@@ -1,70 +1,75 @@
 class BasicBanking {
 	public static void main(String[] args) {
-		Banking bank = new Banking();
+		Banking.createAccount(
+			new Banking.Customer("Mustermann", "Max", "+43 1 555 666"),
+			2000.0
+		);
 
-		bank.createAccount(new Customer("Mustermann", "Max", "+43 1 555 666"), 2000.0);
-		bank.createAccount(new Customer("Musterfrau", "Maximilia", "+43 1 777 888"), 2200.0);
+		Banking.createAccount(
+			new Banking.Customer("Musterfrau", "Maximilia", "+43 1 777 888"),
+			2200.0
+		);
 
-		bank.printAccounts();
-		bank.printBalance();
+		Banking.printAccounts();
+		Banking.printBalance();
 
-		bank.deposit(0, 2800.0);
-		bank.transfer(0, 1, 1300.0);
+		Banking.deposit(0, 2800.0);
+		Banking.transfer(0, 1, 1300.0);
 
-		bank.printAccounts();
-		bank.printBalance();
+		Banking.printAccounts();
+		Banking.printBalance();
 
-		bank.transfer(1, 0, 2000.0);
+		Banking.transfer(1, 0, 2000.0);
 
-		bank.printAccounts();
-		bank.printBalance();
+		Banking.printAccounts();
+		Banking.printBalance();
 
 		// This will fail
-		bank.withdraw(1, 2000.0);
+		Banking.withdraw(1, 2000.0);
 
-		bank.printAccounts();
-		bank.printBalance();
-	}
-}
-
-class Customer {
-	String lastName;
-	String firstName;
-	String phoneNumber;
-
-	Customer(String last, String first, String phone) {
-		this.lastName = last;
-		this.firstName = first;
-		this.phoneNumber = phone;
-	}
-}
-
-class Account {
-	Customer owner;
-
-	int number;
-	double balance;
-	double overdraft;
-
-	Account(Customer owner, int number, double overdraft) {
-		this.owner = owner;
-
-		this.number = number;
-		this.overdraft = overdraft;
-	}
-
-	public boolean withinLimit(double amount) {
-		return (this.balance - amount) > (0.0 - this.overdraft);
+		Banking.printAccounts();
+		Banking.printBalance();
 	}
 }
 
 class Banking {
-	public static final int MAX_ACCOUNTS = 100;
+	static final int MAX_ACCOUNTS = 100;
 
-	private int accountIndex = 0;
-	private Account[] accounts = new Account[Banking.MAX_ACCOUNTS];
+	private static int accountIndex = 0;
+	private static Account[] accounts = new Account[Banking.MAX_ACCOUNTS];
 
-	int createAccount(Customer owner, double overdraftLimit) {
+	static class Customer {
+		String lastName;
+		String firstName;
+		String phoneNumber;
+	
+		Customer(String lastName, String firstName, String phoneNumber) {
+			this.lastName = lastName;
+			this.firstName = firstName;
+			this.phoneNumber = phoneNumber;
+		}
+	}
+
+	private static class Account {
+		Customer owner;
+	
+		int number;
+		double balance;
+		double overdraftLimit;
+	
+		Account(Customer owner, int number, double overdraftLimit) {
+			this.owner = owner;
+	
+			this.number = number;
+			this.overdraftLimit = overdraftLimit;
+		}
+	
+		boolean withinLimit(double amount) {
+			return (this.balance - amount) > (0.0 - this.overdraftLimit);
+		}
+	}
+
+	static int createAccount(Customer owner, double overdraftLimit) {
 		if (accountIndex >= Banking.MAX_ACCOUNTS)
 			return -1;
 
@@ -74,7 +79,7 @@ class Banking {
 		return accountIndex++;
 	}
 
-	boolean deposit(int number, double amount) {
+	static boolean deposit(int number, double amount) {
 		if (accounts[number] == null)
 			return false;
 
@@ -83,7 +88,7 @@ class Banking {
 		return true;
 	}
 
-	boolean withdraw(int number, double amount) {
+	static boolean withdraw(int number, double amount) {
 		Account account = accounts[number];
 
 		if (account == null)
@@ -97,7 +102,7 @@ class Banking {
 		return true;
 	}
 
-	boolean transfer(int from, int to, double amount) {
+	static boolean transfer(int from, int to, double amount) {
 		if (accounts[from] == null || accounts[to] == null)
 			return false;
 		
@@ -110,14 +115,14 @@ class Banking {
 		return true;
 	}
 
-	double getAccountBalance(int number) {
+	static double getAccountBalance(int number) {
 		if (accounts[number] == null)
 			return 0;
 
 		return accounts[number].balance;
 	}
 
-	double getBalance() {
+	static double getBalance() {
 		double sum = 0;
 
 		for (Account account : accounts) {
@@ -130,15 +135,15 @@ class Banking {
 		return sum;
 	}
 
-	void printBalance() {
+	static void printBalance() {
 		Out.println("");
 		Out.println("--------------- Bilanz ----------------");
-		Out.format("%.1f%n", this.getBalance());
+		Out.format("%.1f%n", getBalance());
 		Out.println("---------------------------------------");
 		Out.println("");
 	}
 
-	void printAccounts() {
+	static void printAccounts() {
 		Out.println("------------- Bankauszug --------------");
 
 		for (Account account : accounts) {
@@ -149,7 +154,7 @@ class Banking {
 			Out.format("Kontoinhaber: %s %s%n", account.owner.firstName,
 				account.owner.lastName);
 			Out.format("Kontostand: %.1f%n", account.balance);
-			Out.format("Überziehungsrahmen: %.1f%n", account.overdraft);
+			Out.format("Überziehungsrahmen: %.1f%n", account.overdraftLimit);
 
 			Out.println("---------------------------------------");
 		}
