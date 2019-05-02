@@ -1,2 +1,7 @@
 *.class
 *.zip
+
+# For se1/generateCover
+*.log
+node_modules
+package-lock.json
