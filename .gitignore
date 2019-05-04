@@ -2,3 +2,7 @@
 *.zip
 
 .idea/
+
+# For se1/generateCover
+*.log
+node_modules
