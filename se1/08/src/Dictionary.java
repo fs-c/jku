@@ -1,15 +1,27 @@
-class DictionaryTest {
-    public static void main(String[] args) {
-
-    }
-}
-
 class Dictionary {
+    public static void main(String[] args) {
+        final var dict = new Dictionary();
+
+        dict.insert("better", "besser");
+        Out.println(dict.toString());
+
+        dict.insert("apple", "Apfel");
+        Out.println(dict.toString());
+
+        dict.insert("deft", "geschickt");
+        Out.println(dict.toString());
+
+        dict.insert("control", "Kontrolle");
+        Out.println(dict.toString());
+
+        Out.format("Lookup 'better': %s%n", dict.lookup("better"));
+    }
+
     private Entry head = null; 
 
     void insert(String term, String translation) {
         Entry cur = head, prev = null;
-        Entry e = new Entry(term, translation);
+        final var e = new Entry(term, translation);
 
         while (cur != null && term.compareTo(cur.term) > 0) {
             prev = cur;
@@ -47,13 +59,13 @@ class Dictionary {
             cur = cur.next;
         }
         
-        return (cur ? cur.term : null);
+        return (cur != null ? cur.translation : null);
     }
 
     @Override
     public String toString() {
         Entry cur = head;
-        StringBuilder builder = new StringBuilder();
+        final var builder = new StringBuilder();
 
         while (cur != null) {
             builder.append(cur.toString() + '\n');
@@ -67,7 +79,7 @@ class Dictionary {
     private static class Entry {
         String term;
         String translation;
-        
+
         Entry next = null;
 
         Entry(String term, String translation) {
