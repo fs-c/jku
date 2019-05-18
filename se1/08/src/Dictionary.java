@@ -1,4 +1,4 @@
-class Dictionary {
+final class Dictionary {
     public static void main(String[] args) {
         final var dict = new Dictionary();
 
