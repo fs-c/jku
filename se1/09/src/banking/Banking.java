@@ -142,7 +142,7 @@ public class Banking {
 	}
 
 	private static void printMessage(String operation, boolean success) {
-		String message = success ? operation + " erfolgreich durchgeführt" : "Ungültige Operation";
+		String message = success ? operation + " erfolgreich durchgeführt" : "Ungültige Operation, versuchen Sie es noch einmal";
 		Out.println(message);
 	}
 }
