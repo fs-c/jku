@@ -17,10 +17,8 @@ class Match {
 	}
 
 	public static Match findBest(String haystack, String needle) {
-		int col = 1;
-		int row = 1;
-
 		Match best = null;
+		int col = 1, row = 1;
 
 		for (int i = 0; i < haystack.length() - needle.length(); i++, col++) {
 			char current = haystack.charAt(i);
@@ -31,7 +29,8 @@ class Match {
 			}
 
 			String slice = Match.getSlice(haystack, i, needle.length());
-			int matching = Match.getMatching(slice, needle);
+			int matching = Match.getMatching(slice.toLowerCase(),
+				needle.toLowerCase());
 
 			if (best == null || best.matching < matching)
 				best = new Match(col, row, matching, needle, slice);
@@ -43,15 +42,15 @@ class Match {
 	private static int getMatching(String source, String target) {
 		int matching = 0;
 
-		for (int j = 0; j < target.length(); j++)
-			if (source.charAt(j) == target.charAt(j))
+		for (int i = 0; i < target.length(); i++)
+			if (source.charAt(i) == target.charAt(i))
 				matching++;
 		
 		return matching;
 	}
 
 	private static String getSlice(String source, int offset, int length) {
-		return source.substring(offset, offset + length).toLowerCase();
+		return source.substring(offset, offset + length);
 	}
 }
 
@@ -59,29 +58,36 @@ class TextSearch {
 	public static void main(String[] args) {
 		String fileName;
 
-		if (args.length > 0) {
-			fileName = args[0];
-		} else {
+		if (args.length == 0) {
 			Out.print("File: ");
 			fileName = In.readWord();
+		} else fileName = args[0];
+
+		In.read();
+
+		while (true) {
+			Out.print("Target: ");
+			String target = In.readLine();
+
+			if (target.equals("."))
+				break;
+
+			String file = readFile(fileName);
+			Match best = Match.findBest(file, target);
+
+			best.print();
 		}
 
-		Out.print("Target: ");
-		String target = (In.readLine()).toLowerCase();
-
-		String file = readFile(fileName);
-		Match best = Match.findBest(file, target);
-
-		best.print();
+		Out.println("Bye");
 
 		return;
 	}
 
-	public String readFile(String file) {
+	public static String readFile(String file) {
 		In.open(file);
-
 		String content = In.readFile();
-
 		In.close();
+
+		return content;
 	}
 }
