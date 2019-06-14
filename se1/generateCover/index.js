@@ -7,16 +7,6 @@ const textOptions = {
     color: '#000000',
 };
 
-// const lineOptions = {
-//     lineWidth: 1,
-//     color: '#000000',
-// };
-
-// const drawCross = (x, y) => {
-//     pdfDoc.line([[ x, y ], [ x + 4, y + 4 ]], lineOptions);
-//     pdfDoc.line([[ x, y + 4 ], [ x + 4, y ]], lineOptions);
-// };
-
 pdfDoc.editPage(1);
 
 pdfDoc
