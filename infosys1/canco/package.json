@@ -10,5 +10,7 @@
     "canco": "./src/cli.js"
   },
   "author": "github/lw2904",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": "git://github.com/lw2904/jku.git",
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }
