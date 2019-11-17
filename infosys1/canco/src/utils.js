@@ -12,7 +12,7 @@ const setToString = (set) => {
     for (const el of set)
         string += el;
     
-    return string;
+    return string.split('').sort().join('');
 }
 
 const union = (a, b) => new Set([...a, ...b]);
