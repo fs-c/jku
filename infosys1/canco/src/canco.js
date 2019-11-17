@@ -1,7 +1,5 @@
-const { stringToDeps, setToString, union, difference, isSubset,
+const { setToString, union, difference, isSubset,
     areEqualSets } = require('./utils');
-
-const inputDeps = stringToDeps(process.argv[2]);
 
 const attributeClosure = (dependencies, attributes) => {
     let result = attributes;
@@ -11,7 +9,6 @@ const attributeClosure = (dependencies, attributes) => {
 
         for (const { alpha, beta } of dependencies) {
             if (isSubset(alpha, result)) {
-
                 result = union(result, beta);
             }
         }
@@ -23,40 +20,36 @@ const attributeClosure = (dependencies, attributes) => {
 
 const canonicalCover = (dependencies) => {
     for (const dep of dependencies) {
-        const { alpha, beta } = dep;
-
-        for (const A of alpha) {
-            const attrs = difference(alpha, new Set([ A ]));
+        for (const A of dep.alpha) {
+            const attrs = difference(dep.alpha, new Set([ A ]));
 
             if (!attrs.size)
                 continue;
 
             const closure = attributeClosure(dependencies, attrs);
 
-            if (isSubset(beta, closure)) {
+            if (isSubset(dep.beta, closure)) {
                 dep.alpha = attrs;
             }
         }
     }
 
     for (const dep of dependencies) {
-        const { alpha, beta } = dep;
-
-        for (const B of beta) {
+        for (const B of dep.beta) {
             const bset = new Set([B]);
 
             const deps = union(
-                difference(dependencies, new Set([{ alpha, beta }])),
-                new Set([{ alpha, beta: difference(beta, bset) }]),
+                difference(dependencies, new Set([dep])),
+                new Set([{ alpha: dep.alpha, beta: difference(dep.beta, bset) }]),
             );
 
             if (!deps.size)
                 continue;
 
-            const closure = attributeClosure(deps, alpha);
+            const closure = attributeClosure(deps, dep.alpha);
 
             if (isSubset(bset, closure)) {
-                dep.beta = difference(beta, bset);
+                dep.beta = difference(dep.beta, bset);
             }
         }
     }
@@ -74,4 +67,6 @@ const canonicalCover = (dependencies) => {
     return actual;
 };
 
-console.log(canonicalCover(inputDeps));
+module.exports = {
+    attributeClosure, canonicalCover,
+};
