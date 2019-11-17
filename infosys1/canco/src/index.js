@@ -1,1 +1,1 @@
-module.exports = require('./canco');
+module.exports = { ...require('./canco'), utils: require('./utils') };
