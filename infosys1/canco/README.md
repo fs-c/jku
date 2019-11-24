@@ -10,14 +10,15 @@ Usage:
         Outputs this help message
     canco [functional dependencies]
         Outputs the canonical cover for the given set of functional dependencies 
-        (A-B,B-CD,D-A)
+        (A-B;B-C,D;D-A)
     canco closure [attributes] [functional dependencies]
         Outputs the closure of the given set of attributes (A,B,C,...) for the 
-        given set of functional dependencies (A-B,B-CD,D-A).
+        given set of functional dependencies (A-B;B-C,D;D-A).
 
 Set notation:
-    Sets are comma (but not space!) delimited strings: A,B,C is recognized but 
-    A, B, C is not
+    Elements of a set of functional dependencies are delimited with a semicolon (without whitespace), while elements of attribute sets (A-B,C,D) are comma delimited.
+
+    A-B,C;B-D;D-E,F,G is a set of FDs with 3 elements, some of which contain attribute sets.
 ```
 
 `canco` can also be consumed as a regular package.

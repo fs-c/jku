@@ -1,9 +1,9 @@
-const stringToDeps = (string) => string.split(',')
+const stringToDeps = (string) => string.split(';')
     .map((sub) => {
         const [ alpha, beta ] = sub.split('-');
 
-        return { alpha: new Set(alpha.split('')),
-            beta: new Set(beta.split('')) };
+        return { alpha: new Set(alpha.split(',')),
+            beta: new Set(beta.split(',')) };
     });
 
 const setToString = (set) => {
