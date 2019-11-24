@@ -5,8 +5,7 @@ const { attributeClosure, canonicalCover } = require('./canco');
 
 const [ ,, ...args ] = process.argv;
 
-if ([ '--help', '-h' ].includes(args[0])) {
-    console.log(`
+const printHelp = () => console.log(`
 Usage:
 
     canco --help/-h
@@ -24,8 +23,11 @@ Set notation:
 
     Sets are comma (but not space!) delimited strings: A,B,C is recognized but 
     A, B, C is not
-    `);
-} if (args[0] === 'closure') {
+`);
+
+if (!args.length || [ '--help', '-h' ].includes(args[0])) {
+    printHelp();
+} else if (args[0] === 'closure') {
     const deps = stringToDeps(args[2]);
     const attrs = new Set(args[1].split(','));
 
