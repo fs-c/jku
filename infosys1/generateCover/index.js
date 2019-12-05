@@ -1,27 +1,61 @@
-const HummusRecipe = require('hummus-recipe');
-const pdfDoc = new HummusRecipe(__dirname + '/plain_cover.pdf', 'output.pdf');
+const { PDFDocument, StandardFonts } = require('pdf-lib');
+
+const existingPDF = require('fs').readFileSync(__dirname + '/plain_cover.pdf');
 
 const to = process.argv[3];
 const from = process.argv[2];
 
-const textHeight = 215;
-const explHeight = 351;
-const textOptions = {
-    size: 11,
-    color: '#000000',
-};
+const textHeight = 620;
+const explHeight = 482;
 
-pdfDoc.editPage(1);
+(async () => {
+    const pdfDoc = await PDFDocument.load(existingPDF);
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-pdfDoc
-    .text('11804751', 80, textHeight, textOptions)
-    .text('Laurenz Weixlbaumer', 165, textHeight, textOptions)
-    .text('990', 485, textHeight, textOptions)
-    .text('X', 73, 284, textOptions);
+    const textOptions = {
+        size: 11,
+        font: helveticaFont,
+    }
 
-pdfDoc
-    .text(from, 172, explHeight, textOptions)
-    .text(to, 244, explHeight, textOptions);
+    const firstPage = pdfDoc.getPages()[0];
 
-pdfDoc.endPage();
-pdfDoc.endPDF();
+    firstPage.drawText('11804751', {
+        y: textHeight,
+        x: 80,
+        ...textOptions,
+    });
+
+    firstPage.drawText('Laurenz Weixlbaumer', {
+        y: textHeight,
+        x: 165,
+        ...textOptions,
+    });
+
+    firstPage.drawText('990', {
+        y: textHeight,
+        x: 480,
+        ...textOptions,
+    });
+
+    firstPage.drawText('X', {
+        y: 549,
+        x: 73,
+        ...textOptions,
+    });
+
+    firstPage.drawText(from, {
+        y: explHeight,
+        x: 172,
+        ...textOptions,
+    });
+
+    firstPage.drawText(to, {
+        y: explHeight,
+        x: 244,
+        ...textOptions,
+    });
+
+    const pdfBytes = await pdfDoc.save()
+
+    require('fs').writeFileSync('./output.pdf', pdfBytes);
+})();

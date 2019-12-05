@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hummus-recipe": "^1.8.21"
+    "pdf-lib": "^1.2.1"
   }
 }
