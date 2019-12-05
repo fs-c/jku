@@ -1,12 +1,16 @@
-const stringToDeps = (string) => string.split(';')
-    .map((sub) => {
+const stringToDeps = (string, opts) => {
+    const attributeDelim = opts.short ? '' : '.';
+
+    return string.split(',').map((sub) => {
         const [ alpha, beta ] = sub.split('-');
 
-        return { alpha: new Set(alpha.split(',')),
-            beta: new Set(beta.split(',')) };
+        return { alpha: new Set(alpha.split(attributeDelim)),
+            beta: new Set(beta.split(attributeDelim)) };
     });
+}
 
-const setToString = (set) => {
+// TODO: Respect options
+const setToString = (set, opts) => {
     let string = '';
 
     for (const el of set)

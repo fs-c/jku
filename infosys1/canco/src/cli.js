@@ -11,13 +11,19 @@ Usage:
     canco --help/-h
         Outputs this help message
 
-    canco [functional dependencies]
+    canco [functional dependencies] [-s/--short]
         Outputs the canonical cover for the given set of functional dependencies 
-        (A-B,B-CD,D-A)
+        (Default: Aa.Bb-Cc,Cc-Dd, short form: AB-C,C-D)
 
-    canco closure [attributes] [functional dependencies]
+    canco closure [attributes] [functional dependencies] [-s/--short]
         Outputs the closure of the given set of attributes (A,B,C,...) for the 
-        given set of functional dependencies (A-B,B-CD,D-A).
+        given set of functional dependencies (see above for an example).
+
+Options:
+
+    -s/--short
+        Enables short form parsing, limits attribute names to a single character 
+        but removes the need for attribute seperators (A-B,B-CD,D-A)
 
 Set notation:
 
@@ -25,15 +31,19 @@ Set notation:
     A, B, C is not
 `);
 
-if (!args.length || [ '--help', '-h' ].includes(args[0])) {
-    printHelp();
-} else if (args[0] === 'closure') {
-    const deps = stringToDeps(args[2]);
+if (!args.length || [ '-', '--help' ].includes(args[0])) {
+    return printHelp();
+}
+
+const short = args.includes('-s') || args.includes('--short');
+
+if (args[0] === 'closure') {
+    const deps = stringToDeps(args[2], { short });
     const attrs = new Set(args[1].split(','));
 
     console.log(setToString(attributeClosure(deps, attrs)));
 } else {
-    const deps = stringToDeps(args[0]);
+    const deps = stringToDeps(args[0], { short });
 
     console.log(canonicalCover(deps));
 }
