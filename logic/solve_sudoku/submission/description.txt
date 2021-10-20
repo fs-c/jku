@@ -1,9 +1,14 @@
 Lab Exercise 1: Sudoku
 Laurenz Weixlbaumer, 11804751
 
-Each field in the sudoku is associated with 4 variables which control its value.
-The variables are named "field_value"; the variable "1_2" corresponds to "field 
-at index 1 has value 2". Therefore there are 16 such variables.
+Short video demonstration/explanation
+https://youtu.be/X7kaoRktrGg
+
+Each field in the sudoku is assigned an index starting at 1 and continuing from 
+left to right and top to button to 16. Each field is associated with 4 variables 
+which control its value. Variables are named "field_value"; the variable "1_2" 
+corresponds to "field at index 1 has value 2", "5_4" corresponds to "field at 
+index 5 has value 4". There are a total of 64 (16 * 4) variables.
 
 There are basically two constraints:
 
@@ -12,4 +17,12 @@ There are basically two constraints:
 - Connected fields must have different values. Two fields are connected if they 
   are in the same row, column or square.
 
-As such it is essentially analogous to graph coloring.
+As such the problem is essentially analogous to graph coloring. The provided 
+example steps to encode a graph coloring problem was used as a reference to 
+implement the script which generated the encoding for this problem.
+
+Sudoku51 as solved by the encoding:
+2 3 4 1
+4 1 2 3
+1 2 3 4
+3 4 1 2

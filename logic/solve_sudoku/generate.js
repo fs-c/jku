@@ -83,4 +83,4 @@ for (const i of indices) {
     )).join(' & ');
 }
 
-console.log(formula + ' & 3_4 & 6_1 & 8_3 & 10_2');
+console.log(formula + (process.argv[2] || ''));
