@@ -93,7 +93,7 @@ encode_loop:
 write_buffer:
     # write the encoded chunk to disk (%r13 contains number of bytes/2)
     movq ST_FD_OUT(%rbp), %rdi          # output file descriptor
-    movq $WRITE_BUF_DATA, %rsi          # location to write to
+    movq $WRITE_BUF_DATA, %rsi          # location to read from
     movq %r13, %rdx                     # number of bytes to write (wrong at this point)
     addq %rdx, %rdx                     # double the number of bytes (now it's correct)
     movq $SYS_WRITE, %rax
