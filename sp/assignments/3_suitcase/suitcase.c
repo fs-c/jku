@@ -29,6 +29,17 @@ currency_t to_currency(long value) {
     return cur;
 }
 
+// Prints all suitcases, excluding eliminated ones and the picked one.
+void print_suitcases() {
+    for (int i = 0; i < suitcases_length; i++) {
+        if (suitcases[i] && i != picked_suitcase) {
+            printf("[%d]", i + 1);
+        }
+    }
+
+    puts("\n");
+}
+
 // Shuffle the first n elements of the given array randomly.
 void randomize(long *array, size_t n) {
     if (n <= 1) {
@@ -128,15 +139,11 @@ long get_bank_offer(int round) {
         offer /= 10;
     }
 
-    printf("3 most significant digits: %ld\n", offer);
-
     if (offer % ((offer / 10) * 10)) {
         offer = ((offer / 10) + 1) * 10;
-    } else {
-        offer /= 10;
     }
 
-    for (int i = 0; i < places - 2; i++) {
+    for (int i = 0; i < places - 3; i++) {
         offer *= 10;
     }
 
@@ -166,18 +173,22 @@ int main (int argc, const char *argv[]) {
         randomize(suitcases, suitcases_length);
     }
 
-    picked_suitcase = player_choose_suitcase(prompt_pick_prize);
+    print_suitcases();
 
-    printf(confirm_prize_suitcase, picked_suitcase);
+    picked_suitcase = player_choose_suitcase(prompt_pick_prize) - 1;
+
+    printf(confirm_prize_suitcase, picked_suitcase + 1);
 
     for (int round = 0; round < 9; round++) {
         // Number of cases to eliminate in the current round
         int e = round >= eliminated_cases_length ? 1 : eliminated_cases[round];
 
+        print_suitcases();
         printf(intro_round, round + 1, e);
 
         for (int i = 0; i < e; i++) {
             int p = player_choose_suitcase(prompt_pick_to_eliminate);
+
             long *v = &suitcases[p - 1];
             currency_t cur = to_currency(*v);
 
@@ -205,17 +216,17 @@ int main (int argc, const char *argv[]) {
         }
     }
 
-    printf(intro_switch_suitcase, picked_suitcase, remaining);
+    printf(intro_switch_suitcase, picked_suitcase + 1, remaining + 1);
 
     if (player_prompt_yn(prompt_switch_suitcase)) {
-        printf(confirm_switch_suitcase, picked_suitcase, remaining);
+        printf(confirm_switch_suitcase, picked_suitcase + 1, remaining + 1);
 
         picked_suitcase = remaining;
     }
 
     currency_t prize = to_currency(suitcases[picked_suitcase]);
 
-    printf(game_over_full_game, picked_suitcase, prize.euro, prize.cent);
+    printf(game_over_full_game, picked_suitcase + 1, prize.euro, prize.cent);
 
     return EXIT_SUCCESS;
 }
