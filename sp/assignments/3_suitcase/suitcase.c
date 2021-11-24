@@ -118,7 +118,7 @@ long get_bank_offer(int round) {
         }
     }
 
-    long offer = (total_value / remaining) * (round + 1);
+    long offer = (total_value / remaining) * (round + 1) / 10;
 
     // Ghetto rounding
 
@@ -128,11 +128,15 @@ long get_bank_offer(int round) {
         offer /= 10;
     }
 
-    if (offer % 2) {
-        offer -= 1;
+    printf("3 most significant digits: %ld\n", offer);
+
+    if (offer % ((offer / 10) * 10)) {
+        offer = ((offer / 10) + 1) * 10;
+    } else {
+        offer /= 10;
     }
 
-    for (int i = 0; i < places - 3; i++) {
+    for (int i = 0; i < places - 2; i++) {
         offer *= 10;
     }
 
