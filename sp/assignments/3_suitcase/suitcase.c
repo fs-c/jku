@@ -19,7 +19,7 @@ const int eliminated_cases[] = { 6, 5, 4, 3, 2 };
 
 typedef struct { long euro; long cent; } currency_t;
 
-// Convert a raw currency value (long, cents) into euros and cents.
+// Convert a raw currency value (in cents) into euros and cents.
 currency_t to_currency(long value) {
     currency_t cur;
 
@@ -37,7 +37,7 @@ void print_suitcases() {
         }
     }
 
-    puts("\n");
+    putc('\n', stdout);
 }
 
 // Shuffle the first n elements of the given array randomly.
@@ -47,17 +47,14 @@ void randomize(long *array, size_t n) {
     }
 
     for (size_t i = 0; i < n - 1; i++) {
+        // Randomly determine a new index.
         size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
 
+        // Switch elements at new and old index.
         long t = array[j];
         array[j] = array[i];
         array[i] = t;
     }
-}
-
-// Check if `i` is a valid suitcase index. May be the currently picked one.
-int is_valid_suitcase(int i) {
-    return i > 0 && i <= suitcases_length;
 }
 
 // Prompt player to choose a suitcase in the context of a given message. Retry 
@@ -66,22 +63,22 @@ size_t player_choose_suitcase(const char *message) {
     unsigned int pick;
 
     while (true) {
-        puts(message);
+        fputs(message, stdout);
 
         if (!askPlayerForNumber(&pick)) {
-            puts(input_invalid);
+            fputs(input_invalid, stdout);
 
             continue;
         }
 
-        if (!is_valid_suitcase(pick)) {
-            puts(input_out_of_range);
+        if (pick <= 0 || pick > suitcases_length) {
+            fputs(input_out_of_range, stdout);
 
             continue;
         }
 
-        if (pick == picked_suitcase || !suitcases[pick - 1]) {
-            puts(suitcase_not_availalbe);
+        if ((pick - 1) == picked_suitcase || !suitcases[pick - 1]) {
+            fputs(suitcase_not_availalbe, stdout);
 
             continue;
         }
@@ -90,9 +87,11 @@ size_t player_choose_suitcase(const char *message) {
     }
 }
 
-int player_prompt_yn(const char *message) {
+// Promt player to answer yes/no to a given question. Retry until a valid response 
+// is given.
+bool player_prompt_yn(const char *message) {
     while (true) {
-        puts(message);
+        fputs(message, stdout);
 
         yes_no_retry_t result = askPlayerYesNo();
 
@@ -100,13 +99,18 @@ int player_prompt_yn(const char *message) {
             return 1;
         } else if (result == No) {
             return 0;
+        } else if (result == Retry) {
+            fputs(input_invalid, stdout);
         }
     }
 }
 
+// Get the places of a number. I. e. 7 for 1276435.
 int get_places(long num) {
+    // Number of places.
     int p = 1;
 
+    // Keep deviding by 10 (and incrementing the places) as long as possible.
     while (num > 9) {
         num /= 10;
         p++;
@@ -154,6 +158,7 @@ int main (int argc, const char *argv[]) {
     bool should_randomize = false;
 
     if (argc == 2) {
+        // Very scalable, stonks
         if (argv[1][0] != '-' || argv[1][1] != 'r') {
             printf(argument_invalid, argv[1]);
 
@@ -162,13 +167,13 @@ int main (int argc, const char *argv[]) {
 
         should_randomize = true;
     } else if (argc > 3) {
-        puts(arguments_too_many);
+        fputs(arguments_too_many, stdout);
 
         return EXIT_FAILURE;
     }
 
     if (should_randomize) {
-        puts(suffeling_suitcase_contents);
+        fputs(suffeling_suitcase_contents, stdout);
 
         randomize(suitcases, suitcases_length);
     }

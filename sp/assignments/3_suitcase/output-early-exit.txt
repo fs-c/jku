@@ -1,0 +1,11 @@
+[1][2][3][4][5][6][7][8][9][10][11][12][13][14][15][16][17][18][19][20][21][22][23][24][25][26]
+Pick the suitcase with your prize (1-26):
+1
+You picked suitcase 1.
+[2][3][4][5][6][7][8][9][10][11][12][13][14][15][16][17][18][19][20][21][22][23][24][25][26]
+Round 1 (eliminate 6):
+Pick a suitcase to elimiiate from the game:
+2
+Eliminated case 2. Contains 1.00
+Pick a suitcase to elimiiate from the game:
+End of input reached.
