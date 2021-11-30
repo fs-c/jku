@@ -14,3 +14,11 @@ git_ignore_*
 *.out
 *.class
 *.o
+
+# LaTeX build
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.pdf
