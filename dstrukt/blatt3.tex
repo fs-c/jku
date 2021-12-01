@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 3}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+Die Relation $\leq$ auf $A$ ist nur dann eine Halbordnung wenn sie auch eine transitive Relation ist (Skriptum, Definition 7.3). Es muss also gelten, dass
+\begin{equation*}
+    \forall\ x, y, z \in A : x \leq y \land y \leq z \Rightarrow x \leq z.
+\end{equation*}
+Weiters muss für eine Halbordnung die Antisymmetrie gelten (Skriptum, Definition 7.2) gelten, also
+\begin{equation*}
+    \forall\ x, y \in A : x \leq y \land y \leq x \Rightarrow x = y.
+\end{equation*}
+Wählt man nun $x = a$, $y = b$ und $z = c$ so kann aus dem gegebenen Ausdruck $a \leq b \leq c \leq a$ gemäß der Transitivität abgeleitet werden, dass $a \leq b$ und $b \leq a$. Gemäß der Antisymmetrie müsste nun gelten, dass $a = b$. Gegeben ist allerdings $a \neq b$. Die gegebene Relation kann also keine Halbordnung sein.
+
+\paragraph{Aufgabe 2.}
+
+Es gelte $x, y \in N$.
+
+\begin{enumerate}[label=\alph*)]
+    \item Isoton nachdem $x \leq y \Rightarrow x^2 \leq y^2$.
+
+    \item Nicht isoton nachdem $x \leq y \nRightarrow x^2 \mid y^2$. (Man wähle etwa $x = 2$ und $y = 3$. Es gilt $2 \leq 3$, nicht aber $4 \mid 9$.)
+
+    \item Isoton nachdem $x \mid y \Rightarrow x^2 \leq y^2$. ($x \mid y$ impliziert, $x \cdot n = y$ für ein $n \in \mathbb{Z}$. Es gilt also auch $\lvert x\rvert \leq \lvert y\rvert$ und somit $x^2 \leq y^2$.)
+
+    \item Isoton nachdem $x \mid y \Rightarrow x^2 \mid y^2$.
+\end{enumerate}
+
+\paragraph{Aufgabe 3.}
+
+% Die Relation $\sqsubseteq$ ist dann eine Halbordnung auf $A$ wenn gilt, dass
+% \begin{equation}\label{eq:a3_1}
+%     \begin{split}
+%         \forall\ x \in A &: x \sqsubseteq x\\
+%         \forall\ x, y \in A &: x \sqsubseteq y \land y \sqsubseteq x \Rightarrow x = y\\
+%         \forall\ x, y, z \in A &: x \sqsubseteq y \land y \sqsubseteq z \Rightarrow x \sqsubseteq z\\
+%     \end{split}.
+% \end{equation}
+% Die Funktion $f$ ist dann injektiv wenn gilt, dass
+% \begin{equation}\label{eq:a3_2}
+%     \forall\ x, y \in A : f(x) = f(y) \Rightarrow x = y.
+% \end{equation}
+% % \begin{enumerate}[label=\alph*)]
+% %     \item Zu zeigen ist, dass $\sqsubseteq$ eine Halbordnung auf $A$ ist wenn $f$ injektiv ist. Genauer ist zu zeigen, dass \eqref{eq:a3_2} $\Rightarrow$ \eqref{eq:a3_1}.
+% % \end{enumerate}
+
+% Die Relation $\sqsubseteq$ ist durch
+% \begin{equation*}
+%     \forall\ x, y \in A : x \sqsubseteq y \Leftrightarrow f(x) \leq f(y)
+% \end{equation*}
+% definiert, wobei $\leq$ eine Halbordnung auf der Bildmenge von $f$ ist.
+
+\begin{enumerate}[label=\alph*)]
+    \item $I$ beschreibt die Injektivität von $f$ und $H$ die \enquote{Halbgeordnetheit} von $\sqsubseteq$. Zu zeigen ist $I \Rightarrow H$.
+    
+    Man wähle beliebige $a_1, a_2 \in A$ derart, dass $a_1 \neq a_2$ und $f(a_1) = f(a_2)$. Nachdem $\leq$ eine Halbordnung ist gilt nun $f(a_1) \leq f(a_2)$ und $f(a_2) \leq f(a_1)$. Es muss nun also gelten, dass $a_1 \sqsubseteq a_2$ und $a_2 \sqsubseteq a_1$. Nachdem $a_1 \neq a_2$ kann $\sqsubseteq$ gemäß der Vorraussetzung der Antisymmetrie keine Halbordnung sein.
+    
+    Es wurde gezeigt, dass wenn $f$ nicht injektiv ist, $\sqsubseteq$ keine Halbordnung auf $A$ sein kann --- $\neg I \Rightarrow \neg H$. Damit gilt $I \Rightarrow H$
+
+    \item Man wähle beliebige $a_1, a_2 \in A$ mit $a_1 = a_2$. Unter der Annahme, dass $\sqsubseteq$ eine Halbordnung ist, gilt nun $a_1 \sqsubseteq a_2$ und $a_2 \sqsubseteq a_1$. Nachdem $a_1 \sqsubseteq a_2 \Leftrightarrow f(a_1) \leq f(a_2)$ gilt nun weiter  $f(a_1) \leq f(a_2)$ und $f(a_2) \leq f(a_1)$. Gemäß der Antisymmetrie muss nun gelten, dass $f(a_1) = f(a_2)$.
+    
+    Ist $\sqsubseteq$ eine Halbordnung muss $f$ also injektiv sein. ($H \Rightarrow I$.)
+\end{enumerate}
+
+\end{document}

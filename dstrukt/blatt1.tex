@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}[label=\alph*)]
+    \item Für alle rationalen Zahlen $x$ gibt es mindestens eine natürliche Zahl $y$ für die gilt, dass $y \leq x$.
+    
+    \item Für alle reellen Zahlen $x$ gilt, dass $x$ nicht auch eine rationale Zahl ist wenn $x^2 = 2$.
+    
+    \item Für alle Kombinationen aus einer rationalen Zahl $x$ und einer ganzen Zahl $y$ gilt, dass es für $x < y$ mindestens eine rationale Zahl $z$ gibt, für die gilt, dass $x < z$ und $z < y$.
+    
+    \item $\exists\, x \in \mathbb{R} : x^2 = 2 \land \exists\, y \in \mathbb{R} : y^2 = 2 \land x \neq y$
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}[label=\alph*)]
+    \item Für ein gewisses $x$ ist $p(x)$ wahr und $q(x)$ falsch. Die linke Seite der Äquivalenz ist falsch, die rechte wahr.
+    
+    \item Für jedes $x$ gilt entweder $p(x)$ oder $q(x)$. Die linke Seite der Äquivalenz ist falsch, die rechte wahr.
+    
+    \item Für jedes $x$ gibt es genau ein $y$ für welches $p(x, y)$ gilt. Die linke Seite der Äquivalenz ist wahr, die rechte falsch.
+\end{enumerate}
+
+\paragraph{Aufgabe 3.} Zu zeigen ist, dass $A \cap B$ eine Untermenge von $A \cup B$ ist. Für die Menge $A \cap B$ gilt $\forall\,x : x \in A \land x \in B$. Für die Menge $A \cup B$ gilt $\forall\,x : x \in A \lor x \in B$. Um zu zeigen, dass $A \subseteq B$ sei darzulegen, dass $\forall\, x \in A : x \in B$.
+
+Man betrachte ein beliebiges $x$ mit $x \in A$ und $x \in B$. Es gilt nun $x \in (A \cap B)$. Für $x \in (A \cup B)$ muss nur gelten, dass $x \in A$ oder $x \in B$. Für das gewählte $x$ trifft sogar beides zu; es gilt also auch $x \in (A \cup B)$.
+
+Es wurde gezeigt, dass alle Elemente von $A \cap B$ auch Element von $A \cup B$ sind. Somit gilt $A \cap B \subseteq A \cup B$
+
+\end{document}

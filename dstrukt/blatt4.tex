@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 4}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}[label=\alph*)]
+    \item Keine Äquivalenzrelation. Symmetrie gilt nicht: Für $a = 1$ und $b = -1$ gilt $a \sim_1 b$ ($1 - (-1) \geq 0$), nicht aber $b \sim_1 a$ ($-1 - 1 \ngeq 0$).
+    
+    \item Äquivalenzrelation.
+    %Reflexivität gilt nachdem $\forall\ x \in \R : x^2 > 0$. Symmetrie gilt wegen des Kommutativgesetzes der Multiplikation.
+    
+    \item Keine Äquivalenzrelation. Reflexivität gilt nicht: Für $a = 1$ und $b = a$ gilt $a \sim_3 b$ nicht ($ab \nless 0$).
+
+    \item Äquivalenzrelation.
+    
+    \item Äquivalenzrelation.
+    
+    \item Keine Äquivalenzrelation. Transitivität gilt nicht: Für $c = 10^{-50}$, $x = 2c$, $y = 2.5c$ und $z = 3c$ gelten zwar $\lvert x - y \rvert < c$ ($0.5c < c$) und $\vert y - z \rvert < c$ ($0.5c < c$), nicht aber $\lvert x - z \rvert < c$ ($c \nless c$).
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{align*}
+    \mathcal{P}(M) = \{ \emptyset, \{\frectangle\}, \{\fcircle\}, \{\ftriangle\}, \{\frectangle, \fcircle\}, \{\frectangle, \ftriangle\}, \{\fcircle, \ftriangle\}, \{\frectangle, \fcircle, \ftriangle\} \}
+\end{align*}
+
+Es gilt
+\begin{align*}
+    [\emptyset]_{\sim}                                  &= \{ \emptyset \} \\
+    [\{ \fcircle \}]_{\sim}                             &= \{ \{\fcircle\} \} \\
+    [\{ \ftriangle \}]_{\sim}                           &= \{ \{\ftriangle\} \} \\
+    [\{ \fcircle, \ftriangle \}]_{\sim}                 &= \{ \{\fcircle, \ftriangle\} \} \\
+    [\{ \frectangle \}]_{\sim} = [\{ \frectangle, \fcircle \}]_{\sim} = [\{ \frectangle, \ftriangle \}]_{\sim} = [\{ \frectangle, \fcircle, \ftriangle \}]_{\sim}                     &= \{ \{\frectangle\}, \{\frectangle, \fcircle\}, \{\frectangle, \ftriangle\}, \{\frectangle, \fcircle, \ftriangle\} \}
+\end{align*}
+
+\paragraph{Aufgabe 3.}
+
+\begin{enumerate}[label=\alph*)]
+    \item Die Funktion $\text{isEqual}(T_1, T_2)$ gibt genau dann \enquote{True} zurück wenn jede Komponente von $T_1$ auch in $T_2$ enthalten ist und umgekehrt, andernfalls gibt sie \enquote{False} zurück. \enquote{Zwei Mengen $A, B$ sind gleich, wenn für jedes Objekt $x$ gilt $x \in A \Leftrightarrow x \in B$.} (Skriptum, S. 4) Nachdem Tupeln in diesem Kontext Mengen darstellen, modelliert $\text{isEqual}$ also eine Gleichheitsrelation zwischen Mengen. \enquote{Für jede Menge $A$ ist die Gleichheitsrelation $=$ eine Äquivalenzrelation, denn für alle Objekte $x, y ,z$ gilt $x = x$ (Reflexivität), $x = y \Leftrightarrow y = x$ (Symmetrie) und $x = y \land y = z \Rightarrow x = z$ (Transitivität).} (Skriptum, S. 21)
+
+    Somit wird durch $T_1 \sim T_2 \Leftrightarrow \text{isEqual}(T_1, T_2)$ eine Äquivalenzrelation definiert.
+
+    \item Wie in a) erwähnt sind zwei Mengen gleich, wenn für jedes Objekt $x$ gilt $x \in A \Leftrightarrow x \in B$. Das ist das einzige Kriterium, nicht \enquote{wie oft} oder \enquote{in welcher Reihenfolge} ein Element vorkommt. (Skriptum, S.4) Somit hat die konkrete Wahl von Tupeln aus den Äquivalenzklassen die $u$ als Eingabe erhält keinen Einfluss auf ihr Ergebnis.
+    
+    Die Implementierung passt also insofern zu jener aus a) als bei gleichbleibenden (nach $\text{isEqual}$) Eingabetupeln auch das ausgegebene Tupel gleich bleibt. Gilt $\text{isEqual}(T_1, T'_1)$ und $\text{isEqual}(T_2, T'_2)$ gilt auch $\text{isEqual}(\text{union}(T_1, T_2), \text{union}(T'_1, T'_2))$.
+
+    \item Die Länge eines Tupels ist nicht zwingendermaßen gleich der Größe der Menge die es codiert. So gilt etwa $\lvert\{ 1, 2, 3 \}\rvert = \lvert\{ 1, 2, 2, 3, 3, 3 \}\rvert = 3$ aber $\text{size}((1, 2, 3)) = 3$ und $\text{size}((1, 2, 2, 3, 3, 3)) = 6$.
+\end{enumerate}
+
+\end{document}

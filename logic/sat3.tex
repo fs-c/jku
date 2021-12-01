@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage[landscape]{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Logic --- \textbf{Bonus Exercise 3}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+
+\begin{forest}
+( z ∨ d ∨ a ) ∧ ( ¬d ∨ a ∨ z ) ∧ ( ¬y ∨ b ∨ ¬z ) ∧
+( ¬b ∨ ¬c ∨ ¬x ) ∧
+( ¬d ∨ c ∨ ¬a ) ∧
+( y ) ∧
+( c ∨ d ∨ a ) ∧
+( d ∨ ¬a ∨ ¬z ) ∧
+( ¬d ∨ c ∨ a ) ∧
+( x ) ∧
+( b ∨ c ∨ ¬x ) ∧
+( ¬d ∨ z ∨ ¬a ) ∧
+( d ∨ ¬a ∨ ¬c ) ∧
+( ¬c ∨ ¬d ∨ a ) ∧
+( z ∨ ¬b ∨ ¬y )
+
+\end{forest}
+
+\end{document}

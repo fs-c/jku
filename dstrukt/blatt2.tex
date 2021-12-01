@@ -1,0 +1,112 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+% \begin{enumerate}[label=\alph*)]
+%     \item Wenn $f(x) = x$, $g(x) = x$ und $h(x) = g^{-1}(x)$ dann gilt $h \circ g \circ f = id_A$.
+
+%     \item Wenn $f(x) = a$ und $g(x) = b$ für $a, b \in C$ dann gilt der gegebene Ausdruck.
+
+%     \item Für zwei Funktionen $f : A \rightarrow B$ und $g : B \rightarrow A$ gilt dann $g \circ f = id_A$ wenn $g = f^{-1}$. Demnach müsste für $f \circ f = id_A$ gelten, dass $f = f^{-1}$. Es gibt keine solche Funktion.
+% \end{enumerate}
+
+\begin{enumerate}[label=\alph*)]
+    \item
+    \begin{minipage}{0.3\textwidth}
+        \begin{center}
+            $f\ :\ A \rightarrow B$
+            \vspace{0.1cm}
+
+            \begin{tabular}{c | c | c | c}
+                3 &  &  & $\times$ \\\hline
+                2 &  & $\times$ &  \\\hline
+                1 & $\times$ & &  \\\hline
+                  & $\square$ & $\bigcirc$ & $\triangle$
+            \end{tabular}
+        \end{center}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \begin{center}
+            $g\ :\ B \rightarrow C$
+            \vspace{0.1cm}
+
+            \begin{tabular}{c | c | c | c}
+                a & $\times$ &   &   \\\hline
+                b &   & $\times$ &   \\\hline
+                c &   &   & $\times$ \\\hline
+                  & 1 & 2 & 3 \\
+            \end{tabular}
+        \end{center}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \begin{center}
+            $h\ :\ C \rightarrow A$
+            \vspace{0.1cm}
+
+            \begin{tabular}{c | c | c | c}
+                $\triangle$ &   &   & $\times$ \\\hline
+                $\bigcirc$ &   & $\times$ &   \\\hline
+                $\square$ & $\times$ &   &   \\\hline
+                  & a & b & c
+            \end{tabular}
+        \end{center}
+    \end{minipage}
+    
+    \begin{equation*}
+        h \circ g \circ f = id_A
+    \end{equation*}
+    
+    \item Wenn $f(a) = c_1$ und $g(b) = c_2$ für $c_1 \neq c_2$ und beliebige $a \in A, b \in B$ und $c_1, c_2 \in C$ dann ist der Schnitt $\emptyset$.
+    
+    \item Für zwei Funktionen $f : A \rightarrow A$ und $g : A \rightarrow A$ gilt dann $g \circ f = id_A$ wenn $g = f^{-1}$. Demnach müsste für $f \circ f = id_A$ gelten, dass $f = f^{-1}$. Es gibt keine solche Funktion.
+
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}[label=\alph*)]
+    \item Injektiv und nicht surjektiv.
+    \item Injektiv und surjektiv.
+    \item Injektiv und nicht surjektiv.
+    \item Weder injektiv noch surjektiv.
+    \item Injektiv und surjektiv. (Unter der Annahme, dass der Bildbereich dieser Funktion die Menge aller derzeit vergebenen Matrikelnummern und nicht $\mathbb{N}$ o. Ä. ist.)
+\end{enumerate}
+
+\paragraph{Aufgabe 3.}
+
+Durch den gegebenen Ausdruck wird eine Funktion definiert. Jedes $x$ hat mindestens einen Ausgabewert und kein $x$ führt zu mehr als einem Ausgabewert. Konkret für Fallunterscheidungen gilt, dass jedes $x$ von genau einem Fall abgedeckt werden muss.
+
+\end{document}

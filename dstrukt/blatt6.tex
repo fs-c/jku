@@ -1,0 +1,84 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 6}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}[label=\alph*)]
+    \item $h$ ist ein Graphenhomomorphismus. Es gilt
+    \begin{equation*}
+        \forall\, u, v \in V_1 : (u, v) \in E_1 \Rightarrow (h(u), h(v)) \in E_2
+    \end{equation*}
+    unter Annahme von $G_1 = (V_1, E_1)$ und $G_2 = (V_2, E_2)$.
+    
+    \item $h$ ist ein Graphenhomomorphismus. Für alle $x \in V_1$ gilt auch $h(x) = 1$, somit gilt auch immer $h(x) \in \{ 1 \}$.
+    
+    \item $h$ ist kein Graphenhomomorphismus. Es gibt keinen direkten Weg von der Kreuzung Graben/Kollegiumgasse (1) zur Kreuzung Kollegiumgasse/Pfarrplatz (2), die entsprechende Straße ist eine Einbahn in die entgegengesetzte Richtung.
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+$G_1$ und $G_3$ können nicht zu $G_2$ isomorph sein. $G_1$ und $G_3$ beinhalten beide einen Knoten (\texttt{1} bzw. \texttt{7}) mit zwei nach außen und keinen nach innen gerichteten Kanten. $G_2$ beinhaltet keinen solchen Knoten.
+
+$G_1$ und $G_3$ sind zueinander isomorph, ein Isomorphismus $h$ ist etwa
+\begin{center}
+    \begin{tabular}{c | ccccccc}
+        $v$    &1&2&3&4&5&6&7\\\hline
+        $h(v)$ &7&4&1&2&5&3&6\\
+    \end{tabular}\ .
+\end{center}
+
+\paragraph{Aufgabe 3.}
+
+Es gibt einen bijektiven Graphenhomomorphismus $h: V_1 \rightarrow V_2$ (und einen Graphenhomomorphismus $h^{-1}: V_2 \rightarrow V_1$). Der Graph $U = (V_u, E_u)$ sei ein beliebiger Untergraph von $G_1$, somit gibt es einen injektiven Graphenhomomorphismus $t: V_u \rightarrow V_1$. Zu zeigen ist, dass es nun auch einen einen injektiven Graphenhomomorphismus $f: V_u \rightarrow V_2$ gibt.
+
+Es gelte $f = h \circ t$. Diese Funktion ist injektiv (Skriptum, Satz 1.1, S. 15) und ein Graphenhomomorphismus von $V_u$ nach $V_2$ nachdem gilt, dass
+\begin{equation*}
+    \forall\, u, v \in V_u : (u, v) \in E_u \Rightarrow (t(u), t(v)) \in E_1
+\end{equation*}
+und
+\begin{equation*}
+    \forall\, u, v \in V_1 : (u, v) \in E_1 \Rightarrow (h(u), h(v)) \in E_2
+\end{equation*}
+beziehungsweise also
+\begin{equation*}
+    \forall\, u, v \in V_u : (u, v) \in E_u \Rightarrow (h(t(u)), h(t(v))) \in E_2.
+\end{equation*}
+
+\end{document}

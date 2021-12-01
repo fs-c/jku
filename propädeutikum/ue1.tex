@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Propädeutikum --- \textbf{Übung 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\begin{document}
+
+\section*{Einfluss der Informatik auf Methoden zur Wettervorhersage}
+
+Die ersten \enquote{modernen} Wettervorhersagen erfolgten im 19. Jahrhundert durch einen Offizier der Royal Navy. Er erstellte basierend auf Wetterdaten welche ihm mithilfe von elektrischen Telegraphen (die erst wenige Jahre zuvor erfunden wurden) Vorhersagen zu Windstärke, Luftdruck und anderen Werten.
+
+Im frühen 20. Jahrhundert folgten neue Erkenntnisse über atmosphärische Physik, die unter anderem zu einer Formalisierung eines numerischen Vorhersagemodells führten. Diese Berechnungen waren allerdings derart komplex, dass der verantwortliche Wissenschaftler alleine sechs Wochen für eine einfache Vorhersage benötigte. In Anbetracht dessen stellte er sich eine große Halle vor, gefüllt mit tausenden von \enquote{Berechnern} (von ihm bereits \emph{\enquote{computer}} genannt), die jeweils einen kleinen Schritt der Berechnungen durchführen.
+
+\begin{displayquote}
+    After so much hard reasoning, may one play with a fantasy? Imagine a large hall like a theatre [...]. A myriad computers are at work upon the weather of the part of the map where each sits, but each computer attends only to one equation or part of an equation.
+\end{displayquote}
+
+Einige Jahrzente später, Mitte des 20. Jahrhunderts, erstellte eine amerikanische Forschungsgruppe aus Meterologen, Mathematikern und Programmierern (bemerkenswerterweise u. A. John von Neumann und seine Frau, Klara Dan von Neumann) die erste computergestützte Wettervorhersage. Zu diesem Zeitpunkt benötigten sie für eine Vorhersage der kommenden 24 Stunden etwa 24 Stunden --- man konnte also nur knapp mit dem Wetter mithalten.
+
+Einige Jahre später konnten mithilfe deutlich schneller gewordener Computer die ersten praktikablen Vorhersagen getroffen werden.
+
+\end{document}

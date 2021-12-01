@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 7}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1}
+
+\begin{enumerate}
+    \item $(1\ 5\ 6\ 4\ 8\ 9)(2\ 7\ 2)$
+    \item $(1\ 9\ 2\ 6\ 3\ 7\ 8\ 4)$
+    \item Sei $\pi = (c_1\ c_2\ \ldots\ c_k)$ ein beliebiger Zyklus. Es gilt $\pi(c_i) = c_{i + 1}$ und $\pi^{-1}(c_{i + 1}) = c_i$, also $\pi^{-1} = (c_k\ c_{k-1}\ \ldots\ c_1)$. Konkret gilt nun
+    \begin{align*}
+        \pi &= (1\ 3\ 7\ 2\ 5\ 4)\\
+        \pi^{-1} &= (4\ 5\ 2\ 7\ 3\ 1)\\
+        \pi^{-2} &= (1\ 3\ 7\ 2\ 5\ 4)\\
+        \pi^{-3} &= (4\ 5\ 2\ 7\ 3\ 1)\\
+    \end{align*}
+
+    \item Es gilt
+    \begin{align*}
+        (1\ 3\ 7\ 2\ 5\ 4)^2 &= (1\ 7\ 5)(3\ 2\ 4)\\
+        (1\ 3\ 7\ 2\ 5\ 4)^3 &= (1\ 5\ 7)(2\ 3\ 4)\\
+        (1\ 3\ 7\ 2\ 5\ 4)^4 &= (1\ 7\ 5)(3\ 2\ 4)\\
+        (1\ 3\ 7\ 2\ 5\ 4)^5 &= (1\ 5\ 7)(2\ 3\ 4)\\
+        &\cdots\\
+        (1\ 3\ 7\ 2\ 5\ 4)^{1000} &= (1\ 7\ 5)(3\ 2\ 4).\\
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Aufgabe 2}
+
+\begin{enumerate}
+    \item Man wähle aus $S_2$ die Permutation $\begin{psmallmatrix}1 & 2\\2 & 1\end{psmallmatrix}$. Diese Permutation besteht nur aus dem Zyklus $(1 2)$, müsste aber gemäß der gegebenen Aussage aus mindestens zwei Zyklen bestehen.
+
+    \item Eine Permutation $\pi \in S_n$ sei in disjunkte Zyklen zerlegt. Die Summe der Längen dieser Zyklen ist $n$, nachdem sie disjunkt sind. Die kleinste Länge eines Zyklus ist 1. Somit kann $\pi$ in höchstens $n$ disjunkte Zyklen zerlegt werden. \label{itm:2b}
+    
+    \item Man wähle aus $S_2$ die Permutation $\pi = \begin{psmallmatrix}1 & 2\\2 & 1\end{psmallmatrix}$ mit dem Zyklus $(1 2)$. Die Permutation $\pi^2 = \begin{psmallmatrix}1 & 2\\1 & 2\end{psmallmatrix}$ besteht aus den disjunkten Zyklen $(1)(2)$. Somit besteht $\pi$ aus weniger Zyklen als $\pi^2$.
+
+    \item Es gelte $\pi \in S_n$. Es gibt nun disjunkte Zyklen $c_1, c_2, \ldots, c_k$ derart, dass $\pi = c_1c_2 \ldots c_k$ und $\pi^2 = c_1^2c_2^2 \ldots c_k^2$. Ist $c$ ein Zyklus so besteht $c^2$ aus mindestens einem Zyklus. Somit sind in $\pi^2$ mindestens so viele Zyklen wie in $\pi$ enthalten, in anderen Worten besteht $\pi$ aus höchstens so vielen disjunkten Zyklen wie $\pi^2$.
+\end{enumerate}
+
+\paragraph{Aufgabe 3}
+
+\begin{enumerate}[label=\arabic*.]
+    \item Zu zeigen ist $\forall\, x, y, z \in G : (x * y) * z = x * (y * z)$. (Assoziativität.)
+
+    Seien $(a_1, a_2), (b_1, b_2), (c_1, c_2) \in G$ beliebig. Es gilt
+    \begin{align*}
+        ((a_1, a_2) * (b_1, b_2)) * (c_1, c_2) &=\\
+        (a_1b_1 - a_2b_2, a_1b_2 + a_2b_1) * (c_1, c_2) &=\\
+        ((a_1b_1 - a_2b_2)c_1 - (a_1b_2 + a_2b_1)c_2, (a_1b_1 - a_2b_2)c_2 + (a_1b_2 + a_2b_1)c_1) &=\\
+        ((a_1b_1c_1 - a_2b_2c_1) - (a_1b_2c_2 + a_2b_1c_2), (a_1b_1c_2 - a_2b_2c_2) + (a_1b_2c_1 + a_2b_1c_1)) &= \\
+        (a_1b_1c_1 - a_2b_2c_1 - a_1b_2c_2 - a_2b_1c_2, a_1b_1c_2 - a_2b_2c_2 + a_1b_2c_1 + a_2b_1c_1) &\phantom{=}
+    \end{align*}
+    und
+    \begin{align*}
+        (a_1, a_2) * ((b_1, b_2) * (c_1, c_2)) &=\\
+        (a_1, a_2) * (b_1c_1 - b_2c_2, b_1c_2 + b_2c_1) &=\\
+        (a_1(b_1c_1 - b_2c_2) - a_2(b_1c_2 + b_2c_1), a_1(b_1c_2 + b_2c_1) + a_2(b_1c_1 - b_2c_2)) &=\\
+        ((a_1b_1c_1 - a_1b_2c_2) - (a_2b_1c_2 + a_2b_2c_1), (a_1b_1c_2 + a_1b_2c_1) + (a_2b_1c_1 - a_2b_2c_2)) &=\\
+        (a_1b_1c_1 - a_1b_2c_2 - a_2b_1c_2 - a_2b_2c_1, a_1b_1c_2 + a_1b_2c_1 + a_2b_1c_1 - a_2b_2c_2) &\phantom{=}
+    \end{align*}
+    und somit
+    \begin{equation*}
+        ((a_1, a_2) * (b_1, b_2)) * (c_1, c_2) = (a_1, a_2) * ((b_1, b_2) * (c_1, c_2)).
+    \end{equation*}
+
+    \item Zu zeigen ist $\exists\, e \in G : \forall\, x \in G : x * e = e *x = x$. (Neutralelement.)
+
+    Für $e = (1, 0)$ und beliebige $(a, b) \in G$ gilt
+    \begin{alignat*}{2}
+        (a, b) * (1, 0) &= (1, 0) * (a, b) &= (a, b)\\
+        (a - 0, 0 + b) &= (a - 0, 0 + b) &= (a, b).
+    \end{alignat*}
+
+    \item Zu zeigen ist $\forall\, x \in G : \exists\, y \in G : x * y = y * x = e$, wobei $e \in G$ das Neutralelement ist. (Invertierbarkeit.)
+
+    Für beliebige $(a, b) \in G$ gebe es ein $c \in G$ derart, dass
+    \begin{equation*}
+        (a, b) * c = c * (a, b) = (1, 0).
+    \end{equation*}
+    Man wähle
+    \begin{equation*}
+        c = \left(\frac{a}{a^2 + b^2}, -\frac{b}{a^2 + b^2}\right),
+    \end{equation*}
+    nun gilt
+    \begin{align*}
+        (a, b) * \left(\frac{a}{a^2 + b^2}, -\frac{b}{a^2 + b^2}\right) = \left(\frac{a}{a^2 + b^2}, -\frac{b}{a^2 + b^2}\right) * (a, b) &= (1, 0)\\
+        \left(\frac{a^2}{a^2+b^2} + \frac{b^2}{a^2 + b^2}, \frac{ab}{a^2+b^2} - \frac{ab}{a^2+b^2}\right) &= (1, 0)\\
+        \left(\frac{a^2 + b^2}{a^2+b^2}, \frac{ab - ab}{a^2+b^2}\right) &= (1, 0)\\
+        (1, 0) &= (1, 0).\\
+    \end{align*}
+\end{enumerate}
+
+\end{document}
+
+(1 3 7 2 5 4)
+
+1 2 3 4 5 6 7
+3 5 7 1 4 6 2
+
+-1
+(4 5 2 7 3 1)
+
+1 2 3 4 5 6 7
+4 7 1 5 2 6 3
+
+-2
+(1 3 7 2 5 4)
+1 2 3 4 5 6 7
+3 5 7 1 4 6 2

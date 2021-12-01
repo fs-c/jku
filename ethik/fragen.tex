@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Ethik --- \textbf{Abgabe 3}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+    \begin{enumerate}
+        \item Was zählt zu den äußerlich wahrnehmbaren Unterschieden zwischen Menschen?
+        \begin{enumerate}[label=(\alph*)]
+            \item Geschlecht
+            \item Alter
+            \item körperliche Behinderungen
+            \item Haarfarbe
+            \item Religion
+            \item Drogenkonsum
+            \item Erziehung
+            \item geistige Behinderungen
+            \item sexuelle Orientierung
+        \end{enumerate}
+        
+        \item Welche der folgenden Aussagen über Stereotype sind zutreffend?
+        
+        Steretype sind\ldots
+        
+        \begin{enumerate}[label=(\alph*)]
+            \item Vorurteile.
+            \item keine Vorurteile.
+            \item ausschließlich unbewusst.
+            \item gefühlscolorierte Vorstellungen.
+            \item netrale Vorstellungen.
+        \end{enumerate}
+        
+        \item Beschrieben Sie den Begriff \enquote{Unconscious Bias}.
+        
+        Der Begriff setzt sich aus dem Englischen Wörtern \emph{unconscious} (unbewusst) und \emph{bias} (Vorurteil) zusammen, bedeutet also eine unbewusste Voreingenommenheit. Er beschreibt eine unbewusste kognitive Verzerrung die zu einer fehlerbehafteten Wahrnehmung, Erinnerung und Beurteilung führt.
+        
+        \item Welche der folgenden Aussagen über Diskrimierung sind zutreffend?
+        
+        Diskriminierung ist\ldots
+        
+        \begin{enumerate}[label=(\alph*)]
+            \item ausschließlich negativ.
+            \item ausschließlich positiv.
+            \item eine Verhaltensreaktion auf stereotype Bewertungen.
+            \item das Resultat einer Verhaltensreaktion auf stereotype Bewertungen.
+        \end{enumerate}
+    \end{enumerate}
+\end{document}

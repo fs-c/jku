@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Propädeutikum --- \textbf{Übung 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\begin{document}
+
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Der Raum ist bekannt.} Wähle eine Orientierung (Nord -- Süd oder Ost -- West) und gehe in diese Richtung. Wenn du ein Objekt berührst, stelle fest ob es der Tisch ist. In diesem Fall hast du das Buch gefunden. Andernfalls, gehe einen Schritt der im rechten Winkel zu deiner gewählten Orientierung steht, drehe dich um 180 Grad und wiederhole die vorhergehenden Schritte. Kommst du beim Seitenschritt in Kontakt mit einer Wand so ist die gewählte Orientierung umzupolen.
+    
+    \item \textbf{Der Raum ist unbekannt.} Gehe in eine willkürliche Richtung. Wenn du ein Objekt berührst, stelle fest ob es der Tisch ist. In diesem Fall hast du das Buch gefunden. Andernfalls, oder wenn du eine Wand berührt hast, fange von vorne an.
+\end{enumerate}
+
+\end{document}

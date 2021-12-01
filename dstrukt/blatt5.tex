@@ -1,0 +1,166 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 5}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}[label=\alph*)]
+    \item Zulässig. Die Elemente einer Äquivalenzklasse sind alle gleich lang.
+    
+    \item Zulässig. Die Elemente einer Äquivalenzklasse haben alle die gleichen Buchstaben.
+    
+    \item Nicht zulässig. Die Elemente einer Äquivalenzklasse können sich in der Anordnung der Buchstaben unterscheiden.
+    
+    \item Zulässig. Zu zeigen ist $x \sim y \Rightarrow xx \sim yy$ ($\sim$ sei die gegebene Relation, $x, y \in \Omega^*$). Es gilt $\lvert x \rvert = \lvert y \rvert$ und somit auch $\lvert xx \rvert = \lvert yy \rvert$ (Skriptum, Definition 2.2, S. 8). Ist ein beliebiger Buchstabe $c$ nicht in einem beliebigen Wort $\omega$ enthalten so ist er auch nicht in $\omega\omega$ enthalten.
+    
+    Somit haben $xx$ und $yy$ die gleiche Länge und beinhalten die gleichen Buchstaben. Es gilt $xx \sim yy$.
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}[label=\alph*)]
+    \item Nicht widerspruchsfrei. Es gilt etwa $h([0]_\sim) = 0$ und $f([0]_\sim) = 3$.
+    
+    \item Widerspruchsfrei. Es gilt
+    \begin{align*}
+        [0]_\sim = [3]_\sim = [6]_\sim &= \{ 0, 3, 6 \} \\
+        [1]_\sim = [4]_\sim &= \{ 1, 4 \} \\
+        [2]_\sim = [5]_\sim = [8]_\sim &= \{ 2, 5, 8 \} \\
+    \end{align*}
+    und
+    \begin{align*}
+        [0]_{\equiv_3} = [3]_{\equiv_3} = [6]_{\equiv_3} \\
+        [1]_{\equiv_3} = [4]_{\equiv_3} \\
+        [2]_{\equiv_3} = [5]_{\equiv_3} = [8]_{\equiv_3}. \\
+    \end{align*}
+
+    \item Widerspruchsfrei. Es gilt
+    \begin{align*}
+        [0]_{\equiv_6} = [6]_{\equiv_6} = [12]_{\equiv_6} \\
+        [2]_{\equiv_6} = [8]_{\equiv_6} \\
+        [4]_{\equiv_6} = [10]_{\equiv_6} = [16]_{\equiv_6} \\
+    \end{align*}
+
+    \item Nicht widerspruchsfrei. Es gilt etwa $h([0]_\sim) = \{ \ldots, -6, 0, 6, 12, \ldots \}$ aber $h([3]_\sim) = \{ \ldots, -9, -3, 3, 9, \ldots \}$ bei $[0]_\sim = [3]_\sim$.
+\end{enumerate}
+
+\paragraph{Aufgabe 3.}
+
+\begin{enumerate}[label=\alph*)]
+    \item\hfill
+
+    \begin{tikzpicture}[
+        node distance={10mm},
+        main/.style={draw, circle}
+    ]
+        \node[main] (1) {$1$};
+        \node[main] (2) [right of=1] {$2$};
+        \node[main] (3) [right of=2] {$3$};
+        \node[main] (4) [right of=3] {$4$};
+
+        \draw (1) to (2);
+        \draw (2) to (3);
+        \draw (3) to (4);
+        \draw (4) to[out=90, in=90, looseness=0.5] (1);
+        \draw (2) to[out=90, in=90, looseness=0.5] (4);
+        \draw (3) to[out=-90, in=-90, looseness=0.5] (1);
+    \end{tikzpicture}
+    
+    \item\hfill
+    
+    \begin{tikzpicture}[
+        node distance={12mm},
+        main/.style={draw, circle}
+    ]
+        \node[main] (aaa) {\footnotesize\texttt{aaa}};
+        \node[main] (aba) [below of=aaa] {\footnotesize\texttt{aba}};
+        \node[main] (baa) [left of=aba] {\footnotesize\texttt{baa}};
+        \node[main] (aab) [right of=aba] {\footnotesize\texttt{aab}};
+        \node[main] (bbb) [below of=aba] {\footnotesize\texttt{bbb}};
+        \node[main] (bba) [left of=bbb] {\footnotesize\texttt{bba}};
+        \node[main] (abb) [right of=bbb] {\footnotesize\texttt{abb}};
+        \node[main] (bab) [below of=bbb] {\footnotesize\texttt{bab}};
+
+        \draw (aaa) to (aba);
+        \draw (aaa) to (baa);
+        \draw (aaa) to (aab);
+        
+        \draw (baa) to (bba);
+        \draw (baa) to[out=225, in=-180, looseness=1.1] (bab);
+        \draw (aab) to (abb);
+        \draw (aab) to[out=-45, in=-0, looseness=1.1] (bab);
+        
+        \draw (aba) to (bba);
+        \draw (aba) to (abb);
+        
+        \draw (bbb) to (bab);
+        \draw (bbb) to (bba);
+        \draw (bbb) to (abb);
+    \end{tikzpicture}
+    
+    \item\hfill
+    
+    \begin{tikzpicture}[
+        node distance={12mm},
+        main/.style={draw, circle}
+    ]
+        \node[main] (a) {\footnotesize\texttt{a}};
+        \node[main] (c) [right of=a] {\footnotesize\texttt{c}};
+        \node[main] (e) [right of=c] {\footnotesize\texttt{e}};
+        \node[main] (d) [right of=e] {\footnotesize\texttt{d}};
+        \node[main] (b) [right of=d] {\footnotesize\texttt{b}};
+        
+        \draw (a) to (c);
+        \draw (c) to (e);
+        \draw (e) to (d);
+        \draw (d) to (b);
+        \draw (b) to[out=90, in=90, looseness=0.5] (a);
+    \end{tikzpicture}
+\end{enumerate}
+
+\end{document}
+
+aaa aab aba abb baa bab bba bbb
+
+2 aaa : {aab, aba, baa}
+3 aab : {aaa, abb, bab}
+2 aba : {aaa, abb, bba}
+3 abb : {aab, aba, bbb}
+2 baa : {aaa, bab, bba}
+3 bab : {aab, baa, bbb}
+  bba : {aba, baa, bbb}
+2 bbb : {abb, bab, bba}

@@ -1,0 +1,177 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Logic --- \textbf{Solutions for Exercise Sheet 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (K11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\begin{document}
+
+\begin{enumerate}
+    \item The two truth constants are $\top$ and $\bot$. Variables are \enquote{propositions that have no further internal structure}. Clauses are disjunctions of the former. Thus,
+    
+    \begin{enumerate}[label=(\alph*)]
+        \item contains the three clauses $(x \lor y)$, $(z \lor \neg z)$ and $(x)$ (an unary clause), and three variables, $x$, $y$ and $z$.
+        
+        \item contains the four clauses $(a \lor b \lor \neg c)$, $(\top \lor \neg c)$, $(a \lor b \lor c)$ and $(a \lor b \lor \neg \bot \lor \neg a)$ three variables $a$, $b$ and $c$ as well as the truth constants $\top$ and $\bot$.
+        
+        \item contains the two clauses $(\text{box} \lor \text{diamond})$ and $(\neg \text{box} \lor \neg \text{diamond})$ and two variables $\text{box}$ and $\text{diamond}$.
+    \end{enumerate}
+
+    \item The truth tables for formulas (a) -- (g) are presented in Truth Table (a) -- (g).
+    
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{c c | c}\toprule
+            $a$ & $\bot$ & $(a \lor \bot)$ \\\midrule
+            0 & 0 & 0 \\
+            1 & 0 & 1 \\\bottomrule
+        \end{tabular}
+        \caption{Satisfiable with $\{a\}$.}
+    \end{table}
+
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{c c | c}\toprule
+            $a$ & $\top$ & $(a \lor \top)$ \\\midrule
+            0 & 1 & 1 \\
+            1 & 1 & 1 \\\bottomrule
+        \end{tabular}
+        \caption{Satisfiable with $\{a, \neg a\}$.}
+    \end{table}
+
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{c c | c}\toprule
+            $a$ & $\neg a$ & $(a \lor \neg a)$ \\\midrule
+            0 & 1 & 1 \\
+            1 & 0 & 1 \\\bottomrule
+        \end{tabular}
+        \caption{Satisfiable with $\{a, \neg a\}$.}
+    \end{table}
+    
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{c c | c c | c}\toprule
+            $a$ & $b$ & $C_{1d} = (a \lor \neg b)$ & $C_{2d} = (\neg a \lor b)$ & $C_{1d} \land C_{2d}$ \\\midrule
+            0 & 0 & 1 & 1 & 1 \\
+            0 & 1 & 0 & 1 & 0 \\
+            1 & 0 & 1 & 0 & 0 \\
+            1 & 1 & 1 & 1 & 1 \\\bottomrule
+        \end{tabular}
+        \caption{Satisfiable with $\{\neg a, \neg b\}$, among others.}
+    \end{table}
+    
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{c c | c c c | c}\toprule
+            $a$ & $b$ & $C_{1e} = (\neg a \lor \neg b)$ & $C_{1d} \land C_{2d}$ & $C_{2e} = (a \lor b)$ & $C_{1e} \land C_{1d} \land C_{2d} \land C_{2e}$ \\\midrule
+            0 & 0 & 1 & 1 & 0 & 0 \\
+            0 & 1 & 1 & 0 & 1 & 0 \\
+            1 & 0 & 1 & 0 & 1 & 0 \\
+            1 & 1 & 0 & 1 & 1 & 0 \\\bottomrule
+        \end{tabular}
+        \caption{Not satisfiable.}
+    \end{table}
+    
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{c c c | c c c | c}\toprule
+            $a$ & $b$ & $c$ & $C_{1f} = (a \lor b \lor c)$ & $C_{2d}$ & $C_{2f} = (c \lor a)$ & $C_{1f} \land C_{2d} \land C_{2f}$ \\\midrule
+            0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+            0 & 0 & 1 & 1 & 1 & 1 & 1 \\
+            0 & 1 & 0 & 1 & 1 & 0 & 0 \\
+            0 & 1 & 1 & 1 & 1 & 1 & 1 \\
+            1 & 0 & 0 & 1 & 0 & 1 & 0 \\
+            1 & 0 & 1 & 1 & 0 & 1 & 0 \\
+            1 & 1 & 0 & 1 & 1 & 1 & 1 \\
+            1 & 1 & 1 & 1 & 1 & 1 & 1 \\\bottomrule
+        \end{tabular}
+        \caption{Satisfiable with $\{\neg a, \neg b, c\}$, among others.}
+    \end{table}
+    
+    \begin{table}[h]
+        \centering
+        \begin{adjustbox}{center}
+            \begin{tabular}{c c c c c c | c c c c | c}\toprule
+                $a$ & $b$ & $c$ & $d$ & $f$ & $\bot$ & $C_{1f}$ & $C_{2d}$ & $C_{1g} = (c \lor d \lor f)$ & $C_{2g} = (\neg d \lor \neg f)$ & $C_{1f} \land C_{2d} \land C_{1g} \land C_{2g} \land \bot$ \\\midrule
+                0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 0 \\
+                0 & 0 & 0 & 0 & 1 & 0 & 0 & 1 & 1 & 1 & 0 \\
+                0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 1 & 1 & 0 \\
+                0 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 \\
+                0 & 0 & 1 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 0 & 1 & 0 & 1 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 0 & 1 & 1 & 1 & 0 & 1 & 1 & 1 & 0 & 0 \\
+                0 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 1 & 0 & 0 & 1 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 1 & 0 & 1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 1 & 0 & 1 & 1 & 0 & 1 & 1 & 1 & 0 & 0 \\
+                0 & 1 & 1 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 1 & 1 & 0 & 1 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 1 & 1 & 1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                0 & 1 & 1 & 1 & 1 & 0 & 1 & 1 & 1 & 0 & 0 \\%-
+                1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 1 & 0 \\
+                1 & 0 & 0 & 0 & 1 & 0 & 1 & 1 & 0 & 1 & 0 \\
+                1 & 0 & 0 & 1 & 0 & 0 & 1 & 1 & 0 & 1 & 0 \\
+                1 & 0 & 0 & 1 & 1 & 0 & 1 & 1 & 0 & 0 & 0 \\
+                1 & 0 & 1 & 0 & 0 & 0 & 1 & 1 & 0 & 1 & 0 \\
+                1 & 0 & 1 & 0 & 1 & 0 & 1 & 1 & 0 & 1 & 0 \\
+                1 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 1 & 0 \\
+                1 & 0 & 1 & 1 & 1 & 0 & 1 & 1 & 0 & 0 & 0 \\
+                1 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                1 & 1 & 0 & 0 & 1 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                1 & 1 & 0 & 1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                1 & 1 & 0 & 1 & 1 & 0 & 1 & 1 & 1 & 0 & 0 \\
+                1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                1 & 1 & 1 & 0 & 1 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                1 & 1 & 1 & 1 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+                1 & 1 & 1 & 1 & 1 & 0 & 1 & 1 & 1 & 0 & 0 \\\bottomrule
+            \end{tabular}
+        \end{adjustbox}
+
+        \caption{Not satisfiable.}
+    \end{table}
+
+    \item The conjunction $A \land B$ is defined to be true iff $A$ and $B$ are true. It follows that $B \land A$ is true iff $B$ and $A$ are true. Thus, the order of the arguments is irrelevant --- conjunction is commutative.
+    
+    For the special case where $A = B$, the statement $A \land B$ will always evaluate to $A$. (This follows from the definition above since in that case it can effectively be reduced to: \enquote{The conjunction $A \land B$, where $A = B$, is defined to be true iff $A$ is true.}) Thus $A \land A$ is equal to $A$ --- conjunction is idempotent.
+    
+    Consider $A \land (B \land C)$. Following the definition above it is true iff $A$ and $(B \land C)$ are true. Recursively following the definition leads to it being true iff $A$ is true and iff $B$ and $C$ are true. This can be shortened to it being true iff $A$, $B$ and $C$ are true. Since $(A \land B) \land C$ would lead to the same statement, conjunction is associative.
+    
+    \item The formula $(a \land b) \lor c$ has 5 models.
+    
+    \item The given formula can be expanded to
+    \begin{equation*}
+        (l_{11} \lor l_{12} \lor l_{13}) \land (l_{21} \lor l_{22} \lor l_{23}) \land (l_{31} \lor l_{32} \lor l_{33}),
+    \end{equation*}
+    or alternatively to
+    \begin{equation*}
+        \{\{l_{11}, l_{12}, l_{13}\}, \{l_{21}, l_{22}, l_{23}\}, \{l_{31}, l_{32}, l_{33}\}\}
+    \end{equation*}
+\end{enumerate}
+
+\end{document}

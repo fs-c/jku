@@ -1,0 +1,103 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 8}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1}
+
+Wir wissen
+\begin{align*}
+    \forall,\ u_1, v_1 \in U_1 &: u_1 \circ v_1 \in U_1 \land u_1^{-1} \in U_1 \\
+    \forall,\ u_2, v_2 \in U_2 &: u_2 \circ v_2 \in U_2 \land u_2^{-1} \in U_2.
+\end{align*}
+
+\begin{enumerate}
+    \item Zu zeigen ist, dass $U_1 \cap U_2 \neq \emptyset$ und $\forall\, u, v \in U_1 \cap U_2 : u \circ v \in U_1 \cap U_2 \land u^{-1} \in U_1 \cap U_2$.
+    
+    Ist $e$ das Neutralelement einer Gruppe $G$ so gilt für alle Untergruppen $U$ von $G$, dass $e \in U$. Demzufolge gilt $e \in U_1$ und $e \in U_2$ und weiters $U_1 \cap U_2 \neq \emptyset$.
+
+    Wenn $u, v \in U_1 \cap U_2$ dann gilt $u, v \in U_1$ und $u, v \in U_2$. Nachdem $U_1$ und $U_2$ Untergruppen sind gilt weiters $u \circ v \in U_1$ und $u \circ v \in U_2$. Daraus folgt $u \circ v \in U_1 \cap U_2$.
+
+    Analog dazu, wenn $u \in U_1 \cap U_2$ dann gilt $u \in U_1$ und $u \in U_2$. Weiters gilt $u^{-1} \in U_1$ und $u^{-1} \in U_2$. Daraus folgt $u^{-1} \in U_1 \cap U_2$.
+
+    Demzufolge ist $U_1 \cap U_2$ eine Untergruppe von $G$.
+
+    \item Zu zeigen ist, dass $U_1 \cup U_2 \neq \emptyset$ und $\forall\, u, v \in U_1 \cup U_2 : u \circ v \in U_1 \cup U_2 \land u^{-1} \in U_1 \cup U_2$.
+
+    Nachdem $U_1$ und $U_2$ Untergruppen sind muss gelten, dass $U_1 \neq \emptyset$ und $U_2 \neq \emptyset$. Demzufolge gilt $U_1 \cup U_2 \neq \emptyset$.
+        
+    Man wähle ein $u_1 \in U_1 \backslash U_2$ und ein $u_2 \in U_2 \backslash U_1$. Es gilt $u_1, u_2 \in U_1 \cup U_2$. Unter der Annahme, dass $U_1 \cup U_2$ eine Untergruppe ist, muss nun gelten, dass
+    \begin{align*}
+        u_1 \circ u_2 \in U_1 \cup U_2 &\Rightarrow \begin{cases}
+            u_1 \circ u_2 \in U_1 & \text{oder} \\
+            u_1 \circ u_2 \in U_2
+        \end{cases}
+    \end{align*}
+    und weiters, nachdem es in einer Untergruppe $U$ für jedes $v \in U$ ein $v^{-1} \in U$ gibt,
+    \begin{align*}
+        u_1 \circ u_2 \in U_1 \Rightarrow u_1 \circ u_1^{-1} \circ u_2 \in U_1 &\Rightarrow u_2 \in U_1 \\
+        u_1 \circ u_2 \in U_2 \Rightarrow u_2 \circ u_2^{-1} \circ u_1 \in U_2 &\Rightarrow u_1 \in U_2.
+    \end{align*}
+    Beide \enquote{Implikationsmöglichkeiten} von $u_1 \circ u_2 \in U_1 \cup U_1$ führen also zu einem Widerspruch nachdem gilt, dass $u_1 \notin U_2$ und $u_2 \notin U_1$. Demnach ist $U_1 \cup U_2$ nicht zwingend eine Untergruppe von $G$.
+
+    (Tatsächlich wurde gezeigt, dass $U_1 \cup U_2$ nur dann eine Untergruppe von $G$ ist, wenn entweder für alle $u_1 \in U_1$ gilt, dass $u_1 \in U_2$, oder für alle $u_2 \in U_2$ gilt, dass $u_2 \in U_1$ --- also wenn $U_1 \subseteq U_2$ oder $U_2 \subseteq U_1$.)
+\end{enumerate}
+
+\paragraph{Aufgabe 2}
+
+\begin{enumerate}
+    \item $\langle (1\ 2)(3\ 4) \rangle = \{ \text{\emph{id}, (1\ 2)(3\ 4) } \}$
+    
+    \item $\langle (1\ 2), (3\ 4) \rangle = \{ \text{\emph{id}}, (1\ 2), (3\ 4), (1\ 2)(3\ 4) \}$
+    
+    \item $\langle (1\ 2\ 3\ 4) \rangle = \{ \text{\emph{id}}, (1\ 2\ 3\ 4), (4\ 3\ 2\ 1), (1\ 3)(2\ 4) \}$
+    
+    \item $\langle (1\ 2\ 3\ 4), (1\ 3) \rangle = \{ \text{\emph{id}}, (1\ 2\ 3\ 4), (1\ 3), (4\ 3\ 2\ 1), (1\ 3)(2\ 4), (1\ 4)(2\ 3), (1\ 2)(3\ 4) \}$
+\end{enumerate}
+
+\paragraph{Aufgabe 3}
+
+\begin{enumerate}
+    \item $\langle (1\ 2\ 3), (4\ 5) \rangle$
+    \item $\langle (1\ 2\ 3\ 4\ 5) \rangle$
+    \item $\langle (2\ 4)(3\ 5) \rangle$
+\end{enumerate}
+
+\end{document}

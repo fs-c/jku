@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Propädeutikum --- \textbf{Übung 4}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% Specific to this particular exercise
+\renewcommand{\thetable}{\alph{table}}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{custom}{Truth Table (#2):}
+\captionsetup{labelformat={custom}, labelsep=space}
+
+\begin{document}
+
+\section{Singlethread}
+
+\begin{minipage}{\textwidth}
+\begin{enumerate}
+    \item Broccoli in dünne Schreiben schneiden.
+    \item Zwiebel fein würfeln.
+    \item Butter zerlassen.
+    \item Zwiebel in zerlassener Butter andünsten.
+    \item Zwiebel mit Wein ablöschen.
+    \item (5 Minuten köcheln lassen.)
+    \item Wasser aufkochen lassen, salzen.
+    \item Nudeln zugeben.
+    \item (Bis $t$-4 Minuten warten.)
+    \item Broccoli zugeben
+    \item (4 Minuten warten.)
+    \item Käse fein reiben und in Sauce geben.
+    \item Sauce mit Salz und Pfeffer abschmecken.
+    \item Nudelm mit Sauce mischen.
+\end{enumerate}
+\end{minipage}
+
+\section{Multithread}
+
+\begin{minipage}{0.475\textwidth}
+    \begin{enumerate}
+        \item Broccoli in dünne Schreiben schneiden.
+        \item Butter zerlassen.
+        \item Zwiebel in zerlassener Butter andünsten.
+        \item Zwiebel mit Wein ablöschen.
+        \item (5 Minuten köcheln lassen.)
+        \item Käse fein reiben und in Sauce geben.
+        \item Sauce mit Salz und Pfeffer abschmecken.
+    \end{enumerate}
+\end{minipage}
+\hfill
+\begin{minipage}{0.475\textwidth}
+    \begin{enumerate}
+        \item Zwiebel fein würfeln.
+        \item Wasser aufkochen lassen, salzen.
+        \item Nudeln zugeben.
+        \item (Bis $t$-4 Minuten warten.)
+        \item Broccoli zugeben
+        \item (4 Minuten warten.)
+        \item Nudelm mit Sauce mischen.
+    \end{enumerate}
+\end{minipage}
+
+\end{document}
