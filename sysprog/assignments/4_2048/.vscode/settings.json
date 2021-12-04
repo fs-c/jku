@@ -1,0 +1,11 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/fsoc/Projects/jku/sysprog/assignments/4_2048",
+            "binaryPath": "/home/fsoc/Projects/jku/sysprog/assignments/4_2048/game_2048",
+            "binaryArgs": []
+        }
+    ]
+}
