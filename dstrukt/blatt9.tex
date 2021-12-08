@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 9}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}
+    \item Die Bahn von 1 ist $\{ 1, 2, 3 \}$, der Stabilisator ist $\{ \text{id}, (4\ 5) \}$.
+    
+    \item Die Bahn von 1 ist $\{ 1, 2, 3, 4, 5 \}$, der Stabilisator ist $\{ \text{id} \}$.
+    
+    \item Die Bahn von 1 ist $\{ 1 \}$, der Stabilisator ist $\langle(2\ 4)(3\ 5)\rangle$.
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}
+    \item Zu zeigen sind $\forall\, x \in X : e * x = x$ und $\forall\, g, h \in G\ \forall\, x \in X : (g \circ h) * z = g * (h * z)$. Es muss also einerseits gelten, dass
+    \begin{equation*}
+        e \circ x \circ e^{-1} = x.
+    \end{equation*}
+    Alle Elemente einer Untergruppe (also auch das Neutralelement) haben ein Inverses. Das Inverse $x^{-1} \in X$ eines Elements $x \in X$ ist definiert durch $x \circ x^{-1} = x^{-1} \circ x = e$. Es gilt also auch $e \circ e^{-1} = e^{-1} \circ e = e$. Für alle $x \in X$ gilt, dass $x \circ e = e \circ x = x$. Es gilt also auch $e^{-1} \circ e = e \circ e^{-1} = e^{-1}$. Daraus folgt $e = e^{-1}$ und weiters $e \circ x \circ e^{-1} = e \circ x \circ e = x$, was zu zeigen war.
+
+    Ebenso muss gelten, dass
+    \begin{equation*}
+        (g \circ h) \circ z \circ (g \circ h)^{-1} = g \circ (h \circ z \circ h^{-1}) \circ g^{-1}.
+    \end{equation*}
+    Nachdem (X, $\circ$) eine Gruppe ist, muss $\circ$ assoziativ sein. Demzufolge muss auch gelten, dass $(x \circ y)^{-1} = y^{-1} \circ x^{-1}$. Somit gilt
+    \begin{equation*}
+        g \circ h \circ z \circ h^{-1} \circ g^{-1} = g \circ h \circ z \circ h^{-1} \circ g^{-1},
+    \end{equation*}
+    was zu zeigen war.
+
+    \item Die Bahn von $x$ ist $\langle(1\ 2\ 3)\rangle$, der Stabilisator ist $\langle(4\ 5\ 6)\rangle$
+\end{enumerate}
+
+\paragraph{Aufgabe 3.}
+
+Es gilt $x \in \mathbb{R}$ und $y \in \mathbb{R} \backslash \{ 0 \}$. Zu zeigen ist, dass
+\begin{align*}
+    x - y \cdot \left\lfloor{\frac{x}{y}}\right\rfloor &= x - |y| \cdot \text{sgn}(x) \cdot \left\lfloor{\frac{|x|}{|y|}}\right\rfloor
+\end{align*}
+für $\text{sgn}(x) = \text{sgn}(y)$ gilt, andernfalls aber nicht gelten muss.
+
+Man betrachte den Fall $\text{sgn}(x) = 1$ und $\text{sgn}(y) = 1$. In diesem Fall kann die rechte Seite zur linken vereinfacht werden, nachdem hier $|y| = y$ und $|x| = x$ gilt. Man betrachte weiters den Fall $\text{sgn}(x) = -1$ und $\text{sgn}(y) = -1$. Auch hier kann die rechte Seite wieder zur linken vereinfacht werden, nachdem in diesem Fall $|y| \cdot \text{sgn}(x) = y$ und $\frac{|x|}{|y|} = \frac{x}{y}$ gilt.
+
+Bei gleichen Vorzeichen von $x$ und $y$ gilt die Aussage also wie zu zeigen war.
+
+Man wähle $x = -2$ und $y = 4$, es gilt also $\text{sgn}(x) \neq \text{sgn}(y)$. In diesem Fall gilt
+\begin{align*}
+    -2 - 4 \cdot -1 &\neq -2 - 4 \cdot -1 \cdot 0 \\
+    2 &\neq -2,
+\end{align*}
+was zu zeigen war.
+
+\end{document}
