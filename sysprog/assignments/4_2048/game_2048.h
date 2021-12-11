@@ -37,21 +37,31 @@
 
 #define CLEAR_SCREEN        "\x1b[2J"
 
-// Redefine size_t (stddev.h) to be in line with the given structs.
-typedef unsigned int size_t;
+// Define an internal size_t (thus isize_t) for use with custom structs. 
+typedef unsigned int isize_t;
 
-// struct for the coordinates on the board
+// Struct for program arguments.
+//	seed	... seed for the PRNG
+//	in	... stream to read input from
+//	out	... stream to write output to
+typedef struct Arguments {
+	unsigned int seed;
+	FILE *in;
+	FILE *out;
+} Arguments;
+
+// Struct for the coordinates on the board.
 //      x ... coordinate in horizontal direction
 //      y ... coordinate in vertical direction
 typedef struct Position {
 	// Why does this have to be unsigned char? The largest possible position
 	// for the given board struct is (UINT_MAX, UINT_MAX) and UINT_MAX > UINT_CHAR
-	// by definition.
+	// by definition. (Assuming isize_t = unsigned int.)
 	unsigned char x;
 	unsigned char y;
 } Position;
 
-// struct for element on the board
+// Struct for element on the board.
 //      pos   ... position in x/y coordinates
 //      value ... value of the cell
 typedef struct Cell {
@@ -59,11 +69,11 @@ typedef struct Cell {
 	unsigned int value;
 } Cell;
 
-// struct for the game board
+// Struct for the game board.
 //      size  ... size the array in both directions (NxN; N=size)
 //      cells ... pointer to 2d-array of pointers to Cells
 typedef struct Board {
-	unsigned int size;
+	isize_t size;
 	Cell ***cells;
 } Board;
 
@@ -99,13 +109,10 @@ typedef enum {
 
 // Create a new board of the given size (interpreted as size x size cells) and 
 // initialize it with two random values.
-Board *create_board(const unsigned int size, const unsigned int seed, ErrorCode *err);
+Board *create_board(const isize_t size, ErrorCode *err);
 
 // Free the given board which was previously created with `create_board`.
 ErrorCode free_board(Board *board);
-
-// Print the given board to stdout.
-ErrorCode print_board(Board *board, bool with_clear);
 
 // Apply a direction/move command to the given board.
 BoardState move_direction(Board *board, Direction dir);
@@ -113,4 +120,4 @@ BoardState move_direction(Board *board, Direction dir);
 // Add 2 or 4 (chosen randomly) to a random position on the given board, 
 // following the required "order of randomness". Returns EXIT_OK even if the 
 // board is full (i. e. if no new value was added).
-ErrorCode add_number(Board *board, const unsigned int seed);
+ErrorCode add_number(Board *board);
