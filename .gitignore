@@ -22,3 +22,6 @@ git_ignore_*
 *.log
 *.synctex.gz
 *.pdf
+
+# Mathematica stuff
+*.m
