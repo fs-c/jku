@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 		// 	break;
 		// }
 
-		__move_direction(board, dir);
+		move_direction(board, dir);
 
 		add_number(board);
 

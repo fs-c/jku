@@ -7,10 +7,12 @@
 
 #define WIN_CONDITION 2048
 
-// The following is implemented such that the indices of cells in board.cells 
-// always correspond to their x and y values. This makes it easier to think about 
-// but it also makes said values redundant. Cells are never moved around, but their 
-// actual values are. I hope that's not going against the spirit of the assignment.
+// Implementation details:
+// 	- The indices of cells in board.cells always correspond to their x and y
+//	  values (i.e. board[y][x] <=> cell.y == y and cell.x == x). This makes 
+//	  it easier to think about but it also makes said values redundant.
+//	- Cell pointers are stored in a continuous block of memory, not 
+//	  n = board->size separate blocks. See comment on allocate_board.
 
 // Check if the given board has free cells.
 bool has_free_cells(Board *board) {
@@ -25,6 +27,13 @@ bool has_free_cells(Board *board) {
 	return has_free;
 }
 
+// Allocate a board of the given size, returns NULL and sets err on error. 
+// Allocates *board->cells as a continuous block of memory which allows referring
+// to a cell by doing
+// 	(*(*board->cells + (y * board->size) + x))->value, OR
+// 	board->cells[y][x]->value.
+// The latter means that the specification was followed properly while the
+// former will be useful when iterating through cells.
 Board *allocate_board(const isize_t size, ErrorCode *err) {
 	Board *board = malloc(sizeof(Board));
 
@@ -71,183 +80,69 @@ Board *allocate_board(const isize_t size, ErrorCode *err) {
 		}
 	}
 
-	// Because we allocated the cell pointers as a continuous block we can
-	// refer to a cell by doing
-	// 	(*(*board->cells + (y * board->size) + x))->value, OR
-	//	board->cells[y][x]->value.
-	// The latter means that the specification was followed properly while the
-	// former will be useful in move_direction.
-
 	debug("allocated board %lx", (uintptr_t)board);
 
 	return board;
 }
 
-ErrorCode free_board(Board *board) {
-	if (!board) {
-		return EXIT_INTERNAL;
-	}
-
-	for (isize_t i = 0; i < board->size * board->size; i++) {
-		free(*(*board->cells + i));
-	}
-
-	free(*board->cells);
-	free(board->cells);
-	free(board);
-
-	return EXIT_OK;
-}
-
-// isize_t _move_cell(Cell **cell, isize_t delta, isize_t direction, isize_t steps) {
-// 	// Ignore empty cells
-// 	if ((*cell)->value == 0) {
-// 		return 0;
-// 	}
-
-// 	// Keep track of whether or not we already merged the current cell
-// 	bool has_merged = false;
-
-// 	// Keep track of the step where we merged a value, this will be the 
-// 	// return value
-// 	isize_t last_merge = 0;
-
-// 	for (isize_t i = 0; i < steps; i++) {
-// 		isize_t offset = i * delta * direction;
-
-// 		Cell *cur = *(cell + offset);
-// 		Cell *next = *(cell + offset + delta);
-
-// 		if (next->value == 0) {
-// 			next->value = cur->value;
-// 			cur->value = 0;
-// 		} else if (next->value == cur->value && !has_merged) {
-// 			next->value *= 2;
-// 			cur->value = 0;
-
-// 			has_merged = true;
-// 			last_merge = i;
-// 		}
-// 	}
-
-// 	return last_merge;
-// }
-
-isize_t _move_direction(Board *board, Direction dir, bool dry_run, BoardState *state) {
-	// Keep track of moves, this will be the return value
-	isize_t moves = 0;
-
-	const bool reverse = dir == DIR_DOWN || dir == DIR_RIGHT;
-	const bool horizontal = dir == DIR_LEFT || dir == DIR_RIGHT;
-
-	debug("moving board %lx (reverse: %d, horizontal: %d)", (uintptr_t)board,
-		reverse, horizontal);
-
-	// For every row (left/right) or column (up/down)...
-	for (isize_t outer = 0; outer < board->size; outer++) {
-		// Keep track of where we last moved a value to
-		isize_t cursor = reverse ? board->size - 1 : 0;
-
-	 	// Start from the direction we're moving to, skip the first cell
-	 	isize_t i = reverse ? board->size - 1 : 1;
-	 	for (; reverse ? i > 0 : i <= board->size; reverse ? i-- : i++) {			
-	 		Cell *cell = horizontal ? board->cells[outer][i - 1]
-	 			: board->cells[i - 1][outer];
-
-	 		// We only care about cells with values in them
-	 		if (cell->value == 0) {
-	 			continue;
-	 		}
-
-	 		// Movement direction starting from `i`
-	 		const isize_t offset = reverse ? 1 : -1;
-
-	 		// A given cell may only merge once per "move"
-	 		bool has_merged = false;
-			// To make sure 8 4 4 0 -> 8 8 0 0 and not 16 0 0 0.
-
-	 		// Make cell "bubble" to its new place by iterating
-	 		// backwards relative to the direction of the outer loop.
-			// Stop _before_ the last place we moved a value _from_
-			// to make sure 4 4 8 0 -> 8 8 0 0 and not 16 0 0 0.
-	 		isize_t j = i - 1;
-	 		for (; reverse ? j < cursor : j > cursor; j += offset) {
-	 			Cell *cur = horizontal ? board->cells[outer][j]
-	 				: board->cells[j][outer];
-
-	 			Cell *next = horizontal ? board->cells[outer][j + offset]
-	 				: board->cells[j + offset][outer];
-
-	 			if (next->value == 0) {
-					moves++;
-
-					if (!dry_run) {
-		 				next->value = cur->value;
-		 				cur->value = 0;
-					}
-	 			} else if (next->value == cur->value && !has_merged) {
-					moves++;
-
-					if (!dry_run) {
-		 				next->value *= 2;
-		 				cur->value = 0;
-					}
-
-					if (next->value == WIN_CONDITION) {
-						*state = STATE_FINISH;
-					}
-
-					has_merged = true;
-					cursor = j;
-				}
-			}
-		}
-	}
-
-	return moves;
-}
-
-Cell **__move_cell(Cell **start, Cell **end, ptrdiff_t delta) {
-	debug("delta: %ld", delta);
-
-	bool has_merged = false;
-	Cell **last_merge = end;
-
+// Bubbles a value at *begin to (at most) *end, moving it over zeroes and merging 
+// it with at most one equal value on the way. Determines the "next value" through
+// (begin + delta). Returns the place where a value was last merged _from_. Performs
+// no changes if dry_run is specified but outputs the expected return value.
+Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run) {
+	// TODO
 	// Make sure we don't end up in an infinite loop
-	// if (((uintptr_t)start / (uintptr_t)end) % delta) {
+	// if (((uintptr_t)begin - (uintptr_t)end) % delta) {
 	// 	debug("end pointer unreachable with delta %ld", delta);
 
 	// 	return NULL;
 	// }
+	
+	// Keep track of whether we already did a merge
+	bool has_merged = false;
+	// Keep track of where we last merged a cell from
+	Cell **last_merge = end;
 
-	while (start != end) {
-		Cell *cur = *(start);
-		Cell *next = *(start + delta);
+	while (begin != end) {
+		Cell *cur = *(begin);
+		Cell *next = *(begin + delta);
 
-		start += delta;
+		begin += delta;
 
 		if (!cur->value) {
 			continue;
 		}
 
-		if (next->value == 0) {
+		if (next->value == 0 && !dry_run) {
 			next->value = cur->value;
 			cur->value = 0;
 		} else if (cur->value == next->value && !has_merged) {
-			next->value *= 2;
-			cur->value = 0;
+			if (!dry_run) {
+				next->value *= 2;
+				cur->value = 0;
+			}
 
 			has_merged = true;
-			// Make sure to subtract delta because we already added
-			// it for the next iteration at this point
-			last_merge = start - delta;
+			last_merge = begin - delta;
 		}
 	}
 
 	return last_merge;
 }
 
-void __move_direction(Board *board, Direction dir) {
+bool has_available_moves(Board *board) {
+	// For all rows but the last...
+	for (isize_t x = 0; x < board->size - 1; x++) {
+		// For all columns but the last...
+		for (isize_t y = 0; y < board->size - 1; y++) {
+		}
+	}
+}
+
+// Public API begins here
+
+// TODO: Handle possible board states
+BoardState move_direction(Board *board, Direction dir) {
 	const bool reverse = dir == DIR_DOWN || dir == DIR_RIGHT;
 	const bool horizontal = dir == DIR_LEFT || dir == DIR_RIGHT;
 
@@ -258,107 +153,43 @@ void __move_direction(Board *board, Direction dir) {
 		? direction
 		: (ptrdiff_t)board->size * direction;
 
-	debug("reverse: %d, horizontal: %d, direction: %ld, delta: %ld (%d)",
-		reverse, horizontal, direction, delta, dir);
-
+	debug("board %lx: reverse %d (dir %ld), horizontal %d (offset %ld)",
+		(uintptr_t)board, reverse, direction, horizontal, delta);
+	
+	// For every row (when left/right) or column (when up/down)...
 	for (isize_t outer = 0; outer < board->size; outer++) {
 		Cell **cursor = NULL;
 
-		debug("open context");
-
+		// For all cells in the row/column but the first one...
 		for (isize_t inner = 1; inner < board->size; inner++) {
+			// Pretend we're looping from the back if reverse is true
 			const isize_t index = reverse
 				? (board->size - 1) - inner
 				: inner;
 
+			// Address of the current cell relative to cell zero
 			const isize_t offset = horizontal
 				? (outer * board->size) + index
 				: (index * board->size) + outer;
 
-			debug("outer: %d, inner: %d, index: %d, offset: %d",
-				outer, inner, index, offset);
-
 			Cell **begin = *board->cells + offset;
+			// Never move beyond the cursor
 			Cell **end = cursor ? cursor
 				: begin + (inner * delta * -1);
 
-			cursor = __move_cell(begin, end, delta * -1);
+			// Cursor is either equal to end or the place where we 
+			// last merged a value from
+			cursor = bubble_cell(begin, end, delta * -1, false);
 
-			
-			// Cell **cur = *board->cells + offset;
-			// debug("noseg");
-
-			// if ((*cur)->value == 0) {
-			// 	continue;
-			// }
-
-			// for (isize_t j = cursor; j < inner; j++) {
-			// 	debug("j: %d, d: %ld", j, delta * j);
-
-			// 	Cell *next = *(cur - (delta * j));
-
-			// 	if (next->value == 0) {
-			// 		next->value = (*cur)->value;
-			// 		(*cur)->value = 0;
-			// 	} else if (next->value == (*cur)->value) {
-			// 		next->value *= 2;
-			// 		(*cur)->value = 0;
-
-			// 		cursor = j;
-			// 	}
-			// }
-		}
-
-		debug("close context");
-	}
-}
-
-BoardState cell_has_moves(Cell **cell, isize_t offset) {
-	Cell *cur = *cell;
-
-	Cell *next = *cell + offset;
-
-	if (cur->value == next->value) {
-		return STATE_ONGOING;
-	}
-
-	return STATE_NO_MORE_MOVES;
-}
-
-bool possible_moves(Board *board) {
-	for (isize_t i = board->size + 1; i < (board->size * board->size) - board->size - 1; i++) {
-		Cell **cell = *board->cells + 1;
-		
-		if (
-			cell_has_moves(cell, 1) == STATE_ONGOING || 
-			cell_has_moves(cell, -1) == STATE_ONGOING ||
-			cell_has_moves(cell, board->size) == STATE_ONGOING ||
-			cell_has_moves(cell, board->size * -1) == STATE_ONGOING
-		) {
-			return true;
+			if ((*cursor - delta)->value == WIN_CONDITION) {
+				return STATE_FINISH;
+			}
 		}
 	}
 
-	return false;
+	return STATE_ONGOING;
 }
 
-
-BoardState move_direction(Board *board, Direction dir) {
-	BoardState state = STATE_ONGOING;
-
-	// if (!possible_moves(board)) {
-	// 	return STATE_NO_MORE_MOVES;
-	// }
-
-	_move_direction(board, dir, false, &state);
-
-	return state;
-}
-
-
-// Add 2 or 4 (chosen randomly) to a random position on the given board, 
-// following the required "order of randomness". Returns EXIT_OK even if the 
-// board is full (i. e. if no new value was added).
 ErrorCode add_number(Board *board) {
 	debug("adding number to board %lx", (uintptr_t)board);
 
@@ -393,6 +224,7 @@ ErrorCode add_number(Board *board) {
 	return EXIT_INTERNAL;
 }
 
+
 Board *create_board(const isize_t size, ErrorCode *err) {
 	debug("creating board of size %d", size);
 
@@ -412,4 +244,20 @@ Board *create_board(const isize_t size, ErrorCode *err) {
 	*err = add_number(board);
 
 	return board;
+}
+
+ErrorCode free_board(Board *board) {
+	if (!board) {
+		return EXIT_INTERNAL;
+	}
+
+	for (isize_t i = 0; i < board->size * board->size; i++) {
+		free(*(*board->cells + i));
+	}
+
+	free(*board->cells);
+	free(board->cells);
+	free(board);
+
+	return EXIT_OK;
 }
