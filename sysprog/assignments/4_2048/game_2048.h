@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 // Note that I have changed some of the given structs to use an appropiately
 // redefined type size_t.
 
@@ -121,3 +123,7 @@ BoardState move_direction(Board *board, Direction dir);
 // following the required "order of randomness". Returns EXIT_OK even if the 
 // board is full (i. e. if no new value was added).
 ErrorCode add_number(Board *board);
+
+
+void __move_direction(Board *board, Direction dir);
+Cell **__move_cell(Cell **start, Cell **end, ptrdiff_t delta);

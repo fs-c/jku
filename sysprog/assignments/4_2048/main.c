@@ -135,6 +135,7 @@ int main(int argc, char *argv[]) {
 
 	// Set up PRNG
 	srand(args.seed);
+		debug("c1");
 
 	// Set up board
 	Board *board = create_board(BOARD_SIZE, &err);
@@ -145,6 +146,24 @@ int main(int argc, char *argv[]) {
 		return err;
 	}
 
+	// board->cells[0][0]->value = 2;
+	// board->cells[0][1]->value = 2;
+	// board->cells[1][0]->value = 2;
+	// board->cells[2][0]->value = 4;
+
+	// print_state(stdout, board, -1, false);
+
+	// __move_cell(*(board->cells) + 0, *(board->cells + 3) + 0, (ptrdiff_t)board->size);
+
+	// print_state(stdout, board, 1, false);
+
+	// __move_direction(board, DIR_UP);
+	// __move_direction(board, DIR_RIGHT);
+	// __move_direction(board, DIR_UP);
+	// __move_direction(board, DIR_DOWN);
+
+	// print_state(stdout, board, 1, false);
+
 	unsigned int round = 0;
 
 	print_state(args.out, board, round, true);
@@ -153,7 +172,12 @@ int main(int argc, char *argv[]) {
 	while ((dir = read_direction(args.in)) != DIR_UNDEFINED) {
 		round++;
 
-		move_direction(board, dir);
+		// if (move_direction(board, dir) != STATE_ONGOING) {
+		// 	break;
+		// }
+
+		__move_direction(board, dir);
+
 		add_number(board);
 
 		print_state(args.out, board, round, true);
