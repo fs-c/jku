@@ -87,7 +87,7 @@ size_t player_choose_suitcase(const char *message) {
     }
 }
 
-// Promt player to answer yes/no to a given question. Retry until a valid response 
+// Prompt player to answer yes/no to a given question. Retry until a valid response 
 // is given.
 bool player_prompt_yn(const char *message) {
     while (true) {
@@ -154,7 +154,7 @@ long get_bank_offer(int round) {
     return offer;
 }
 
-int main (int argc, const char *argv[]) {
+int main(int argc, const char *argv[]) {
     bool should_randomize = false;
 
     if (argc == 2) {

@@ -1,0 +1,119 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 10}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\frectangle}{\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) rectangle (1em, 1em)}}
+\newcommand{\fcircle}   {\tikz[scale=0.7, baseline]{\draw[fill] (0.5em, 0.5em) circle [radius=0.5em]}}
+\newcommand{\ftriangle} {\tikz[scale=0.7, baseline]{\draw[fill] (0, 0) -- (0.5em, 1em) -- (1em, 0) -- cycle}}
+
+\newcommand{\cmod}{\text{mod}}
+
+%\newcommand{\gcd}{\text{gcd}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}
+    % TODO: Verify
+    \item Für $a = 868318803$ und $b = 1601135481$ gilt $\gcd (a, b) = 3531$, $u = -104598$ und $v = 56725$.
+    
+    Für $a = 911761172$ und $b = 573241334$ gilt $\gcd (a, b) = 958$, $u = -146941$ und $v = 233715$.
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}
+    % TODO: Use set builder notation, this is probably enough already but it can't hurt
+
+    \item Alle $x \in [6]_{\equiv_{13}}$, bzw. alle $x \in \{ 13y + 6 : y \in \mathbb{Z} \}$.
+    % $x \in \{ \ldots, -20, -7, 6, 19, 32, \ldots \}$.
+
+    \item Alle $x \in [3]_{\equiv_{12}}$, bzw. alle $x \in \{ 12y + 3 : y \in \mathbb{Z} \}$
+    % $x \in \{ \ldots, -21, -9, 3, 15, 27, \ldots \}$.
+    
+    \item Es gibt keine derartigen $x$.
+    
+    \item Alle $x \in [4]_{\equiv_{12}}$, bzw. alle $x \in \{ 12y + 4 : y \in \mathbb{Z} \}$
+    % $x \in \{ \ldots, -20, -8, 4, 16, 28, \ldots \}$.
+\end{enumerate}
+
+\paragraph{Aufgabe 3.}
+
+Behauptet ist
+\begin{equation*}
+    \exists\, [y]_{\equiv_{m}} \in \mathbb{Z}_m : [x]_{\equiv_{m}} \cdot [y]_{\equiv_{m}} = [1]_{\equiv_{m}}\Longleftrightarrow \gcd(x, m) = 1.
+\end{equation*}
+
+\enquote{$\Rightarrow$} Angenommen es gibt ein solches $[y]_{\equiv_{m}}$. Es gilt also $xy \equiv_{m} 1$ beziehungsweise $\cmod(xy, m) = \cmod(1, m)$, woraus folgt $\cmod(xy, m) = 1$ nachdem $\cmod(1, m) = 1 - m \left\lfloor{1 / m}\right\rfloor = 1 - m \cdot 0 = 1$. (Nachdem $m \geq 2$ gilt für alle $m$, dass $\left\lfloor{1 / m}\right\rfloor = 0$.) Weiters gilt $\gcd(xy, m) = 1$ nachdem
+\begin{align*}
+    \{ g, g' \} &= \{ xy, m \}\\
+    \{ g, g' \} &= \{ m, \cmod(xy, m) \}\\
+    \{ g, g' \} &= \{ 1, \cmod(m, 1) \}\\
+    \{ g, g' \} &= \{ 1, 0 \},
+\end{align*}
+wobei der Algorithmus bei $g' = 0$ mit $\gcd(xy, m) = g = 1$ terminiert. (Nachdem $m \in \mathbb{N}$ gilt für alle $m$, dass $\left\lfloor{m / 1}\right\rfloor = m$ und ergo $\cmod(m, 1) = 0$.) Aus $\gcd(xy, m) = 1$ folgt $\gcd(x, m) = 1$ (und $\gcd(y, m) = 1$), was zu zeigen war.
+
+%(Siehe Skriptum, S. 58: Der euklidische Algorithmus $\gcd(a, b)$ berechnet eine Folge von Divisionsresten $r_1 = a$, $r_2 = b$, \ldots. Jeweils zwei aufeinanderfolgende Zahlen $r_i$ haben den gleichen größten gemeinsamen Teiler.)
+%(Gedankenschritt: Es gelte $\gcd(a, c) = 1$. Warum sollte nun $\gcd(ab, c) \neq 1$ gelten?) % TODO
+
+\enquote{$\Leftarrow$} Angenommen es gilt $\gcd(x, m) = 1$. Zu zeigen ist, dass es ein $[y]_m \in \mathbb{Z}$ gibt mit $xy \equiv_m 1$ beziehungsweise $\cmod(xy, m) = 1$. Man wähle ein $y$ derart, dass $\gcd(y, m) = 1$. Dann gilt $\gcd(xy, m = 1)$, woraus folgt, dass $\cmod(xy, m) = 1$ gelten muss, wie zu zeigen war.
+
+%Seien $x_1, x_2, \ldots x_i$ die Primfaktoren von $x$, $y_1, y_2, \ldots y_j$ jene von $y$ und $m_1, m_2, \ldots, m_k$ jene von $m$. Nachdem $\gcd(x, m) = 1$ und $\gcd(y, m) = 1$ sind alle diese Primzahlen voneinander verschieden. Das Produkt $xy$ hat nun die Primfaktoren $x_1, x_2, \ldots x_i, y_1, y_2, \ldots y_j$, wovon keine in $m_1, m_2, \ldots, m_k$ sind. Es gilt demzufolge $\gcd(xy, m) = 1$, was zu zeigen war.
+
+%Analog zu Satz 11 sei nun $A = [a]_m \in \mathbb{Z}$ beliebig. Es gibt $u, v \in \mathbb{Z}$ derart, dass $ux + vm = \gcd(x, m)$.
+
+%Sei $A = [a]_m \in \mathbb{Z}$ beliebig. Wegen $[a]_{\equiv_m} = [\cmod(a, m)]_{\equiv_m}$ und $0 \leq \cmod(a, m) < m$ können wir annehmen $0 \leq a < m$ (siehe Satz 11, Skriptum). Wegen $m \in \mathbb{N}\,\backslash\{0, 1\}$ 
+
+%Angenommen, $\gcd(x, m) = 1$ gilt nicht. Es gibt also $u, v \in \mathbb{Z}\backslash\{0\}$ für die gilt, dass $x \cdot uv = m$. Es gilt also weiters $u \mod m = u \neq 0$ und $v \mod m = v \neq 0$, also $[u]_{\equiv_{m}} \neq [0]_{\equiv_{m}}$ und $[v]_{\equiv_{m}} \neq [0]_{\equiv_{m}}$.
+
+\end{document}
+
+mod(xy, m) = 1
+
+gcd(xy, m)
+
+{g, g'} = {xy, m}
+{g, g'} = {m, mod(xy, m)}
+{g, g'} = {1, mod(m, 1)}
+{g, g'} = {1, 0}
+
+--
+
+gcd(x, m)
+
+{g, g'} = {x, m}
+{g, g'} = {m, mod(x, m)}
+{g, g'} = {}
