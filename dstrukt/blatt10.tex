@@ -84,12 +84,22 @@ Behauptet ist
     \{ g, g' \} &= \{ 1, \cmod(m, 1) \}\\
     \{ g, g' \} &= \{ 1, 0 \},
 \end{align*}
-wobei der Algorithmus bei $g' = 0$ mit $\gcd(xy, m) = g = 1$ terminiert. (Nachdem $m \in \mathbb{N}$ gilt für alle $m$, dass $\left\lfloor{m / 1}\right\rfloor = m$ und ergo $\cmod(m, 1) = 0$.) Aus $\gcd(xy, m) = 1$ folgt $\gcd(x, m) = 1$ (und $\gcd(y, m) = 1$), was zu zeigen war.
+wobei der Algorithmus bei $g' = 0$ mit $\gcd(xy, m) = g = 1$ terminiert. (Nachdem $m \in \mathbb{N}$ gilt für alle $m$, dass $\left\lfloor{m / 1}\right\rfloor = m$ und ergo $\cmod(m, 1) = 0$.)
+
+Die Primfaktorzerlegungen von $xy = \chi_1\chi_2 \ldots \chi_i$ und $m = m_1m_2 \ldots m_j$ sind nun also voneinander verschieden (haben eine leere Schnittmenge). Das Produkt $xy$ kann weiter in die Primfaktoren von $x$ und $y$, also $xy = x_1x_2 \ldots x_k y_1y_2 \ldots y_l$ zerlegt werden. Nachdem die Primfaktoren von $xy$ und $m$ voneinander verschieden sind, müssen auch die Primfaktoren von $x$ und $m$ (und $y$ und $m$) voneinander verschieden sein. Demzufolge gilt $\gcd(x, m) = 1$ (und $\gcd(y, m) = 1$), was zu zeigen war.
 
 %(Siehe Skriptum, S. 58: Der euklidische Algorithmus $\gcd(a, b)$ berechnet eine Folge von Divisionsresten $r_1 = a$, $r_2 = b$, \ldots. Jeweils zwei aufeinanderfolgende Zahlen $r_i$ haben den gleichen größten gemeinsamen Teiler.)
 %(Gedankenschritt: Es gelte $\gcd(a, c) = 1$. Warum sollte nun $\gcd(ab, c) \neq 1$ gelten?) % TODO
 
-\enquote{$\Leftarrow$} Angenommen es gilt $\gcd(x, m) = 1$. Zu zeigen ist, dass es ein $[y]_m \in \mathbb{Z}$ gibt mit $xy \equiv_m 1$ beziehungsweise $\cmod(xy, m) = 1$. Man wähle ein $y$ derart, dass $\gcd(y, m) = 1$. Dann gilt $\gcd(xy, m = 1)$, woraus folgt, dass $\cmod(xy, m) = 1$ gelten muss, wie zu zeigen war.
+\enquote{$\Leftarrow$} Angenommen es gilt $\gcd(x, m) = 1$. Zu zeigen ist, dass es ein $[y]_m \in \mathbb{Z}$ gibt mit $xy \equiv_m 1$ beziehungsweise $\cmod(xy, m) = 1$. 
+
+%Man wähle ein $y$ derart, dass $\gcd(y, m) = 1$. Dann gilt $\gcd(xy, m) = 1$, woraus folgt, dass es $u, v \in \mathbb{Z}$ gibt derart, dass $uxy + vm = 1$.
+
+Nachdem $\gcd(x, m) = 1$ gibt es $y, v \in \mathbb{Z}$ mit $yx + vm = 1$. Dann gilt
+\begin{equation*}
+    [1]_{\equiv_{m}} = [y]_{\equiv_{m}}[x]_{\equiv_{m}} + \underbrace{[vm]_{\equiv_{m}}}_{= [0]_{\equiv_{m}}} = [y]_{\equiv_{m}}[x]_{\equiv_{m}},
+\end{equation*}
+woraus folgt, dass $[y]_{\equiv_{m}}$ das gesuchte multiplikative Inverse von $[x]_{\equiv_{m}}$ ist, wie zu zeigen war.
 
 %Seien $x_1, x_2, \ldots x_i$ die Primfaktoren von $x$, $y_1, y_2, \ldots y_j$ jene von $y$ und $m_1, m_2, \ldots, m_k$ jene von $m$. Nachdem $\gcd(x, m) = 1$ und $\gcd(y, m) = 1$ sind alle diese Primzahlen voneinander verschieden. Das Produkt $xy$ hat nun die Primfaktoren $x_1, x_2, \ldots x_i, y_1, y_2, \ldots y_j$, wovon keine in $m_1, m_2, \ldots, m_k$ sind. Es gilt demzufolge $\gcd(xy, m) = 1$, was zu zeigen war.
 

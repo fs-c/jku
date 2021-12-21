@@ -1,0 +1,19 @@
+- Nennen Sie einige Schlüsselfaktoren für "Trustworthy AI" gemäß der EU-Ethikrichtlinien.
+
+- Was ist ein Schlüsselaspekt der Rechenschaftspflicht?
+    - Nachprüfbarkeit
+    - Barrierefreiheit
+    - Rentierbarkeit
+    - Gleichberechtigung
+
+- Was ist ein Beispiel von "Dark UX Patterns"?
+    - Diskriminierung von Menschen mit Beeinträchtigungen
+    - Kein Support für IE
+    - Website nur in jeweiliger Amtssprache
+    - Ethics Washing
+
+- Welche Auswahlmöglichkeit passt nicht zum Utilitarismus?
+    - Der aggregierte Gesamtnutzen aller Betroffenen soll im Vordergrund stehen.
+    - Die innere Qualität einer Handlung soll im Vordergrund stehen.
+    - Form der zweckorientierten Ethik.
+    - Eine Kosten-Nutzen-Abwägung erlaubt vordergründlich Argumentation über eine Handlung.

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-DDEBUG -Wall -Wextra -g
+CFLAGS=-Wall -Wextra -g
 
 all: game_2048
 

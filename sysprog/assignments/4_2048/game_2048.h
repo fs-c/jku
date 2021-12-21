@@ -69,6 +69,7 @@ typedef struct Position {
 typedef struct Cell {
 	Position pos;
 	unsigned int value;
+	unsigned int dbg;
 } Cell;
 
 // Struct for the game board.
@@ -117,7 +118,7 @@ Board *create_board(const isize_t size, ErrorCode *err);
 ErrorCode free_board(Board *board);
 
 // Apply a direction/move command to the given board.
-BoardState move_direction(Board *board, Direction dir);
+BoardState move_direction(Board *board, Direction dir, bool *moved);
 
 // Add 2 or 4 (chosen randomly) to a random position on the given board, 
 // following the required "order of randomness". Returns EXIT_OK even if the 

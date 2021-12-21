@@ -1,0 +1,7 @@
+input FILE		output FILE		SEED	Info
+-------------------------------------------------------------
+input.txt		output.txt		 100	example from assignment description
+input_win.txt		output_win.txt	      <none>	reach 2048 and win the game
+input_fail.txt		output_fail.txt		 404	no more moves possible
+input_cont.txt		output_cont.txt		 666	continue w/o move; one dir repeating
+input_other.txt		output_other.txt	 123	other input than w/a/s/d

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <stdbool.h>
 
 #include "game_2048.h"
@@ -33,7 +34,7 @@ bool has_free_cells(Board *board) {
 // 	(*(*board->cells + (y * board->size) + x))->value, OR
 // 	board->cells[y][x]->value.
 // The latter means that the specification was followed properly while the
-// former will be useful when iterating through cells.
+// former will be useful when iterating through cells "vertically".
 Board *allocate_board(const isize_t size, ErrorCode *err) {
 	Board *board = malloc(sizeof(Board));
 
@@ -48,17 +49,11 @@ Board *allocate_board(const isize_t size, ErrorCode *err) {
 	// Allocate a continuous block of memory where cell pointers are stored
 	Cell **cell_ptrs = malloc(board->size * board->size * sizeof(Cell *));
 
-	if (!cell_ptrs) {
-		*err = EXIT_OUT_OF_MEM;
-
-		return NULL;
-	}
-
 	// Allocate space for "columns", these will just be pointers into that 
 	// continuous block
 	board->cells = malloc(board->size * sizeof(Cell **));
 
-	if (!board->cells) {
+	if (!cell_ptrs || !board->cells) {
 		*err = EXIT_OUT_OF_MEM;
 
 		return NULL;
@@ -71,6 +66,8 @@ Board *allocate_board(const isize_t size, ErrorCode *err) {
 		for (isize_t j = 0; j < board->size; j++) {
 			// Make sure cells have their fields default to zero
 			board->cells[i][j] = calloc(1, sizeof(Cell));
+
+			board->cells[i][j]->dbg = 1337;
 
 			if (!board->cells[i][j]) {
 				*err = EXIT_OUT_OF_MEM;
@@ -87,24 +84,25 @@ Board *allocate_board(const isize_t size, ErrorCode *err) {
 
 // Bubbles a value at *begin to (at most) *end, moving it over zeroes and merging 
 // it with at most one equal value on the way. Determines the "next value" through
-// (begin + delta). Returns the place where a value was last merged _from_. Performs
-// no changes if dry_run is specified but outputs the expected return value.
-Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run) {
-	// TODO
+// (begin + delta). Returns the place where a value was last merged _from_. If
+// dry_run is set, doesn't actually move anything but otherwise operates normally.
+// Not a perfect simulation because 2 0 2 will never get merged because of the zero.
+// The bool at *moved is set to true if a value was (or would have been) moved.
+Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run, bool *moved) {
 	// Make sure we don't end up in an infinite loop
-	// if (((uintptr_t)begin - (uintptr_t)end) % delta) {
-	// 	debug("end pointer unreachable with delta %ld", delta);
+	if (((ptrdiff_t)begin - (ptrdiff_t)end) % delta) {
+		debug("end pointer unreachable with delta %ld", delta);
 
-	// 	return NULL;
-	// }
-	
+		return NULL;
+	}
+
 	// Keep track of whether we already did a merge
 	bool has_merged = false;
 	// Keep track of where we last merged a cell from
 	Cell **last_merge = end;
 
 	while (begin != end) {
-		Cell *cur = *(begin);
+		Cell *cur = *begin;
 		Cell *next = *(begin + delta);
 
 		begin += delta;
@@ -113,9 +111,15 @@ Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run) {
 			continue;
 		}
 
-		if (next->value == 0 && !dry_run) {
-			next->value = cur->value;
-			cur->value = 0;
+		if (next->value == 0) {
+			if (!dry_run) {
+				next->value = cur->value;
+				cur->value = 0;
+			}
+
+			if (moved) {
+				*moved = true;
+			}
 		} else if (cur->value == next->value && !has_merged) {
 			if (!dry_run) {
 				next->value *= 2;
@@ -124,25 +128,51 @@ Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run) {
 
 			has_merged = true;
 			last_merge = begin - delta;
+
+			if (moved) {
+				*moved = true;
+			}
 		}
 	}
 
 	return last_merge;
 }
 
+// Checks if the board has empty or mergeable cells. 
 bool has_available_moves(Board *board) {
-	// For all rows but the last...
-	for (isize_t x = 0; x < board->size - 1; x++) {
-		// For all columns but the last...
-		for (isize_t y = 0; y < board->size - 1; y++) {
-		}
+	bool moved = false;
+
+	// Do a naiive check in both directions for all rows/columns, works because 
+	// bubble_cell sets moved even if it only moved across a space (which wouldn't
+	// alter its return value otherwise). 
+	for (isize_t i = 0; i < board->size && !moved; i++) {
+		Cell **begin, **end;
+		
+		// Horizontal
+		begin = board->cells[i];
+		end = board->cells[i] + board->size - 1;
+
+		bubble_cell(begin, end, 1, true, &moved);
+		bubble_cell(end, begin, -1, true, &moved);
+
+		// Vertical
+		begin = board->cells[0] + i;
+		end = board->cells[board->size - 1] + i;
+	
+		bubble_cell(begin, end, board->size, true, &moved);
+		bubble_cell(end, begin, board->size * -1, true, &moved);
 	}
+
+	return moved;
 }
 
 // Public API begins here
 
-// TODO: Handle possible board states
-BoardState move_direction(Board *board, Direction dir) {
+BoardState move_direction(Board *board, Direction dir, bool *moved) {
+	if (!has_available_moves(board)) {
+		return STATE_NO_MORE_MOVES;
+	}
+
 	const bool reverse = dir == DIR_DOWN || dir == DIR_RIGHT;
 	const bool horizontal = dir == DIR_LEFT || dir == DIR_RIGHT;
 
@@ -155,7 +185,7 @@ BoardState move_direction(Board *board, Direction dir) {
 
 	debug("board %lx: reverse %d (dir %ld), horizontal %d (offset %ld)",
 		(uintptr_t)board, reverse, direction, horizontal, delta);
-	
+
 	// For every row (when left/right) or column (when up/down)...
 	for (isize_t outer = 0; outer < board->size; outer++) {
 		Cell **cursor = NULL;
@@ -179,9 +209,9 @@ BoardState move_direction(Board *board, Direction dir) {
 
 			// Cursor is either equal to end or the place where we 
 			// last merged a value from
-			cursor = bubble_cell(begin, end, delta * -1, false);
+			cursor = bubble_cell(begin, end, delta * -1, false, moved);
 
-			if ((*cursor - delta)->value == WIN_CONDITION) {
+			if ((*(cursor))->value == WIN_CONDITION) {
 				return STATE_FINISH;
 			}
 		}
