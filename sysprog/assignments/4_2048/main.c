@@ -8,13 +8,13 @@
 
 #define BOARD_SIZE 4
 
-// Processes the given arguments, optionally opening streams if required. The 
+// Process the given arguments, optionally opening streams if required. The 
 // callee will have to close any streams that were opened. If the input or output
 // pointer is NULL, something went wrong. Modifies argv.
 Arguments process_arguments(int argc, char *argv[], ErrorCode *err) {
 	*err = EXIT_OK;
 
-	// Set up args struct with defaults.
+	// Set up args struct with defaults
 	Arguments args = { 1, stdin, stdout };
 
 	for (int i = 1; i < argc; i++) {
@@ -27,9 +27,6 @@ Arguments process_arguments(int argc, char *argv[], ErrorCode *err) {
 
 		if (!strcmp(key, "seed")) {
 			args.seed = (unsigned int)strtoul(value, NULL, 10);
-			
-			// TODO: Maybe do some error checking here? Probably not
-			// particularly useful since strtoul just returns 0 on err.
 
 			debug("seed is %d", args.seed);
 		} else if (!strcmp(key, "in")) {
@@ -82,7 +79,29 @@ Direction read_direction(FILE *stream) {
 	return DIR_UNDEFINED;
 }
 
-// TODO: Colors
+// Move the cursor to a given position on the terminal.
+void move_cursor(int x, int y) {
+	printf("\x1b[%d;%dH", y, x);
+}
+
+// Get a color control code for a given cell value. Guaranteed
+// to be stable but will repeat for values >2^11.
+char *get_color(unsigned int value) {
+	static char colors[11][6] = {
+		COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_MAGENTA, 
+		COLOR_CYAN, COLOR_BR_RED, COLOR_BR_GREEN, COLOR_BR_YELLOW,
+		COLOR_BR_BLUE, COLOR_BR_MAGENTA, COLOR_BR_CYAN
+	};
+
+	size_t index = 0;
+
+	while (value /= 2) {
+		index++;
+	}
+
+	return colors[(index - 1) % 11];
+}
+
 // Write the given board and round number to the given stream. Produces human-readable 
 // and colored output when stream is stdout and the given standard format otherwise.
 // If with_clear is true, attempts to clear the console (ignored if stream != stdout).
@@ -95,8 +114,8 @@ ErrorCode print_state(FILE *stream, Board *board, unsigned int round, bool with_
 	const bool nice = stream == stdout;
 
 	if (with_clear && nice) {
-		// TODO: system("clear") is a horrible solution (not portable, 
-		// user might lose data because of it, etc.), find a better way.
+		move_cursor(0, 0);
+		puts(CLEAR_SCREEN);
 	}
 
 
@@ -105,8 +124,10 @@ ErrorCode print_state(FILE *stream, Board *board, unsigned int round, bool with_
 
 	for (isize_t i = 0; i < board->size; i++) {
 		for (isize_t j = 0; j < board->size; j++) {
+			unsigned int value = board->cells[i][j]->value;
+
 			if (nice) {
-				fprintf(stream, "%4d", board->cells[i][j]->value);
+				fprintf(stream, "%s%4d%s", get_color(value), value, COLOR_RESET);
 			} else {
 				fprintf(stream, "%d", board->cells[i][j]->value);
 			}
@@ -117,11 +138,9 @@ ErrorCode print_state(FILE *stream, Board *board, unsigned int round, bool with_
 		putc('\n', stream);
 	}
 
+
 	return EXIT_OK;
 }
-
-// A `save_current_state(Board *, FILE *, round)` was outlined here but I didn't
-// see a necessity for it yet.
 
 int main(int argc, char *argv[]) {
 	ErrorCode err = EXIT_OK;
@@ -134,10 +153,8 @@ int main(int argc, char *argv[]) {
 		return err;
 	}
 
-	// Set up PRNG
 	srand(args.seed);
 
-	// Set up board
 	Board *board = create_board(BOARD_SIZE, &err);
 
 	if (err != EXIT_OK || !board) {
@@ -153,15 +170,19 @@ int main(int argc, char *argv[]) {
 	bool moved;
 	Direction dir;
 
+	// Main game loop, kepe reading movement commands
 	while ((dir = read_direction(args.in)) != DIR_UNDEFINED) {
 		round++;
 		moved = false;
 
+		// Execute the move
 		BoardState state;
 		if ((state = move_direction(board, dir, &moved)) != STATE_ONGOING) {
+			// If no more moves were possible, exit
 			break;
 		}
 
+		// If we actually moved something, add a new number
 		if (moved) {
 			add_number(board);
 		}

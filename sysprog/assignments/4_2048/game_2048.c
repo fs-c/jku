@@ -9,9 +9,11 @@
 #define WIN_CONDITION 2048
 
 // Implementation details:
+//
 // 	- The indices of cells in board.cells always correspond to their x and y
 //	  values (i.e. board[y][x] <=> cell.y == y and cell.x == x). This makes 
 //	  it easier to think about but it also makes said values redundant.
+//
 //	- Cell pointers are stored in a continuous block of memory, not 
 //	  n = board->size separate blocks. See comment on allocate_board.
 
@@ -33,8 +35,8 @@ bool has_free_cells(Board *board) {
 // to a cell by doing
 // 	(*(*board->cells + (y * board->size) + x))->value, OR
 // 	board->cells[y][x]->value.
-// The latter means that the specification was followed properly while the
-// former will be useful when iterating through cells "vertically".
+// The latter means that the specification was followed properly while the former 
+// will be useful when iterating through cells "vertically".
 Board *allocate_board(const isize_t size, ErrorCode *err) {
 	Board *board = malloc(sizeof(Board));
 
@@ -85,9 +87,11 @@ Board *allocate_board(const isize_t size, ErrorCode *err) {
 // Bubbles a value at *begin to (at most) *end, moving it over zeroes and merging 
 // it with at most one equal value on the way. Determines the "next value" through
 // (begin + delta). Returns the place where a value was last merged _from_. If
-// dry_run is set, doesn't actually move anything but otherwise operates normally.
-// Not a perfect simulation because 2 0 2 will never get merged because of the zero.
-// The bool at *moved is set to true if a value was (or would have been) moved.
+// dry_run is set, doesn't actually move anything. Not a perfect simulation: It's
+// only guaranteed that `return value == end && moved` has the same truth value 
+// with dry_run and without on a given board instance (return value equality is 
+// not guaranteed). The bool at *moved is set to true if a value was (or would 
+// have been) moved.
 Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run, bool *moved) {
 	// Make sure we don't end up in an infinite loop
 	if (((ptrdiff_t)begin - (ptrdiff_t)end) % delta) {
@@ -107,11 +111,15 @@ Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run, bool
 
 		begin += delta;
 
+		// Can only happen if the cell at begin was empty, skip until the 
+		// first non-empty cell
 		if (!cur->value) {
 			continue;
 		}
 
 		if (next->value == 0) {
+			// Bubble cell over empty cells
+
 			if (!dry_run) {
 				next->value = cur->value;
 				cur->value = 0;
@@ -121,6 +129,8 @@ Cell **bubble_cell(Cell **begin, Cell **end, ptrdiff_t delta, bool dry_run, bool
 				*moved = true;
 			}
 		} else if (cur->value == next->value && !has_merged) {
+			// Merge cells with the same value, but only once per cell
+
 			if (!dry_run) {
 				next->value *= 2;
 				cur->value = 0;
@@ -144,10 +154,10 @@ bool has_available_moves(Board *board) {
 
 	// Do a naiive check in both directions for all rows/columns, works because 
 	// bubble_cell sets moved even if it only moved across a space (which wouldn't
-	// alter its return value otherwise). 
+	// alter its return value otherwise).
 	for (isize_t i = 0; i < board->size && !moved; i++) {
 		Cell **begin, **end;
-		
+
 		// Horizontal
 		begin = board->cells[i];
 		end = board->cells[i] + board->size - 1;
@@ -169,10 +179,6 @@ bool has_available_moves(Board *board) {
 // Public API begins here
 
 BoardState move_direction(Board *board, Direction dir, bool *moved) {
-	if (!has_available_moves(board)) {
-		return STATE_NO_MORE_MOVES;
-	}
-
 	const bool reverse = dir == DIR_DOWN || dir == DIR_RIGHT;
 	const bool horizontal = dir == DIR_LEFT || dir == DIR_RIGHT;
 
@@ -217,6 +223,10 @@ BoardState move_direction(Board *board, Direction dir, bool *moved) {
 		}
 	}
 
+	if (!has_available_moves(board)) {
+		return STATE_NO_MORE_MOVES;
+	}
+
 	return STATE_ONGOING;
 }
 
@@ -227,12 +237,13 @@ ErrorCode add_number(Board *board) {
 		return EXIT_INTERNAL;
 	}
 
+	// Make sure we won't end up in an infinite loop later
 	if (!has_free_cells(board)) {
 		return EXIT_OK;
 	}
 
-	// x = rand() % 2 is either 1 or 2 so (x + 1) * 2 is either 2 or 4
-	unsigned int value = ((rand() % 2) + 1) * 2;
+	// x = rand() % 2 is either 1 or 2, so (x + 1) * 2 is either 2 or 4
+	const unsigned int value = ((rand() % 2) + 1) * 2;
 
 	// We know that a free cell exists, so just keep trying to add a value
 	while (true) {

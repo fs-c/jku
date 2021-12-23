@@ -2,12 +2,13 @@
 
 #include <stddef.h>
 
-// Note that I have changed some of the given structs to use an appropiately
-// redefined type size_t.
+// Note that I have changed some of the given structs to use isize_t, a custom
+// type conceptually analogous to size_t.
 
 // If DEBUG is defined, define a debug() macro function that works like printf() 
-// but also appends a debug tag and the name of the calling function. Depends on 
-// stdio being included.
+// but also appends a debug tag and the name of the current function. Otherwise
+// it expands to a stub which will get optimized away. Depends on stdio being 
+// included where it's used.
 #ifdef DEBUG
 
 	#define debug(...)\
@@ -39,7 +40,7 @@
 
 #define CLEAR_SCREEN        "\x1b[2J"
 
-// Define an internal size_t (thus isize_t) for use with custom structs. 
+// Define an internal size type for use with custom structs.
 typedef unsigned int isize_t;
 
 // Struct for program arguments.
@@ -57,8 +58,8 @@ typedef struct Arguments {
 //      y ... coordinate in vertical direction
 typedef struct Position {
 	// Why does this have to be unsigned char? The largest possible position
-	// for the given board struct is (UINT_MAX, UINT_MAX) and UINT_MAX > UINT_CHAR
-	// by definition. (Assuming isize_t = unsigned int.)
+	// for the given board struct is (UINT_MAX, UINT_MAX) and UINT_MAX > UCHAR_MAX
+	// by definition.
 	unsigned char x;
 	unsigned char y;
 } Position;
@@ -114,13 +115,12 @@ typedef enum {
 // initialize it with two random values.
 Board *create_board(const isize_t size, ErrorCode *err);
 
-// Free the given board which was previously created with `create_board`.
+// Free a board created with `create_board`.
 ErrorCode free_board(Board *board);
 
 // Apply a direction/move command to the given board.
 BoardState move_direction(Board *board, Direction dir, bool *moved);
 
 // Add 2 or 4 (chosen randomly) to a random position on the given board, 
-// following the required "order of randomness". Returns EXIT_OK even if the 
-// board is full (i. e. if no new value was added).
+// following the required "order of randomness".
 ErrorCode add_number(Board *board);

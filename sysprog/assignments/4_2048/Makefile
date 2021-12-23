@@ -10,7 +10,6 @@ game2048.o: game_2048.c game_2048.h
 
 main.o: main.c game_2048.h
 
-
 clean:
 	rm -f *.o game_2048
 
