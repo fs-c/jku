@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 11}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\cmod}{\text{mod}}
+
+\usepackage{seqsplit}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+Gegeben ist ein \emph{public key} und eine verschlüsselte Nachricht. Verlangt ist eine Entschlüsselung der Nachricht gefolgt von einer Ableitung des \emph{private keys}.
+
+Das macht für mich aus mehreren Gründen keinen Sinn. Erstens werden die Begriffe \emph{public} und \emph{private key} dubios verwendet. Im ersten Teil soll mithilfe eines \emph{public keys} eine Nachricht entschlüsselt werden, im zweiten Teil mithilfe eines \emph{private keys} eine Nachricht verschlüsselt werden. Jeweils das Umgekehrte wäre sinnvoll --- \emph{public key} verschlüsselt, \emph{private key} entschlüsselt.
+
+Zweitens ergibt sich aus dem angeblichen \emph{public key} kein valider \emph{private key}. Man zerlege $m$ in die Primfaktoren $p = 1417021450037$ und $q = 1743801750631$. Daraus ergibt sich weiters $\phi = 2471004485253037876522680$ und $d = 2094576675656119524619681$ (eine von mehreren gleichwertigen Lösungen für $d$). Dann gilt aber für $x = 272797218939662984624437$, dass $\cmod(x^d, m) = \seqsplit{2191972902183325951471984}$, was kein valides Ergebnis ist.
+
+Interpretiert man aber das als \emph{public key} gegebenen Paar als \emph{private key} $(m, d)$, nimmt man also $m = 2471004485256198699723347$ und $d = 679256688868919115503281$, funktioniert die Entschlüsselung wie erwartet mit
+\begin{equation*}
+    \cmod(x^d, m) = 282033334039281634 = \texttt{merryxmas}.
+\end{equation*} (In diesem Fall muss auch der einleitende Satz zu \enquote{Ihr \emph{private key} ist\ldots. Sie erhalten von Ihrem Übungsleiter folgende Nachricht, die mit Ihrem \emph{public key} verschlüsselt wurde.} umgedacht werden.)
+
+Interpretiert man nun weiter den zweiten Teil als Ableitung eines \emph{public keys} aus einem \emph{private key} machen auch die Hinweise, die sonst eher beim ersten Teil hilfreich gewesen wären, mehr Sinn. Abzuleiten ist nun also $e$ aus dem gegebenen $m$ und $d$. Gelten muss $de \equiv_{\phi} 1$, das $\phi$ ist schon von oben bekannt und unverändert, es ergibt sich $e = 2094576675656119524619681$ als modulares Inverses von $d$. Die Nachricht $\texttt{happynewyear}$ wird zu $x = 231631314029203840201633$ codiert, was zu
+\begin{equation*}
+    \cmod(x^e, m) = 156693474749568634695296
+\end{equation*}
+verschlüsselt werden kann.
+
+% Der Teil $m$ des gegebenen Keys kann in die Primfaktoren
+% \begin{equation*}
+%     p = 1417021450037 \quad \text{und} \quad q = 1743801750631
+% \end{equation*}
+% zerlegt werden. Damit kann
+% \begin{equation*}
+%     \phi = (1417021450037 - 1)(1743801750631 - 1) = 2471004485253037876522680
+% \end{equation*}
+% berechnet werden. (Es gilt nun $\gcd(e, \phi) = 1$.) Weiters kann nun ein modulares Inverses von $e$ mit dem Modulus $\phi$,
+% \begin{equation*}
+%     d e \equiv_{\phi} 1 \quad \text{mit} \quad d = 2094576675656119524619681
+% \end{equation*}
+% berechnet werden. Die Funktionen zu Ver- und Entschlüsselung (jeweils $\mathbb{Z}_m \rightarrow \mathbb{Z}_m$) sind nun
+% \begin{align*}
+%     f(X) &= X^e = X^{679256688868919115503281} \\
+%     f^{-1}(X) &= X^d = X^{2094576675656119524619681}.
+% \end{align*}
+
+% \begin{enumerate}
+%     \item Es gilt $f^{-1}(272797218939662984624437) = 2191972902183325951471984$, das ist kein valides Ergebnis nachdem etwa 84 (ersten beiden Ziffern) schon größer als der größtmögliche Wert (41) ist.
+    
+%     \item 
+% \end{enumerate}
+
+\end{document}
