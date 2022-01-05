@@ -46,7 +46,7 @@ Gegeben ist ein \emph{public key} und eine verschlüsselte Nachricht. Verlangt i
 
 Das macht für mich aus mehreren Gründen keinen Sinn. Erstens werden die Begriffe \emph{public} und \emph{private key} dubios verwendet. Im ersten Teil soll mithilfe eines \emph{public keys} eine Nachricht entschlüsselt werden, im zweiten Teil mithilfe eines \emph{private keys} eine Nachricht verschlüsselt werden. Jeweils das Umgekehrte wäre sinnvoll --- \emph{public key} verschlüsselt, \emph{private key} entschlüsselt.
 
-Zweitens ergibt sich aus dem angeblichen \emph{public key} kein valider \emph{private key}. Man zerlege $m$ in die Primfaktoren $p = 1417021450037$ und $q = 1743801750631$. Daraus ergibt sich weiters $\phi = 2471004485253037876522680$ und $d = 2094576675656119524619681$ (eine von mehreren gleichwertigen Lösungen für $d$). Dann gilt aber für $x = 272797218939662984624437$, dass $\cmod(x^d, m) = \seqsplit{2191972902183325951471984}$, was kein valides Ergebnis ist.
+Zweitens ergibt sich aus dem gegebenen \emph{public key} kein valider \emph{private key}. Man zerlege $m$ in die Primfaktoren $p = 1417021450037$ und $q = 1743801750631$. Daraus ergibt sich weiters $\phi = 2471004485253037876522680$ und $d = 2094576675656119524619681$ (eine von mehreren gleichwertigen Lösungen für $d$). Dann gilt aber für $x = 272797218939662984624437$, dass $\cmod(x^d, m) = \seqsplit{2191972902183325951471984}$, was kein valides Ergebnis ist.
 
 Interpretiert man aber das als \emph{public key} gegebenen Paar als \emph{private key} $(m, d)$, nimmt man also $m = 2471004485256198699723347$ und $d = 679256688868919115503281$, funktioniert die Entschlüsselung wie erwartet mit
 \begin{equation*}
@@ -59,28 +59,26 @@ Interpretiert man nun weiter den zweiten Teil als Ableitung eines \emph{public k
 \end{equation*}
 verschlüsselt werden kann.
 
-% Der Teil $m$ des gegebenen Keys kann in die Primfaktoren
-% \begin{equation*}
-%     p = 1417021450037 \quad \text{und} \quad q = 1743801750631
-% \end{equation*}
-% zerlegt werden. Damit kann
-% \begin{equation*}
-%     \phi = (1417021450037 - 1)(1743801750631 - 1) = 2471004485253037876522680
-% \end{equation*}
-% berechnet werden. (Es gilt nun $\gcd(e, \phi) = 1$.) Weiters kann nun ein modulares Inverses von $e$ mit dem Modulus $\phi$,
-% \begin{equation*}
-%     d e \equiv_{\phi} 1 \quad \text{mit} \quad d = 2094576675656119524619681
-% \end{equation*}
-% berechnet werden. Die Funktionen zu Ver- und Entschlüsselung (jeweils $\mathbb{Z}_m \rightarrow \mathbb{Z}_m$) sind nun
-% \begin{align*}
-%     f(X) &= X^e = X^{679256688868919115503281} \\
-%     f^{-1}(X) &= X^d = X^{2094576675656119524619681}.
-% \end{align*}
+\paragraph{Aufgabe 2}
 
-% \begin{enumerate}
-%     \item Es gilt $f^{-1}(272797218939662984624437) = 2191972902183325951471984$, das ist kein valides Ergebnis nachdem etwa 84 (ersten beiden Ziffern) schon größer als der größtmögliche Wert (41) ist.
-    
-%     \item 
-% \end{enumerate}
+Der gegebene Mechanismus erzeugt keine besonders guten Zufallsziffern nachdem Ziffern $< 6$ bedeutend wahrscheinlicher als solche $\geq 6$ sind. Das ist dadurch bedingt, dass der Ausdruck $b_0 + 2b_1 + 4b_2 + 8b_3$ uniform Werte im Bereich $[0, 15]$ erzeugt. Werte in $[10, 15]$ werden durch den Modulo allerdings zu $[0, 5]$ gewandelt, sie kommen also h\"aufiger vor.
+
+\begin{table}[h]
+    \centering
+    \makebox[0pt]{\begin{tabular}{c c c c c c c c c c}\toprule
+        0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\\midrule
+        0.124757 & 0.124656 & 0.124566 & 0.125098 & 0.124697 & 0.125103 & 0.062505 & 0.062703 & 0.062811 & 0.063104 \\\bottomrule
+    \end{tabular}}
+    \caption{Relative H\"aufigkeit der m\"oglichen Ziffern, $n = 1000000$.}
+\end{table}
+
+Sei $B(i)$ eine Funktion die das Zufallsbit $b_i$ retourniert. Dann w\"are ein uniformer Generator die Funktion
+\begin{equation*}
+    f(i) = \begin{cases}
+        b_{i} + 2b_{i + 1} + 4b_{i + 2} + 8b_{i + 3} & \text{f\"ur}\ b_{i} + 2b_{i + 1} + 4b_{i + 2} + 8b_{i + 3} < 10 \\
+        f(i + 4) & \text{andernfalls} \\
+    \end{cases}
+\end{equation*}
+welche so lange neue Bits durchprobiert bis eine Zahl $< 10$ das Ergebnis ist. Somit wird die Verwendung von $\cmod$ und die damit einhergehenden Probleme umgangen. 
 
 \end{document}
