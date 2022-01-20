@@ -42,43 +42,47 @@
 
 \paragraph{Aufgabe 1.}
 
-Es gilt eine injektive Funktion $f$ von der Menge aller Partitionen von $\{ 1, \ldots, n \}$ in die Menge $S_n$ (also die Menge aller Permutationen von $\{ 1, \ldots, n \}$) zu konstruieren.
-\begin{equation*}
-    f(\{ p_1, p_2, \ldots p_j \}) = 
-\end{equation*}
+Es gilt eine surjektive Funktion von $S_n$ in die Menge $P$ aller Partitionen von $\{1, \ldots, n\}$ zu konstruieren.
 
-% Dafür hilfreich ist eine Funktion $z : \mathcal{P}(\mathbb{N}) \rightarrow S_n$, welche eine Menge von ganzen Zahlen in einen Zyklus überführt.
-% \begin{equation*}
-%     z(\{ 1, 2, \ldots, n \}) = (1, 2, \ldots, n)
-% \end{equation*}
+Beobachtung: Zerlegt man ein $\pi \in S_n$ in disjunkte Zyklen $z_1, \ldots, z_m$ und interpretiert man die Zyklen $z = (k_1\ \ldots\ k_j)$ als $\overline{z} = \{ k_1, \ldots, k_j \}$ so ergibt $\{ \overline{z}_1, \ldots, \overline{z}_m \}$ eine Menge von Mengen die $\in P$ ist. Beweis: Zu zeigen ist, dass f\"ur $\{ \overline{z}_1, \ldots, \overline{z}_m \}$ die Bedingungen einer Partition gelten. Nach der Definition von Zyklen gilt $\overline{z}_i \in \mathcal{P}(\{1, \ldots, n\})$, $\overline{z}_i \neq \emptyset$ und $\overline{z}_1 \cup \cdots \cup \overline{z}_m = \{ 1, \ldots, n \}$. Weiters gilt $\overline{z}_i \cap \overline{z}_j = \emptyset$ f\"ur $i \neq j$ nachdem die Zyklen disjunkt sind.
 
-% Damit kann nun
-% \begin{equation*}
-%     f(\{ p_1, p_2, \ldots p_j \}) = z(p_1) \circ z(p_2) \circ \cdots \circ z(p_j)
-% \end{equation*}
-% formuliert werden.
+Die gesuchte Funktion geht gem\"aß der obigen Beobachtung vor. Diese Funktion ist surjektiv, f\"ur alle $p \in P$ gibt es ein $\pi \in S_n$ mit $f(\pi) = p$, nachdem f\"ur den Inhalt einer beliebigen Partition $p = \{ u_1, \ldots, u_k \} \in P$ und f\"ur (gem\"aß der obigen Ausf\"uhrungen uminterpretierten) disjunkte Zyklen gleiche Bedingungen gelten. Die Funktion ist allerdings nicht injektiv, nachdem zwei verschiedene Zyklen --- etwa $(1\ 2\ 3)$ und $(1\ 3\ 2)$ --- zur gleichen Menge uminterpretiert werden.
+
+\paragraph{Aufgabe 2.}
+
+K\"onnte kein Topf leer sein, so w\"urde es $\begin{Bsmallmatrix}n \\k\end{Bsmallmatrix}$ M\"oglichkeiten zur Aufteilung geben. Nachdem dies nicht der Fall ist, muss $\begin{Bsmallmatrix}n \\k\end{Bsmallmatrix}$ (keine leeren T\"opfe), $\begin{Bsmallmatrix}n \\k - 1\end{Bsmallmatrix}$ (ein leerer Topf), $\begin{Bsmallmatrix}n \\k - 2\end{Bsmallmatrix}$ (zwei leeren T\"opfe), \ldots ,$\begin{Bsmallmatrix}n \\k - k\end{Bsmallmatrix}$ ($k$ leere T\"opfe) berechnet und summiert werden.
+
+\paragraph{Aufgabe 3.}
+
+Wenn die Reihenfolge der B\"ucher irrelevant w\"are, so w\"urde $\begin{psmallmatrix}n + k - 1 \\ k - 1\end{psmallmatrix}$ die Anzahl der M\"oglich\-kei\-ten modellieren, sie zu platzieren. Man denke die B\"oden zu \enquote{Separatoren} um. Dann gibt es f\"ur $k$ B\"oden immer $k - 1$ Separatoren, weil der erste Separator zwischen dem ersten und zweiten (und nicht unter dem ersten) \enquote{Stock} liegt. Im Kontext des Binomialkoeffizienten gibt es dann insgesamt $n + k - 1$ m\"ogliche Positionen zwischen denen $k - 1$ Separatoren verschoben werden k\"onnen.
+
+\begin{center}
+    \begin{tabular}{c c c}
+        n & k & $\begin{psmallmatrix}n + k - 1 \\ k - 1\end{psmallmatrix}$ \\
+        1 & 1 & 1 \\
+        1 & 2 & 2 \\
+        1 & 3 & 3 \\
+        1 & 4 & 4 \\
+        \multicolumn{3}{c}{$\cdots$}
+    \end{tabular}
+    \quad
+    \begin{tabular}{c c c}
+        n & k & $\begin{psmallmatrix}n + k - 1 \\ k - 1\end{psmallmatrix}$ \\
+        2 & 1 & 1 \\
+        2 & 2 & 3 \\
+        2 & 3 & 6 \\
+        2 & 4 & 10 \\
+        \multicolumn{3}{c}{$\cdots$}
+    \end{tabular}
+    \quad
+    $\cdots$
+\end{center}
+
+Nachdem die Reihenfolge der B\"ucher relevant ist, muss dieser Wert noch um die Anzahl der m\"oglichen Permutationen der Menge der B\"ucher, $|S_n| = n!$, skaliert werden.
 
 \end{document}
 
-partitionen von {1, 2, 3} (5)
-{ {1}, {2}, {3} }, { {1, 2, 3} }, { {1, 2}, {3} }, { {1}, {2, 3} }, { {2}, {1, 3} }
+n! = |S_n|
 
-permutationen von S_3, zyklennotation (6)
-(1)(2)(3), (1)(2 3), (1 2)(3), (1 2 3), (1 3 2), (1 3)(2)
-
-injektiv: nicht alles muss getroffen werden, aber niemals doppelt
-
-
-permutationen von S_4
-{1, 2, 3, 4}, {1, 2, 4, 3}, {1, 3, 2, 4}, {1, 3, 4, 2}, {1, 4, 2, 3}, {1, 4, 3, 2}, 
-{2, 1, 3, 4}, {2, 1, 4, 3}, {2, 3, 1, 4}, {2, 3, 4, 1}, {2, 4, 1, 3}, {2, 4, 3, 1}, {3, 1, 2, 4}, 
-{3, 1, 4, 2}, {3, 2, 1, 4}, {3, 2, 4, 1}, {3, 4, 1, 2}, {3, 4, 2, 1}, {4, 1, 2, 3}, {4, 1, 3, 2},  
-{4, 2, 1, 3}, {4, 2, 3, 1}, {4, 3, 1, 2}, {4, 3, 2, 1}
-
-z : nimmt permutation, gibt menge der disjunkten zyklen zurück
-
-(1)(2)(3)(4), (1)(2)(3 4), (1)(2 3)(4), (1)(2 3 4), (1)(2 4 3), (1)(2 4)(3)
-{1}{2}{3}{4}
-
-
+anzahl der teilmengen von 1 ... n + k - 1 mit k - 1 elementen
 
