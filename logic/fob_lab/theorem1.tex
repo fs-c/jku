@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Logic --- \textbf{FOBL}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\cmod}{\text{mod}}
+
+\newcommand{\asymmetric}{\textit{asymmetric}\,}
+\newcommand{\antisymmetric}{\textit{antisymmetric}\,}
+\newcommand{\irreflexive}{\textit{irreflexive}\,}
+
+\begin{document}
+
+Binary relations $R$ operating on a set $A$ are said to be asymmetric, antisymmetric or irreflexive according to the following definitions for arbitrary but fixed $R$ and $A$.
+\begin{align}
+    \label{eq:asymmetric} \asymmetric(R, A) &\Longleftrightarrow \forall\, x, y \in A : R(x, y) \Rightarrow \neg R(y, x) \\
+    \label{eq:antisymmetric} \antisymmetric(R, A) &\Longleftrightarrow \forall\, x, y \in A : (R(x, y) \land R(y, x)) \Rightarrow (x = y) \\
+    \label{eq:irreflexive} \irreflexive(R, A) &\Longleftrightarrow \forall\, x \in A : \neg R(x, x)
+\end{align}
+
+We show that, again for arbitrary but fixed $R$ and $A$, the implication
+\begin{equation*}
+    \asymmetric(R, A) \Rightarrow (\antisymmetric(R, A) \land \irreflexive(R, A))
+\end{equation*}
+holds by assuming that $\asymmetric(R, A)$ is true and showing that $\antisymmetric(R, A)$ and $\irreflexive(R, A)$ then hold.
+
+It is elementary that, for arbitrary but fixed $x, y \in A$ the statement $R(x, y) \land R(y, x)$ in $\eqref{eq:antisymmetric}$ is a contradiction. $R(x, y)$ implies that $\neg R(y, x)$, therefore $R(x, y) \land R(y, x)$ can never be true for fixed $x, y$ under the assumption of $\eqref{eq:asymmetric}$. Since the left-hand side of the implication in \eqref{eq:antisymmetric} is always false the statement will always be true. We have thus shown that $\antisymmetric(R, A)$ holds.
+
+If $R(x, x)$ were true for arbitrary but fixed $x \in A$ it would lead to $R(x, x) \Rightarrow \neg R(x, x)$ being false. Since that is a contradiction (we know that \eqref{eq:asymmetric} holds for our $R$ and $A$) we conclude that $\neg R(x, x)$. We have thus shown that $\irreflexive(R, A)$ holds.
+
+\end{document}

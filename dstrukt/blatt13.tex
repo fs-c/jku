@@ -1,0 +1,123 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 13}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\cmod}{\text{mod}}
+
+\newcommand{\inline}{}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+Induktionsanfang: Für $n = 0$ gilt
+\begin{align*}
+    \sum_{k = 0}^{0} (-1)^k {{m + 1}\choose{k}}
+    &=
+    (-1)^0 {{m}\choose{0}}
+    \\
+    (-1)^0 {{m + 1}\choose{0}}
+    &=
+    (-1)^0 {{m}\choose{0}}
+    \\
+    1 &= 1
+\end{align*}
+nachdem für beliebiges $x \in \mathbb{N}$ gilt, dass $x^0 = 1$ und ${{x}\choose{0}} = 1$.
+
+Induktionsvorraussetzung: Angenommen $n \in \mathbb{N}$ ist so, dass
+\begin{equation}\label{eq:induction-pre}
+    \sum_{k = 0}^{n} (-1)^k {{m + 1}\choose{k}} = (-1)^n {{m}\choose{n}}
+\end{equation}
+gilt.
+
+Induktionsschritt: Zu zeigen ist, dass dann auch
+\begin{align}
+    \sum_{k = 0}^{n + 1} (-1)^k {{m + 1}\choose{k}} &= (-1)^{n + 1} {{m}\choose{n + 1}} \label{eq:induction-goal}\\
+    \left( \sum_{k = 0}^{n} (-1)^k {{m + 1}\choose{k}} \right) + (-1)^{n + 1} {{m + 1}\choose{n + 1}}
+    &=
+    (-1)^{n + 1} {{m}\choose{n + 1}} \nonumber \\
+    (-1)^n {{m}\choose{n}} + (-1)^{n + 1} {{m + 1}\choose{n + 1}} &= (-1)^{n + 1} {{m}\choose{n + 1}} \label{eq:induction-step-2}
+\end{align}
+gilt. In \eqref{eq:induction-step-2} wurde \eqref{eq:induction-pre} angewendet. Wenn $n$ gerade dann $(-1)^n = 1$, andernfalls $(-1)^n = -1$. Angenommen $n$ gerade (also $n + 1$ ungerade), dann gilt für \eqref{eq:induction-step-2}, dass
+\begin{align*}
+    {{m}\choose{n}} - {{m + 1}\choose{n + 1}} &= -{{m}\choose{n + 1}} \\
+    -{{m + 1}\choose{n + 1}} &= -{{m}\choose{n + 1}} - {{m}\choose{n}} \\
+    {{m + 1}\choose{n + 1}} &= {{m}\choose{n}} + {{m}\choose{n + 1}}.
+\end{align*}
+Angenommen $n$ ungerade (also $n + 1$ gerade), dann gilt für \eqref{eq:induction-step-2}, dass
+\begin{align*}
+    -{{m}\choose{n}} + {{m + 1}\choose{n + 1}} &= {{m}\choose{n + 1}} \\
+    {{m + 1}\choose{n + 1}} &= {{m}\choose{n}} + {{m}\choose{n + 1}}.
+\end{align*}
+Gemäß der Rekurrenz des Pascal-Dreiecks ${{m + 1}\choose{n + 1}} = {{m}\choose{n}} + {{m}\choose{n + 1}}$ ist nun \eqref{eq:induction-goal} bewiesen.
+
+\paragraph{Aufgabe 2}
+
+Wir wissen $F_0 = 0$ und $F_1 = 1$.
+
+Induktionsanfang: Für $n = 0$ gilt
+\begin{align*}
+    F_0 &= (2F_1 - F_0)F_0     & F_1 &= F^{2}_{1} + F^{2}_{0} \\
+    0 &= (2 - 0)0              & 1 &= 1 + 0 \\
+    0 &= 0                     & 1 &= 1
+\end{align*}
+
+Induktionsvorraussetzung: Angenommen $n \in \mathbb{N}$ ist so, dass
+\begin{align*}
+    F_{2n} &= (2F_{n + 1} - F_n)F_n & F_{2n + 1} &= F^{2}_{n + 1} + F^{2}_{n}
+\end{align*}
+gilt.
+
+Induktionsschritt: Zu zeigen ist, dass dann auch
+\begin{align*}
+    F_{2n + 2} &= (2F_{n + 2} - F_{n + 1})F_{n + 1} & F_{2n + 3} &= F^{2}_{n + 2} + F^{2}_{n + 1}
+\end{align*}
+gilt. Wir wissen $F_{2n + 2} = F_{2n + 1} + F_{2n}$ und somit
+\begin{align*}
+    F_{2n + 1} + F_{2n} &= (2F_{n + 2} - F_{n + 1})F_{n + 1} \\
+    F^{2}_{n + 1} + F^{2}_{n} + (2F_{n + 1} - F_n)F_n &= (2F_{n + 2} - F_{n + 1})F_{n + 1}
+\end{align*}
+
+\paragraph{Aufgabe 3}
+
+\begin{enumerate}
+    \item 
+\end{enumerate}
+
+\end{document}
+
+x(y - z)
+
+xy - xz
