@@ -42,22 +42,34 @@
 
 \paragraph{Aufgabe 1.}
 
-Gegeben ist ein \emph{public key} und eine verschlüsselte Nachricht. Verlangt ist eine Entschlüsselung der Nachricht gefolgt von einer Ableitung des \emph{private keys}.
+\emph{Public keys} werden f\"ur Verschl\"usselung, \emph{private keys} f\"ur Entschl\"usselung verwendet (Skriptum, S. 62). Ich interpretiere die Aufgabe also so, dass in (a) ein \emph{private key} $(m, d)$ gegeben ist und (b) die Rekonstruktion eines \emph{public keys} zur Verschl\"usselung verlangt.
 
-Das macht für mich aus mehreren Gründen keinen Sinn. Erstens werden die Begriffe \emph{public} und \emph{private key} dubios verwendet. Im ersten Teil soll mithilfe eines \emph{public keys} eine Nachricht entschlüsselt werden, im zweiten Teil mithilfe eines \emph{private keys} eine Nachricht verschlüsselt werden. Jeweils das Umgekehrte wäre sinnvoll --- \emph{public key} verschlüsselt, \emph{private key} entschlüsselt.
+\begin{enumerate}
+    \item Es gilt $m = 2471004485256198699723347$ und $d = 679256688868919115503281$. Dann gilt $\cmod(x^d, m) = 282033334039281634 = \texttt{merryxmas}$.
+    
+    \item Man zerlege $m$ in die Primfaktoren $p = 1417021450037$ und $q = 1743801750631$. Daraus ergibt sich weiters $\phi = (p - 1)(q - 1) = 2471004485253037876522680$ und, nachdem $de \equiv_{\phi} 1$ gelten muss, $e = 2094576675656119524619681$ als modulares Inverses von $d$. Die Nachricht $\texttt{happynewyear}$ wird zu $x = 231631314029203840201633$ codiert, was zu
+    \begin{equation*}
+        \cmod(x^e, m) = 156693474749568634695296
+    \end{equation*}
+    verschlüsselt werden kann.
+\end{enumerate}
 
-Zweitens ergibt sich aus dem gegebenen \emph{public key} kein valider \emph{private key}. Man zerlege $m$ in die Primfaktoren $p = 1417021450037$ und $q = 1743801750631$. Daraus ergibt sich weiters $\phi = 2471004485253037876522680$ und $d = 2094576675656119524619681$ (eine von mehreren gleichwertigen Lösungen für $d$). Dann gilt aber für $x = 272797218939662984624437$, dass $\cmod(x^d, m) = \seqsplit{2191972902183325951471984}$, was kein valides Ergebnis ist.
+% Gegeben ist ein \emph{public key} und eine verschlüsselte Nachricht. Verlangt ist eine Entschlüsselung der Nachricht gefolgt von einer Ableitung des \emph{private keys}.
 
-Interpretiert man aber das als \emph{public key} gegebenen Paar als \emph{private key} $(m, d)$, nimmt man also $m = 2471004485256198699723347$ und $d = 679256688868919115503281$, funktioniert die Entschlüsselung wie erwartet mit
-\begin{equation*}
-    \cmod(x^d, m) = 282033334039281634 = \texttt{merryxmas}.
-\end{equation*} (In diesem Fall muss auch der einleitende Satz zu \enquote{Ihr \emph{private key} ist\ldots. Sie erhalten von Ihrem Übungsleiter folgende Nachricht, die mit Ihrem \emph{public key} verschlüsselt wurde.} umgedacht werden.)
+% Das macht für mich aus mehreren Gründen keinen Sinn. Erstens werden die Begriffe \emph{public} und \emph{private key} dubios verwendet. Im ersten Teil soll mithilfe eines \emph{public keys} eine Nachricht entschlüsselt werden, im zweiten Teil mithilfe eines \emph{private keys} eine Nachricht verschlüsselt werden. Jeweils das Umgekehrte wäre sinnvoll --- \emph{public key} verschlüsselt, \emph{private key} entschlüsselt.
 
-Interpretiert man nun weiter den zweiten Teil als Ableitung eines \emph{public keys} aus einem \emph{private key} machen auch die Hinweise, die sonst eher beim ersten Teil hilfreich gewesen wären, mehr Sinn. Abzuleiten ist nun also $e$ aus dem gegebenen $m$ und $d$. Gelten muss $de \equiv_{\phi} 1$, das $\phi$ ist schon von oben bekannt und unverändert, es ergibt sich $e = 2094576675656119524619681$ als modulares Inverses von $d$. Die Nachricht $\texttt{happynewyear}$ wird zu $x = 231631314029203840201633$ codiert, was zu
-\begin{equation*}
-    \cmod(x^e, m) = 156693474749568634695296
-\end{equation*}
-verschlüsselt werden kann.
+% Zweitens ergibt sich aus dem gegebenen \emph{public key} kein valider \emph{private key}. Man zerlege $m$ in die Primfaktoren $p = 1417021450037$ und $q = 1743801750631$. Daraus ergibt sich weiters $\phi = 2471004485253037876522680$ und $d = 2094576675656119524619681$ (eine von mehreren gleichwertigen Lösungen für $d$). Dann gilt aber für $x = 272797218939662984624437$, dass $\cmod(x^d, m) = \seqsplit{2191972902183325951471984}$, was kein valides Ergebnis ist.
+
+% Interpretiert man aber das als \emph{public key} gegebenen Paar als \emph{private key} $(m, d)$, nimmt man also $m = 2471004485256198699723347$ und $d = 679256688868919115503281$, funktioniert die Entschlüsselung wie erwartet mit
+% \begin{equation*}
+%     \cmod(x^d, m) = 282033334039281634 = \texttt{merryxmas}.
+% \end{equation*} (In diesem Fall muss auch der einleitende Satz zu \enquote{Ihr \emph{private key} ist\ldots. Sie erhalten von Ihrem Übungsleiter folgende Nachricht, die mit Ihrem \emph{public key} verschlüsselt wurde.} umgedacht werden.)
+
+% Interpretiert man nun weiter den zweiten Teil als Ableitung eines \emph{public keys} aus einem \emph{private key} machen auch die Hinweise, die sonst eher beim ersten Teil hilfreich gewesen wären, mehr Sinn. Abzuleiten ist nun also $e$ aus dem gegebenen $m$ und $d$. Gelten muss $de \equiv_{\phi} 1$, das $\phi$ ist schon von oben bekannt und unverändert, es ergibt sich $e = 2094576675656119524619681$ als modulares Inverses von $d$. Die Nachricht $\texttt{happynewyear}$ wird zu $x = 231631314029203840201633$ codiert, was zu
+% \begin{equation*}
+%     \cmod(x^e, m) = 156693474749568634695296
+% \end{equation*}
+% verschlüsselt werden kann.
 
 \paragraph{Aufgabe 2}
 
@@ -80,5 +92,19 @@ Sei $B(i)$ eine Funktion die das Zufallsbit $b_i$ retourniert. Dann w\"are ein u
     \end{cases}
 \end{equation*}
 welche so lange neue Bits durchprobiert bis eine Zahl $< 10$ das Ergebnis ist. Somit wird die Verwendung von $\cmod$ und die damit einhergehenden Probleme umgangen. 
+
+\paragraph{Aufgabe 3}
+
+\begin{enumerate}
+    \item $\{ \ldots, -58, -23, 12, 47, 82, \ldots \}$ bzw. $\{ 35y + 12 : y \in \mathbb{Z} \}$.
+    % -16 -9 -2 5 12 19 26 33 40 47 54
+    % -8 -3 2 7 12 17 22 27 32 37 42 47
+    \item $\{ \ldots, -43, -19, 5, 29, 53, \ldots \}$ bzw. $\{ 24y + 5 : y \in \mathbb{Z} \}$.
+    % -1 5 11 17 23 29 35 41 47 53 59 65 71
+    % -27 -19 -11 -3 5 13 21 29 37 45 53 61
+    \item $\{ \ldots, -25, -1, 23, 47, 71, \ldots \}$ bzw. $\{ 24y + 23 : y \in \mathbb{Z} \}$.
+    % -1, 5, 11, 17, 23, 29 
+    % -1, 7, 15, 23, 
+\end{enumerate}
 
 \end{document}

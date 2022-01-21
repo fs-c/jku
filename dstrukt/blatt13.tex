@@ -101,23 +101,77 @@ Induktionsvorraussetzung: Angenommen $n \in \mathbb{N}$ ist so, dass
 gilt.
 
 Induktionsschritt: Zu zeigen ist, dass dann auch
-\begin{align*}
-    F_{2n + 2} &= (2F_{n + 2} - F_{n + 1})F_{n + 1} & F_{2n + 3} &= F^{2}_{n + 2} + F^{2}_{n + 1}
-\end{align*}
+
+\begin{minipage}{.49\linewidth}
+    \begin{equation}\label{eq:2-ind-goal-1}
+        F_{2n + 2} = (2F_{n + 2} - F_{n + 1})F_{n + 1}
+    \end{equation}
+\end{minipage}%
+\begin{minipage}{.49\linewidth}
+    \begin{equation}\label{eq:2-ind-goal-2}
+        F_{2n + 3} = F^{2}_{n + 2} + F^{2}_{n + 1}
+    \end{equation}
+\end{minipage}
+\vspace{.5em}
+
 gilt. Wir wissen $F_{2n + 2} = F_{2n + 1} + F_{2n}$ und somit
 \begin{align*}
-    F_{2n + 1} + F_{2n} &= (2F_{n + 2} - F_{n + 1})F_{n + 1} \\
-    F^{2}_{n + 1} + F^{2}_{n} + (2F_{n + 1} - F_n)F_n &= (2F_{n + 2} - F_{n + 1})F_{n + 1}
+    (2F_{n + 2} - F_{n + 1})F_{n + 1} &= F^{2}_{n + 1} + F^{2}_{n} + (2F_{n + 1} - F_n)F_n \\
+    (2F_{n + 2} - F_{n + 1})F_{n + 1} &= F^{2}_{n + 1} + F^{2}_{n} + 2F_{n + 1}F_n - F_{n}^{2} \\
+    (2F_{n + 2} - F_{n + 1})F_{n + 1} &= F^{2}_{n + 1} + 2F_{n + 1}F_n \\
+    2F_{n + 2} - F_{n + 1} &= F_{n + 1} + 2F_n \\
+    F_{n + 2} &= F_{n + 1} + F_n,
 \end{align*}
+womit \eqref{eq:2-ind-goal-1} bewiesen ist.
+
+Wir wissen $F_{2n + 3} = F_{2n + 2} + F_{2n + 1}$ und somit
+\begin{align*}
+    F^{2}_{n + 2} + F^{2}_{n + 1} &= (2F_{n + 2} - F_{n + 1})F_{n + 1} + F^{2}_{n + 1} + F^{2}_{n} \\
+    F^{2}_{n + 2} &= (2F_{n + 2} - F_{n + 1})F_{n + 1} + F^{2}_{n}.
+\end{align*}
+Nachdem $F_{n + 2} - F_{n + 1} = F_{n}$ und somit $2F_{n + 2} - F_{n + 1} = F_{n + 2} + F_{n + 2} - F_{n + 1} = F_{n + 2} + F_{n}$, gilt
+\begin{align*}
+    F^{2}_{n + 2} &= (F_{n + 2} + F_{n})F_{n + 1} + F^{2}_{n} \\
+    F^{2}_{n + 2} - F^{2}_{n} &= (F_{n + 2} + F_{n})F_{n + 1} \\
+    F_{n + 2} - F_{n} &= F_{n + 1} \\
+    F_{n + 2} &= F_{n + 1} + F_{n},
+\end{align*}
+womit \eqref{eq:2-ind-goal-2} bewiesen ist.
 
 \paragraph{Aufgabe 3}
 
 \begin{enumerate}
-    \item 
+    \item Wir haben $f(x) = rx(1 - x)$, es gilt $f'(x) = -2rx + r$ und $f''(x) = -2r$. An der Stelle
+    \begin{align*}
+        f'(x) = 0 &= -2rx + r \\
+        \frac{-r}{-2r} &= x \\
+        \frac{1}{2} &= x
+    \end{align*}
+    befindet sich eine Extremstelle. Nachdem $f''$ f\"ur unser $r$ immer negativ ist, ist an dieser Stelle das Maximum von $f$. Die Funktion $f(x_{n})$ modelliert den Wert $x_{n + 1}$. Somit ist $n_{x + 1}$ das Maximum wenn $x_n = \frac{1}{2}$, das größtmögliche $x_{n + 1}$ kann nun durch 
+    \begin{align*}
+        x_{n + 1} &= r \cdot \frac{1}{2}\left(1 - \frac{1}{2}\right) = \frac{1}{4}r
+    \end{align*}
+    beschrieben werden. Nachdem $0 < r < 4$ gilt demzufolge $0 < x_{n + 1} < 1$.
+
+    \item Induktionsanfang: Zu zeigen ist, dass $x_1 < 1$. Unter der Annahme $0 \leq x_0 \leq 1$ ist $x_1$ nach a) immer kleiner als 1.
+    
+    Induktionsvorraussetzung: Angenommen $n \in \mathbb{N}$ ist so, dass $x_n < \frac{1}{n}$ gilt.
+
+    Induktionsschritt: Zu zeigen ist nun, dass $x_{n + 1} < \frac{1}{n + 1}$. Es gilt $x_{n + 1} = r x_{n} (1 - x_{n})$ und hierf\"ur $r x_{n} (1 - x_{n}) \leq x_{n} (1 - x_{n})$ nachdem $r \leq 1$, somit wird $r$ nicht weiter beachtet. Wir wissen $x_{n} (1 - x_{n}) < \frac{1}{n} (1 - \frac{1}{n})$ nachdem $x_n < \frac{1}{n}$. Es gilt
+    \begin{align*}
+        \frac{1}{n} (1 - \frac{1}{n}) = \frac{n - 1}{n^2} = \frac{(n - 1)(n + 1)}{n^2(n + 1)} = \frac{n^2 - 1}{n^2} \cdot \frac{1}{n + 1} = \left(1 - \frac{1}{n^2}\right) \cdot \frac{1}{n + 1},
+    \end{align*}
+    woraus folgt, dass $\frac{n - 1}{n^2} \leq \frac{1}{n + 1}$ beziehungsweise in weiterer Folge $x_n < \frac{1}{n} < \frac{1}{n + 1}$, was zu zeigen war.
+    
+    \item Man betrachte $f$ aus a). Im gegebenen Fall muss gelten, dass
+    \begin{equation}\label{eq:epidemic-end}
+        \begin{aligned}            
+        n &= f(n) = rn(1 - n) \\
+        \frac{1}{r} &= 1 - n \\
+        \frac{r - 1}{r} &= n.
+        \end{aligned}
+    \end{equation}
+    Man w\"ahle nun also ein $n \in \mathbb{N}$ mit $x_{n + 1} = \frac{r - 1}{r}$, dann gilt gem\"a{\ss} \eqref{eq:epidemic-end} $x_n = x_{n + 1}$.
 \end{enumerate}
 
 \end{document}
-
-x(y - z)
-
-xy - xz
