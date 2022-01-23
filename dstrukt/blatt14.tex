@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Diskrete Strukturen --- \textbf{Übungsblatt 13}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\cmod}{\text{mod}}
+
+\newcommand{\bO}{\text{O}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+Zu zeigen ist
+\begin{align*}
+    f(n) = \bO(g(n)) \land g(n) &= \bO(h(n)) \Rightarrow f(n) = \bO(h(n)).
+\end{align*}
+Angenommen es gilt die linke Seite der Implikation, also \eqref{eq:1-1} und \eqref{eq:1-2}.
+\begin{align}
+    \label{eq:1-1}\exists\, c, n_0 > 0 : \forall\, n \geq n_0 : |f(n)| \leq c|g(n)| \\
+    \label{eq:1-2}\exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |g(n)| \leq k|h(n)|
+\end{align}
+Die Ungleichung aus \eqref{eq:1-1} kann zu $\frac{|f(n)|}{c} \leq |g(n)|$ umformuliert werden und dann in \eqref{eq:1-2} eingesetzt werden:
+\begin{align*}
+    \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : \frac{|f(n)|}{c} \leq k|h(n)| \\
+    \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |f(n)| \leq ck|h(n)|
+\end{align*}
+Dann gilt
+\begin{align*}
+    \exists\, j, n_2 > 0 : \forall\, n \geq n_2 : |f(n)| \leq j|h(n)| 
+\end{align*}
+für $j = ck$ und $n_2 = \text{max}\{n_0, n_1\}$. Somit gilt $f(n) = O(h(n))$ wenn $f(n) = O(g(n))$ und $g(n) = O(h(n))$.
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}
+    \item $a = 1$ und $b = 2$, $\bO(\sqrt{n})$
+    \item $a = 2$ und $b = 2$, $\Omega(n)$
+    \item $a = 2$ und $b = 4$, $\bO(\sqrt{n} \log n)$
+\end{enumerate}
+
+\end{document}
