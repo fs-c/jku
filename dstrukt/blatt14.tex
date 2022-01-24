@@ -42,19 +42,19 @@
 
 \paragraph{Aufgabe 1.}
 
-Zu zeigen ist
+ Zu zeigen ist
 \begin{align*}
     f(n) = \bO(g(n)) \land g(n) &= \bO(h(n)) \Rightarrow f(n) = \bO(h(n)).
 \end{align*}
-Angenommen es gilt die linke Seite der Implikation, also \eqref{eq:1-1} und \eqref{eq:1-2}.
+(Es seien $c, k, j, n_*$ in $\mathbb{N}$.) Angenommen die linke Seite der Implikation,
 \begin{align}
-    \label{eq:1-1}\exists\, c, n_0 > 0 : \forall\, n \geq n_0 : |f(n)| \leq c|g(n)| \\
-    \label{eq:1-2}\exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |g(n)| \leq k|h(n)|
+    \label{eq:1-1} & \exists\, c, n_0 > 0 : \forall\, n \geq n_0 : |f(n)| \leq c|g(n)|,\ \text{und} \\
+    \label{eq:1-2} & \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |g(n)| \leq k|h(n)|,
 \end{align}
-Die Ungleichung aus \eqref{eq:1-1} kann zu $\frac{|f(n)|}{c} \leq |g(n)|$ umformuliert werden und dann in \eqref{eq:1-2} eingesetzt werden:
+gilt. Die Ungleichung aus \eqref{eq:1-1} kann zu $\frac{|f(n)|}{c} \leq |g(n)|$ umformuliert werden und in \eqref{eq:1-2} eingesetzt werden:
 \begin{align*}
-    \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : \frac{|f(n)|}{c} \leq k|h(n)| \\
-    \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |f(n)| \leq ck|h(n)|
+    & \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : \frac{|f(n)|}{c} \leq k|h(n)| \\
+    & \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |f(n)| \leq ck|h(n)|
 \end{align*}
 Dann gilt
 \begin{align*}
@@ -64,10 +64,14 @@ für $j = ck$ und $n_2 = \text{max}\{n_0, n_1\}$. Somit gilt $f(n) = O(h(n))$ we
 
 \paragraph{Aufgabe 2.}
 
+Es gilt $f(n) = \sqrt{n}$.
+
 \begin{enumerate}
-    \item $a = 1$ und $b = 2$, $\bO(\sqrt{n})$
-    \item $a = 2$ und $b = 2$, $\Omega(n)$
-    \item $a = 2$ und $b = 4$, $\bO(\sqrt{n} \log n)$
+    \item Es gilt $a = 1$, $b = 2$ und $c = \log_2(1) = 0$. 
+    %Wir sind in Fall 2,  $\bO(\sqrt{n})$
+    \item Es gilt $a = 2$, $b = 2$ und $c = \log_2(2) = 1$. 
+    % Somit gilt $T(n) = \Theta(n)$.
+    \item Es gilt $a = 2$, $b = 4$ und $c = \log_4(2) = \frac{1}{2}$. Es greift Fall 2 wegen $f(n) = \bO(\sqrt{n})$ mit $k = 0$. Somit gilt $T(n) = \bO(\sqrt{n} \log(n))$. (Fall 3 bzw. $f(n) = \Omega(\sqrt{n})$ gilt nicht weil es f\"ur kein $n$ ein $c > 0$ gibt mit $\sqrt{n}\geq c\sqrt{n}$.)
 \end{enumerate}
 
 \end{document}
