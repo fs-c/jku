@@ -9,6 +9,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{mathtools}
+\usepackage{tabularx}
 
 % Proper tables and centering for overfull ones
 \usepackage{booktabs}
@@ -46,32 +47,58 @@
 \begin{align*}
     f(n) = \bO(g(n)) \land g(n) &= \bO(h(n)) \Rightarrow f(n) = \bO(h(n)).
 \end{align*}
-(Es seien $c, k, j, n_*$ in $\mathbb{N}$.) Angenommen die linke Seite der Implikation,
+Angenommen die linke Seite der Implikation,
 \begin{align}
-    \label{eq:1-1} & \exists\, c, n_0 > 0 : \forall\, n \geq n_0 : |f(n)| \leq c|g(n)|,\ \text{und} \\
-    \label{eq:1-2} & \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |g(n)| \leq k|h(n)|,
+    \label{eq:1-1} & \exists\, c > 0\ \exists\, n_0 \in \mathbb{N} : \forall\, n \geq n_0 : |f(n)| \leq c|g(n)| \\
+    \label{eq:1-2} & \exists\, k > 0\ \exists\, n_1 \in \mathbb{N} : \forall\, n \geq n_1 : |g(n)| \leq k|h(n)|
 \end{align}
 gilt. Die Ungleichung aus \eqref{eq:1-1} kann zu $\frac{|f(n)|}{c} \leq |g(n)|$ umformuliert werden und in \eqref{eq:1-2} eingesetzt werden:
 \begin{align*}
-    & \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : \frac{|f(n)|}{c} \leq k|h(n)| \\
-    & \exists\, k, n_1 > 0 : \forall\, n \geq n_1 : |f(n)| \leq ck|h(n)|
+    & \exists\, k > 0\ \exists\, n_1 \in \mathbb{N} : \frac{|f(n)|}{c} \leq k|h(n)| \\
+    & \exists\, k > 0\ \exists\, n_1 \in \mathbb{N} : |f(n)| \leq ck|h(n)|
 \end{align*}
 Dann gilt
 \begin{align*}
-    \exists\, j, n_2 > 0 : \forall\, n \geq n_2 : |f(n)| \leq j|h(n)| 
+    \exists\, j > 0\ \exists\, n_2 \in \mathbb{N} : \forall\, n \geq n_2 : |f(n)| \leq j|h(n)| 
 \end{align*}
-für $j = ck$ und $n_2 = \text{max}\{n_0, n_1\}$. Somit gilt $f(n) = O(h(n))$ wenn $f(n) = O(g(n))$ und $g(n) = O(h(n))$.
+für $j = ck$ und $n_2 = \text{max}\{n_0, n_1\}$. Somit gilt $f(n) = O(h(n))$ wenn $f(n) = O(g(n))$ und $g(n) = O(h(n))$, die $\bO$-Notation ist transitiv.
 
 \paragraph{Aufgabe 2.}
 
-Es gilt $f(n) = \sqrt{n}$.
+Es gilt $f(n) = \sqrt{n} = \Theta(\sqrt{n})$.
 
 \begin{enumerate}
-    \item Es gilt $a = 1$, $b = 2$ und $c = \log_2(1) = 0$. 
-    %Wir sind in Fall 2,  $\bO(\sqrt{n})$
-    \item Es gilt $a = 2$, $b = 2$ und $c = \log_2(2) = 1$. 
-    % Somit gilt $T(n) = \Theta(n)$.
-    \item Es gilt $a = 2$, $b = 4$ und $c = \log_4(2) = \frac{1}{2}$. Es greift Fall 2 wegen $f(n) = \bO(\sqrt{n})$ mit $k = 0$. Somit gilt $T(n) = \bO(\sqrt{n} \log(n))$. (Fall 3 bzw. $f(n) = \Omega(\sqrt{n})$ gilt nicht weil es f\"ur kein $n$ ein $c > 0$ gibt mit $\sqrt{n}\geq c\sqrt{n}$.)
+    \item Es gilt $a = 1$, $b = 2$ und $c = \log_2(1) = 0$. Es greift Fall 4 wegen $f(n) = \Omega(n^{0 + \frac{1}{2}}) = \Omega(\sqrt{n})$ ($\epsilon = \frac{1}{2}$). Somit gilt $T(n) = \Omega(\sqrt{n})$.
+
+    \item Es gilt $a = 2$, $b = 2$ und $c = \log_2(2) = 1$. Es greift Fall 1 wegen $f(n) = \bO(n^{1 - \frac{1}{2}}) = \bO(\sqrt{n})$ ($\epsilon = \frac{1}{2}$). Somit gilt $T(n) = \Theta(\sqrt{n})$.
+
+    \item Es gilt $a = 2$, $b = 4$ und $c = \log_4(2) = \frac{1}{2}$. Es greifen Fall 2 und 3 wegen $f(n) = \bO(n^{\frac{1}{2}} \log(n)^0) = \bO(\sqrt{n})$ und $f(n) = \Omega(n^{\frac{1}{2}} \log(n)^0) = \Omega(\sqrt{n})$ ($k = 0$). Somit gilt $T(n) = \Theta(\sqrt{n} \log(n))$.
 \end{enumerate}
+
+\paragraph{Aufgabe 3.}
+
+% TODO: Tabelle mit Frequency | Ops, jeweils  >= maximum
+
+% Die folgende Tabelle zeigt die maximale Anzahl an Ausführungen für eine bestimmte Zeile, in Abhängigkeit von $n$. Es wurde immer vom schlechtesten Fall ausgegangen, 
+
+Die folgende Tabelle zeigt für jede Zeile die maximale Anzahl der Ausführungen (\enquote{Häufigkeit}) und die daraus resultierende maximale Anzahl an Operationen. Nachdem etwa Zeile 3 zu einem früheren Abbruch von Schleifeniterationen führen kann sind diese Werte als oberes Limit zu verstehen, nicht zwingend als tatsächlich erreichbares Maximum.
+
+\begin{tabular}{c c c l}
+    Zeile & Häufigkeit & Operationen &  \\
+
+    1   & 1         & 0             & \\
+    2   & 1         & $n$           & \\
+    3   & $n$       & $3n$          & \\
+    4   & $n$       & $2n^2$        & Größtmögl. $i = n$ also $2n \cdot n = 2n^2$ \\
+    5   & $2n^2$    & $12n^2$       & \\
+    6   & $2n^2$    & $6n^3 + 1$    & Größtmögl. $j = 2i = 2n$ also $2n + n = 3n$ und $2n^{2} 3n = 6n^3$ \\
+    7   & $6n^3$    & $0$           & \\
+    8   & $6n^3$    & $18n^3$       & \\
+    9   & $6n^3$    & 0             & \\
+    10  & $6n^3$    & $24n^3$       & \\
+    11  & 1         & 0             & \\
+\end{tabular}
+
+Die größte vorkommende maximale Anzahl der Operationen ist $24n^3$, somit benötigt der Algorithmus $O(n^3)$ arithmetische Operationen. 
 
 \end{document}
