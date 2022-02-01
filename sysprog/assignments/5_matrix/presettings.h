@@ -10,7 +10,10 @@
 #define EXIT_INVALID_NUMBER 6
 #define EXIT_OUT_OF_MEM 7
 
+// Maximum length of a matrix element
 #define MAX_LENGTH 255
+// Maximum length of a line, should be a reasonable default
+#define MAX_LINE_LENGTH 1023
 
 typedef unsigned char error_t;
 
