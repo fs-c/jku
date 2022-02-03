@@ -22,7 +22,7 @@ typedef struct Matrix {
 } Matrix;
 
 // Stub
-BigInteger *create_big_integer(error_t *err) {
+BigInteger *create_big_integer(char *raw_integer, error_t *err) {
 	BigInteger *bigint = malloc(sizeof(BigInteger));
 
 	if (!bigint) {
@@ -31,9 +31,11 @@ BigInteger *create_big_integer(error_t *err) {
 		return NULL;
 	}
 
-	// do things
+	while (*raw_integer) {
+		
 
-	bigint->data = malloc(100);
+		raw_integer++;
+	}
 
 	return bigint;
 }
@@ -149,18 +151,66 @@ error_t parse_first_line(char *line, int *n, int *m, int *p, int *q) {
 }
 
 // Reads characters from `*file` until it encounters a non-space character. The
-// `pure` parameter determines how space is defined, if false it is ' ', otherwise 
+// `pure` parameter determines how space is defined, if true it is ' ', otherwise 
 // is is isspace().
-void skip_space(FILE *file, bool pure) {
+void skip_space_stream(FILE *file) {
 
 }
 
-error_t parse_matrix_row(char *line, int max, BigInteger **row) {
+char *skip_space_string(char *string) {
+	while (*string && (isspace(*string++)))
+		;
 
+	return string;
+}
+
+// 94289238429424239847203984092 928409238432    	242398423  132948209384 888
+error_t parse_matrix_row(char *line, Matrix *m) {
+	char *raw_value = malloc(MAX_LENGTH + 1);
+
+	char *temp = line;
+	while ((temp = skip_space_string(temp)) != line) {
+		line = temp;
+
+		size_t i;
+		for (i = 0; i < MAX_LENGTH; i++) {
+			if (isspace(line[i])) {
+				break;
+			}
+
+			raw_value[i] = *line++;
+		}
+
+		if (!isspace(*line)) {
+			free(raw_value);
+
+			return EXIT_NUMBER_TOO_BIG;
+		}
+
+		raw_value[i + 1] = '\0';
+	}
 }
 
 error_t parse_matrix_data(FILE *input_file, Matrix *m) {
-	
+	skip_space_stream(input_file);
+
+	char *line = malloc(MAX_LINE_LENGTH);
+
+	for (size_t row = 0; row < m->rows; row++) {
+		if (!fgets(line, MAX_LINE_LENGTH, input_file)) {
+			free(line);
+
+			return EXIT_IO;
+		}
+
+		parse_matrix_row(line, m);
+
+		skip_space_stream(input_file);
+	}
+
+	free(line);
+
+	return EXIT_OK;
 }
 
 // Make sure to destroy m1 and m2 even if an error occurred.
