@@ -74,7 +74,7 @@ BigInteger *create_big_integer(char *raw_integer, error_t *err) {
 			return NULL;
 		}
 
-		bigint->data[i++] = c;
+		bigint->data[i++] = c - '0';
 	}
 
 	bigint->length = i;
@@ -98,6 +98,62 @@ BigInteger *create_big_integer(char *raw_integer, error_t *err) {
 	}
 
 	return bigint;
+}
+
+// Calculate x + y.
+BigInteger *add_big_integers(BigInteger *x, BigInteger *y, error_t *error) {
+	const size_t max_length = MAX_LENGTH + 1;
+	char *raw_result = malloc(max_length);
+
+	raw_result[max_length - 1] = '\0';
+
+	BigInteger *larger = x->length > y->length ? x : y;
+
+	char carry = 0;
+	size_t i = 0;
+	for (; i < larger->length + 1; i++) {
+		char a = i >= x->length ? 0 : x->data[x->length - i];
+		char b = i >= y->length ? 0 : y->data[y->length - i];
+
+		char sum = a + b + carry;
+		carry = sum / 10;
+		sum %= 10;
+
+		raw_result[max_length - 2 - i] = sum;
+	}
+
+	// Make sure that the carry didn't make us go over the length limit
+	if (carry && larger->length == MAX_LENGTH) {
+		*error = EXIT_NUMBER_TOO_BIG;
+
+		free(raw_result);
+
+		return NULL;
+	}
+
+	BigInteger *result = create_big_integer(raw_result + (max_length - 1 - i),
+		error);
+
+	free(raw_result);
+
+	return result;
+}
+
+// Calculate x * y where y is an int.
+BigInteger *scale_big_integer(BigInteger *x, int y, error_t *error) {
+
+}
+
+// Calculate x * y.
+BigInteger *multiply_big_integer(BigInteger *x, BigInteger *y, error_t *error) {
+	char *raw_result = malloc(MAX_LENGTH + 1);
+
+	BigInteger *larger = x->length > y->length ? x : y;
+	BigInteger *smaller = x->length > y->length ? y : x;
+
+	for (size_t i = 0; i < larger->length; i++) {
+
+	}
 }
 
 // Creates an empty matrix (2d array) of the given size. Might still return a 
@@ -170,143 +226,6 @@ void destroy_matrix(Matrix *matrix) {
 
 	free(matrix);
 }
-
-// // Parses the 'header line' of input files.
-// error_t parse_first_line(char *line, int *n, int *m, int *p, int *q) {
-// 	for (int i = 0; i < 4; i++) {
-// 		// strtol sets end to the position it last read from + 1
-// 		char *end;
-// 		const long value = strtol(line, &end, 10);
-
-// 		line = end;
-
-// 		switch (i) {
-// 			case 0: *n = value;
-// 				break;
-// 			case 1: *m = value;
-// 				break;
-// 			case 2: *p = value;
-// 				break;
-// 			case 3: *q = value;
-// 				break;
-// 		}
-// 	}
-
-// 	return EXIT_OK;
-// }
-
-// // Reads characters from `*file` until it encounters a non-space character. The
-// // `pure` parameter determines how space is defined, if true it is ' ', otherwise 
-// // is is isspace().
-// void skip_space_stream(FILE *file) {
-
-// }
-
-// char *skip_space_string(char *string) {
-// 	while (*string && (isspace(*string++)))
-// 		;
-
-// 	return string;
-// }
-
-// // 94289238429424239847203984092 928409238432    	242398423  132948209384 888
-// error_t parse_matrix_row(char *line, Matrix *m) {
-// 	// Plus one for terminating zero
-// 	char *raw_value = malloc(MAX_LENGTH + 1);
-
-// 	char *temp = line;
-// 	while ((temp = skip_space_string(temp)) != line) {
-// 		line = temp;
-
-// 		size_t i;
-// 		for (i = 0; i < MAX_LENGTH; i++) {
-// 			if (isspace(line[i])) {
-// 				break;
-// 			}
-
-// 			raw_value[i] = *line++;
-// 		}
-
-// 		if (!isspace(*line)) {
-// 			free(raw_value);
-
-// 			return EXIT_NUMBER_TOO_BIG;
-// 		}
-
-// 		raw_value[i + 1] = '\0';
-// 	}
-// }
-
-// error_t parse_matrix_data(FILE *input_file, Matrix *m) {
-// 	skip_space_stream(input_file);
-
-// 	char *line = malloc(MAX_LINE_LENGTH);
-
-// 	for (size_t row = 0; row < m->rows; row++) {
-// 		if (!fgets(line, MAX_LINE_LENGTH, input_file)) {
-// 			free(line);
-
-// 			return EXIT_IO;
-// 		}
-
-// 		parse_matrix_row(line, m);
-
-// 		skip_space_stream(input_file);
-// 	}
-
-// 	free(line);
-
-// 	return EXIT_OK;
-// }
-#include <errno.h>
-
-// // Make sure to destroy m1 and m2 even if an error occurred.
-// error_t read_input_file(FILE *input_file, Matrix **m1, Matrix **m2) {
-// 	error_t error = EXIT_OK;
-// 	char *line_buffer = malloc(MAX_LINE_LENGTH);
-
-// 	if (!line_buffer) {
-// 		return EXIT_OUT_OF_MEM;
-// 	}
-
-// 	// Read first line
-// 	if (!fgets(line_buffer, MAX_LINE_LENGTH, input_file)) {
-// 		free(line_buffer);
-
-// 		return EXIT_IO;
-// 	}
-
-// 	// Parse first line
-// 	int n, m, p, q;
-// 	if ((error = parse_first_line(line_buffer, &n, &m, &p, &q)) != EXIT_OK) {
-// 		free(line_buffer);
-
-// 		return error;
-// 	}
-
-// 	// Check that cols of first matrix = rows of second matrix
-// 	if (n != p) {
-// 		free(line_buffer);
-
-// 		return EXIT_INCOMPATIBLE_DIM;
-// 	}
-
-// 	*m1 = create_matrix(n, m, &error);
-// 	*m2 = create_matrix(p, q, &error);
-
-// 	if (error != EXIT_OK) {
-// 		free(line_buffer);
-
-// 		return error;
-// 	}
-
-// 	parse_matrix_data(input_file, *m1);
-// 	parse_matrix_data(input_file, *m2);
-
-// 	free(line_buffer);
-
-// 	return error;
-// }
 
 // Read and discard characters until a non-isspace() character is read. That
 // character will be the first character on the stream after the call.
@@ -478,7 +397,7 @@ void print_matrix(Matrix *m) {
 
 			size_t i;
 			for (i = 0; i < bigint->length; i++) {
-				num[i] = bigint->data[i];
+				num[i] = bigint->data[i] + '0';
 			}
 
 			num[bigint->length] = '\0';
@@ -546,59 +465,3 @@ cleanup:
 
 	return error;
 }
-
-// error_t parse_header_line(FILE *input_file, Matrix **m1, Matrix **m2) {
-// 	if (!*m1 || !*m2) {
-// 		return EXIT_INTERNAL;
-// 	}
-
-// 	char *line = malloc(MAX_LINE_LENGTH);
-
-// 	if (!line) {
-// 		return EXIT_OUT_OF_MEM;
-// 	}
-
-// 	for (int i = 0; i < 4; i++) {
-// 		// strtol sets end to the position it last read from + 1
-// 		char *end;
-// 		const long value = strtol(line, &end, 10);
-
-// 		line = end;
-
-// 		switch (i) {
-// 			case 0: (*m1)->rows = value;
-// 				break;
-// 			case 1: (*m1)->columns = value;
-// 				break;
-// 			case 2: (*m2)->rows = value;
-// 				break;
-// 			case 3: (*m2)->columns = value;
-// 				break;
-// 		}
-// 	}
-// }
-
-// error_t parse_matrix_data(FILE *input_file, Matrix *m) {
-
-// }
-
-// error_t read_input_file(FILE *input_file, Matrix **m1, Matrix **m2) {
-// 	error_t error;
-
-// 	if ((error = parse_header_line(input_file, m1, m2)) != EXIT_OK) {
-// 		return error;
-// 	}
-
-// 	if ((*m1)->columns != (*m2)->rows) {
-// 		return EXIT_INCOMPATIBLE_DIM;
-// 	}
-
-// 	if (
-// 		(error = parse_matrix_data(input_file, *m1) != EXIT_OK) ||
-// 		(error = parse_matrix_data(input_file, *m2) != EXIT_OK)
-// 	) {
-// 		return error;
-// 	}
-	
-// 	return EXIT_OK;
-// }
