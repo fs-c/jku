@@ -3,7 +3,9 @@
 #define __STDC_WANT_LIB_EXT2__ 1
 
 #include <stdio.h>
+#include <ctype.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct BigInteger {
 	size_t length;
@@ -51,8 +53,9 @@ void destroy_big_integer(BigInteger *bigint) {
 	return;
 }
 
-// Creates a matrix (2d array) of the given size. Might still return a pointer to 
-// an incomplete matrix if *err is EXIT_OUT_OF_MEM, make sure to destroy it. 
+// Creates an empty matrix (2d array) of the given size. Might still return a 
+// pointer to an incomplete matrix if *err is EXIT_OUT_OF_MEM, make sure to 
+// destroy it. Doesn't initialize matrix data items.
 Matrix *create_matrix(size_t rows, size_t columns, error_t *err) {
 	// Make sure to always use calloc here, otherwise destroy_matrix might 
 	// run into garbage values when called immediately after a partially failed
@@ -92,7 +95,7 @@ Matrix *create_matrix(size_t rows, size_t columns, error_t *err) {
 }
 
 // Counterpart to create_matrix. Can also destroy matrices that were only partially
-// allocated.
+// allocated and will destroy any BigIntegers.
 void destroy_matrix(Matrix *matrix) {
 	if (!matrix) {
 		return;
@@ -101,14 +104,18 @@ void destroy_matrix(Matrix *matrix) {
 	if (matrix->data) {
 		for (size_t column = 0; column < matrix->columns; column++) {
 			if (!matrix->data[column]) {
-				break;
+				continue;
 			}
 
+			for (size_t row = 0; row < matrix->rows; row++) {
+				if (!matrix->data[column][row]) {
+					continue;
+				}
 
+				destroy_big_integer(matrix->data[column][row]);
+			}
 
-			// for (size_t row = 0; row < matrix->rows; row++) {
-
-			// }
+			free(matrix->data[column]);
 		}
 
 		free(matrix->data);
@@ -141,6 +148,22 @@ error_t parse_first_line(char *line, int *n, int *m, int *p, int *q) {
 	return EXIT_OK;
 }
 
+// Reads characters from `*file` until it encounters a non-space character. The
+// `pure` parameter determines how space is defined, if false it is ' ', otherwise 
+// is is isspace().
+void skip_space(FILE *file, bool pure) {
+
+}
+
+error_t parse_matrix_row(char *line, int max, BigInteger **row) {
+
+}
+
+error_t parse_matrix_data(FILE *input_file, Matrix *m) {
+	
+}
+
+// Make sure to destroy m1 and m2 even if an error occurred.
 error_t read_input_file(FILE *input_file, Matrix **m1, Matrix **m2) {
 	error_t error = EXIT_OK;
 	char *line_buffer = malloc(MAX_LINE_LENGTH);
@@ -177,11 +200,11 @@ error_t read_input_file(FILE *input_file, Matrix **m1, Matrix **m2) {
 	if (error != EXIT_OK) {
 		free(line_buffer);
 
-		destroy_matrix(*m1);
-		destroy_matrix(*m2);
-
 		return error;
 	}
+
+	parse_matrix_data(input_file, *m1);
+	parse_matrix_data(input_file, *m2);
 
 	free(line_buffer);
 
@@ -219,6 +242,9 @@ int main(int argc, char *argv[]) {
 
 		return error;
 	}
+
+	destroy_matrix(m1);
+	destroy_matrix(m2);
 
 	if (fclose(input_file)) {
 		fputs(close_file_err_str, stderr);
