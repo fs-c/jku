@@ -9,13 +9,14 @@
 #define EXIT_INVALID_MATRIX 5
 #define EXIT_INVALID_NUMBER 6
 #define EXIT_OUT_OF_MEM 7
+#define EXIT_INTERNAL 0xd34d
 
 // Maximum length of a matrix element
 #define MAX_LENGTH 255
 // Maximum length of a line, should be a reasonable default
 #define MAX_LINE_LENGTH 1023
 
-typedef unsigned char error_t;
+typedef unsigned int error_t;
 
 static const char invalid_arg_num_str[]  = "Invalid number of arguments\n";
 
