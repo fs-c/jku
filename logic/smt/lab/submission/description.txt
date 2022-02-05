@@ -1,0 +1,10 @@
+Lab Exercise 4: Sudoku
+Laurenz Weixlbaumer, 11804751
+
+Short video demonstration/explanation
+TODO
+
+Both versions of the encoding have the same general structure:
+    1. create a variable for each cell
+    2. ensure that these variables have values in [1, 4]
+    3. ensure that rows, columns and 2x2 grids have distinct values
