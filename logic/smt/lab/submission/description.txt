@@ -2,7 +2,7 @@ Lab Exercise 4: Sudoku
 Laurenz Weixlbaumer, 11804751
 
 Short video demonstration/explanation
-TODO
+https://youtu.be/VYkHKu1q-PM
 
 Both versions of the encoding have the same general structure:
     1. create a variable for each cell
