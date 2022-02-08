@@ -22,7 +22,7 @@ typedef struct Matrix {
 	BigInteger ***data;
 } Matrix;
 
-// Stub?
+// Counterpart to create_big_integer. Destroys a BigInteger struct.
 void destroy_big_integer(BigInteger *bigint) {
 	if (!bigint) {
 		return;
@@ -100,7 +100,7 @@ BigInteger *create_big_integer(char *raw_integer, error_t *err) {
 	return bigint;
 }
 
-// Calculate x + y.
+// Calculate x + y. UNUSED.
 BigInteger *add_big_integers(BigInteger *x, BigInteger *y, error_t *error) {
 	const size_t max_length = MAX_LENGTH + 1;
 	char *raw_result = malloc(max_length);
@@ -111,6 +111,7 @@ BigInteger *add_big_integers(BigInteger *x, BigInteger *y, error_t *error) {
 
 	char carry = 0;
 	size_t i = 0;
+	// Plus one for a potential carry after the last addition
 	for (; i < larger->length + 1; i++) {
 		char a = i >= x->length ? 0 : x->data[x->length - i];
 		char b = i >= y->length ? 0 : y->data[y->length - i];
@@ -139,6 +140,45 @@ BigInteger *add_big_integers(BigInteger *x, BigInteger *y, error_t *error) {
 	return result;
 }
 
+// Add src to dest in-place.
+error_t add_to_big_integer(BigInteger *src, BigInteger *dest) {
+	const size_t max_length = MAX_LENGTH + 1;
+
+	BigInteger *larger = src->length > dest->length ? src : dest;
+
+	char carry = 0;
+	size_t i = 0;
+	// Plus one for a potential carry after the last addition
+	for (; i < larger->length + 1; i++) {
+		char a = i >= src->length ? 0 : src->data[src->length - i];
+		char b = i >= dest->length ? 0 : dest->data[dest->length - i];
+
+		char sum = a + b + carry;
+		carry = sum / 10;
+		sum %= 10;
+
+		
+
+		raw_result[max_length - 2 - i] = sum;
+	}
+
+	// Make sure that the carry didn't make us go over the length limit
+	if (carry && larger->length == MAX_LENGTH) {
+		*error = EXIT_NUMBER_TOO_BIG;
+
+		free(raw_result);
+
+		return NULL;
+	}
+
+	BigInteger *result = create_big_integer(raw_result + (max_length - 1 - i),
+		error);
+
+	free(raw_result);
+
+	return result;
+}
+
 // Calculate x * y where y is an int.
 BigInteger *scale_big_integer(BigInteger *x, int y, error_t *error) {
 
@@ -146,14 +186,27 @@ BigInteger *scale_big_integer(BigInteger *x, int y, error_t *error) {
 
 // Calculate x * y.
 BigInteger *multiply_big_integer(BigInteger *x, BigInteger *y, error_t *error) {
-	char *raw_result = malloc(MAX_LENGTH + 1);
+	BigInteger *result = create_big_integer("0", error);
+
+	if (*error != EXIT_OK) {}
 
 	BigInteger *larger = x->length > y->length ? x : y;
 	BigInteger *smaller = x->length > y->length ? y : x;
 
-	for (size_t i = 0; i < larger->length; i++) {
+	for (size_t i = 0; i < smaller->length; i++) {
+		char factor = smaller->data[i];
 
+		BigInteger *scaled = scale_big_integer(larger, factor * (i * 10),
+			error);
+
+		if (*error != EXIT_OK) {}
+
+		add_to_big_integer(scaled, result);
+
+		destroy_big_integer(scaled);
 	}
+
+	return result;
 }
 
 // Creates an empty matrix (2d array) of the given size. Might still return a 
