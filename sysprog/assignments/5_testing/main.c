@@ -1,8 +1,10 @@
 #include "presettings.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <errno.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -32,7 +34,7 @@ void destroy_big_integer(BigInteger *bigint) {
 	return;
 }
 
-void reverse_big_integer(BigInteger *bigint) {
+void reverse_big_integer_data(BigInteger *bigint) {
 	for (size_t i = 0; i < bigint->length / 2; i++) {
 		size_t reverse_i = bigint->length - 1 - i;
 		char temp = bigint->data[reverse_i];
@@ -89,7 +91,7 @@ BigInteger *create_big_integer(char *raw_integer, error_t *err) {
 	}
 
 
-	reverse_big_integer(bigint);
+	reverse_big_integer_data(bigint);
 
 	return bigint;
 }
@@ -105,14 +107,7 @@ void print_big_integer(BigInteger *bigint) {
 	printf("\tnegative = %d\n", bigint->negative);
 
 	putchar('\n');
-	putchar('\t');
-
-	for (size_t i = 0; i < bigint->length; i++) {
-		printf("%d ", bigint->data[i]);
-	}
-
-	putchar('\n');
-	putchar('\t');
+	fputs("\t", stdout);
 
 	for (size_t i = bigint->length; i > 0; i--) {
 		printf("%d ", bigint->data[i - 1]);
@@ -121,41 +116,168 @@ void print_big_integer(BigInteger *bigint) {
 	putchar('\n');
 }
 
-int main() {
-	error_t error = EXIT_OK;
+// Calculate src + dest and store it in dest. Completely ignores the negative flag.
+error_t add_big_integers(BigInteger *src, BigInteger *dest) {
+	const size_t max_length = (
+		src->length > dest->length ? src->length : dest->length
+	);
 
-	BigInteger *a = create_big_integer("868384567", &error);
-	BigInteger *b = create_big_integer("-97", &error);
-	BigInteger *c = create_big_integer("31", &error);
-	BigInteger *d = create_big_integer("2", &error);
+	int carry = 0;
 
-	if (error != EXIT_OK) {
-		destroy_big_integer(a);
-		destroy_big_integer(b);
-		destroy_big_integer(c);
-		destroy_big_integer(d);
+	for (size_t i = 0; i < max_length; i++) {
+		// It's fine if we technically go over one of the bigints lengths
+		// here because the buffers are zero-initialized
 
-		printf("error: %d\n", error);
+		// Sum is in [0, 19]
+		const int sum = src->data[i] + dest->data[i] + carry;
 
-		return 1;
+		// Carry is either 0 or 1
+		carry = sum / 10;
+		// Final digit is in [0, 9]
+		dest->data[i] = sum % 10;
+
+		// If we made a contentful calculation just now...
+		if (dest->data[i]) {
+			dest->length = i + 1;
+		}
 	}
 
-	print_big_integer(a);
-	print_big_integer(b);
-	print_big_integer(c);
-	print_big_integer(d);
+	// If we still have a leftover carry...
+	if (carry) {
+		// Make sure it will fit
+		if (dest->length == MAX_LENGTH) {
+			return EXIT_NUMBER_TOO_BIG;
+		}
 
-	assert(a->length == 9);
-	assert(b->length == 2);
-	assert(c->length == 2);
-	assert(d->length == 1);
+		dest->data[dest->length++] = carry;
+	}
 
-	destroy_big_integer(a);
-	destroy_big_integer(b);
-	destroy_big_integer(c);
-	destroy_big_integer(d);
+	return EXIT_OK;
+}
 
-	putchar('\n');
+// Returns a copy of a given biginteger, scaled by a value in [0, 9]. Caller is 
+// responsible for freeing the created bigint in all cases.
+BigInteger *scale_big_integer(BigInteger *src, char scale, error_t *error) {
+	BigInteger *dest = create_big_integer("0", error);
+
+	if (*error != EXIT_OK || scale == 0) {
+		return dest;
+	}
+
+	// This is not particularly efficient but adds at most a constant factor
+	// to the runtime so it'll be fine
+	for (char i = 0; i < scale; i++) {
+		error_t temp_error = EXIT_OK;
+
+		if ((temp_error = add_big_integers(src, dest)) != EXIT_OK) {
+			*error = temp_error;
+
+			return dest;
+		}
+	}
+
+	return dest;
+}
+
+// Returns a new bigintiger containing the result of a * b. Caller is resposible for 
+// freeing the created bigint in all cases.
+BigInteger *multiply_big_integers(BigInteger *a, BigInteger *b, error_t *error) {
+	BigInteger *dest = create_big_integer("0", error);
+
+	if (*error != EXIT_OK) {
+		return dest;
+	}
+
+	for (size_t i = 0; i < a->length; i++) {
+		
+	}
+}
+
+// --- TESTING CODE ---
+
+int big_integers_compare(BigInteger *a, BigInteger *b, bool absolute) {
+	if (a->length > b->length) {
+		return ((absolute || !a->negative) ? 1 : -1);
+	} else if (a->length < b->length) {
+		return ((absolute || !b->negative) ? -1 : 1);
+	}
+
+	// We know a->length == b->length
+
+	if (!absolute) {
+		if (!a->negative && b->negative) {
+			return 1;
+		} else if (a->negative && !b->negative) {
+			return -1;
+		}
+	}
+
+	for (size_t i = 0; i < a->length; i++) {
+		if (a->data[i] > b->data[i]) {
+			return (absolute || !a->negative) ? 1 : -1;
+		} else if (a->data[i] < b->data[i]) {
+			return (absolute || !a->negative) ? -1 : 1;
+		}
+	}
+
+	return 0;
+}
+
+void test_big_integer_add(char *a, char *b, char *expected) {
+	error_t error = EXIT_OK;
+
+	BigInteger *ba = create_big_integer(a, &error);
+	BigInteger *bb = create_big_integer(b, &error);
+	BigInteger *bexpected = create_big_integer(expected, &error);
+
+	assert(error == EXIT_OK);
+
+	add_big_integers(ba, bb);
+
+	assert(big_integers_compare(bb, bexpected, true) == 0);
+
+	destroy_big_integer(ba);
+	destroy_big_integer(bb);
+	destroy_big_integer(bexpected);
+}
+
+void test_big_integer_scale(char *a, char scale, char *expected) {
+	error_t error = EXIT_OK;
+
+	BigInteger *ba = create_big_integer(a, &error);
+	BigInteger *bexpected = create_big_integer(expected, &error);
+
+	assert(error == EXIT_OK);
+
+	BigInteger *scaled = scale_big_integer(ba, scale, &error);
+
+	assert(error == EXIT_OK);
+
+	assert(big_integers_compare(scaled, bexpected, true) == 0);
+
+	destroy_big_integer(ba);
+	destroy_big_integer(scaled);
+	destroy_big_integer(bexpected);
+}
+
+void addition_test() {
+	test_big_integer_add("0", "3", "3");
+	test_big_integer_add("0", "100", "100");
+	test_big_integer_add("100", "0", "100");
+	test_big_integer_add("243872374", "123478324", "367350698");
+}
+
+void scale_test() {
+	test_big_integer_scale("21322193872183123", 0, "0");
+	test_big_integer_scale("5", 1, "5");
+	test_big_integer_scale("9", 3, "27");
+	test_big_integer_scale("99", 9, "891");
+}
+
+int main() {
+	addition_test();
+
+	scale_test();
 
 	return 0;
 }
