@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -22,6 +23,7 @@ typedef struct Matrix {
 	BigInteger ***data;
 } Matrix;
 
+
 // Counterpart to create_big_integer. Destroys a BigInteger struct.
 void destroy_big_integer(BigInteger *bigint) {
 	if (!bigint) {
@@ -37,41 +39,28 @@ void destroy_big_integer(BigInteger *bigint) {
 	return;
 }
 
-// Creates a BigInteger struct from a string.
-BigInteger *create_big_integer(char *raw_integer, error_t *err) {
-	// Use calloc to make fields default to zero
-	BigInteger *bigint = calloc(1, sizeof(BigInteger));
+// Reverses the content of the data field of the given bigint.
+void reverse_big_integer_data(BigInteger *bigint) {
+	for (size_t i = 0; i < bigint->length / 2; i++) {
+		size_t reverse_i = bigint->length - 1 - i;
+		char temp = bigint->data[reverse_i];
 
-	if (!bigint) {
-		*err = EXIT_OUT_OF_MEM;
-
-		return NULL;
+		bigint->data[reverse_i] = bigint->data[i];
+		bigint->data[i] = temp;
 	}
+}
 
-	bigint->data = malloc(MAX_LENGTH);
-
-	if (!bigint->data) {
-		destroy_big_integer(bigint);
-
-		*err = EXIT_OUT_OF_MEM;
-
-		return NULL;
-	}
-
-	if (*raw_integer == '-') {
-		bigint->negative = true;
-		raw_integer++;
-	}
-
+// Parses a string containing a number into a bigint.
+error_t parse_raw_integer(char *raw_integer, BigInteger *bigint) {
 	char c;
 	size_t i = 0;
 	while ((c = *raw_integer++)) {
-		if (!isdigit(c) || i >= MAX_LENGTH) {
-			destroy_big_integer(bigint);
+		if (!isdigit(c)) {
+			return EXIT_INVALID_NUMBER;
+		}
 
-			*err = EXIT_INVALID_NUMBER;
-
-			return NULL;
+		if (i > MAX_LENGTH) {
+			return EXIT_NUMBER_TOO_BIG;
 		}
 
 		bigint->data[i++] = c - '0';
@@ -80,133 +69,277 @@ BigInteger *create_big_integer(char *raw_integer, error_t *err) {
 	bigint->length = i;
 
 	if (!bigint->length) {
-		destroy_big_integer(bigint);
+		return EXIT_INVALID_NUMBER;
+	}
 
-		*err = EXIT_INVALID_NUMBER;
+	return EXIT_OK;
+}
+
+// Creates a BigInteger struct from a string. Guarantees that digits are zeroed.
+// The data in the struct will be reversed. E. g. "123" -> [ 3, 2, 1 ]. Caller
+// is responsible for cleanup in all cases
+BigInteger *create_big_integer(char *raw_integer, error_t *error) {
+	// Use calloc to make fields (length, negative, ...) default to zero
+	BigInteger *bigint = calloc(1, sizeof(BigInteger));
+
+	if (!bigint) {
+		*error = EXIT_OUT_OF_MEM;
 
 		return NULL;
 	}
 
-	bigint->data = realloc(bigint->data, bigint->length);
+	// Make sure that unset digits are zeroed
+	bigint->data = calloc(1, MAX_LENGTH);
 
 	if (!bigint->data) {
-		destroy_big_integer(bigint);
+		*error = EXIT_OUT_OF_MEM;
 
-		*err = EXIT_OUT_OF_MEM;
-
-		return NULL;
+		return bigint;
 	}
+
+	if (*raw_integer == '-') {
+		bigint->negative = true;
+		raw_integer++;
+	}
+
+	if ((*error = parse_raw_integer(raw_integer, bigint)) != EXIT_OK) {
+		return bigint;
+	}
+
+	reverse_big_integer_data(bigint);
 
 	return bigint;
 }
 
-// Calculate x + y. UNUSED.
-BigInteger *add_big_integers(BigInteger *x, BigInteger *y, error_t *error) {
-	const size_t max_length = MAX_LENGTH + 1;
-	char *raw_result = malloc(max_length);
+// Analogous to strcmp, returns 0 if a == b, -1 if a < b and 1 if a > b. If 
+// absolute is true, ignores the sign.
+int compare_big_integers(BigInteger *a, BigInteger *b, bool absolute) {
+	if (a->length > b->length) {
+		return ((absolute || !a->negative) ? 1 : -1);
+	} else if (a->length < b->length) {
+		return ((absolute || !b->negative) ? -1 : 1);
+	}
 
-	raw_result[max_length - 1] = '\0';
+	// We know a->length == b->length
 
-	BigInteger *larger = x->length > y->length ? x : y;
+	if (!absolute) {
+		if (!a->negative && b->negative) {
+			return 1;
+		} else if (a->negative && !b->negative) {
+			return -1;
+		}
+	}
 
-	char carry = 0;
-	size_t i = 0;
-	// Plus one for a potential carry after the last addition
-	for (; i < larger->length + 1; i++) {
-		char a = i >= x->length ? 0 : x->data[x->length - i];
-		char b = i >= y->length ? 0 : y->data[y->length - i];
+	for (size_t i = 0; i < a->length; i++) {
+		if (a->data[i] > b->data[i]) {
+			return (absolute || !a->negative) ? 1 : -1;
+		} else if (a->data[i] < b->data[i]) {
+			return (absolute || !a->negative) ? -1 : 1;
+		}
+	}
 
-		char sum = a + b + carry;
+	return 0;
+}
+
+// Calculate src + dest and stores it in dest. Exactly one of src or dest has to
+// be negative.
+error_t subtract_big_integers(BigInteger *src, BigInteger *dest) {
+	const size_t max_length = (
+		src->length > dest->length ? src->length : dest->length
+	);
+
+	bool swapped_sign = false;
+
+	// Wrapping this in a scope because the variables would be potentially 
+	// confusing otherwise
+	{
+		BigInteger *negative = src->negative ? src : dest;
+		BigInteger *positive = negative == src ? dest : src;
+
+		// If the negative value is larger than the positive one (in absolute terms)...
+		if (compare_big_integers(negative, positive, true) > 0) {
+			// Swap their signedness to make the naiive algorithm work
+			negative->negative = false;
+			positive->negative = true;
+
+			swapped_sign = true;
+		}
+	}
+
+	const int src_factor = src->negative ? -1 : 1;
+	const int dest_factor = dest->negative ? -1 : 1;
+
+	size_t i;
+	int carry = 0;
+
+	for (i = 0; i < max_length; i++) {
+		const int sum = (src->data[i] * src_factor)
+			+ (dest->data[i] * dest_factor) + carry;
+
+		if (sum < 0) {
+			carry = -1;
+			dest->data[i] = sum + 10;
+		} else {
+			carry = 0;
+			dest->data[i] = sum;
+		}
+	}
+
+	dest->length = i;
+
+	// We can never have a carry at this point because the negative value is 
+	// guaranteed to be smaller than the positive one.
+
+	if (swapped_sign) {
+		// If we previously swapped the signs of the operands, make sure 
+		// to change them back. Dest is now definitely negative though.
+		dest->negative = true;
+		src->negative = !src->negative;
+	} else {
+		// And if we didn't swap them dest is sure to be positive.
+		dest->negative = false;
+	}
+
+	return EXIT_OK;
+}
+
+// Calculate src + dest and store it in dest. If absolute is true, ignores the sign.
+error_t add_big_integers(BigInteger *src, BigInteger *dest, bool absolute) {
+	// If either src or dest are zero immediately return the other one
+	if (src->length == 1 && !src->data[src->length - 1]) {
+		// src is zero so dest remains unchanged
+		return EXIT_OK;
+	} else if (dest->length == 1 && !dest->data[dest->length - 1]) {
+		// dest is zero so just copy src into it
+		dest->length = src->length;
+		dest->negative = absolute ? dest->negative : src->negative;
+
+		memmove(dest->data, src->data, src->length);
+
+		return EXIT_OK;
+	}
+
+	// If exactly one of the numbers is negative, perform a subtraction
+	if (!absolute && (src->negative ^ dest->negative)) {
+		return subtract_big_integers(src, dest);
+	}
+
+	// We know that either none or both of the numbers are negative now. If 
+	// both are negative we can just perform addition as if none of them were.
+	
+	const size_t max_length = (
+		src->length > dest->length ? src->length : dest->length
+	);
+
+	size_t i;
+	int carry = 0;
+
+	for (i = 0; i < max_length; i++) {
+		// It's fine if we technically go over one of the bigints lengths
+		// here because the buffers are zero-initialized
+
+		// Sum is in [0, 19]
+		const int sum = src->data[i] + dest->data[i] + carry;
+
+		// Carry is either 0 or 1
 		carry = sum / 10;
-		sum %= 10;
+		// Final digit is in [0, 9]
+		dest->data[i] = sum % 10;
 
-		raw_result[max_length - 2 - i] = sum;
+		// If we made a contentful calculation just now...
+		if (dest->data[i]) {
+			dest->length = i + 1;
+		}
 	}
 
-	// Make sure that the carry didn't make us go over the length limit
-	if (carry && larger->length == MAX_LENGTH) {
-		*error = EXIT_NUMBER_TOO_BIG;
+	// If we still have a leftover carry...
+	if (carry) {
+		// Make sure it will fit
+		if (i + 1 > MAX_LENGTH) {
+			return EXIT_NUMBER_TOO_BIG;
+		}
 
-		free(raw_result);
-
-		return NULL;
+		dest->length = i + 1;
+		dest->data[i] = carry;
 	}
 
-	BigInteger *result = create_big_integer(raw_result + (max_length - 1 - i),
-		error);
-
-	free(raw_result);
-
-	return result;
+	return EXIT_OK;
 }
 
-// Add src to dest in-place.
-error_t add_to_big_integer(BigInteger *src, BigInteger *dest) {
-	const size_t max_length = MAX_LENGTH + 1;
+// Returns a copy of a given biginteger, scaled by a value in [0, 9]. Caller is 
+// responsible for freeing the created bigint in all cases.
+BigInteger *scale_big_integer(BigInteger *src, char scale, error_t *error) {
+	BigInteger *dest = create_big_integer("0", error);
 
-	BigInteger *larger = src->length > dest->length ? src : dest;
-
-	char carry = 0;
-	size_t i = 0;
-	// Plus one for a potential carry after the last addition
-	for (; i < larger->length + 1; i++) {
-		char a = i >= src->length ? 0 : src->data[src->length - i];
-		char b = i >= dest->length ? 0 : dest->data[dest->length - i];
-
-		char sum = a + b + carry;
-		carry = sum / 10;
-		sum %= 10;
-
-		
-
-		raw_result[max_length - 2 - i] = sum;
+	if (*error != EXIT_OK || scale == 0) {
+		return dest;
 	}
 
-	// Make sure that the carry didn't make us go over the length limit
-	if (carry && larger->length == MAX_LENGTH) {
-		*error = EXIT_NUMBER_TOO_BIG;
+	// This is not particularly efficient but adds at most a constant factor
+	// to the runtime so it'll be fine
+	for (char i = 0; i < scale; i++) {
+		error_t temp_error = EXIT_OK;
 
-		free(raw_result);
+		if ((temp_error = add_big_integers(src, dest, true)) != EXIT_OK) {
+			*error = temp_error;
 
-		return NULL;
+			return dest;
+		}
 	}
 
-	BigInteger *result = create_big_integer(raw_result + (max_length - 1 - i),
-		error);
-
-	free(raw_result);
-
-	return result;
+	return dest;
 }
 
-// Calculate x * y where y is an int.
-BigInteger *scale_big_integer(BigInteger *x, int y, error_t *error) {
+// Returns a new bigintiger containing the result of a * b. Caller is resposible for 
+// freeing the created bigint in all cases.
+BigInteger *multiply_big_integers(BigInteger *a, BigInteger *b, error_t *error) {
+	BigInteger *dest = create_big_integer("0", error);
 
-}
+	if (*error != EXIT_OK) {
+		return dest;
+	}
 
-// Calculate x * y.
-BigInteger *multiply_big_integer(BigInteger *x, BigInteger *y, error_t *error) {
-	BigInteger *result = create_big_integer("0", error);
+	for (size_t i = 0; i < a->length; i++) {
+		BigInteger *scaled = scale_big_integer(b, a->data[i], error);
 
-	if (*error != EXIT_OK) {}
+		if (*error != EXIT_OK) {
+			destroy_big_integer(scaled);
 
-	BigInteger *larger = x->length > y->length ? x : y;
-	BigInteger *smaller = x->length > y->length ? y : x;
+			return dest;
+		}
 
-	for (size_t i = 0; i < smaller->length; i++) {
-		char factor = smaller->data[i];
+		if ((scaled->length + i) > MAX_LENGTH) {
+			*error = EXIT_NUMBER_TOO_BIG;
 
-		BigInteger *scaled = scale_big_integer(larger, factor * (i * 10),
-			error);
+			return dest;
+		}
 
-		if (*error != EXIT_OK) {}
+		// Multiply `scaled` by 10^i by adding i zeroes to the end
+		memmove(scaled->data + i, scaled->data, scaled->length);
+		memset(scaled->data, 0, i);
+		scaled->length += i;
 
-		add_to_big_integer(scaled, result);
+		error_t temp_error = EXIT_OK;
+
+		if ((temp_error = add_big_integers(scaled, dest, true)) != EXIT_OK) {
+			*error = temp_error;
+
+			destroy_big_integer(scaled);
+
+			return dest;
+		}
 
 		destroy_big_integer(scaled);
 	}
 
-	return result;
+	const bool one_negative = !(a->negative && b->negative)
+		&& (a->negative || b->negative);
+
+	if (one_negative) {
+		dest->negative = true;
+	}
+
+	return dest;
 }
 
 // Creates an empty matrix (2d array) of the given size. Might still return a 
@@ -424,8 +557,6 @@ void print_matrix(Matrix *m) {
 		return;
 	}
 
-	char num[MAX_LENGTH + 1];
-
 	printf("\trows = %ld\n", m->rows);
 	printf("\tcolumns = %ld\n", m->columns);
 	printf("\tdata = %p\n", m->data);
@@ -448,25 +579,70 @@ void print_matrix(Matrix *m) {
 				continue;
 			}
 
-			size_t i;
-			for (i = 0; i < bigint->length; i++) {
-				num[i] = bigint->data[i] + '0';
-			}
-
-			num[bigint->length] = '\0';
-
 			putchar('\t');
+
 			if (bigint->negative) {
 				putchar('-');
 			}
-			fputs(num, stdout);
-			putchar(' ');
+
+			size_t i;
+			for (i = bigint->length; i > 0; i--) {
+				printf("%d", bigint->data[i - 1]);
+			}
 		}
 
 		putchar('\n');
 	}
 
 	putchar('\n');
+}
+
+// Returns the result of a * b. Caller is resposible for freeing the return value
+// in all cases.
+Matrix *multiply_matrices(Matrix *a, Matrix *b, error_t *error) {
+	Matrix *result = create_matrix(a->rows, b->columns, error);
+
+	if (*error != EXIT_OK) {
+		return result;
+	}
+
+	for (size_t row = 0; row < result->rows; row++) {
+		for (size_t col = 0; col < result->columns; col++) {
+			BigInteger *bigint = create_big_integer("0", error);
+
+			if (*error != EXIT_OK) {
+				destroy_big_integer(bigint);
+
+				return result;
+			}
+
+			for (size_t i = 0; i < a->columns; i++) {
+				BigInteger *product = multiply_big_integers(
+					a->data[row][i], b->data[i][col], error
+				);
+
+				if (*error != EXIT_OK) {
+					destroy_big_integer(bigint);
+					destroy_big_integer(product);
+
+					return result;
+				}
+
+				if ((*error = add_big_integers(product, bigint, false)) != EXIT_OK) {
+					destroy_big_integer(bigint);
+					destroy_big_integer(product);
+
+					return result;
+				}
+
+				destroy_big_integer(product);
+			}
+
+			result->data[row][col] = bigint;
+		}
+	}
+
+	return result;
 }
 
 int main(int argc, char *argv[]) {
@@ -503,10 +679,16 @@ int main(int argc, char *argv[]) {
 		goto cleanup;
 	}
 
-cleanup:
 	print_matrix(m1);
 	print_matrix(m2);
 
+	Matrix *result = multiply_matrices(m1, m2, &error);
+
+	print_matrix(result);
+
+	destroy_matrix(result);
+
+cleanup:
 	destroy_matrix(m1);
 	destroy_matrix(m2);
 
