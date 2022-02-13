@@ -130,10 +130,13 @@ int compare_big_integers(BigInteger *a, BigInteger *b, bool absolute) {
 		}
 	}
 
-	for (size_t i = 0; i < a->length; i++) {
-		if (a->data[i] > b->data[i]) {
+	for (size_t i = a->length; i > 0; i--) {
+		char a_val = a->data[i - 1];
+		char b_val = b->data[i - 1];
+
+		if (a_val > b_val) {
 			return (absolute || !a->negative) ? 1 : -1;
-		} else if (a->data[i] < b->data[i]) {
+		} else if (a_val < b_val) {
 			return (absolute || !a->negative) ? -1 : 1;
 		}
 	}
@@ -156,7 +159,7 @@ error_t subtract_big_integers(BigInteger *src, BigInteger *dest) {
 		BigInteger *negative = src->negative ? src : dest;
 		BigInteger *positive = negative == src ? dest : src;
 
-		// If the negative value is larger than the positive one (in absolute terms)...
+		// If abs(negative value) is larger than abs(positive value)...
 		if (compare_big_integers(negative, positive, true) > 0) {
 			// Swap their signedness to make the naiive algorithm work
 			negative->negative = false;
@@ -165,6 +168,10 @@ error_t subtract_big_integers(BigInteger *src, BigInteger *dest) {
 			swapped_sign = true;
 		}
 	}
+
+	// Assuming we don't make a single nonzero calculation (-x + x), this 
+	// is the default
+	dest->length = 1;
 
 	const int src_factor = src->negative ? -1 : 1;
 	const int dest_factor = dest->negative ? -1 : 1;
@@ -183,12 +190,11 @@ error_t subtract_big_integers(BigInteger *src, BigInteger *dest) {
 			carry = 0;
 			dest->data[i] = sum;
 		}
+
+		if (dest->data[i]) {
+			dest->length = i + 1;
+		}
 	}
-
-	dest->length = i;
-
-	// We can never have a carry at this point because the negative value is 
-	// guaranteed to be smaller than the positive one.
 
 	if (swapped_sign) {
 		// If we previously swapped the signs of the operands, make sure 
@@ -220,7 +226,8 @@ error_t add_big_integers(BigInteger *src, BigInteger *dest, bool absolute) {
 	}
 
 	// If exactly one of the numbers is negative, perform a subtraction
-	if (!absolute && (src->negative ^ dest->negative)) {
+	// TODO: Maybe use src->negative ^ dest->negative
+	if (!absolute && ((!src->negative && dest->negative) || (src->negative && !dest->negative))) {
 		return subtract_big_integers(src, dest);
 	}
 
@@ -246,7 +253,6 @@ error_t add_big_integers(BigInteger *src, BigInteger *dest, bool absolute) {
 		// Final digit is in [0, 9]
 		dest->data[i] = sum % 10;
 
-		// If we made a contentful calculation just now...
 		if (dest->data[i]) {
 			dest->length = i + 1;
 		}
@@ -550,51 +556,40 @@ error_t parse_input_file(FILE *input_file, Matrix **m1, Matrix **m2) {
 	return error;
 }
 
-void print_matrix(Matrix *m) {
-	printf("matrix @ %p\n", m);
+void print_matrix(Matrix *m, FILE *stream) {
+	size_t max_length = 0;
 
-	if (!m) {
-		return;
-	}
-
-	printf("\trows = %ld\n", m->rows);
-	printf("\tcolumns = %ld\n", m->columns);
-	printf("\tdata = %p\n", m->data);
-
-	if (!m->data) {
-		return;
-	}
-
-	for (size_t row = 0; row < m->rows; row++) {
-		if (!m->data[row]) {
-			continue;
-		}
-
-		for (size_t col = 0; col < m->columns; col++) {
-			BigInteger *bigint = m->data[row][col];
-
-			if (!bigint) {
-				fputs("\tnull ", stdout);
-
-				continue;
+	for (size_t i = 0; i < m->rows; i++) {
+		for (size_t j = 0; j < m->columns; j++) {
+			size_t length = m->data[i][j]->length
+				+ m->data[i][j]->negative;
+			
+			if (length > max_length) {
+				max_length = length;
 			}
+		}
+	}
 
-			putchar('\t');
+	for (size_t i = 0; i < m->rows; i++) {
+		for (size_t j = 0; j < m->columns; j++) {
+			BigInteger *bigint = m->data[i][j];
+			size_t length = bigint->length + bigint->negative;
+
+			for (size_t k = 0; k < max_length - length + 1; k++) {
+				putc(' ', stream);
+			}
 
 			if (bigint->negative) {
-				putchar('-');
+				putc('-', stream);
 			}
 
-			size_t i;
-			for (i = bigint->length; i > 0; i--) {
-				printf("%d", bigint->data[i - 1]);
+			for (size_t k = bigint->length; k > 0; k--) {
+				putc(bigint->data[k - 1] + '0', stream);
 			}
 		}
 
-		putchar('\n');
-	}
-
-	putchar('\n');
+		putc('\n', stream);
+	}	
 }
 
 // Returns the result of a * b. Caller is resposible for freeing the return value
@@ -645,58 +640,192 @@ Matrix *multiply_matrices(Matrix *a, Matrix *b, error_t *error) {
 	return result;
 }
 
-int main(int argc, char *argv[]) {
+void print_error(error_t error) {
+	switch (error) {
+		case EXIT_ARGS: fputs(invalid_arg_num_str, stderr);
+			break;
+		case EXIT_INCOMPATIBLE_DIM: fputs(incompatible_dim_str, stderr);
+			break;
+		case EXIT_OUT_OF_MEM: fputs(out_of_mem_str, stderr);
+			break;
+		case EXIT_NUMBER_TOO_BIG: fprintf(stderr, number_too_big_str,
+			MAX_LENGTH);
+			break;
+		case EXIT_INVALID_NUMBER: fputs(invalid_number_str, stderr);
+			break;
+		case EXIT_INVALID_MATRIX: fputs(invalid_matrix_str, stderr);
+			break;
+		case EXIT_INTERNAL: fputs("An internal error occured.", stderr);
+			break;
+		default: fprintf(stderr, unknown_error_str, error);
+	}
+}
+
+void print_big_integer(BigInteger *bigint, char *name) {
+	printf("\nbigint (%s) @ %p\n", name, bigint);
+
+	if (!bigint) {
+		return;
+	}
+
+	printf("\tlength = %ld\n", bigint->length);
+	printf("\tnegative = %d\n", bigint->negative);
+
+	putchar('\n');
+	fputs("\t", stdout);
+
+	for (size_t i = bigint->length; i > 0; i--) {
+		printf("%d ", bigint->data[i - 1]);
+	}
+
+	putchar('\n');
+}
+
+void print_big_integer_content(BigInteger *bigint) {
+	if (bigint->negative) {
+		putchar('-');
+	}
+
+	for (size_t i = bigint->length; i > 0; i--) {
+		printf("%d", bigint->data[i - 1]);
+	}
+}
+
+void testing() {
+	#define type int16_t
+	#define MIN INT16_MIN
+	#define MAX INT16_MAX
+
 	error_t error = EXIT_OK;
 
-	if (argc != 2) {
-		fputs(invalid_arg_num_str, stderr);
+	char buf1[20];
+	char buf2[20];
+	char buf3[20];
 
-		return EXIT_ARGS;
-	}
+	for (type i = MIN; i < MAX; i++) {
+		memset(buf1, 0, 20);
+		sprintf(buf1, "%d", i);
 
-	char *input_file_name = argv[1];
-	FILE *input_file = fopen(input_file_name, "r");
+		BigInteger *a = create_big_integer(buf1, &error);
 
-	if (!input_file) {
-		fprintf(stderr, open_infile_err_str, input_file_name);
+		if (error != EXIT_OK) {
+			destroy_big_integer(a);
 
-		return EXIT_IO;
-	}
+			print_error(error);
 
-	Matrix *m1 = NULL, *m2 = NULL;
-
-	if ((error = parse_input_file(input_file, &m1, &m2)) != EXIT_OK) {
-		if (error == EXIT_OUT_OF_MEM) {
-			fputs(out_of_mem_str, stderr);
-		} else if (error == EXIT_NUMBER_TOO_BIG) {
-			fprintf(stderr, number_too_big_str, MAX_LENGTH);
-		} else {
-			// Should be a dead code path
-			fprintf(stderr, unknown_error_str, error);
+			return;
 		}
 
-		// This is C after all
-		goto cleanup;
+		for (type j = MIN; j < MAX; j++) {
+			memset(buf2, 0, 20);
+			memset(buf3, 0, 20);
+			sprintf(buf2, "%d", j);
+			sprintf(buf3, "%d", i + j);
+
+			BigInteger *b = create_big_integer(buf2, &error);
+			BigInteger *expected = create_big_integer(buf3, &error);
+
+			if (error != EXIT_OK) {
+				destroy_big_integer(a);
+				destroy_big_integer(b);
+				destroy_big_integer(expected);
+
+				print_error(error);
+
+				return;
+			}
+
+			fputs("expecting ", stdout);
+			print_big_integer_content(a);
+			fputs(" + ", stdout);
+			print_big_integer_content(b);
+			fputs(" = ", stdout);
+			print_big_integer_content(expected);
+			putchar('\n');
+
+			if (i == -126 && j == 126) {
+				puts("hi");
+			}
+
+			if ((error = add_big_integers(a, b, false)) != EXIT_OK) {
+				print_error(error);
+
+				return;
+			}
+
+			if (compare_big_integers(b, expected, false)) {
+				puts("\nintegers not equal");
+
+				print_big_integer(b, "actual");
+				print_big_integer(expected, "expected");
+
+				destroy_big_integer(a);
+				destroy_big_integer(b);
+				destroy_big_integer(expected);
+
+				return;
+			}
+
+			destroy_big_integer(b);
+			destroy_big_integer(expected);
+		}
+
+		destroy_big_integer(a);
 	}
+}
 
-	print_matrix(m1);
-	print_matrix(m2);
+int main(int argc, char *argv[]) {
+	testing();
 
-	Matrix *result = multiply_matrices(m1, m2, &error);
+// 	error_t error = EXIT_OK;
 
-	print_matrix(result);
+// 	if (argc != 2) {
+// 		fputs(invalid_arg_num_str, stderr);
 
-	destroy_matrix(result);
+// 		return EXIT_ARGS;
+// 	}
 
-cleanup:
-	destroy_matrix(m1);
-	destroy_matrix(m2);
+// 	char *input_file_name = argv[1];
+// 	FILE *input_file = fopen(input_file_name, "r");
 
-	if (fclose(input_file)) {
-		fputs(close_file_err_str, stderr);
+// 	if (!input_file) {
+// 		fprintf(stderr, open_infile_err_str, input_file_name);
 
-		return EXIT_IO;
-	}
+// 		return EXIT_IO;
+// 	}
 
-	return error;
+// 	Matrix *m1 = NULL, *m2 = NULL;
+
+// 	if ((error = parse_input_file(input_file, &m1, &m2)) != EXIT_OK) {
+// 		print_error(error);
+
+// 		// This is C after all
+// 		goto cleanup;
+// 	}
+
+// 	Matrix *result = multiply_matrices(m1, m2, &error);
+
+// 	if (error) {
+// 		destroy_matrix(result);
+
+// 		print_error(error);
+
+// 		goto cleanup;
+// 	}
+
+// 	print_matrix(result, stdout);
+
+// 	destroy_matrix(result);
+
+// cleanup:
+// 	destroy_matrix(m1);
+// 	destroy_matrix(m2);
+
+// 	if (fclose(input_file)) {
+// 		fputs(close_file_err_str, stderr);
+
+// 		return EXIT_IO;
+// 	}
+
+// 	return error;
 }

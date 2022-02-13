@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [],
+            "args": [ "ref-data/input/input.txt" ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

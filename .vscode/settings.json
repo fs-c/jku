@@ -11,5 +11,6 @@
         "editor.insertSpaces": false,
         "editor.tabSize": 8,
         "editor.detectIndentation": false
-    }
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }
