@@ -661,171 +661,56 @@ void print_error(error_t error) {
 	}
 }
 
-void print_big_integer(BigInteger *bigint, char *name) {
-	printf("\nbigint (%s) @ %p\n", name, bigint);
-
-	if (!bigint) {
-		return;
-	}
-
-	printf("\tlength = %ld\n", bigint->length);
-	printf("\tnegative = %d\n", bigint->negative);
-
-	putchar('\n');
-	fputs("\t", stdout);
-
-	for (size_t i = bigint->length; i > 0; i--) {
-		printf("%d ", bigint->data[i - 1]);
-	}
-
-	putchar('\n');
-}
-
-void print_big_integer_content(BigInteger *bigint) {
-	if (bigint->negative) {
-		putchar('-');
-	}
-
-	for (size_t i = bigint->length; i > 0; i--) {
-		printf("%d", bigint->data[i - 1]);
-	}
-}
-
-void testing() {
-	#define type int16_t
-	#define MIN INT16_MIN
-	#define MAX INT16_MAX
-
+int main(int argc, char *argv[]) {
 	error_t error = EXIT_OK;
 
-	char buf1[20];
-	char buf2[20];
-	char buf3[20];
+	if (argc != 2) {
+		fputs(invalid_arg_num_str, stderr);
 
-	for (type i = MIN; i < MAX; i++) {
-		memset(buf1, 0, 20);
-		sprintf(buf1, "%d", i);
-
-		BigInteger *a = create_big_integer(buf1, &error);
-
-		if (error != EXIT_OK) {
-			destroy_big_integer(a);
-
-			print_error(error);
-
-			return;
-		}
-
-		for (type j = MIN; j < MAX; j++) {
-			memset(buf2, 0, 20);
-			memset(buf3, 0, 20);
-			sprintf(buf2, "%d", j);
-			sprintf(buf3, "%d", i + j);
-
-			BigInteger *b = create_big_integer(buf2, &error);
-			BigInteger *expected = create_big_integer(buf3, &error);
-
-			if (error != EXIT_OK) {
-				destroy_big_integer(a);
-				destroy_big_integer(b);
-				destroy_big_integer(expected);
-
-				print_error(error);
-
-				return;
-			}
-
-			fputs("expecting ", stdout);
-			print_big_integer_content(a);
-			fputs(" + ", stdout);
-			print_big_integer_content(b);
-			fputs(" = ", stdout);
-			print_big_integer_content(expected);
-			putchar('\n');
-
-			if (i == -126 && j == 126) {
-				puts("hi");
-			}
-
-			if ((error = add_big_integers(a, b, false)) != EXIT_OK) {
-				print_error(error);
-
-				return;
-			}
-
-			if (compare_big_integers(b, expected, false)) {
-				puts("\nintegers not equal");
-
-				print_big_integer(b, "actual");
-				print_big_integer(expected, "expected");
-
-				destroy_big_integer(a);
-				destroy_big_integer(b);
-				destroy_big_integer(expected);
-
-				return;
-			}
-
-			destroy_big_integer(b);
-			destroy_big_integer(expected);
-		}
-
-		destroy_big_integer(a);
+		return EXIT_ARGS;
 	}
-}
 
-int main(int argc, char *argv[]) {
-	testing();
+	char *input_file_name = argv[1];
+	FILE *input_file = fopen(input_file_name, "r");
 
-// 	error_t error = EXIT_OK;
+	if (!input_file) {
+		fprintf(stderr, open_infile_err_str, input_file_name);
 
-// 	if (argc != 2) {
-// 		fputs(invalid_arg_num_str, stderr);
+		return EXIT_IO;
+	}
 
-// 		return EXIT_ARGS;
-// 	}
+	Matrix *m1 = NULL, *m2 = NULL;
 
-// 	char *input_file_name = argv[1];
-// 	FILE *input_file = fopen(input_file_name, "r");
+	if ((error = parse_input_file(input_file, &m1, &m2)) != EXIT_OK) {
+		print_error(error);
 
-// 	if (!input_file) {
-// 		fprintf(stderr, open_infile_err_str, input_file_name);
+		// This is C after all
+		goto cleanup;
+	}
 
-// 		return EXIT_IO;
-// 	}
+	Matrix *result = multiply_matrices(m1, m2, &error);
 
-// 	Matrix *m1 = NULL, *m2 = NULL;
+	if (error) {
+		destroy_matrix(result);
 
-// 	if ((error = parse_input_file(input_file, &m1, &m2)) != EXIT_OK) {
-// 		print_error(error);
+		print_error(error);
 
-// 		// This is C after all
-// 		goto cleanup;
-// 	}
+		goto cleanup;
+	}
 
-// 	Matrix *result = multiply_matrices(m1, m2, &error);
+	print_matrix(result, stdout);
 
-// 	if (error) {
-// 		destroy_matrix(result);
+	destroy_matrix(result);
 
-// 		print_error(error);
+cleanup:
+	destroy_matrix(m1);
+	destroy_matrix(m2);
 
-// 		goto cleanup;
-// 	}
+	if (fclose(input_file)) {
+		fputs(close_file_err_str, stderr);
 
-// 	print_matrix(result, stdout);
+		return EXIT_IO;
+	}
 
-// 	destroy_matrix(result);
-
-// cleanup:
-// 	destroy_matrix(m1);
-// 	destroy_matrix(m2);
-
-// 	if (fclose(input_file)) {
-// 		fputs(close_file_err_str, stderr);
-
-// 		return EXIT_IO;
-// 	}
-
-// 	return error;
+	return error;
 }
