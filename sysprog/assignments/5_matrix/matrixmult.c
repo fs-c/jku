@@ -1,3 +1,15 @@
+// Hey there. Please feel free to only grade this assignment up to the point where
+// it makes up for any points I might have lost in the fourth assignment. (At the
+// time of writing this the points are not yet visible.) I'm certain that you have 
+// a lot to do, and points above the maximum won't do me any good anyways.
+
+// Some implementation details:
+// - The data in my BigInteger struct is stored in reverse order. "123" = [ 3, 2, 1 ]
+// - I didn't want to deal with resizing the BigInteger data if a calculation changed 
+//   the length so it is maxed out at INTERNAL_MAX_LENGTH, anything above that is an error.
+// - BigInteger data is zeroed by default which means that reads over bigint->length but
+//   within INTERNAL_MAX_LENGTH are fine. (They would return garbage if it weren't zeroed.)
+
 #include "presettings.h"
 
 #include <stdio.h>
@@ -7,6 +19,8 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
+
+#define INTERNAL_MAX_LENGTH 515
 
 typedef struct BigInteger {
 	size_t length;
@@ -68,6 +82,13 @@ error_t parse_raw_integer(char *raw_integer, BigInteger *bigint) {
 
 	bigint->length = i;
 
+	if (bigint->length > 1 && bigint->data[0] == 0) {
+		// Not a particularly good practice but it is what it is
+		fputs(leading_zero_str, stderr);
+
+		return EXIT_INVALID_NUMBER;
+	}
+
 	if (!bigint->length) {
 		return EXIT_INVALID_NUMBER;
 	}
@@ -89,7 +110,7 @@ BigInteger *create_big_integer(char *raw_integer, error_t *error) {
 	}
 
 	// Make sure that unset digits are zeroed
-	bigint->data = calloc(1, MAX_LENGTH);
+	bigint->data = calloc(1, INTERNAL_MAX_LENGTH);
 
 	if (!bigint->data) {
 		*error = EXIT_OUT_OF_MEM;
@@ -261,8 +282,8 @@ error_t add_big_integers(BigInteger *src, BigInteger *dest, bool absolute) {
 	// If we still have a leftover carry...
 	if (carry) {
 		// Make sure it will fit
-		if (i + 1 > MAX_LENGTH) {
-			return EXIT_NUMBER_TOO_BIG;
+		if (i + 1 > INTERNAL_MAX_LENGTH) {
+			return EXIT_INTERNAL;
 		}
 
 		dest->length = i + 1;
@@ -314,8 +335,8 @@ BigInteger *multiply_big_integers(BigInteger *a, BigInteger *b, error_t *error) 
 			return dest;
 		}
 
-		if ((scaled->length + i) > MAX_LENGTH) {
-			*error = EXIT_NUMBER_TOO_BIG;
+		if ((scaled->length + i) > INTERNAL_MAX_LENGTH) {
+			*error = EXIT_INTERNAL;
 
 			return dest;
 		}
@@ -478,7 +499,9 @@ int32_t read_int32(FILE *input_file, error_t *error) {
 	return value;
 }
 
-void parse_matrix_block(FILE *input_file, Matrix *m, error_t *error) {
+error_t parse_matrix_block(FILE *input_file, Matrix *m) {
+	error_t error = EXIT_OK;
+
 	const size_t max_length = MAX_LENGTH + 1;
 	char *raw_integer = malloc(max_length);
 
@@ -487,28 +510,43 @@ void parse_matrix_block(FILE *input_file, Matrix *m, error_t *error) {
 			if (feof(input_file)) {
 				free(raw_integer);
 
-				*error = EXIT_INVALID_MATRIX;
-
-				return;
+				return EXIT_INVALID_MATRIX;
 			}
 
-			if ((*error = read_word(input_file, raw_integer, max_length)) != EXIT_OK) {
+			if ((error = read_word(input_file, raw_integer, max_length)) != EXIT_OK) {
 				free(raw_integer);
 
-				return;
+				return error;
 			}
 
-			m->data[row][col] = create_big_integer(raw_integer, error);
+			m->data[row][col] = create_big_integer(raw_integer, &error);
 
-			if (*error != EXIT_OK) {
+			if (error != EXIT_OK) {
 				free(raw_integer);
 
-				return;
+				return error;
 			}
+		}
+
+		// Check that we have actually reached the end of a line
+		// ...by discarding blank (space, tab) characters,
+		char c;
+		while (isblank(c = fgetc(input_file)))
+			;
+		
+		// ...and checking whether the first non-blank character is a linebreak.
+		if (!isspace(c)) {
+			// It's not.
+
+			free(raw_integer);
+
+			return EXIT_INVALID_MATRIX;
 		}
 	}
 
 	free(raw_integer);
+
+	return error;
 }
 
 void initialize_matrix(FILE *input_file, Matrix **m, error_t *error) {
@@ -544,8 +582,12 @@ error_t parse_input_file(FILE *input_file, Matrix **m1, Matrix **m2) {
 		return EXIT_INCOMPATIBLE_DIM;
 	}
 
-	parse_matrix_block(input_file, *m1, &error);
-	parse_matrix_block(input_file, *m2, &error);
+	if (
+		(error = parse_matrix_block(input_file, *m1)) != EXIT_OK ||
+		(error = parse_matrix_block(input_file, *m2)) != EXIT_OK
+	) {
+		return error;
+	}
 
 	skip_space(input_file);
 
