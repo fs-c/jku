@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [ "ref-data/input/input.txt" ],
+            "args": [ "ref-data/input/missing_number.in" ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
