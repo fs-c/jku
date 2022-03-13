@@ -1,147 +1,95 @@
 package ordersys;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import ordersys.Order;
-import java.util.Iterator;
-import java.util.function.Consumer;
+import java.lang.reflect.Array;
 
-record Item(int id, double price, String name) {
+class DynamicArray<T> {
+    private T[] elements;
+    private int logicalLength = 0;
+
+    @SuppressWarnings("unchecked")
+    DynamicArray(Class<T> t, int initialSize) {
+        elements = (T[]) Array.newInstance(t, initialSize);
+    }
+
+    public int size() {
+        return logicalLength;
+    }
+
+    public void add(T element) {
+        if (logicalLength >= elements.length) {
+            elements = Arrays.copyOf(elements, logicalLength * 2);
+        }
+
+        elements[logicalLength++] = element;
+    }
+
+    public T get(int index) {
+        if (index >= logicalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
+        return elements[index];
+    }
+
+    public void remove(int index) {
+        if (index >= logicalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
+        // Indices are [ 0, 1, ..., index, index + 1, ..., logicalLength - 1 ]
+        // We move [ index + 1, ... logicalLength - 1 ] to the left by one, thus
+        // overwriting the element at index
+        System.arraycopy(elements, index + 1, elements, index, logicalLength - 1 - index);
+
+        logicalLength--;
+    }
 }
 
-//class DynamicArray<T> implements Iterable<T> {
-//    private T[] elements;
-//    private int logicalLength = 0;
-//
-//    @SuppressWarnings("unchecked")
-//    DynamicArray(Class<T> t, int initialSize) {
-//        elements = (T[]) Array.newInstance(t, initialSize);
-//    }
-//
-//    public T get(int index) {
-//        if (index >= logicalLength) {
-//            throw new ArrayIndexOutOfBoundsException();
-//        }
-//
-//        return elements[index];
-//    }
-//
-//    public void add(T element) {
-//        if (logicalLength >= elements.length) {
-//            elements = Arrays.copyOf(elements, logicalLength * 2);
-//        }
-//
-//        elements[logicalLength++] = element;
-//    }
-//
-//    public void delete(int index) {
-//        if (index >= logicalLength) {
-//            throw new ArrayIndexOutOfBoundsException();
-//        }
-//
-//        // Indices are [ 0, 1, ..., index, index + 1, ..., logicalLength - 1 ]
-//        // We move [ index + 1, ... logicalLength - 1 ] to the left by one, thus
-//        // overwriting the element at index
-//        System.arraycopy(elements, index + 1, elements, index, logicalLength - 1 - index);
-//
-//        logicalLength--;
-//    }
-//
-//    @Override
-//    public Iterator<T> iterator() {
-//        return new DynamicArrayIterator();
-//    }
-//
-//    class DynamicArrayIterator implements Iterator<T> {
-//        private int index = 0;
-//
-//        @Override
-//        public boolean hasNext() {
-//            return index <= logicalLength;
-//        }
-//
-//        @Override
-//        public T next() {
-//            return get(index++);
-//        }
-//
-//        @Override
-//        public void remove() {
-//            delete(index);
-//        }
-//    }
-//}
+class IdNotFoundException extends RuntimeException {
+}
 
-//class DynamicArray<T> {
-//    private T[] elements;
-//    private int logicalLength = 0;
-//
-//    @SuppressWarnings("unchecked")
-//    DynamicArray(Class<T> t, int initialSize) {
-//        elements = (T[]) Array.newInstance(t, initialSize);
-//    }
-//
-//    public int size() {
-//        return logicalLength;
-//    }
-//
-//    public void add(T element) {
-//        if (logicalLength >= elements.length) {
-//            elements = Arrays.copyOf(elements, logicalLength * 2);
-//        }
-//
-//        elements[logicalLength++] = (T) element;
-//    }
-//
-//    public T get(int index) {
-//        if (index >= logicalLength) {
-//            throw new ArrayIndexOutOfBoundsException();
-//        }
-//
-//        return (T) elements[index];
-//    }
-//
-//    public void remove(int index) {
-//        if (index >= logicalLength) {
-//            throw new ArrayIndexOutOfBoundsException();
-//        }
-//
-//        // Indices are [ 0, 1, ..., index, index + 1, ..., logicalLength - 1 ]
-//        // We move [ index + 1, ... logicalLength - 1 ] to the left by one, thus
-//        // overwriting the element at index
-//        System.arraycopy(elements, index + 1, elements, index, logicalLength - 1 - index);
-//
-//        logicalLength--;
-//    }
-//}
-
-public class ItemList {
-    public void add(Item item) {
-
+class ItemList extends DynamicArray<Item> {
+    ItemList() {
+        super(Item.class, 2);
     }
 
     public void removeById(int itemId) {
-
+        remove(getIndexById((itemId)));
     }
 
     public Item getById(int itemId) {
-
+        return get(getIndexById(itemId));
     }
 
     private int getIndexById(int itemId) {
+        for (int i = 0; i < size(); i++) {
+            if (get(i).id() == itemId) {
+                return i;
+            }
+        }
 
+        throw new IdNotFoundException();
     }
 }
 
-public class OrderList {
-    private Order[] orders = new Order[2];
-
-    public void add(Order order) {
-
+class OrderList extends DynamicArray<Order> {
+    OrderList() {
+        super(Order.class, 2);
     }
 
     public Order getById(int orderId) {
+        return get(getIndexById(orderId));
+    }
 
+    private int getIndexById(int itemId) {
+        for (int i = 0; i < size(); i++) {
+            if (get(i).getId() == itemId) {
+                return i;
+            }
+        }
+
+        throw new IdNotFoundException();
     }
 }
 
@@ -152,6 +100,16 @@ public class OrderSystem {
     private final ItemList items = new ItemList();
     private final OrderList orders = new OrderList();
 
+    public int addItem(Item item) {
+        if (item == null) {
+            return -1;
+        }
+
+        items.add(item);
+
+        return item.id();
+    }
+
     public int addItem(double price, String name) {
         Item item = new Item(runningItemId++, price, name);
 
@@ -160,36 +118,94 @@ public class OrderSystem {
         return item.id();
     }
 
-    public void removeItem(int id) {
-        items.removeById(id);
+    public boolean removeItem(int id) {
+        try {
+            items.removeById(id);
+
+            return true;
+        } catch (IdNotFoundException err) {
+            return false;
+        }
     }
 
     public int addOrder(int itemId, int quantity) {
-        Item item = items.getById(itemId);
-        Order order = new Order(runningOrderId++, item, quantity, Order.Status.OPEN);
+        if (quantity < 1) {
+            return -1;
+        }
 
-        orders.add(order);
+        try {
+            Item item = items.getById(itemId);
+            Order order = new Order(runningOrderId++, item, quantity, Order.Status.OPEN);
 
-        return order.getId();
+            orders.add(order);
+
+            return order.getId();
+        } catch (IdNotFoundException err) {
+            return -1;
+        }
     }
 
-    public void setOrderStatus(int orderId, Order.Status status) {
-        orders.getById(orderId).setStatus(status);
+    public boolean setOrderStatus(int orderId, Order.Status status) {
+        try {
+            orders.getById(orderId).setStatus(status);
+
+            return true;
+        } catch (IdNotFoundException err) {
+            return false;
+        }
     }
 
     public Order[] getAllOrders() {
+        Order[] result = new Order[orders.size()];
 
+        for (int i = 0; i < orders.size(); i++) {
+            result[i] = orders.get(i);
+        }
+
+        return result;
     }
 
     public Order[] getOrdersByStatus(Order.Status status) {
+        Order[] temp = new Order[orders.size()];
 
+        int j = 0;
+        for (int i = 0; i < orders.size(); i++) {
+            if (orders.get(i).getStatus() == status) {
+                temp[j++] = orders.get(i);
+            }
+        }
+
+        Order[] result = new Order[j];
+        System.arraycopy(temp, 0, result, 0, j);
+
+        return result;
     }
 
     public Order[] getOpenOrders() {
+        Order[] open = getOrdersByStatus(Order.Status.OPEN);
+        Order[] processing = getOrdersByStatus(Order.Status.PROCESSING);
 
+        Order[] result = new Order[open.length + processing.length];
+
+        System.arraycopy(open, 0, result, 0, open.length);
+        System.arraycopy(processing, 0, result, open.length, processing.length);
+
+        return result;
     }
 
     public Order[] getOrdersByItem(int itemId) {
+        Order[] temp = new Order[orders.size()];
 
+        int j = 0;
+        for (int i = 0; i < orders.size(); i++) {
+            if (orders.get(i).getItem().id() == itemId) {
+                temp[j++] = orders.get(i);
+            }
+        }
+
+        Order[] result = new Order[j];
+        System.arraycopy(temp, 0, result, 0, j);
+
+        return result;
     }
 }

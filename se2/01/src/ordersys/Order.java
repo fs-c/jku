@@ -1,11 +1,9 @@
 package ordersys;
 
-import ordersys.Item;
-
 import java.util.Objects;
 
 public class Order {
-    enum Status {
+    public enum Status {
         OPEN, PROCESSING, FULFILLED, CANCELLED
     }
 
@@ -21,7 +19,6 @@ public class Order {
         this.item = item;
         this.quantity = quantity;
         this.totalCost = item.price() * quantity;
-
         this.status = status;
     }
 
@@ -67,3 +64,4 @@ public class Order {
         return Objects.hash(item, quantity, totalCost, status);
     }
 }
+

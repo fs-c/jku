@@ -4,64 +4,70 @@ import inout.Out;
 
 import ordersys.Item;
 import ordersys.Order;
-import ordersys.Status;
 import ordersys.OrderSystem;
 
 public class OrderApp {
-
     public static void main(String[] args) {
         OrderSystem system = new OrderSystem();
 
         Item screw = new Item(0, 2.5, "100pcs M2 8mm Screws");
         Item screwdriver = new Item(1, 7, "Simple Screwdriver");
-        Item nails = new Item(2, 2, "20pcs 40mm Nails");
+        Item nail = new Item(2, 2, "20pcs 40mm Nails");
         Item hammer = new Item(3, 15, "Simple Hammer");
 
-        // TODO: add all 4 items to the system
+        int screwItemId = system.addItem(screw);
+        int screwdriverItemId = system.addItem(screwdriver);
+        int nailItemId = system.addItem(nail);
+        int hammerItemId = system.addItem(hammer);
 
-        // TODO: perform the following orders using the ordersystem
-        // ITEM         | QUANTITY
-        // screw        | 10
-        // screwdriver  | 2
-        // nails (1st)  | 1
-        // nails (2nd)  | 1
-        // hammer       | 1
+        int screwsOrderId = system.addOrder(screwItemId, 10);
+        int screwdriverOrderId = system.addOrder(screwdriverItemId, 2);
+        int firstNailsOrderId = system.addOrder(nailItemId, 11);
+        int secondNailsOrderId = system.addOrder(nailItemId, 1);
+        int hammerOrderId = system.addOrder(hammerItemId, 1);
 
         Out.println("PRINTING ORDERS AFTER PART 1:");
-        // TODO: print all orders using the "printOrders" method
 
-        // TODO: set the status of the scre order to cancelled
+        printOrders(system.getAllOrders());
 
-        // TODO: perform a new order of scews, however with a quantity of 1
+        system.setOrderStatus(screwsOrderId, Order.Status.CANCELLED);
 
-        // TODO: set the status of the orders as follows:
-        // ORDER        |   STATUS
-        // screwdriver  |   PROCESSING
-        // NAIL (1st)   |   FULFILLED
-        // NAIL (2nd)   |   PROCESSING
-        // HAMMER       |   FULFILLED
+        int newScrewsOrderId = system.addOrder(screwItemId, 1);
+
+        system.setOrderStatus(screwdriverOrderId, Order.Status.PROCESSING);
+        system.setOrderStatus(firstNailsOrderId, Order.Status.FULFILLED);
+        system.setOrderStatus(secondNailsOrderId, Order.Status.PROCESSING);
+        system.setOrderStatus(hammerOrderId, Order.Status.FULFILLED);
 
         Out.println("PRINTING ORDERS AFTER PART 2:");
-        // TODO: print all orders using the "printOrders" method
+
+        printOrders(system.getAllOrders());
 
         Out.println("PRINTING ALL FULFILLED ORDERS:");
-        // TODO: print all fulfilled orders
+
+        printOrders(system.getOrdersByStatus(Order.Status.FULFILLED));
 
         Out.println("PRINTING ALL ORDERS OF NAILS:");
-        // TODO: print all order of nails
+
+        printOrders(system.getOrdersByItem(nailItemId));
 
         Out.println("PRINTING ALL OPEN ORDERS");
-        // TODO: print all open orders
+
+        printOrders(system.getOpenOrders());
 
         Item invalidItem = new Item(4, 1000, "Computer");
-        // TODO: check that you implementation does not allow invalid operations
-        // perform an order with the invalid item
-        // remove the invalid item from the system
-        // create an order (using the order system) with the screwdriver and a quantity of -1
-        // create an order (using the order system) with a "null" item and a quantity of -1
+
+        int invalidItemOrderNumber = system.addOrder(invalidItem.id(), 1);
+        boolean invalidItemWasRemoved = system.removeItem(invalidItem.id());
+        int invalidQuantityOrderNumber = system.addOrder(screwdriverItemId, -1);
+        // My implementation is such that the last case is impossible.
 
         Out.println("PRINTING RESULTS OF INVALID OPERATIONS");
-        // TODO: print the order numbers of the invalid operations from above, one per line
+
+        Out.println(String.format("invalidItemOrderNumber: %d", invalidItemOrderNumber));
+        Out.println(String.format("invalidItemWasRemoved: %b", invalidItemWasRemoved));
+        Out.println(String.format("invalidQuantityOrderNumber: %d", invalidQuantityOrderNumber));
+        Out.println("nullItemOrderNumber: N/A");
     }
 
     private static void printOrders(Order[] orders) {
@@ -71,5 +77,4 @@ public class OrderApp {
 
         Out.println();
     }
-
 }
