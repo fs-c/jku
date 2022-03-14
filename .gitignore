@@ -25,3 +25,5 @@ git_ignore_*
 
 # Mathematica stuff
 *.m
+
+!algebra/ue/*.pdf
