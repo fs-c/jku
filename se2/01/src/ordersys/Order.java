@@ -7,23 +7,17 @@ public class Order {
         OPEN, PROCESSING, FULFILLED, CANCELLED
     }
 
-    private final int id;
     private final Item item;
     private final int quantity;
     private final double totalCost;
 
     private Status status;
 
-    Order(int id, Item item, int quantity, Status status) {
-        this.id = id;
+    Order(Item item, int quantity, Status status) {
         this.item = item;
         this.quantity = quantity;
         this.totalCost = item.price() * quantity;
         this.status = status;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public Item getItem() {

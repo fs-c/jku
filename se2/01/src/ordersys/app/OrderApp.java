@@ -20,24 +20,24 @@ public class OrderApp {
         int nailItemId = system.addItem(nail);
         int hammerItemId = system.addItem(hammer);
 
-        int screwsOrderId = system.addOrder(screwItemId, 10);
-        int screwdriverOrderId = system.addOrder(screwdriverItemId, 2);
-        int firstNailsOrderId = system.addOrder(nailItemId, 11);
-        int secondNailsOrderId = system.addOrder(nailItemId, 1);
-        int hammerOrderId = system.addOrder(hammerItemId, 1);
+        int screwsOrderIndex = system.addOrder(screwItemId, 10);
+        int screwdriverOrderIndex = system.addOrder(screwdriverItemId, 2);
+        int firstNailsOrderIndex = system.addOrder(nailItemId, 11);
+        int secondNailsOrderIndex = system.addOrder(nailItemId, 1);
+        int hammerOrderIndex = system.addOrder(hammerItemId, 1);
 
         Out.println("PRINTING ORDERS AFTER PART 1:");
 
         printOrders(system.getAllOrders());
 
-        system.setOrderStatus(screwsOrderId, Order.Status.CANCELLED);
+        system.setOrderStatus(screwsOrderIndex, Order.Status.CANCELLED);
 
         int newScrewsOrderId = system.addOrder(screwItemId, 1);
 
-        system.setOrderStatus(screwdriverOrderId, Order.Status.PROCESSING);
-        system.setOrderStatus(firstNailsOrderId, Order.Status.FULFILLED);
-        system.setOrderStatus(secondNailsOrderId, Order.Status.PROCESSING);
-        system.setOrderStatus(hammerOrderId, Order.Status.FULFILLED);
+        system.setOrderStatus(screwdriverOrderIndex, Order.Status.PROCESSING);
+        system.setOrderStatus(firstNailsOrderIndex, Order.Status.FULFILLED);
+        system.setOrderStatus(secondNailsOrderIndex, Order.Status.PROCESSING);
+        system.setOrderStatus(hammerOrderIndex, Order.Status.FULFILLED);
 
         Out.println("PRINTING ORDERS AFTER PART 2:");
 

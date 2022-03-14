@@ -3,6 +3,9 @@ package ordersys;
 import java.util.Arrays;
 import java.lang.reflect.Array;
 
+class NotFoundException extends RuntimeException {
+}
+
 class DynamicArray<T> {
     private T[] elements;
     private int logicalLength = 0;
@@ -16,17 +19,19 @@ class DynamicArray<T> {
         return logicalLength;
     }
 
-    public void add(T element) {
+    public int add(T element) {
         if (logicalLength >= elements.length) {
             elements = Arrays.copyOf(elements, logicalLength * 2);
         }
 
-        elements[logicalLength++] = element;
+        elements[logicalLength] = element;
+
+        return logicalLength++;
     }
 
     public T get(int index) {
         if (index >= logicalLength) {
-            throw new ArrayIndexOutOfBoundsException();
+            throw new NotFoundException();
         }
 
         return elements[index];
@@ -34,7 +39,7 @@ class DynamicArray<T> {
 
     public void remove(int index) {
         if (index >= logicalLength) {
-            throw new ArrayIndexOutOfBoundsException();
+            throw new NotFoundException();
         }
 
         // Indices are [ 0, 1, ..., index, index + 1, ..., logicalLength - 1 ]
@@ -44,9 +49,6 @@ class DynamicArray<T> {
 
         logicalLength--;
     }
-}
-
-class IdNotFoundException extends RuntimeException {
 }
 
 class ItemList extends DynamicArray<Item> {
@@ -69,7 +71,7 @@ class ItemList extends DynamicArray<Item> {
             }
         }
 
-        throw new IdNotFoundException();
+        throw new NotFoundException();
     }
 }
 
@@ -77,25 +79,10 @@ class OrderList extends DynamicArray<Order> {
     OrderList() {
         super(Order.class, 2);
     }
-
-    public Order getById(int orderId) {
-        return get(getIndexById(orderId));
-    }
-
-    private int getIndexById(int itemId) {
-        for (int i = 0; i < size(); i++) {
-            if (get(i).getId() == itemId) {
-                return i;
-            }
-        }
-
-        throw new IdNotFoundException();
-    }
 }
 
 public class OrderSystem {
     private static int runningItemId = 0;
-    private static int runningOrderId = 0;
 
     private final ItemList items = new ItemList();
     private final OrderList orders = new OrderList();
@@ -123,7 +110,7 @@ public class OrderSystem {
             items.removeById(id);
 
             return true;
-        } catch (IdNotFoundException err) {
+        } catch (NotFoundException err) {
             return false;
         }
     }
@@ -135,22 +122,20 @@ public class OrderSystem {
 
         try {
             Item item = items.getById(itemId);
-            Order order = new Order(runningOrderId++, item, quantity, Order.Status.OPEN);
+            Order order = new Order(item, quantity, Order.Status.OPEN);
 
-            orders.add(order);
-
-            return order.getId();
-        } catch (IdNotFoundException err) {
+            return orders.add(order);
+        } catch (NotFoundException err) {
             return -1;
         }
     }
 
-    public boolean setOrderStatus(int orderId, Order.Status status) {
+    public boolean setOrderStatus(int orderIndex, Order.Status status) {
         try {
-            orders.getById(orderId).setStatus(status);
+            orders.get(orderIndex).setStatus(status);
 
             return true;
-        } catch (IdNotFoundException err) {
+        } catch (NotFoundException err) {
             return false;
         }
     }
