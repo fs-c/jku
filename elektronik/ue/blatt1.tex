@@ -45,19 +45,19 @@
         l &= \frac{100 \Omega \cdot 5000 mm^2}{6 \Omega mm^2 m^{-1}} = 83333m
     \end{align*}
 
-    Somit ist der gesuchte Punkt $\frac{83333m}{2} = 41666m$ vom Messpunkt entfernt.
+    Somit ist der gesuchte Punkt $\frac{83333m}{2} = 41km$ vom Messpunkt entfernt.
 
     \item Es gilt
     \begin{align*}
         l &= 6cm \cdot 500 = 3000cm \\
         \rho_{Al} &= 2.65 \cdot 10^{-2} \Omega mm^2 m^{-1} \\
-        A &= \frac{d}{2}^2 \pi = 0.1963mm^2
+        A &= \left(\frac{d}{2}\right)^2 \pi = 0.1963mm^2
     \end{align*}
     und somit
     \begin{align*}
         R &= \rho \frac{l}{A} \\
-        R &= 2.65 \cdot 10^{-2} \Omega mm^2 m^{-1} \frac{3000cm}{0.1963mm^2} \\
-        R &= 40.5 \Omega.
+        R &= 2.65 \cdot 10^{-2} \Omega mm^2 m^{-1} \frac{30000mm}{0.1963mm^2} \\
+        R &= 4.05 \Omega.
     \end{align*}
 \end{enumerate}
 
@@ -66,21 +66,37 @@
 \begin{enumerate}
     \item Es gilt
     \begin{align*}
-        A = \frac{d}{2}^2 \pi = 0.0314mm^2
+        A = \left(\frac{d}{2}\right)^2 \pi = 0.0314mm^2
     \end{align*}
     und somit
     \begin{align*}
         J &= \frac{I}{A} \\
         4 Amm^{-2} &= \frac{I}{0.0314mm^2} \\
-        I &= 0.1257 A.
+        I &= 125.66mA.
     \end{align*}
 
-    \item
+    \item Es gilt
     \begin{align*}
-        \frac{\rho \frac{l_1}{A_1}}{\rho \frac{l_2}{A_2}} = 
-        \frac{\rho \frac{l_1}{0.25\pi}}{\rho \frac{4l_1}{4\pi}} =
-        \frac{4 \pi l_1}{4 l_1 0.25 \pi} = \frac{1}{0.25} = 4
+        V_1 &= \pi \left(\frac{d_1}{2}\right)^2 l_1 & V_2 &= \pi \left(\frac{d_2}{2}\right)^2 l_2 \\
+        A_1 &= \pi \left(\frac{d_1}{2}\right)^2 & A_2 &= \pi \left(\frac{d_2}{2}\right)^2
     \end{align*}
+    Wir sind interessiert an $l_2$ und wissen, dass das Volumen konstant bleibt. Somit
+    \begin{align*}
+        \pi \left(\frac{d_1}{2}\right)^2 l_1 &= \pi \left(\frac{d_2}{2}\right)^2 l_2 \\
+        \pi \left(\frac{4}{2}\right)^2 l_1 &= \pi \left(\frac{1}{2}\right)^2 l_2 \\
+        4l_1 &= \frac{1}{4}l_2 \\
+        16l_1 &= l_2.
+    \end{align*}
+    Damit kann nun das Verh\"altnis zwischen $R_D$ und $R_D'$ berechnet werden, wobei $R_D'$ den Widerstand des verl\"angerten Drahtes repr\"asentiert.
+    \begin{align*}
+        \frac{R_D'}{R_D} = 
+        \frac{\rho \frac{l_2}{A_2}}{\rho \frac{l_1}{A_1}} = 
+        \frac{16l_1 \pi \left(\frac{d_1}{2}\right)^2}{l_1\pi \left(\frac{d_2}{2}\right)^2} =
+        \frac{16 \cdot \left(\frac{4}{2}\right)^2}{\left(\frac{1}{2}\right)^2} =
+        \frac{64}{\frac{1}{4}} =
+        256
+    \end{align*}
+    Es gilt also $R_D' = 256R_D$.
 \end{enumerate}
 
 \end{document}
