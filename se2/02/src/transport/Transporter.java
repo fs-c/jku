@@ -14,6 +14,10 @@ public abstract class Transporter {
     private Cargo currentLoad;
 
     public Transporter(String name, int maxLoadWeight, int costPerKilometre, Cargo.Type[] allowedCargoTypes, boolean canTraverseOcean, Location currentLocation) {
+        if (currentLocatiom == null) {
+            // Error or something
+        }
+
         this.name = name;
         this.maxLoadWeight = maxLoadWeight;
         this.costPerKilometre = costPerKilometre;
