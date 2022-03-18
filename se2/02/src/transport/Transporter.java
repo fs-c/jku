@@ -1,36 +1,49 @@
 package transport;
 
+import transport.exceptions.CargoTooHeavyException;
 import transport.exceptions.InvalidCargoTypeException;
-import transport.exceptions.TooHeavyException;
+import transport.exceptions.UnreachableByTransporterException;
 
 public abstract class Transporter {
     private final String name;
     private final int maxLoadWeight;
     private final int costPerKilometre;
-    private final Cargo.Type[] allowedCargoTypes;
-    private final boolean canTraverseOcean;
 
-    private Location currentLocation;
     private Cargo currentLoad;
+    private Location currentLocation;
 
-    public Transporter(String name, int maxLoadWeight, int costPerKilometre, Cargo.Type[] allowedCargoTypes, boolean canTraverseOcean, Location currentLocation) {
-        if (currentLocatiom == null) {
-            // Error or something
+    public Transporter(String name, int maxLoadWeight, int costPerKilometre, Location currentLocation) {
+        if (currentLocation == null) {
+            throw new IllegalArgumentException("Current location must not be null.");
         }
 
         this.name = name;
         this.maxLoadWeight = maxLoadWeight;
         this.costPerKilometre = costPerKilometre;
-        this.allowedCargoTypes = allowedCargoTypes;
-        this.canTraverseOcean = canTraverseOcean;
         this.currentLocation = currentLocation;
     }
 
-    public double goTo(Location destination) {
-        if (!canTraverseOcean && !currentLocation.reachableOverland(destination)) {
-            throws
-        }
+    public String getName() {
+        return name;
+    }
 
+    public int getMaxLoadWeight() {
+        return maxLoadWeight;
+    }
+
+    public int getCostPerKilometre() {
+        return costPerKilometre;
+    }
+
+    public Cargo getCurrentLoad() {
+        return currentLoad;
+    }
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public double goTo(Location destination) throws UnreachableByTransporterException {
         double cost = currentLocation.getDistance(destination) * costPerKilometre;
 
         currentLocation = destination;
@@ -38,32 +51,24 @@ public abstract class Transporter {
         return cost;
     }
 
-    public void load(Cargo cargo) throws TooHeavyException, InvalidCargoTypeException {
+    public void load(Cargo cargo) throws CargoTooHeavyException, InvalidCargoTypeException {
         if (currentLoad != null) {
             unload();
         }
 
         if (cargo.weight() > maxLoadWeight) {
-            throw new TooHeavyException("Attempted to load overweight cargo", this);
+            throw new CargoTooHeavyException("Attempted to load overweight cargo", this);
         }
 
-        for (Cargo.Type allowedCargoType : allowedCargoTypes) {
-            if (allowedCargoType == cargo.type()) {
-                currentLoad = cargo;
-
-                return;
-            }
-        }
-
-        throw new InvalidCargoTypeException("Invalid cargo type", this);
+        currentLoad = cargo;
     }
 
     public Cargo unload() {
-        Cargo load = currentLoad;
-
-        if (load == null) {
+        if (currentLoad == null) {
             throw new IllegalStateException();
         }
+
+        Cargo load = currentLoad;
 
         currentLoad = null;
 
