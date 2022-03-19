@@ -129,6 +129,8 @@ Gutschrift?
 \pagebreak
 \paragraph{Exercise 3}
 
+Idk.
+
 \pagebreak
 \paragraph{Exercise 4}
 
@@ -208,9 +210,102 @@ Interpreting the polynomials as being in $\mathbb{Q}$.
 
     Thus $q_2 = \frac{1}{8}x - \frac{1}{8}$ and $r_2 = 0$. We have $\gcd(P_1, P_2) = r_1 = 8x^3 + 16x^2 - 16x - 32$.
 
-    \item If $\frac{a}{b}$ is a root of $\gcd(P_1, P_2)$ then $a$ must be a divisor of $32$ and $b$ must be a divisor of $8$. Candidates are thus $1, 2, 4, 8, 16, 32, \frac{1}{2}, \frac{1}{4}, \frac{1}{8}$.
-    
-    %We have $u_2 = 0 - q_2 = -\frac{1}{8}x + \frac{1}{8}$ and $v_2 = 1 - (v_1 \cdot q_2) = (-\frac{1}{8}x^2 + \frac{1}{8}x - \frac{5}{8}x + \frac{5}{8}) = -\frac{1}{8}x^2 - \frac{1}{2}x + \frac{5}{8}$.
+    \item If $\frac{a}{b}$ is a root of $\gcd(P_1, P_2)$ then $a$ must be a divisor of $32$ and $b$ must be a divisor of $8$. The candidates are thus 
+    \begin{align*}
+        \pm1&&\boxed{-2}&&\pm4&&\pm8&&\pm16&&\pm32&&\pm\frac{1}{2}&&\pm\frac{1}{4}&&\pm\frac{1}{8}
+    \end{align*}
+    where boxed numbers are actual roots. We can thus factor out $x + 2$ by division.
+
+    \begin{center}
+        \begin{tabular}{cccc c cc c ccc}
+            $x^3$&$x^2$&$x^1$&$x^0$&&$x^1$&$x^0$&&$x^2$&$x^1$&$x^0$ \\
+            8&16&-16&-32&:&1&2&=&8&0&-16\\
+            8&16\\\cmidrule{1-2}
+            &&-16&-32\\
+            &&-16&-32\\\cmidrule{3-4}
+        \end{tabular}
+    \end{center}
+
+    We can now solve $8x^2 - 16 = 0$ through
+    \begin{align*}
+        x_1,x_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} =
+        \pm\frac{\sqrt{-4 \cdot 8 \cdot -16}}{2 \cdot 8} =
+        \pm\frac{\sqrt{512}}{16} =
+        \pm\frac{16\sqrt{2}}{16} = \pm \sqrt{2},
+    \end{align*}
+    yielding no rational roots. The rational roots are thus these obtained previously.
 \end{enumerate}
+
+\pagebreak
+\paragraph{Exercise 6}
+
+We are looking for the rational roots of
+\begin{align*}
+    P(x) = 18 x^6 - 51 x^5 - 7 x^4 + 106 x^3 - 62 x^2 - 8 x + 8
+\end{align*}
+
+Using the fact that, if $\frac{a}{b}$ is a root of a polynom then $a \mid a_0$ and $b \mid a_n$, we get
+\begin{align*}
+    \pm1&&\boxed{2}&&\pm4&&\pm8&&\boxed{\frac{1}{2}}&&\pm\frac{1}{3}&&\pm\frac{1}{6}&&\pm\frac{1}{9}&&\pm\frac{1}{18}&&\boxed{\pm\frac{2}{3}}&&\pm\frac{2}{9}&&\pm\frac{2}{18}&&\pm\frac{4}{3}&&\pm\frac{4}{9}&&\pm\frac{8}{3}&&\pm\frac{8}{9}
+\end{align*}
+as potential roots. Boxed numbers are actual roots.
+
+We can thus factor out
+\begin{align*}
+    \left(x + \frac{1}{3}\right)\left(x - \frac{1}{2}\right)\left(x - \frac{2}{3}\right)(x - 2) = x^4-\frac{17}{6}x^3+\frac{29}{18}x^2+\frac{2}{9}x-\frac{2}{9}
+\end{align*}
+by division.
+
+\begin{center}
+    \begin{tabular}{ccccccc c ccccc c ccc}
+        $x^6$&$x^5$&$x^4$&$x^3$&$x^2$&$x^1$&$x^0$&&$x^4$&$x^3$&$x^2$&$x^1$&$x^0$&&$x^2$&$x^1$&$x^0$ \\
+        18&-51&-7&106&-62&-8&8&:&1&$-\frac{17}{6}$&$\frac{29}{18}$&$\frac{2}{9}$&$-\frac{2}{9}$&=&18&0&-36 \\
+        18&-51&29&4&-4&&&&&&&&&&&& \\\cmidrule{1-5}
+        &&-36&102&-58&-8&8&&&&&&&&& \\
+        &&-36&102&-58&-8&8\\\cmidrule{3-7}
+    \end{tabular}
+\end{center}
+
+We can now solve $18x^2 - 36 = 0$ through
+\begin{align*}
+    x_1,x_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} =
+    \pm\frac{\sqrt{-4 \cdot 18 \cdot -36}}{2 \cdot 18} =
+    \pm\frac{\sqrt{2592}}{36} =
+    \pm\frac{36\sqrt{2}}{36} = \pm \sqrt{2},
+\end{align*}
+yielding no rational roots. The rational roots are thus these obtained previously.
+
+\pagebreak
+\paragraph{Exercise 7}
+
+We have
+\begin{align*}
+    p(x) &= x^7 - 6x^6 + 10x^5 - 6x^4 + 9x^3 \\
+    p'(x) &= 7x^6 - 36x^5 + 50x^4 - 24x^3 + 27x^2
+\end{align*}
+and we are looking for a square-free factorisation of $p$. Calculating the GCD of $p$ and $p'$ we get
+
+\begin{center}
+    \begin{tabular}{cccccc c cccc c cc}
+        $x^7$&$x^6$&$x^5$&$x^4$&$x^3$&&$x^6$&$x^5$&$x^4$&$x^3$&$x^2$&&$x^1$&$x^0$ \\
+        1&-6&10&-6&9&:&7&-36&50&-24&27&=&x&x\\
+    \end{tabular}
+\end{center}
+
+\pagebreak
+\paragraph{Exercise 8}
+
+To show that $p \mid \left(\begin{smallmatrix}
+    p \\k
+\end{smallmatrix}\right)$ note that
+\begin{align*}
+    \begin{pmatrix*}
+        p \\k
+    \end{pmatrix*} &= \frac{p!}{k!(p - k)!} \\
+    p! &= \begin{pmatrix*}
+        p \\k
+    \end{pmatrix*}(k!(p - k)!).
+\end{align*}
+Since the left hand side of the equation is clearly divisible by $p$, the right hand side must also be divisible by it. The expression $k!(p - k)!$ is not divisible by $p$ since it is a product of numbers smaller than $p$ and $p$ is prime. Thus the binomial coefficient must be the part which is divisible by $p$.
 
 \end{document}
