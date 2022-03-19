@@ -1,0 +1,216 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+\begin{enumerate}
+    \item We have
+    \begin{center}
+        \begin{tabular}{c | c c | c}
+            $r$ & $x$ & $y$ & $q$ \\\midrule
+            135 & 1 & 0 & \\
+            54 & 0 & 1 & 2 \\
+            27 & 1 & -2 & 2 \\ 
+            0 & -2 & 5 & \\ 
+        \end{tabular}
+    \end{center}
+    and thus $\gcd(135, 54) = 27$. Since $27 \mid 0$, there is a solution.
+
+    From the last row we know that $125 \cdot -2 + 54 \cdot 5 = 0$, thus $(-2, 5) \in L$. We can now describe $L$ as $L = \{(-2k, 5k) \mid k \in \mathbb{Z}\}$.
+
+    \item We have (note that $x$ and $y$ are reversed)
+    \begin{center}
+        \begin{tabular}{c | c c | c}
+            $r$ & $y$ & $x$ & $q$ \\\midrule
+            105 & 1 & 0 & \\
+            99 & 0 & 1 & 1 \\
+            6 & 1 & -1 & 16 \\ 
+            3 & -16 & 17 & 2 \\ 
+            0 & 33 & -35 & \\ 
+        \end{tabular}
+    \end{center}
+    and thus $\gcd(105, 99) = 3$. Since $3 \mid 12$, there is a solution.
+    
+    From the second to last row we know
+    \begin{align*}
+        3  &= (17 \cdot 99) + (-16 \cdot 105) \quad \text{and, after multiplying by 4}\\
+        12 &= (68 \cdot 99) + (-64 \cdot 105).
+    \end{align*}
+
+    Thus we have that $(68, -64) \in L$ and further $L = \{(68 - 35k, -64 + 33k) \mid k \in \mathbb{Z}\}$.
+
+    \item We have
+    \begin{center}
+        \begin{tabular}{c | c c | c}
+            $q$ & $x$ & $y$ & $r$ \\\midrule
+            38 & 1 & 0 & \\
+            19 & 0 & 1 & 2 \\
+            0 & 1 & -2 &  \\
+        \end{tabular}
+    \end{center}
+    and thus $\gcd(38, 19) = \gcd(19, -38) = 19$. Since $19 \nmid 5$ this equation does not have a solution.
+\end{enumerate}
+
+\pagebreak
+\paragraph{Exercise 2}
+
+We are looking for solutions to
+\begin{align*}
+    35x + 45y = 1000
+\end{align*}
+where $x$ is the number of linear Algebra books and $y$ is the number of Analysis books. We have (note that $x$ and $y$ are reversed)
+\begin{center}
+    \begin{tabular}{c | c c | c}
+        $r$ & $y$ & $x$ & $q$ \\\midrule
+        45 & 1 & 0 & \\
+        35 & 0 & 1 & 1 \\
+        10 & 1 & -1 & 3 \\ 
+        5 & -3 & 4 & 2 \\ 
+        0 & 7 & -9 & \\ 
+    \end{tabular}
+\end{center}
+and thus $\gcd(45, 35) = 5$. Since $5 \mid 1000$, there is a solution.
+
+From the second to last row we know
+\begin{align*}
+    5  &=  (4 \cdot 35) + (-3 \cdot 45) \quad \text{and, after multiplying by 200}\\
+    1000 &=  (800 \cdot 35) + (-600 \cdot 45)
+\end{align*}
+and thus $(800, -600) \in L$, allowing us to state $L = \{(800 \cdot -9k, -600 \cdot 7k) \mid k \in \mathbb{Z}\}$. For $86 \leq k \leq 88$ neither of the values in the pairs $\in L$ are negative. Thus we can either buy 
+\begin{center}
+    \begin{tabular}{c c}
+        Lineare Algebra & Analysis \\
+        26 & 2 \\
+        17 & 9 \\
+        8 & 16 \\
+    \end{tabular}
+\end{center}
+books.
+
+Gutschrift?
+
+\pagebreak
+\paragraph{Exercise 3}
+
+\pagebreak
+\paragraph{Exercise 4}
+
+Interpreting the polynomials as being in $\mathbb{Z}_5$.
+\begin{center}
+    \begin{tabular}{l l l l l l l l l l l l l l l}
+        $x^5$&$x^4$&$x^3$&$x^2$&$x^1$&$x^0$&&$x^3$&$x^2$&$x^1$&$x^0$&&$x^2$&$x^1$&$x^0$ \\
+        3&1&4&1&0&4 &:& 2&2&1&3 &=& 4&4&1 \\
+        3&3&4&2&&&&&&&&&&& \\\cmidrule{1-4}
+        &3&0&4&0&4&&&&&&&&& \\
+        &3&3&4&2&&&&&&&&&& \\\cmidrule{2-5}
+        &&2&0&3&4&&&&&&& \\
+        &&2&2&1&3&&&&&&& \\\cmidrule{3-6}
+        &&&3&2&1&&&&&&& \\
+    \end{tabular}
+\end{center}
+
+Interpreting the polynomials as being in $\mathbb{Q}$.
+
+\begin{center}
+    \begin{tabular}{l l l l l l l l l l l l l l l}
+        $x^5$&$x^4$&$x^3$&$x^2$&$x^1$&$x^0$&&$x^3$&$x^2$&$x^1$&$x^0$&&$x^2$&$x^1$&$x^0$ \\
+        3&1&4&1&5&9 &:& 2&7&1&8 &=& 1.5&-4.75&17.875 \\
+        3&10.5&1.5&12&&&&&&&&&&& \\\cmidrule{1-4}
+        &-9.5&3.5&-11&5&9&&&&&&&&& \\
+        &-9.5&-33.25&-4.75&-38&&&&&&&&&& \\\cmidrule{2-5}
+        &&35.75&-6.25&43&9&&&&&&& \\
+        &&35.75&125.12&17.975&143&&&&&&& \\\cmidrule{3-6}
+        &&&-132.37&25.125&-134&&&&&&& \\
+    \end{tabular}
+\end{center}
+
+\pagebreak
+\paragraph{Exercise 5}
+
+\begin{enumerate}
+    \item
+    Consider that a general table for the GCD is 
+    \begin{center}
+        \begin{tabular}{c | c c | c}
+            $r$ & $u$ & $v$ & $q$ \\\midrule
+            $P_1$ & 1 & 0 & \\
+            $P_2$ & 0 & 1 & $q_1$ \\
+            $r_1$ & 1 & $v_1$ & $q_2$ \\
+            $r_2$ & $u_2$ & $v_2$ & $q_3$ \\
+            $r_3$ & $u_3$ & $v_3$ & $q_4$ \\
+        \end{tabular}
+    \end{center}
+
+    We begin by calculating $q_1$ and $r_1$.
+
+    \begin{center}
+        \begin{tabular}{l l l l l l l l l l l l l l l}
+            $x^5$&$x^4$&$x^3$&$x^2$&$x^1$&$x^0$&&$x^4$&$x^3$&$x^2$&$x^1$&$x^0$&&$x^1$&$x^0$ \\
+            1&6&9&-6&-22&-12& :& 1&1&-4&-2&4& =& 1&5 \\
+            1&1&-4&-2&4&&&&&&&&& \\\cmidrule{1-5}
+            &5&13&-4&-26&-12&&&&&&&&& \\
+            &5&5&-20&-10&20&&&&&&&&& \\\cmidrule{2-6}
+            &&8&16&-16&-32&&&&&&&&& \\
+        \end{tabular}
+    \end{center}
+
+    Thus $q_1 = x + 5$, $r_1 = 8x^3 + 16x^2 - 16x - 32$ and $v_1 = 0 - q_1 = -x - 5$.
+
+    We continue by calculating $q_2$ and $r_2$.
+
+    \begin{center}
+        \begin{tabular}{ l l l l l l l l l l l l l}
+            $x^4$&$x^3$&$x^2$&$x^1$&$x^0$&&$x^3$&$x^2$&$x^1$&$x^0$&&$x^1$&$x^0$ \\
+            1&1&-4&-2&4& :& 8&16&-16&-32& =& $\frac{1}{8}$&$-\frac{1}{8}$ \\
+            1&2&-2&-4&&&&&&&& \\\cmidrule{1-4}
+            &-1&-2&2&4&&&&&&& \\
+            &-1&-2&2&4&&&&&&&& \\\cmidrule{2-5}
+            &0&0&0&0&&&&&&&& \\
+        \end{tabular}
+    \end{center}
+
+    Thus $q_2 = \frac{1}{8}x - \frac{1}{8}$ and $r_2 = 0$. We have $\gcd(P_1, P_2) = r_1 = 8x^3 + 16x^2 - 16x - 32$.
+
+    \item If $\frac{a}{b}$ is a root of $\gcd(P_1, P_2)$ then $a$ must be a divisor of $32$ and $b$ must be a divisor of $8$. Candidates are thus $1, 2, 4, 8, 16, 32, \frac{1}{2}, \frac{1}{4}, \frac{1}{8}$.
+    
+    %We have $u_2 = 0 - q_2 = -\frac{1}{8}x + \frac{1}{8}$ and $v_2 = 1 - (v_1 \cdot q_2) = (-\frac{1}{8}x^2 + \frac{1}{8}x - \frac{5}{8}x + \frac{5}{8}) = -\frac{1}{8}x^2 - \frac{1}{2}x + \frac{5}{8}$.
+\end{enumerate}
+
+\end{document}
