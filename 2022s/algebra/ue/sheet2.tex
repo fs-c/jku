@@ -124,7 +124,7 @@ and thus $(800, -600) \in L$, allowing us to state $L = \{(800 \cdot -9k, -600 \
 \end{center}
 books.
 
-Gutschrift?
+If the total available money were 1001 then we would have $5 \nmid 1000$, thus we would not be able to spend all of our budget.
 
 \pagebreak
 \paragraph{Exercise 3}
@@ -231,9 +231,9 @@ Interpreting the polynomials as being in $\mathbb{Q}$.
         x_1,x_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} =
         \pm\frac{\sqrt{-4 \cdot 8 \cdot -16}}{2 \cdot 8} =
         \pm\frac{\sqrt{512}}{16} =
-        \pm\frac{16\sqrt{2}}{16} = \pm \sqrt{2},
+        \pm\frac{16\sqrt{2}}{16} = \pm \sqrt{2}.
     \end{align*}
-    yielding no rational roots. The rational roots are thus these obtained previously.
+    The roots are thus $-2, -\sqrt{2}$ and $\sqrt{2}$.
 \end{enumerate}
 
 \pagebreak
@@ -246,7 +246,7 @@ We are looking for the rational roots of
 
 Using the fact that, if $\frac{a}{b}$ is a root of a polynom then $a \mid a_0$ and $b \mid a_n$, we get
 \begin{align*}
-    \pm1&&\boxed{2}&&\pm4&&\pm8&&\boxed{\frac{1}{2}}&&\pm\frac{1}{3}&&\pm\frac{1}{6}&&\pm\frac{1}{9}&&\pm\frac{1}{18}&&\boxed{\pm\frac{2}{3}}&&\pm\frac{2}{9}&&\pm\frac{2}{18}&&\pm\frac{4}{3}&&\pm\frac{4}{9}&&\pm\frac{8}{3}&&\pm\frac{8}{9}
+    \pm1&&\boxed{2}&&\pm4&&\pm8&&\boxed{\frac{1}{2}}&&\boxed{-\frac{1}{3}}&&\pm\frac{1}{6}&&\pm\frac{1}{9}&&\pm\frac{1}{18}&&\boxed{\frac{2}{3}}&&\pm\frac{2}{9}&&\pm\frac{2}{18}&&\pm\frac{4}{3}&&\pm\frac{4}{9}&&\pm\frac{8}{3}&&\pm\frac{8}{9}
 \end{align*}
 as potential roots. Boxed numbers are actual roots.
 
@@ -283,14 +283,35 @@ We have
     p(x) &= x^7 - 6x^6 + 10x^5 - 6x^4 + 9x^3 \\
     p'(x) &= 7x^6 - 36x^5 + 50x^4 - 24x^3 + 27x^2
 \end{align*}
-and we are looking for a square-free factorisation of $p$. Calculating the GCD of $p$ and $p'$ we get
-
+and we are looking for a square-free factorisation of $p$. Calculating the GCD of $p$ and $p'$ we first divide $p$ by $p'$
 \begin{center}
-    \begin{tabular}{cccccc c cccc c cc}
-        $x^7$&$x^6$&$x^5$&$x^4$&$x^3$&&$x^6$&$x^5$&$x^4$&$x^3$&$x^2$&&$x^1$&$x^0$ \\
-        1&-6&10&-6&9&:&7&-36&50&-24&27&=&x&x\\
+    \begin{tabular}{ccccccc c cccc c cc}
+        $x^7$&$x^6$&$x^5$&$x^4$&$x^3$&$x^2$&&$x^6$&$x^5$&$x^4$&$x^3$&$x^2$&&$x^1$&$x^0$ \\
+        1&-6&10&-6&9&0&:&7&-36&50&-24&27&=&$\frac{1}{7}$&$-\frac{6}{49}$\\
+        1&$-\frac{36}{7}$&$\frac{50}{7}$&$-\frac{24}{7}$&$\frac{27}{7}$ \\\cmidrule{1-5}
+        &$-\frac{6}{7}$&$\frac{20}{7}$&$-\frac{17}{7}$&$\frac{36}{7}$&0\\
+        &$-\frac{6}{7}$&$\frac{216}{49}$&$-\frac{300}{49}$&$\frac{144}{49}$&$-\frac{162}{49}$ \\\cmidrule{2-6}
+        &&$-\frac{76}{49}$&$\frac{174}{49}$&$\frac{108}{49}$&$\frac{162}{49}$ \\
     \end{tabular}
 \end{center}
+and get $r_1 = -\frac{76 x^5}{49}+\frac{174 x^4}{49}+\frac{108 x^3}{49}+\frac{162 x^2}{49}$ and $q_1 = \frac{x}{7}-\frac{6}{49}$. We can simplify $r_1 = -38 x^5+87 x^4+54 x^3+81 x^2$.
+
+Now we divide $p'$ by $r_1$
+\begin{center}
+    \begin{tabular}{lllll l llll l ll}
+        $x^6$&$x^5$&$x^4$&$x^3$&$x^2$ && $x^5$&$x^4$&$x^3$&$x^2$ && $x^1$&$x^0$ \\
+        7&-36&50&-24&27 &:& $-38$&$87$&$54$&$81$ &=& $-\frac{7}{38}$&$\frac{759}{1444}$ \\
+        7&$\frac{126}{19}$&$\frac{175}{19}$&$\frac{84}{19}$&$-\frac{189}{38}$\\\cmidrule{1-5}
+        &$-\frac{810}{19}$&$\frac{775}{19}$&$-\frac{540}{19}$&$\frac{1215}{38}$\\
+        &$-\frac{810}{19}$&$\frac{66033}{1444}$&$\frac{20493}{722}$&$\frac{61479}{1444}$\\\cmidrule{2-6}
+        &&$\frac{20531 x^4}{1444}$&$-\frac{13524 x^3}{361}$&$-\frac{22491 x^2}{1444}$
+    \end{tabular}
+\end{center}
+and get $r_2 = \frac{20531 x^4}{1444}-\frac{13524 x^3}{361}-\frac{22491 x^2}{1444}$. We then divide $r_1$ by $r_2$ and get $r_3 = \frac{11696400 x^2}{175561}-\frac{3898800 x^3}{175561}$. We then divide $r_2$ by $r_3$ and get $r_4 = 0$.
+
+Thus $r_3$, which can be simplified to $x^3 - 3x^2$, is the GCD we are looking for.
+
+We now divide $p$ by this result which yields $x^4-3 x^3+x^2-3 x$ with no remainder.
 
 \pagebreak
 \paragraph{Exercise 8}
@@ -307,5 +328,34 @@ To show that $p \mid \left(\begin{smallmatrix}
     \end{pmatrix*}(k!(p - k)!).
 \end{align*}
 Since the left hand side of the equation is clearly divisible by $p$, the right hand side must also be divisible by it. The expression $k!(p - k)!$ is not divisible by $p$ since it is a product of numbers smaller than $p$ and $p$ is prime. Thus the binomial coefficient must be the part which is divisible by $p$.
+
+Now consider that, by the binomial theorem
+\begin{align*}
+    (x + y)^p &= \sum^{p}_{k = 0} \begin{pmatrix*}
+        p \\k
+    \end{pmatrix*}x^{p - k}y^{k} \\
+    (x + y)^p &= \begin{pmatrix*}
+        p \\0
+    \end{pmatrix*}x^p y^0 + 
+    \begin{pmatrix*}
+        p \\1
+    \end{pmatrix*}x^{p-1} y^1 + \cdots +
+    \begin{pmatrix*}
+        p \\p - 1
+    \end{pmatrix*}
+    x^1 y^{p - 1} + 
+    \begin{pmatrix*}
+        p \\p
+    \end{pmatrix*}
+    x^0 y^p \\
+    (x + y)^p &= x^p + \begin{pmatrix*}
+        p \\1
+    \end{pmatrix*}x^{p-1} y^1 + \cdots +
+    \begin{pmatrix*}
+        p \\p - 1
+    \end{pmatrix*}
+    x^1 y^{p - 1} + y^p \\
+    (x + y)^p &\equiv_6 x^p + y^p
+\end{align*}
 
 \end{document}
