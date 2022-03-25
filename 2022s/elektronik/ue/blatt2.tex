@@ -1,0 +1,159 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+\usepackage{siunitx}
+\sisetup{round-mode=places, round-precision=4, locale=DE}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{circuitikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Elektronik --- \textbf{Blatt 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\begin{document}
+
+\paragraph{Aufgabe 3}
+
+\begin{enumerate}
+    \item Es handelt sich um eine Serienschaltung von Widerst\"anden. Somit gilt
+    \begin{align*}
+        R_{ges} = R_i + R_a = 100\si{\ohm} + 50\si{\kohm} = \num{50.1}\si{\kohm}.
+    \end{align*}
+    Weiters gilt aus dem gleichen Grund, dass $I$ konstant bleibt. Somit kann $I$ durch
+    \begin{align*}
+        I = \frac{U_q}{R_{ges}} = \frac{8\si{\volt}}{50.1\si{\kohm}} = \num{0.1596806387225549}\si{\milli\ampere}
+    \end{align*}
+    berechnet werden. Damit k\"onnen die Spannungen
+    \begin{align*}
+        U_i &= R_i I = 100\si{\ohm} \cdot \num{0.1596806387225549}\si{\milli\ampere} = \num{15.96806387225549}\si{\milli\volt} \\
+        U_k &= R_a I = 50\si{\kilo\ohm} \cdot \num{0.1596806387225549}\si{\milli\ampere} = \num{7.984031936127744}\si{\volt}
+    \end{align*}
+    berechnet werden.
+
+    \item Es gilt
+    \begin{align*}
+        R_{ges} = \frac{U_q}{I} = \frac{7\si{\volt}}{100\si{\milli\ampere}} = 70\si{\ohm}
+    \end{align*}
+    und weiters
+    \begin{align*}
+        R_{ges} &= R_i + R_a \\
+        R_a &= R_{ges} - R_i = 70\si{\ohm} - 8\si{\ohm} = 62\si{\ohm}.
+    \end{align*}
+
+    \item Wir haben
+    \begin{align*}
+        I_1 &= \num{2}\si{\ampere} & I_2 &= \num{3.2}\si{\ampere} \\
+        U_{k_1} &= 12\si{\volt} & U_{k_2} &= 6\si{\volt}
+    \end{align*}
+    und k\"onnen somit
+    \begin{align*}
+        R_{a_1} &= \frac{U_{k_1}}{I_1} & R_{a_2} &= \frac{U_{k_2}}{I_2} \\
+        R_{a_1} &= \frac{12\si{\volt}}{\num{2}\si{\ampere}} = 6\si{\ohm} & R_{a_2} &= \frac{6\si{\volt}}{\num{3.2}\si{\ampere}} = \num{1.875}\si{\ohm}
+    \end{align*}
+    berechnen. Es gilt $U_q = R_{ges} \cdot I$ beziehungsweise
+    \begin{align*}
+        U_q &= (R_{a_1} + R_i)I_1 & U_q &= (R_{a_2} + R_i)I_2 \\
+        U_q &= (6\si{\ohm}+ R_i) \cdot \num{2}\si{\ampere} & U_q &= (\num{1.875}\si{\ohm}+ R_i) \cdot \num{3.2}\si{\ampere} \\
+        U_q &= 12\si{\volt} + 2\si{\ampere} \cdot R_i & U_q &= 6\si{\volt} + \num{3.2}\si{\ampere} \cdot R_i
+    \end{align*}
+    Gleichsetzen der Gleichungen zur Ermittlung von $R_i$.
+    \begin{align*}
+        12\si{\volt} + 2\si{\ampere} \cdot R_i &= 6\si{\volt} + \num{3.2}\si{\ampere} \cdot R_i \\
+        6\si{\volt} + 2\si{\ampere} \cdot R_i &= \num{3.2}\si{\ampere} \cdot R_i \\
+        6\si{\volt} &= \num{1.2}\si{\ampere} \cdot R_i \\
+        5\si{\ohm} &= R_i
+    \end{align*}
+    Einsetzen von $R_i$ zur Ermittlung von $U_q$.
+    \begin{align*}
+        U_q &= 12\si{\volt} + 2\si{\ampere} \cdot R_i & U_q &= 6\si{\volt} + \num{3.2}\si{\ampere} \cdot R_i \\
+        U_q &= 12\si{\volt} + 10\si{\volt} & U_q &= 6\si{\volt} + 16\si{\volt} \\
+        U_q &= 22\si{\volt} & U_q &= 22\si{\volt}
+    \end{align*}
+    Der maximale Strom $I_k$ kann durch
+    \begin{align*}
+        U_q &= (R_a + R_i)I_k \\
+        22\si{\volt} &= (0\si{\ohm} + 5\si{\ohm})I_k \\
+        I_k &= \frac{22\si{\volt}}{5\si{\ohm}} = \num{4.4}\si{\ampere}
+    \end{align*}
+    angegeben werden.
+\end{enumerate}
+
+\paragraph{Aufgabe 4} Es gilt
+\begin{align*}
+    R_{q} &= (R + R) \vert\vert R = \frac{(R + R)R}{R + R + R} = \frac{2R^2}{3R} = \frac{2R}{3} & R_{h} &= 2R_q & \frac{1}{R_{ges}} &= \frac{1}{R_h} + \frac{1}{R_h} + \frac{1}{R}
+\end{align*}
+
+Und somit nach Einsetzen und Aufl\"osen $R_{ges} = \frac{2R}{5}$.
+
+\begin{center}
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,0) to[R=$R$, *-*] (3,0) to[R=$R$, *-*] (6,0);
+        \draw (0,-3) to[R=$R$, *-*] (6,-3);
+        \draw (0,-6) to[R=$R$, *-*] (3,-6) to[R=$R$, *-*] (6,-6);
+
+        \draw (0,0) to[R=$R$, *-*] (0,-3) node[label=left:$E$]{} to[R=$R$, *-*] (0,-6);
+        \draw (6,0) to[R=$R$, *-*] (6,-3) node[label=right:$F$]{} to[R=$R$, *-*] (6,-6);
+
+        \draw (0,-3) to[R=$R$, *-*] (3,0) to[R=$R$, *-*] (6,-3);
+        \draw (0,-3) to[R=$R$, *-*] (3,-6) to[R=$R$, *-*] (6,-3);
+    \end{circuitikz}\quad
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,-3) node[label=left:$E$]{} to[R=$R$, *-*] (6,-3) node[label=right:$F$]{};
+
+        \draw (0,-3) to[R=$R_q$, *-*] (3,0) to[R=$R_q$, *-*] (6,-3);
+        \draw (0,-3) to[R=$R_q$, *-*] (3,-6) to[R=$R_q$, *-*] (6,-3);
+    \end{circuitikz}\quad
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,-3) node[label=left:$E$]{} to[R=$R$, *-*] (6,-3) node[label=right:$F$]{};
+        
+        \draw (0,-3) to (0,-1.5) to[R=$R_h$] (6,-1.5) to (6,-3);
+        \draw (0,-3) to (0,-4.5) to[R=$R_h$] (6,-4.5) to (6,-3);  
+    \end{circuitikz}\quad
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,0) node[label=left:$E$]{} to[R=$R_{ges}$, *-*] (6,0) node[label=right:$F$]{};
+    \end{circuitikz}
+\end{center}
+
+\paragraph{Aufgabe 5}
+
+Unter der Annahme, dass die Spannung $U_2$ an $R_2$ anliegt, gilt gemäß der Spannung\-steilerformel, dass
+\begin{align*}
+    U_2 &= U_q \frac{R_2}{R_1 + R_2}
+\end{align*}
+und weiters
+\begin{align*}
+    U_4 = U_2 \frac{R_4}{R_3 + R_4}.
+\end{align*}
+Nach Einsetzen ergibt sich nun
+\begin{align*}
+    f(R_1, R_2, R_3, R_4, U_q) = U_q \cdot \frac{R_2}{R_1 + R_2} \cdot \frac{R_4}{R_3 + R_4}.
+\end{align*}
+
+\end{document}

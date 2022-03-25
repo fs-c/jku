@@ -1,0 +1,120 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+Since $H$ is closed under $\circ$, for arbitrary $a, b \in H$ we have $a \circ b \in H$. It follows that for any $h \in H$ we have that $h, h^2, h^3, \ldots \in H$.
+
+Since $H$ is finite the above sequence must have repeating elements at some point. Thus there must exist $i, k \in \mathbb{Z}$ with $i > k$ such that $h^i = h^k$. By $\circ$-ing $h^{-k}$ to both sides we can transform this to $h^{i - k} = e$. Since $i > k$, $i - k$ is positive which means that $e$ is a positive power of $h$ and thus $e \in H$.
+
+We can restate $h^{i - k} = e$ to $h \circ h^{i - k - 1} = e$ and thus the inverse of $h \in H$ is $h^{i - k - 1} \in H$.
+
+\paragraph{Exercise 2}
+
+A proper subgroup $H$ of a group $G$ is a subgroup where $H \neq G$. We are given a group $G$ and asked to show if there exist proper subgroups $H_1$ and $H_2$ such that $G = H_1 \cup H_2$.
+
+Let us assume that this is the case. We now have $H_1 \not\subset H_2$ and $H_2 \not\subset H_1$ because otherwise $H_1 \cup H_2 = H_1$ and $H_1 \cup H_2 = H_2$, respectively, which would mean that $H_1$ and $H_2$ are not proper subgroups. This means that there exist $x \in G \backslash H_1$ and $y \in G \backslash H_2$. (Thus $x \not\in H_1$ and $y \not\in H_2$.)
+
+Because $G$ is a group we have $xy \in G$. Since we assume $G = H_1 \cup H_2$ we further have $xy \in H_1$ \emph{or} $xy \in H_2$. We can now derive a contradiction through
+\begin{align*}
+    xy &= xy \in H_1 & xy &= xy \in H_2 \\
+    x &= (xy)y^{-1} \in H_1 & y &= (xy)x^{-1} \in H_2
+\end{align*}
+which ultimately shows that $G = H_1 \cup H_2$ cannot exist.
+
+\paragraph{Exercise 3}
+
+If we take a cycle $c$ to the power of its length $l$ we get $\id \in S_{l}$. If we apply it to the power of some multiple of its length this obviously still holds. So we are looking for the smallest common multiple of all cycle lengths, knowing that this will yield $\id$ for all respective lengths.
+
+Breaking $\pi$ down into disjoint cycles gives us $(1\ 3\ 7)(2)(4\ 8\ 5\ 6)$, with lengths 3, 1 and 4 respectively. The least common multiple of these cycle lengths is 12, thus the order of the permutation is 12.
+
+\paragraph{Exercise 4}
+
+Following the given hint we obtain $\gcd(9, 15) = 3$ and determine that the set of $c \in \mathbb{Z}$ for which $9x + 15y = c$ has a solution is the set of all $c$ which are a multiple of 3. (Since, for a diophantic equation to have an integer solution, the greatest common divisor must divide $c$.)
+
+We can thus describe $G$ as $3 \cdot \mathbb{Z}$. (Or alternatively $\mathbb{Z}_4$?)
+
+\paragraph{Exercise 5}
+
+To show that a group $G$ is abelian we show that for arbitrary $a, b \in G$ we have $a \circ b = b \circ a$. Consider
+\begin{align*}
+    a \circ b &= b \circ a \\
+    a &= b \circ a \circ b,
+\end{align*}
+and, replacing the $a$ on the left hand side and adding $b \circ b = e$ on the right hand side
+\begin{align*}
+    a \circ b &= b \circ a \\
+    b \circ a \circ b \circ b &= b \circ a \circ e \\
+    b \circ a \circ b \circ b &= b \circ a \circ b \circ b.
+\end{align*}
+
+\paragraph{Exercise 6}
+
+We are given a homomorphism $\phi$ from a group $(G, \circ)$ to a group $(H, *)$.
+
+\begin{itemize}
+    \item To show that $\text{ker}(\phi)$ is a subgroup of $G$ we show that the statement
+    \begin{align*}
+        \forall\, a, b \in \text{ker}(\phi) :  a \circ b^{-1} \in \text{ker}(\phi)
+    \end{align*}
+    holds. Let $a, b \in \text{ker}(\phi)$ so we have $\phi(a) = \phi(b) = e_H$. Then
+    \begin{align*}
+        \phi(a \circ b^{-1}) &= \phi(a) * \phi(b^{-1}) \\
+        &= \phi(a) * \phi(b)^{-1} \\
+        &= e_H * e_H^{-1} \\
+        &= e_H
+    \end{align*}
+    and thus $a \circ b^{-1} \in \text{ker}(\phi)$. (Since $\text{ker}(\phi)$ is defined to contain all $g \in G$ such that $\phi(g) = e_H$.)
+
+    \item To show that $\phi(G)$ is a subgroup of $H$ we show that the statement
+    \begin{align*}
+        \forall\, a, b \in \phi(G):  a * b^{-1} \in \phi(G)
+    \end{align*}
+    holds. Choose $x, y \in G$ such that $\phi(x) = a$ and $\phi(y) = b$. We now have
+    \begin{align*}
+        \phi(x \circ y^{-1}) &= \phi(x) * \phi(y^{-1}) \\
+        \phi(x \circ y^{-1}) &= a * b^{-1} \\
+    \end{align*}
+    since $G$ is a group we have $x \circ y^{-1} \in G$ and thus $\phi(x \circ y^{-1}) \in \phi(G)$. (Meaning that $a * b^{-1} \in \phi(G)$.)
+\end{itemize}
+
+
+\end{document}
