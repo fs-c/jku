@@ -11,4 +11,9 @@ public class Const extends Expr {
     public double evaluate() {
         return value;
     }
+
+    @Override
+    public String asDotString(boolean useDashedEdges) {
+        return DotExportable.formatNode(getId(), "const", evaluate(), "box", "lightgray");
+    }
 }
