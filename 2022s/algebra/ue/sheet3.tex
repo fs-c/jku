@@ -111,10 +111,25 @@ We are given a homomorphism $\phi$ from a group $(G, \circ)$ to a group $(H, *)$
     holds. Choose $x, y \in G$ such that $\phi(x) = a$ and $\phi(y) = b$. We now have
     \begin{align*}
         \phi(x \circ y^{-1}) &= \phi(x) * \phi(y^{-1}) \\
-        \phi(x \circ y^{-1}) &= a * b^{-1} \\
+        \phi(x \circ y^{-1}) &= a * b^{-1}
     \end{align*}
     since $G$ is a group we have $x \circ y^{-1} \in G$ and thus $\phi(x \circ y^{-1}) \in \phi(G)$. (Meaning that $a * b^{-1} \in \phi(G)$.)
 \end{itemize}
+
+\paragraph{Exercise 7}
+
+For $n = 3$ we have
+\begin{align*}
+    p(x) = b_1 \frac{(x - a_2)(x - a_3)}{(a_1 - a_2)(a_1 - a_3)} + b_2 \frac{(x - a_1)(x - a_3)}{(a_2 - a_1)(a_2 - a_3)} + b_3 \frac{(x - a_1)(x - a_2)}{(a_3 - a_1)(a_3 - a_2)}
+\end{align*}
+
+\paragraph{Exercise 8}
+
+Of the given structures,
+\begin{align*}
+    \overset{3}{A},\quad \overset{4}{B},\quad \overset{5}{C},\quad \overset{6}{D},\quad \overset{4}{E},\quad \overset{4}{G} \quad\text{and}\quad \overset{6}{H}
+\end{align*}
+are groups. An isomorphism is a bijective function and thus we need only consider sets of equal length. This leaves $(B, E)$, $(B, G)$ and $(D, H)$ as candidates. 
 
 
 \end{document}
