@@ -1,5 +1,7 @@
 package expr;
 
+import java.util.function.BiFunction;
+
 public abstract class BinaryExpr extends Expr {
     final Expr left;
     final Expr right;
@@ -11,7 +13,7 @@ public abstract class BinaryExpr extends Expr {
 
     @Override
     public String asDotString(boolean useDashedEdges) {
-        return left.asDotString(useDashedEdges) + DotExportable.formatLine(getId(), left.getId(), useDashedEdges)
-                + right.asDotString(useDashedEdges) + DotExportable.formatLine(getId(), right.getId(), useDashedEdges);
+        return left.asDotString(useDashedEdges) + DotExportable.formatEdge(getId(), left.getId(), useDashedEdges)
+                + right.asDotString(useDashedEdges) + DotExportable.formatEdge(getId(), right.getId(), useDashedEdges);
     }
 }

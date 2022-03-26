@@ -7,13 +7,7 @@ public class Add extends VariadicExpr {
 
     @Override
     public double evaluate() {
-        double value = 0;
-
-        for (Expr e : expressions) {
-            value += e.evaluate();
-        }
-
-        return value;
+        return super.evaluate(0, Double::sum);
     }
 
     @Override

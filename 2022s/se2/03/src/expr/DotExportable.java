@@ -9,7 +9,7 @@ public interface DotExportable {
         return String.format(NODE_FORMAT, id, label, value, shape, color);
     }
 
-    static String formatLine(int fromId, int toId, boolean dashed) {
+    static String formatEdge(int fromId, int toId, boolean dashed) {
         return String.format(dashed ? DASHED_LINE_FORMAT : LINE_FORMAT, fromId, toId);
     }
 

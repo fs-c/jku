@@ -7,13 +7,7 @@ public class Mul extends VariadicExpr {
 
     @Override
     public double evaluate() {
-        double value = 1;
-
-        for (Expr e : expressions) {
-            value *= e.evaluate();
-        }
-
-        return value;
+        return super.evaluate(1, (x, y) -> x * y);
     }
 
     @Override
