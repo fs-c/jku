@@ -1,7 +1,7 @@
 package expr;
 
 public class Add extends VariadicExpr {
-    protected Add(Expr[] operands) {
+    Add(Expr[] operands) {
         super(operands);
     }
 
@@ -9,10 +9,16 @@ public class Add extends VariadicExpr {
     public double evaluate() {
         double value = 0;
 
-        for (Expr operand : operands) {
-            value += operand.evaluate();
+        for (Expr e : expressions) {
+            value += e.evaluate();
         }
 
         return value;
+    }
+
+    @Override
+    public String asDotString(boolean useDashedEdges) {
+        return DotExportable.formatNode(getId(), "+", evaluate(), "circle", "green")
+                + super.asDotString(useDashedEdges);
     }
 }

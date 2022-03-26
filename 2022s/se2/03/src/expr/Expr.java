@@ -9,7 +9,7 @@ public abstract class Expr implements DotExportable {
      * Non-thread-safe constructor
      */
     Expr() {
-      id = ++lastId;
+        id = ++lastId;
     }
 
     /**
@@ -17,7 +17,7 @@ public abstract class Expr implements DotExportable {
      * @return The id.
      */
     int getId() {
-      return id;
+        return id;
     }
 
     /**
@@ -25,7 +25,7 @@ public abstract class Expr implements DotExportable {
      * @return The unique expression ID.
      */
     String getNodeName() {
-      return "expr_" + id;
+        return "expr_" + id;
     }
 
     /**

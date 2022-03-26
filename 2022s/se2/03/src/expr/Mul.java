@@ -1,18 +1,24 @@
 package expr;
 
 public class Mul extends VariadicExpr {
-    protected Mul(Expr[] operands) {
+    Mul(Expr[] operands) {
         super(operands);
     }
 
     @Override
     public double evaluate() {
-        double value = 0;
+        double value = 1;
 
-        for (Expr operand : operands) {
-            value *= operand.evaluate();
+        for (Expr e : expressions) {
+            value *= e.evaluate();
         }
 
         return value;
+    }
+
+    @Override
+    public String asDotString(boolean useDashedEdges) {
+        return DotExportable.formatNode(getId(), "*", evaluate(), "circle", "yellow")
+                + super.asDotString(useDashedEdges);
     }
 }
