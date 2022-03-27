@@ -26,7 +26,7 @@
 % Adjust header and footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 2}}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 3}}
 \fancyhead[R]{Laurenz Weixlbaumer (11804751)}
 \fancyfoot[C]{}
 \fancyfoot[R]{\thepage}
@@ -40,6 +40,8 @@
 \begin{document}
 
 \paragraph{Exercise 1}
+
+We show that if $(G, \circ)$ is a group and $H$ is a nonempty subset of $G$ which is closed under $\circ$ then $H$ is a subgroup of $G$. We assume associativity as per axiom 1.41 and show that there exists a neutral element and inverse elements.
 
 Since $H$ is closed under $\circ$, for arbitrary $a, b \in H$ we have $a \circ b \in H$. It follows that for any $h \in H$ we have that $h, h^2, h^3, \ldots \in H$.
 
@@ -70,20 +72,21 @@ Breaking $\pi$ down into disjoint cycles gives us $(1\ 3\ 7)(2)(4\ 8\ 5\ 6)$, wi
 
 Following the given hint we obtain $\gcd(9, 15) = 3$ and determine that the set of $c \in \mathbb{Z}$ for which $9x + 15y = c$ has a solution is the set of all $c$ which are a multiple of 3. (Since, for a diophantic equation to have an integer solution, the greatest common divisor must divide $c$.)
 
-We can thus describe $G$ as $3 \cdot \mathbb{Z}$. (Or alternatively $\mathbb{Z}_4$?)
+We can thus describe $G$ as $3 \cdot \mathbb{Z}$.
 
 \paragraph{Exercise 5}
 
 To show that a group $G$ is abelian we show that for arbitrary $a, b \in G$ we have $a \circ b = b \circ a$. Consider
 \begin{align*}
-    a \circ b &= b \circ a \\
+    a \circ b &= b \circ a \quad \text{and after adding $b$ to both sides,}\\
     a &= b \circ a \circ b,
 \end{align*}
 and, replacing the $a$ on the left hand side and adding $b \circ b = e$ on the right hand side
 \begin{align*}
     a \circ b &= b \circ a \\
     b \circ a \circ b \circ b &= b \circ a \circ e \\
-    b \circ a \circ b \circ b &= b \circ a \circ b \circ b.
+    b \circ a \circ b \circ b &= b \circ a \circ b \circ b \\
+    b \circ a &= b \circ a.
 \end{align*}
 
 \paragraph{Exercise 6}
@@ -118,10 +121,25 @@ We are given a homomorphism $\phi$ from a group $(G, \circ)$ to a group $(H, *)$
 
 \paragraph{Exercise 7}
 
-For $n = 3$ we have
+As an example, for $n = 3$ we have
 \begin{align*}
-    p(x) = b_1 \frac{(x - a_2)(x - a_3)}{(a_1 - a_2)(a_1 - a_3)} + b_2 \frac{(x - a_1)(x - a_3)}{(a_2 - a_1)(a_2 - a_3)} + b_3 \frac{(x - a_1)(x - a_2)}{(a_3 - a_1)(a_3 - a_2)}
+    p(x) &= b_1 \frac{(x - a_2)(x - a_3)}{(a_1 - a_2)(a_1 - a_3)} + b_2 \frac{(x - a_1)(x - a_3)}{(a_2 - a_1)(a_2 - a_3)} + b_3 \frac{(x - a_1)(x - a_2)}{(a_3 - a_1)(a_3 - a_2)}
 \end{align*}
+
+The expression
+\begin{align*}
+    \frac{(x - a_1) \cdots (x - a_{i - 1})(x - a_{i + 1}) \cdots (x - a_n)}{(a_i - a_1) \cdots (a_i - a_{i - 1})(a_i - a_{i + 1}) \cdots (a_i - a_n)}
+\end{align*}
+will always evaluate to zero (0) unless $x = a_i$ because the dividend would be zero otherwise. In the case where $x = a_i$ it is clear that it will evaluate to one (1) since there are $n$ matching pairs of $(a_i  - a_1), (a_i - a_2), \cdots$ in both divisor and dividend.
+
+This means that
+\begin{equation*}
+    p(x) = \sum^{n}_{i = 1} b_i \frac{(x - a_1) \cdots (x - a_{i - 1})(x - a_{i + 1}) \cdots (x - a_n)}{(a_i - a_1) \cdots (a_i - a_{i - 1})(a_i - a_{i + 1}) \cdots (a_i - a_n)} = \sum^{n}_{i = 1} b_i \cdot \begin{cases}
+        0 & \text{for } x \neq a_i \\
+        1 & \text{for } x = a_i
+    \end{cases}
+\end{equation*}
+can be shortened to $p(a_i) = b_i$.
 
 \paragraph{Exercise 8}
 
@@ -129,7 +147,6 @@ Of the given structures,
 \begin{align*}
     \overset{3}{A},\quad \overset{4}{B},\quad \overset{5}{C},\quad \overset{6}{D},\quad \overset{4}{E},\quad \overset{4}{G} \quad\text{and}\quad \overset{6}{H}
 \end{align*}
-are groups. An isomorphism is a bijective function and thus we need only consider sets of equal length. This leaves $(B, E)$, $(B, G)$ and $(D, H)$ as candidates. 
-
+are groups. An isomorphism is a bijective function and thus we need only consider sets of equal length. This leaves $(B, E)$, $(B, G)$ and $(D, H)$ as candidates. $(B, G)$ and $(B, E)$ (exchange 3 and 4) are isomorphic.
 
 \end{document}
