@@ -51,6 +51,16 @@ We can restate $h^{i - k} = e$ to $h \circ h^{i - k - 1} = e$ and thus the inver
 
 \paragraph{Exercise 2}
 
+There is no such group. Consider $G = H_1 \cup H_2$ with $g_1 \in H_1 \backslash H_2$ and $g_2 \in H_2 \backslash H_1$. Assume $g_1 \circ g_2 \in H_1$, we then have
+\begin{align*}
+    g_1 \circ g_2 &\in H_1 \\
+    g_{1}^{-1} \circ (g_1 \circ g_2) &\in H_1 \\
+    (g_{1}^{-1} \circ g_1) \circ g_2 &\in H_1 \\
+    e \circ g_2 &\in H_1 \\
+    g_2 &\in H_1,
+\end{align*}
+which is a contradiction. It follows that the same applies for $g_1 \circ g_2 \in H_2$.
+
 A proper subgroup $H$ of a group $G$ is a subgroup where $H \neq G$. We are given a group $G$ and asked to show if there exist proper subgroups $H_1$ and $H_2$ such that $G = H_1 \cup H_2$.
 
 Let us assume that this is the case. We now have $H_1 \not\subset H_2$ and $H_2 \not\subset H_1$ because otherwise $H_1 \cup H_2 = H_1$ and $H_1 \cup H_2 = H_2$, respectively, which would mean that $H_1$ and $H_2$ are not proper subgroups. This means that there exist $x \in G \backslash H_1$ and $y \in G \backslash H_2$. (Thus $x \not\in H_1$ and $y \not\in H_2$.)
@@ -139,7 +149,14 @@ This means that
         1 & \text{for } x = a_i
     \end{cases}
 \end{equation*}
-can be shortened to $p(a_i) = b_i$.
+can be restated as $p(a_i) = b_i$.
+
+Consider $a_1 = -1$, $a_2 = 0$, $a_3 = 1$ and $a_4 = 2$ and $b_1 = -1$, $b_2 = 0$, $b_3 = 1$ and $b_4$. We now have
+\begin{align*}
+    p(x) &= -\frac{(x - 0)(x - 1)(x - 2)}{(-1 - 0)(-1-1)(-1-2)} + \frac{x-(-1)(x-0)(x-2)}{(1-(-1)(1-0)(1-2))}+5\frac{(x-(-1)(x-0))(x-0)(x-1)}{(2-(-1))(2-0)(2-1)} \\
+    &= \frac{x^3}{2}+\frac{x}{2}
+\end{align*}
+with $p(-1) = -1$, $p(0) = 0$, $p(1) = 1$ and $p(2) = 5$.
 
 \paragraph{Exercise 8}
 
