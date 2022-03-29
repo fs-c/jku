@@ -9,12 +9,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 
 public class SmithCount {
     private static int[] getPrimeFactors(int n) {
-        final ArrayList<Integer> primes = new ArrayList<Integer>();
+        final ArrayList<Integer> primes = new ArrayList<>();
 
         int factor = 2;
         while (n > 1) {
@@ -69,19 +67,19 @@ public class SmithCount {
 
     public static int parCountSmith(final int from, final int to, final int nrThreads) {
         final ExecutorService pool = Executors.newFixedThreadPool(nrThreads);
-        final List<Future<Integer>> promisedResults = new ArrayList<Future<Integer>>();
+        final List<Future<Integer>> promisedResults = new ArrayList<>();
 
-        final int shardSize = (to - from) / nrThreads;
+        final int subsetSize = (to - from) / nrThreads;
 
         for (int i = 0; i < nrThreads; i++) {
             final int index = i;
 
             promisedResults.add(pool.submit(() -> (
-                    seqCountSmith(from + (shardSize * index), from + (shardSize * (index + 1)))
+                    seqCountSmith(from + (subsetSize * index), from + (subsetSize * (index + 1)))
             )));
         }
 
-        final int missedSize = (to - from) - (shardSize * nrThreads);
+        final int missedSize = (to - from) - (subsetSize * nrThreads);
 
         if (missedSize > 0) {
             promisedResults.add(pool.submit(() -> (
@@ -89,37 +87,34 @@ public class SmithCount {
             )));
         }
 
-        int count = 0;
+        return promisedResults.stream().mapToInt(promise -> {
+                try {
+                    return promise.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
 
-        for (final Future<Integer> promise : promisedResults) {
-            try {
-                count += promise.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        pool.shutdown();
-
-        return count;
+                    return 0;
+                }
+        }).sum();
     }
 
-
     private static Duration getExecutionTime(final Runnable f) {
-        Instant before = Instant.now();
+        final Instant before = Instant.now();
 
         f.run();
 
-        Instant after = Instant.now();
+        final Instant after = Instant.now();
 
         return Duration.between(before, after);
     }
 
     private static void printComparisonBenchmark(final int from, final int to, final int threads) {
-        System.out.format("benchmark from %d to %d with %d threads\n", from, to, threads);
+        System.out.format("benchmark from %d to %d\n", from, to);
 
-        System.out.format("seq: %d ms\n", getExecutionTime(() -> seqCountSmith(from, to)).toMillis());
-        System.out.format("par: %d ms\n", getExecutionTime(() -> parCountSmith(from, to, threads)).toMillis());
+        System.out.format("seq: %d ms\n",
+                getExecutionTime(() -> seqCountSmith(from, to)).toMillis());
+        System.out.format("par: %d ms (%d threads)\n",
+                getExecutionTime(() -> parCountSmith(from, to, threads)).toMillis(), threads);
     }
 
     public static void main(String[] args) {
