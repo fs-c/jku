@@ -1,0 +1,239 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+\usepackage{siunitx}
+\sisetup{round-mode=places, round-precision=4, locale=DE}
+
+% Drawings
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{circuitikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Elektronik --- \textbf{Blatt 3}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\begin{document}
+
+\paragraph{Aufgabe 2}
+
+Die Ausgangsschaltung ist
+\begin{center}
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,4) to[R=$R_1$, -*] (4,4) to [-] (12,4) to (14, 4) to[R=$R_{11}$] (14,0);
+        \draw (0,0) to[R=$R_2$, -] (2,0) to[R=$R_3$, -*] (4,0) to[R=$R_5$, -*] (8,0) to[R=$R_8$, -*] (12,0) to[R=$R_{10}$, -] (14,0);
+    
+        \draw (4,4) to[R=$R_4$, *-*] (4,0);
+        \draw (12,4) to[R=$R_9$, *-*] (12,0);
+        \draw (4,4) to[R=$R_6$, *-*] (8,0) to[R=$R_7$, *-*] (12,4);
+
+        \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+        \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+    \end{circuitikz}
+\end{center}
+
+\begin{enumerate}[label=\arabic*)]
+    \item Serielle Widerst\"ande zusammenfassen.
+    
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,4) to[R=$R_1$, -*] (4,4) to [-] (12,4) to (14, 4) to[R=$R_{10, 11}$] (14,0) to (12,0);
+            \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to[R=$R_5$, -*] (8,0) to[R=$R_8$, -*] (12,0);
+        
+            \draw (4,4) to[R=$R_4$, *-*] (4,0);
+            \draw (12,4) to[R=$R_9$, *-*] (12,0);
+            \draw (4,4) to[R=$R_6$, *-*] (8,0) to[R=$R_7$, *-*] (12,4);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+        \end{circuitikz}
+    \end{center}
+
+    \item Parallele Widerst\"ande zusammenfassen.
+    
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,4) to[R=$R_1$, -*] (4,4) to [-] (12,4);
+            \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to[R=$R_5$, -*] (8,0) to[R=$R_8$, -*] (12,0);
+        
+            \draw (4,4) to[R=$R_4$, *-*] (4,0);
+            \draw (12,4) to[R=$R_9 \mid\mid R_{10, 11}$, *-] (12,0);
+            \draw (8,4) to[R=$R_6 \mid\mid R_7$, *-*] (8,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+        \end{circuitikz}
+    \end{center}
+
+    \item Serielle Widerst\"ande zusammenfassen.
+    
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,4) to[R=$R_1$, -*] (4,4) to [-] (12,4);
+            \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to[R=$R_5$, -*] (8,0) to (12,0);
+        
+            \draw (4,4) to[R=$R_4$, *-*] (4,0);
+            \draw (12,4) to[R=$R_8 + (R_9 \mid\mid R_{10, 11})$, *-] (12,0);
+            \draw (8,4) to[R=$R_6 \mid\mid R_7$, *-*] (8,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+        \end{circuitikz}
+    \end{center}
+
+    \item Parallele Widerst\"ande zusammenfassen.
+    
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,4) to[R=$R_1$] (4,4) to (8,4);
+            \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to[R=$R_5$, -] (8,0);
+        
+            \draw (4,4) to[R=$R_4$, *-*] (4,0);
+            \draw (8,4) to[R=$(R_6 \mid\mid R_7) \mid\mid (R_8 + (R_9 \mid\mid R_{10, 11}))$, -] (8,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+        \end{circuitikz}
+    \end{center}
+
+    \item Serielle Widerst\"ande zusammenfassen.
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,4) to[R=$R_1$] (4,4) to (8,4);
+            \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to (8,0);
+        
+            \draw (4,4) to[R=$R_4$, *-*] (4,0);
+            \draw (8,4) to[R=$R_5 + ((R_6 \mid\mid R_7) \mid\mid (R_8 + (R_9 \mid\mid R_{10, 11})))$, -] (8,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+        \end{circuitikz}
+    \end{center}
+
+    \item Parallele Widerst\"ande zusammenfassen.
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,4) to[R=$R_1$] (4,4) to (4,4);
+            \draw (0,0) to[R=$R_{2, 3}$] (4,0) to (4,0);
+        
+            \draw (4,4) to[R=$R_4 \mid\mid (R_5 + ((R_6 \mid\mid R_7) \mid\mid (R_8 + (R_9 \mid\mid R_{10, 11}))))$, -] (4,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+        \end{circuitikz}
+    \end{center}
+
+    \item Serielle Widerst\"ande zusammenfassen.
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,4) to (4,4) to (4,4);
+            \draw (0,0) to (4,0) to (4,0);
+        
+            \draw (4,4) to[R=$R_1 + R_{2, 3} + (R_4 \mid\mid (R_5 + ((R_6 \mid\mid R_7) \mid\mid (R_8 + (R_9 \mid\mid R_{10, 11})))))$, -] (4,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_2$] (2pt) at (0,0) {};
+        \end{circuitikz}
+    \end{center}
+\end{enumerate}
+
+Es gilt nun also
+\begin{align*}
+    R_{\text{ges}} = R_1 + R_{2, 3} + (R_4 \mid\mid (R_5 + ((R_6 \mid\mid R_7) \mid\mid (R_8 + (R_9 \mid\mid R_{10, 11})))))
+\end{align*}
+mit
+\begin{align*}
+    R_{9, 10, 11} &= R_9 \mid\mid R_{10, 11} = \frac{R_9 \cdot (R_{10} + R_{11})}{R_9 + R_{10} + R_{11}} = 2\si{\ohm} \\
+    R_{8, 9, 10, 11} &= R_8 + R_{9, 10, 11} = 8\si{\ohm} \\
+    R_{6, 7, 8, 9, 10, 11} &= (R_6 \mid\mid R_7) \mid\mid R_{8, 9, 10, 11} = \frac{12}{11}\si{\ohm} \mid\mid 8\si{\ohm} = \frac{24}{25}\si{\ohm} \\
+    R_{5, 6, 7, 8, 9, 10, 11} &= R_5 + R_{6, 7, 8, 9, 10, 11} = \frac{49}{25}\si{\ohm} \\
+    R_{4, 5, 6, 7, 8, 9, 10, 11} &= R_4 \mid\mid R_{5, 6, 7, 8, 9, 10, 11} = \frac{98}{99}\si{\ohm} \\
+    R_{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} = R_{\text{ges}} &= R_1 + R_{2, 3} + R_{4, 5, 6, 7, 8, 9, 10, 11} = \frac{6335}{99}\si{\ohm} = \num{63.98989898989899}\si{\ohm}.
+\end{align*}
+
+\paragraph{Aufgabe 3}
+
+Die Ausgangsschaltung ist
+\begin{center}
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,5) to (3,5);
+        \draw (5,5) to (8,5);
+
+        \draw (0,5) to[R=$R_1$] (0,2.5) to[voltage source, v>=$U_{q1}$] (0,0);
+
+        \draw (2,5) to[R=$R_2$, *-] (2,3.5) to[voltage source, v>=$U_{q2}$] (2,2) to[current source, i=$I_{q3}$, *-*] (2,0);
+        \draw (2,2) to (3.5,2) to[R=$R_3$, -*] (3.5,0);
+
+        \draw (6.5,5) to[current source, i<=$I_{q5}$, *-*] (6.5,0);
+
+        \draw (8,5) to[R=$R_5$] (8,2.5) to[current source, i<=$I_{q6}$, *-*] (8,0);
+        \draw (8,2.5) to (9,2.5) to[R=$R_6$] (9,0) to (8,0);
+
+        \draw (0,0) to (8,0);
+
+
+        \node[draw, inner sep=1pt, fill=white, circle, label=$K_1$] (2pt) at (3,5) {};
+        \node[draw, inner sep=1pt, fill=white, circle, label=$K_2$] (2pt) at (5,5) {};
+    \end{circuitikz}
+\end{center}
+
+\begin{enumerate}
+    \item Stromquellen zu Spannungsquellen wandeln und zusammenfassen.
+    \begin{center}
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (3,5);
+            \draw (5,5) to (8,5);
+    
+            \draw (0,5) to[R=$R_1$] (0,2.5) to[voltage source, v>=$U_{q1}$] (0,0);
+
+            \draw (2,5) to[R=$R_{2,3}$] (2,2.5) to[voltage source, v>=$U_{q2, 3}$] (2,0);
+    
+            % \draw (2,5) to[R=$R_2$, *-] (2,3.5) to[voltage source, v>=$U_{q2}$] (2,2) to[current source, i=$I_{q3}$, *-*] (2,0);
+            % \draw (2,2) to (3.5,2) to[R=$R_3$, -*] (3.5,0);
+    
+            \draw (6.5,5) to[current source, i<=$I_{q5}$, *-*] (6.5,0);
+    
+            \draw (8,5) to[R=$R_{5,6}$] (8,2.5) to[voltage source, v=$U_{q6}$] (8,0);
+
+            % \draw (8,5) to[R=$R_5$] (8,2.5) to[current source, i<=$I_{q6}$, *-*] (8,0);
+            % \draw (8,2.5) to (9,2.5) to[R=$R_6$] (9,0) to (8,0);
+    
+            \draw (0,0) to (8,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label=$K_1$] (2pt) at (3,5) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label=$K_2$] (2pt) at (5,5) {};
+        \end{circuitikz}
+    \end{center}
+    Mit $U_{q2, 3} = U_{q2} - (I_{q3} \cdot R_3)$ und $U_{q6} = I_{q6} \cdot R_6$.
+\end{enumerate}
+
+\paragraph{Aufgabe 4}
+
+
+
+\end{document}
