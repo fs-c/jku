@@ -1,0 +1,101 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}
+    \item Wir haben \(T(n) = 3T(\frac{n}{3}) + n\) mit \(T(1) = 1\). Wiederholtes Einsetzen
+    \begin{align*}
+        T(n) &= 3 T\left(\frac{n}{3}\right) + n \\
+        &= 3 \cdot \left(3T\left(\frac{n}{9}\right) + \frac{n}{3}\right) + n =  9T\left(\frac{n}{9}\right) + 2n \\
+        &= 9 \cdot \left(3T\left(\frac{n}{27}\right) + \frac{n}{9}\right) + 2n = 27T\left(\frac{n}{27}\right) + 3n
+    \end{align*}
+    führt zum Schluss, dass
+    \begin{align*}
+        T(n) = 3^i \cdot T\left(\frac{n}{3^i}\right) + i \cdot n
+    \end{align*}
+    mit einer maximalen Rekursionstiefe von \(\log_3(n)\) nachdem \(n / 3^{\log_3(n)} = 1\).
+
+    Nach Einsetzen dieses Werts bleibt
+    \begin{align*}
+        T(n) &= 3^{\log_3(n)} \cdot T\left(\frac{n}{3^{\log_3(n)}}\right) + \log_3(n) \cdot n \\
+        &= n \cdot T(1) + \log_3(n) \cdot n = n + n \cdot \log_3(n).
+    \end{align*}
+
+    Die Annahme ist nun, dass \(T(n) = O(n \cdot \log_3(n))\). Zu zeigen: Es gibt \(c, n_0\) mit \(n + n \cdot \log_3(n) \leq c(n \cdot \log_3(n))\) für alle \(n \geq n_0\). Man wähle \(c = 2\). Gemäß
+    \begin{align*}
+        n + n \cdot \log_3(n) &\leq 2(n \cdot \log_3(n)) \\
+        n &\leq n \cdot \log_3(n) \\
+        1 &\leq \log_3(n) \\
+        3 &\leq n
+    \end{align*}
+    gilt \(n_0 = 3\). Somit gilt \(T(n) = O(n \log_3(n))\).
+
+    \item Die Induktionsannahme ist \(T(n) = n + n\log_3(n)\). Die Induktionsbasis \(T(1) = 1 + 1 \cdot \log_3(1) = 1\) gilt. Gemäß
+    \begin{align*}
+        T(n) &= 3T\left(\frac{n}{3}\right) + n \\
+        &= 3\left(\frac{n}{3} + \frac{n}{3}\log_3\left(\frac{n}{3}\right)\right) + n \\
+        &= n + n \log_3\left(\frac{n}{3}\right) + n \\
+        &= 2n + n \log_3(n) - 1 \\
+    \end{align*}
+    gilt nun $T(n) = O(n + n \log_3(n))$, nachdem Konstanten vernachlässigt werden können.
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}
+    \item Wir haben $a = 6, b = 3, n^{\log_{3}(6)} = n^{1.631}$ und $f(n) = n^2 \log(n)$. Es gilt $f(n) = \Omega(n^{\log_{3}(6) + \epsilon})$ nachdem es $c, n_0, \epsilon > 0$ gibt derart, dass
+    \begin{align*}
+        n^2 \log(n) &\leq c \cdot n^{\log_{3}(6) + \epsilon}
+    \end{align*}
+    für alle $n > n_0$
+
+    Ebenso gibt es ein $c < 1$ derart, dass
+    \begin{align*}
+        f\left(\frac{n}{3}\right) &\leq c \cdot f(n) \\
+        \left(\frac{n}{3}\right)^2 \log(\frac{n}{3}) &\leq c \cdot n^2 \log(n) \\
+        \frac{1}{9}n^2 \log(\frac{n}{3}) &\leq c \cdot n^2 \log(n)
+    \end{align*}
+    nämlich $c = \frac{1}{9}$, nachdem klarerweise für alle $n > 0$ gilt, dass $\log(\frac{n}{3}) \leq \log(n)$. Somit haben wir $T(n) = \Theta(n^2 \log(n))$.
+
+    \item Wir haben $a = 4, b = 2, log_2(4) = 2$ und $f(n) = n^2$.
+\end{enumerate}
+
+\end{document}
