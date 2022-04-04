@@ -54,7 +54,7 @@ public class Array2D implements Tabular {
 
             @Override
             public boolean hasNext() {
-                return colIndex < data.length;
+                return colIndex < data[row].length;
             }
 
             @Override
@@ -71,7 +71,7 @@ public class Array2D implements Tabular {
 
             @Override
             public boolean hasNext() {
-                return rowIndex < data[rowIndex].length;
+                return rowIndex < data.length;
             }
 
             @Override

@@ -55,7 +55,7 @@ public class Game {
 
     // TODO static inner class PlayerResultNode ------------------------------------------------
 
-    Tabular getScoreSheet() {
+    public Tabular getScoreSheet() {
         return new ScoreSheet();
     }
 
@@ -68,20 +68,21 @@ public class Game {
         }
     }
 
+    // Rows are players, columns are categories, values are points.
     private class ScoreSheet implements Tabular {
         @Override
         public int rowCount() {
-            return 0;
+            return getSize();
         }
 
         @Override
         public int colCount() {
-            return 0;
+            return PlayerResult.N_CATEGORIES;
         }
 
         @Override
         public String rowName(int row) {
-            return "Player " + ;
+            return "Player " + getResultByIndex(row).getName();
         }
 
         @Override
@@ -91,12 +92,36 @@ public class Game {
 
         @Override
         public Iterable<Integer> iterableRow(int row) {
-            return null;
+            return () -> new Iterator<>() {
+                int index = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return index < colCount();
+                }
+
+                @Override
+                public Integer next() {
+                    return getResultByIndex(row).getPoints(index++);
+                }
+            };
         }
 
         @Override
         public Iterable<Integer> iterableCol(int col) {
-            return null;
+            return () -> new Iterator<>() {
+                int index = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return index < rowCount();
+                }
+
+                @Override
+                public Integer next() {
+                    return getResultByIndex(index++).getPoints(col);
+                }
+            };
         }
     }
 

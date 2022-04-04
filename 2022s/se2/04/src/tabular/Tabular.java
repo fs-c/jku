@@ -70,12 +70,12 @@ public interface Tabular extends Iterable<Integer> {
     }
 
     default double average() {
-        return (double)sum() / (rowCount() * colCount());
+        return Arrays.stream(colAverages()).sum() / colCount();
     }
 
     @Override
     default Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
+        return new Iterator<>() {
             int rowIndex = 0;
             Iterator<Integer> rowIterator = iterableRow(0).iterator();
 
