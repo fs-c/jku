@@ -73,11 +73,12 @@
         T(n) &= 3T\left(\frac{n}{3}\right) + n \\
         &= 3\left(\frac{n}{3} + \frac{n}{3}\log_3\left(\frac{n}{3}\right)\right) + n \\
         &= n + n \log_3\left(\frac{n}{3}\right) + n \\
-        &= 2n + n \log_3(n) - 1 \\
+        &= n + n \log_3(n)
     \end{align*}
-    gilt nun $T(n) = O(n + n \log_3(n))$, nachdem Konstanten vernachlässigt werden können.
+    gilt nun $T(n) = O(n + n \log_3(n))$.
 \end{enumerate}
 
+\pagebreak
 \paragraph{Aufgabe 2.}
 
 \begin{enumerate}
