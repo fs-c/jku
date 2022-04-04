@@ -28,6 +28,8 @@
 \usetikzlibrary{positioning}
 \usepackage{circuitikz}
 
+\usepackage{adjustbox}
+
 % Adjust header and footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -79,10 +81,10 @@ Die Ausgangsschaltung ist
     \begin{center}
         \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
             \draw (0,4) to[R=$R_1$, -*] (4,4) to [-] (12,4);
-            \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to[R=$R_5$, -*] (8,0) to[R=$R_8$, -*] (12,0);
+            \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to[R=$R_5$, -*] (8,0) to[R=$R_8$, -] (12,0);
         
             \draw (4,4) to[R=$R_4$, *-*] (4,0);
-            \draw (12,4) to[R=$R_9 \mid\mid R_{10, 11}$, *-] (12,0);
+            \draw (12,4) to[R=$R_9 \mid\mid R_{10, 11}$, -] (12,0);
             \draw (8,4) to[R=$R_6 \mid\mid R_7$, *-*] (8,0);
     
             \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
@@ -98,7 +100,7 @@ Die Ausgangsschaltung ist
             \draw (0,0) to[R=$R_{2, 3}$, -*] (4,0) to[R=$R_5$, -*] (8,0) to (12,0);
         
             \draw (4,4) to[R=$R_4$, *-*] (4,0);
-            \draw (12,4) to[R=$R_8 + (R_9 \mid\mid R_{10, 11})$, *-] (12,0);
+            \draw (12,4) to[R=$R_8 + (R_9 \mid\mid R_{10, 11})$, -] (12,0);
             \draw (8,4) to[R=$R_6 \mid\mid R_7$, *-*] (8,0);
     
             \node[draw, inner sep=1pt, fill=white, circle, label=left:$K_1$] (2pt) at (0,4) {};
@@ -197,8 +199,8 @@ Die Ausgangsschaltung ist
         \draw (0,0) to (8,0);
 
 
-        \node[draw, inner sep=1pt, fill=white, circle, label=$K_1$] (2pt) at (3,5) {};
-        \node[draw, inner sep=1pt, fill=white, circle, label=$K_2$] (2pt) at (5,5) {};
+        \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (3,5) {};
+        \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (5,5) {};
     \end{circuitikz}
 \end{center}
 
@@ -211,7 +213,7 @@ Die Ausgangsschaltung ist
     
             \draw (0,5) to[R=$R_1$] (0,2.5) to[voltage source, v>=$U_{q1}$] (0,0);
 
-            \draw (2,5) to[R=$R_{2,3}$] (2,2.5) to[voltage source, v>=$U_{q2, 3}$] (2,0);
+            \draw (2,5) to[R=$R_{2,3}$, *-] (2,2.5) to[voltage source, v>=$U_{q2, 3}$, -*] (2,0);
     
             % \draw (2,5) to[R=$R_2$, *-] (2,3.5) to[voltage source, v>=$U_{q2}$] (2,2) to[current source, i=$I_{q3}$, *-*] (2,0);
             % \draw (2,2) to (3.5,2) to[R=$R_3$, -*] (3.5,0);
@@ -225,15 +227,135 @@ Die Ausgangsschaltung ist
     
             \draw (0,0) to (8,0);
     
-            \node[draw, inner sep=1pt, fill=white, circle, label=$K_1$] (2pt) at (3,5) {};
-            \node[draw, inner sep=1pt, fill=white, circle, label=$K_2$] (2pt) at (5,5) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (3,5) {};
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (5,5) {};
         \end{circuitikz}
     \end{center}
-    Mit $U_{q2, 3} = U_{q2} - (I_{q3} \cdot R_3)$ und $U_{q6} = I_{q6} \cdot R_6$.
+    Mit $R_{2,3} = R_2 + R_3$, $R_{5,6} = R_5 + R_6$, $U_{q2, 3} = U_{q2} - (I_{q3} \cdot R_3)$ und $U_{q6} = I_{q6} \cdot R_6$.
+
+    \item Stromquellen und Widerst\"ande der linken Seite zusammenfassen.
+
+    \makebox[\textwidth]{
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (3,5);
+    
+            \draw (0,5) to[R=$R_1$] (0,2.5) to[voltage source, v>=$U_{q1}$] (0,0);
+
+            \draw (2,5) to[R=$R_{2,3}$, *-] (2,2.5) to[voltage source, v>=$U_{q2, 3}$, -*] (2,0);
+    
+            \draw (0,0) to (3,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (3,5) {};
+        \end{circuitikz}\qquad
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (6,5);
+    
+            \draw (0,5) to[current source, i<=$I_{q1}$] (0,0);
+            \draw (1.5,5) to[R=$R_1$, *-*] (1.5,0);
+            \draw (3,5) to[current source, i<=$I_{q2,3}$, *-*] (3,0);
+            \draw (4.5,5) to[R=$R_{2,3}$, *-*] (4.5,0);
+
+            \draw (0,0) to (6,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (6,5) {};
+        \end{circuitikz}\qquad
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (2.5,5);
+    
+            \draw (0,5) to[current source, i<=$I_{q1,2,3}$] (0,0);
+            \draw (1.5,5) to[R=$R_{1,2,3}$, *-*] (1.5,0);
+
+            \draw (0,0) to (2.5,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (2.5,5) {};
+        \end{circuitikz}
+        \qquad
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (1.5,5);
+    
+            \draw (0,5) to[R=$R_{1,2,3}$] (0,2.5) to[voltage source, v=$U_{q1,2,3}$] (0,0);
+
+            \draw (0,0) to (1.5,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (1.5,5) {};
+        \end{circuitikz}
+    }
+
+    Mit $I_{q1} = \frac{U_{q1}}{R_1}$, $I_{q2,3} = \frac{U_{q2,3}}{R_{2,3}}$, $I_{q1,2,3} = I_{q1}+I_{q2,3}$, $R_{1,2,3} = R_1 \mid\mid R_{2,3}$ und $U_{q1,2,3} = R_{1,2,3} \cdot I_{q1,2,3}$.
+
+    \item Strom- und Spannungsquellen der rechten Seite zusammenfassen.
+    
+    \makebox[\textwidth]{
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (3,5);
+    
+            \draw (0,5) to[R=$R_{5,6}$] (0,2.5) to[voltage source, v>=$U_{q6}$] (0,0);
+
+            \draw (2,5) to[current source, i<=$I_{q5}$, *-*] (2,0);
+    
+            \draw (0,0) to (3,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (3,5) {};
+        \end{circuitikz}\qquad
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (4.5,5);
+    
+            \draw (0,5) to[R=$R_{5,6}$] (0,0);
+
+            \draw (2,5) to[current source, i<=$I_{q6}$, *-*] (2,0);
+
+            \draw (3.5,5) to[current source, i<=$I_{q5}$, *-*] (3.5,0);
+    
+            \draw (0,0) to (4.5,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (4.5,5) {};
+        \end{circuitikz}\qquad
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (3,5);
+    
+            \draw (0,5) to[R=$R_{5,6}$] (0,0);
+
+            \draw (2,5) to[current source, i<=$I_{q5,6}$, *-*] (2,0);
+    
+            \draw (0,0) to (3,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (3,5) {};
+        \end{circuitikz}\qquad
+        \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+            \draw (0,5) to (1.5,5);
+    
+            \draw (0,5) to[R=$R_{5,6}$] (0,2.5) to[voltage source, v=$U_{q5,6}$] (0,0);
+
+            \draw (0,0) to (1.5,0);
+    
+            \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (1.5,5) {};
+        \end{circuitikz}
+    }
+
+    Mit $I_{q6} = \frac{U_{q6}}{R_{5,6}}$, $I_{q5,6} = I_{q5}+I_{q6}$ und $U_{q5,6} = R_{5,6} \cdot I_{q5,6}$.
 \end{enumerate}
 
-\paragraph{Aufgabe 4}
+Somit wurde die Schaltung zu
+\begin{center}
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,0) to (1,0) to[R=$R_{1,2,3}$] ++(1.5,0) to[voltage source, v=$U_{q1,2,3}$] ++(1.5,0) to[R=$R_{5,6}$] ++(1.5,0) to[voltage source, v=$U_{q5,6}$] ++(1.5,0) to ++(1,0);
 
+        \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (0,0) {};
+        \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (8,0) {};
+    \end{circuitikz}\qquad
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,0) to (1,0) to[R=$R_{1,2,3,5,6}$] ++(1.5,0) to[voltage source, v=$U_{q1,2,3,5,6}$] ++(1.5,0) to ++(1,0);
 
+        \node[draw, inner sep=1pt, fill=white, circle, label={$K_1$}] (2pt) at (0,0) {};
+        \node[draw, inner sep=1pt, fill=white, circle, label={$K_2$}] (2pt) at (5,0) {};
+    \end{circuitikz}\qquad
+\end{center}
+vereinfacht. Es gilt also $R_q = R_{1,2,3,5,6} = R_{1,2,3} + R_{5,6}$ und $U_q = U_{q1,2,3,5,6} = U_{q1,2,3} - U_{q5,6}$ bzw. in erweiterter Form
+\begin{align*}
+    U_q &= (R_1 \mid\mid (R_2 + R_3)) \cdot \left(\frac{U_{q1}}{R_1}+\frac{U_{q2} - R_3 \cdot I_{q3}}{R_2 + R_3}\right) - ((R_5 + R_6) \cdot (I_{q5} + I_{q6})) \\
+    R_q &= (R_1 \mid\mid (R_2 + R_3)) + R_5 + R_6
+\end{align*}
+
+Der Strom $I$ im Schaltkreis entspricht $I = \frac{U_q}{R_q}$. Es gilt also $U_4 = R_4 \cdot I$.
 
 \end{document}
