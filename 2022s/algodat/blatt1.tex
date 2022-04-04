@@ -66,7 +66,7 @@
         1 &\leq \log_3(n) \\
         3 &\leq n
     \end{align*}
-    gilt \(n_0 = 3\). Somit gilt \(T(n) = O(n \log_3(n))\).
+    gilt \(n_0 = 3\). Somit gilt \(T(n) = O(n \log_3(n))\) mit $c = 2$ und $n_0 = 3$.
 
     \item Die Induktionsannahme ist \(T(n) = n + n\log_3(n)\). Die Induktionsbasis \(T(1) = 1 + 1 \cdot \log_3(1) = 1\) gilt. Gemäß
     \begin{align*}
@@ -81,21 +81,23 @@
 \paragraph{Aufgabe 2.}
 
 \begin{enumerate}
-    \item Wir haben $a = 6, b = 3, n^{\log_{3}(6)} = n^{1.631}$ und $f(n) = n^2 \log(n)$. Es gilt $f(n) = \Omega(n^{\log_{3}(6) + \epsilon})$ nachdem es $c, n_0, \epsilon > 0$ gibt derart, dass
+    \item Wir haben $a = 6, b = 3, n^{\log_{3}(6)} = n^{1.631\ldots}$ und $f(n) = n^2 \log(n)$. Es gilt $f(n) = \Omega(n^{\log_{3}(6) + \epsilon})$ nachdem es $c, n_0, \epsilon > 0$ gibt derart, dass
     \begin{align*}
-        n^2 \log(n) &\leq c \cdot n^{\log_{3}(6) + \epsilon}
+        n^2 \log(n) &\geq c \cdot n^{\log_{3}(6) + \epsilon}
     \end{align*}
-    für alle $n > n_0$
-
+    für alle $n > n_0$. (Etwa f\"ur $c \leq \log(n)$ und $0 < \epsilon \leq (2 - \log_{3}(6))$ ab $n_0 = 0$.)
+ 
     Ebenso gibt es ein $c < 1$ derart, dass
     \begin{align*}
-        f\left(\frac{n}{3}\right) &\leq c \cdot f(n) \\
-        \left(\frac{n}{3}\right)^2 \log(\frac{n}{3}) &\leq c \cdot n^2 \log(n) \\
-        \frac{1}{9}n^2 \log(\frac{n}{3}) &\leq c \cdot n^2 \log(n)
+        a\left(f\left(\frac{n}{3}\right)\right) &\leq c \cdot f(n) \\
+        6\left(\left(\frac{n}{3}\right)^2 \log(\frac{n}{3})\right) &\leq c \cdot n^2 \log(n) \\
+        \frac{6}{9}n^2 \log(\frac{n}{3}) &\leq c \cdot n^2 \log(n)
     \end{align*}
-    nämlich $c = \frac{1}{9}$, nachdem klarerweise für alle $n > 0$ gilt, dass $\log(\frac{n}{3}) \leq \log(n)$. Somit haben wir $T(n) = \Theta(n^2 \log(n))$.
+    nämlich $c = \frac{6}{9}$, nachdem klarerweise für alle $n > 0$ gilt, dass $\log(\frac{n}{3}) \leq \log(n)$. Somit haben wir $T(n) = \Theta(n^2 \log(n))$.
 
-    \item Wir haben $a = 4, b = 2, log_2(4) = 2$ und $f(n) = n^2$.
+    \item Wir haben $a = 4, b = 2, log_2(4) = 2$ und $f(n) = n^2$. F\"ur $k = 0$ gilt $f(n) = \Theta(n^2 \cdot (\log(n))^0) = \Theta(n^2)$ und somit $T(n) = \Theta(n^2 \log(n))$.
+    
+    \item Wir haben $a = \sqrt{2}$, $b = 2$, $\log_2(\sqrt{2}) = \frac{1}{2}$ und $f(n) = \log(n)$. Nachdem $f(n) = O(\sqrt{n})$ (es gibt $c$ mit $\log(n) \leq c\sqrt{n}$, etwa $c = 1$ f\"ur $n \geq 0$) und das auch f\"ur eine Funktion mit minimal kleinerer Wachstumsrate als $\sqrt{n}$ funktioniert, gilt $T(n) = \Theta(\sqrt{n})$.
 \end{enumerate}
 
 \end{document}
