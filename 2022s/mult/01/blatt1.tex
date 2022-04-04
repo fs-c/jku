@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{forest}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Multimedia --- \textbf{Aufgabe 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+
+\begin{document}
+
+\paragraph{Huffmann-Codierung}
+
+\begin{enumerate}
+    \item
+    
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \begin{forest}
+            edge/.style={edge label={node[midway,fill=white,font=\scriptsize]{#1}}}
+            [100
+                [40,edge=1
+                    [15,edge=1
+                        [5 \textbf{F},edge=1]
+                        [10 \textbf{I},edge=0]
+                    ]
+                    [25 \textbf{L},edge=0]
+                ]
+                [60,edge=0
+                    [25,edge=1
+                        [10,edge=1
+                            [5,edge=1
+                                [3 \textbf{O}, edge=1]
+                                [2 \textbf{V}, edge=0]
+                            ]
+                            [5 \textbf{G}, edge=0]
+                        ]
+                        [15 \textbf{R}, edge=0]
+                    ]
+                    [35 \textbf{E}, edge=0]                
+                ]
+            ]
+        \end{forest}
+    \end{minipage}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \begin{tabular}{cl}
+            E & 00 \\
+            L & 10 \\
+            R & 010\\
+            I & 110\\
+            F & 111\\
+            G & 0110\\
+            O & 01111\\
+            V & 01110
+        \end{tabular}
+    \end{minipage}
+
+    \item Die entsprechende Codierung ist
+    \begin{center}
+        \begin{tabular}{cccccccccc}
+            V&I&E&L&E&R&F&O&L&G \\
+            01110&110&00&10&00&010&111&01111&10&0110 \\
+        \end{tabular}
+    \end{center}
+    Sie benötigt 31 bits an Speicher.
+
+    \item Der Informationsgehalt beschreibt die kleinste Anzahl von Bits die benötigt werden um ein Zeichen darzustellen (für E 2, für L 10, \ldots). Die Entropie ist die Zufälligkeit der Nachricht, die im gegebenen Fall -- natürliche Sprache -- nicht besonders hoch ist (etwa im Vergleich zu einer völlig zufällig generierten Nachricht).
+\end{enumerate}
+
+\paragraph{ASCII}
+
+\begin{enumerate}
+    \item 1001100 1100001 1110101 1110010 1100101 1101110 1111010 0100000 1010111 1100101 1101001 1111000 1101100 1100010 1100001 1110101 1101101 1100101 1110010.
+    \item Es wäre sonst nicht möglich verschiedene Zeichen zu unterscheiden, ASCII ist kein Präfixcode.
+    \item Etwa Umlaute, ASCII ist ein amerikanischer Standard.
+\end{enumerate}
+
+\end{document}

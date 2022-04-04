@@ -1,7 +1,5 @@
 package jku.tk.mms.quotedprintableSS22;
 
-import java.util.Locale;
-
 public class QuotedPrintableCodec {
 	public static final char DEFAULT_QUOTE_CHAR	= '=';
 
