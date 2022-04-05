@@ -1,0 +1,45 @@
+-----------------------------------------------
+TwoDimensionalArrayApplication:
+-----------------------------------------------
+Average of Row 0: 50
+Average of Row 1: 22
+Average of Row 2: 43
+Average of Row 3: 34
+Average of Row 4: 38
+Average of Row 5: 49
+Average of Row 6: 28
+Average of Row 7: 59
+Average of Row 8: 50
+Average of Row 9: 31
+
+Average of Column 0:  6.6
+Average of Column 1:  5.7
+Average of Column 2:  6.4
+Average of Column 3:  6.5
+Average of Column 4:  7.0
+Average of Column 5:  8.2
+
+Average cell:  6.7
+
+-----------------------------------------------
+ScoresheetApplication:
+-----------------------------------------------
+Sum of Player Anna (row): 44
+Sum of Player Antonia (row): 60
+Sum of Player Basti (row): 59
+Sum of Player Birgit (row): 53
+Sum of Player Franz (row): 32
+Sum of Player Fritz (row): 41
+Sum of Player Gabe (row): 38
+Sum of Player Pepe (row): 59
+Sum of Player Pikachu (row): 60
+Sum of Player Valentina (row): 48
+
+Average of Category 0 (column): 6.6
+Average of Category 1 (column): 5.7
+Average of Category 2 (column): 15.4
+Average of Category 3 (column): 6.5
+Average of Category 4 (column): 7.0
+Average of Category 5 (column): 8.2
+
+Overall category average: 8.2
