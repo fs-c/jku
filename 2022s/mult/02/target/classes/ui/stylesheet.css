@@ -1,0 +1,94 @@
+* {
+    -background-color-primary-dark: #929292;
+    -background-color-primary: #4C4C4C;
+    -background-color-primary-light: #727272;
+    -background-color-accent: #191C22;
+    -text-color-primary: #C8C8C8;
+    -text-color-accent: #F2B03F;
+}
+
+.root {
+    -fx-font-size: 16pt;
+    -fx-font-family: Gill Sans Extrabold, sans-serif;
+    -fx-background-color: -background-color-primary-dark;
+}
+.pane {
+    -fx-background-color: #929292;
+}
+
+.button {
+    -fx-font-size: 10pt;
+    -fx-background-color: -background-color-primary;
+    -fx-text-fill: -text-color-primary;
+}
+
+.icon-button:selected {
+    -fx-background-color: -background-color-accent;
+    -fx-text-fill: -text-color-accent;
+}
+
+.button:hover {
+    -fx-background-color: -background-color-primary-light;
+}
+
+.icon-button {
+    -fx-content-display: graphic-only;
+    -icon-paint: -text-color-primary;
+}
+
+.corner {
+    -fx-background-color: -background-color-primary-dark;
+}
+
+.scroll-bar * {
+    -fx-border-color: -background-color-primary-dark;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow,
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-padding: 0 0 0 0;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -background-color-primary;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -background-color-primary-light;
+}
+
+.scroll-bar:vertical {
+    -fx-pref-width: 13;
+    -fx-padding: 1;
+    -fx-background-color: -background-color-primary-dark;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 13;
+    -fx-padding: 1;
+    -fx-background-color: -background-color-primary-dark;
+}
+
+.slider .track {
+    -fx-pref-height: 3;
+    -fx-control-inner-background: -text-color-primary;
+    -fx-border-color: transparent;
+}
+
+.slider .thumb {
+    -fx-background-color: -text-color-primary;
+    -fx-pref-height: 16;
+    -fx-pref-width: 16;
+}
+
+.slider .thumb:hover, .slider .thumb:pressed {
+    -fx-background-color: -text-color-accent;
+}
+
+
+.label {
+    -fx-font-size: 10pt;
+    -fx-text-fill: #C8C8C8;
+}

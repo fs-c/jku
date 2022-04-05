@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+\usepackage{csquotes}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{forest}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Multimedia --- \textbf{Blatt 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+
+\begin{document}
+
+\paragraph{Convolution Filter}
+
+Ein Convolution Filter wird für die (künstliche bzw. nachträgliche) Reduktion oder Erhöhung der Schärfe von Bildern verwendet. Das Eingabebild wird als Matrix von Farb- und Helligkeitswerten interpretiert. Ein sog. Kernel, eine benutzerdefinierte kleine Matrix, wird schrittweise \enquote{über} das Bild geschoben. Jeder Pixel nimmt einen Wert in Abhängigkeit von benachbarten Pixeln an, skaliert durch die Werte des Kernels.
+
+\end{document}
