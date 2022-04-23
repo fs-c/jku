@@ -1,0 +1,238 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+\usepackage{siunitx}
+\sisetup{round-mode=places, round-precision=4, locale=DE}
+
+% Drawings
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{circuitikz}
+
+\usepackage{adjustbox}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Elektronik --- \textbf{Blatt 4}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\begin{document}
+
+\paragraph{Aufgabe 2}
+
+Die Ausgangsschaltung ist
+\begin{center}
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \draw (0,0) node[ground]{}
+        to ++(3,0) to[current source, i=$I_{q3}$] ++(0,3.5)
+        to ++(0,1.5) to[voltage source, v_=$U_{q2}$, i=$I_6$] ++(-6,0)
+        to ++(0,-1.5) to[voltage source, v_=$U_{q1}$, i=$I_0$] ++(0,-3.5) to ++(3,0)
+        ;
+
+        \draw (-3,3.5) node[left]{\underline{1}}
+        to[R=$R_1$, i=$I_1$, *-*] ++(2,0) node[below left]{\underline{2}}
+        to[R=$R_4$, i=$I_4$, *-*] ++(2,0) node[below left]{\underline{3}}
+        to[R=$R_5$, i=$I_5$, *-*] ++(2,0) node[right]{\underline{4}}
+        ;
+
+        \draw (-1,0) to[R=$R_2$, *-*, i<_=$I_2$] (-1,3.5);
+        \draw (1,0) to[R=$R_3$, *-*, i<_=$I_3$] (1,3.5);
+    \end{circuitikz}
+\end{center}
+wobei die f\"ur das Verfahren relevanten Knoten mit \underline{1}--\underline{4} explizit nummeriert, und die Str\"ome $I_0, \ldots, I_6$ eingezeichnet wurden.
+
+Es gilt nun
+\begin{align*}
+    I_0 - I_1 - I_6 &= 0 \\
+    I_1 - I_2 - I_4 &= 0 \\
+    I_4 - I_3 - I_5 &= 0 \\
+    I_5 + I_6 + I_{q3} &= 0
+\end{align*}
+mit
+\begin{align*}
+    I_1 &= \frac{1}{R_1}(\phi_1 - \phi_2) &
+    I_2 &= \frac{1}{R_2}\phi_2 &
+    I_3 &= \frac{1}{R_3}\phi_3 \\
+    I_4 &= \frac{1}{R_4}(\phi_2 - \phi_3) &
+    I_5 &= \frac{1}{R_5}(\phi_3 - \phi_4)
+\end{align*}
+und
+\begin{align*}
+    U_{q1} &= \phi_1 \\
+    U_{q2} &= \phi_4 - \phi_1 = \phi_4 - U_{q1} \Rightarrow \phi_4 = U_{q1} + U_{q2}
+\end{align*}
+Nach Einsetzen ergibt sich
+\begin{align*}
+    I_0 - \frac{1}{R_1}(U_{q1} - \phi_2) - I_6 &= 0 \\
+    \frac{1}{R_1}(U_{q1} - \phi_2) - \frac{1}{R_2}\phi_2 - \frac{1}{R_4}(\phi_2 - \phi_3) &= 0 \\
+    \frac{1}{R_4}(\phi_2 - \phi_3) - \frac{1}{R_3}\phi_3 - \frac{1}{R_5}(\phi_3 - U_{q1} - U_{q2}) &= 0 \\
+    \frac{1}{R_5}(\phi_3 - U_{q1} - U_{q2}) + I_6 + I_{q3} &= 0
+\end{align*}
+was zu
+\begin{align*}
+    \frac{1}{R_1}\phi_2 + I_0 - I_6 - \frac{1}{R_1}U_{q1}  &= 0 \\
+    \left(-\frac{1}{R_1} - \frac{1}{R_2} - \frac{1}{R_4}\right)\phi_2 + \frac{1}{R_4}\phi_3 + \frac{1}{R_1}U_{q1} &= 0 \\
+    \frac{1}{R_4}\phi_2 + \left(-\frac{1}{R_4} - \frac{1}{R_3} - \frac{1}{R_5}\right)\phi_3 + \frac{1}{R_5}U_{q1} + \frac{1}{R_5}U_{q2} &= 0 \\
+    \frac{1}{R_5}\phi_3 + I_6 - \frac{1}{R_5}U_{q1} - \frac{1}{R_5}U_{q2} + I_{q3} &= 0
+\end{align*}
+umgestellt werden kann, woraus sich schlussendlich
+\begin{align*}
+    \begin{bmatrix}
+        \frac{1}{R_1} & 0 & 1 & -1 \\
+        \left(-\frac{1}{R_1} - \frac{1}{R_2} - \frac{1}{R_4}\right) & \frac{1}{R_4} & 0 & 0 \\
+        \frac{1}{R_4} & \left(-\frac{1}{R_4} - \frac{1}{R_3} - \frac{1}{R_5}\right) & 0 & 0 \\
+        0 & \frac{1}{R_5} & 0 & 1 \\
+    \end{bmatrix}
+    \cdot 
+    \begin{bmatrix}
+        \phi_2 \\
+        \phi_3 \\
+        I_0 \\
+        I_6
+    \end{bmatrix}
+    -
+    \begin{bmatrix}
+        \frac{1}{R_1}U_{q1} \\
+        -\frac{1}{R_1}U_{q1} \\
+        -\frac{1}{R_5}U_{q1} - \frac{1}{R_5}U_{q2} \\
+        \frac{1}{R_5}U_{q1} + \frac{1}{R_5}U_{q2} - I_{q3}        
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        0 \\ 0 \\ 0 \\ 0
+    \end{bmatrix}
+\end{align*}
+ergibt.
+
+\paragraph{Aufgabe 3}
+
+Die (leicht umgezeichnete) Ausgangsschaltung ist
+\begin{center}
+    \begin{circuitikz}[european, /tikz/circuitikz/bipoles/length=1cm, scale=.75]
+        \ctikzset{label/align=smart}
+        \draw (0,0) node[ground]{}
+        to[R=$R_5$, *-*, i<=$I_5$] ++(-5,0) to ++(-1.5,0)
+        to[current source, i<=$I_{q2}$] ++(0,4)
+        to ++(1.5,0) to[R=$R_2$, *-*, i=$I_2$] ++(2.5,0) node[above]{\underline{2}}
+        to[voltage source, v<=$U_{q3}$, *-*, i^=$I_{q3}$] ++(2.5,0) node[above]{\underline{3}}
+        to[voltage source, v=$U_{q1}$, *-*,i>=$I_{q1}$] ++(0,-2) node[right]{\underline{4}} to[R=$R_1$, i=$I_1$] ++(0,-2)
+        ;
+
+        \draw (-5,0) node[below]{\underline{5}} to[R=$R_3$, *-*, i=$I_3$] (-5,4) node[above]{\underline{1}};
+        \draw (-5,0) to (-4,3) to[R=$R_4$, i=$I_4$] (-1.5,3) to (0,4);
+        \draw (-5,0) to (-4,1.5) to[current source, i=$I_{q4}$] (-1.5,1.5) to (0,4);
+    \end{circuitikz}
+\end{center}
+wobei wieder die f\"ur das Verfahren relevanten Knoten mit \underline{1}--\underline{5} explizit nummeriert, und die Str\"ome $I_1, I_2, I_3, I_4, I_5, I_{q1}, I_{q3}$ eingezeichnet wurden.
+
+Es gilt nun
+\begin{align*}
+    I_3 - I_{q2} - I_2 &= 0 \\
+    I_2 - I_{q3} &= 0 \\
+    I_{q3} + I_4 + I_{q4} - I_{q1} &= 0 \\
+    I_{q1} - I_1 &= 0 \\
+    I_{q2} - I_3 - I_4 - I_{q4} - I_5 &= 0
+\end{align*}
+mit
+\begin{align*}
+    I_1 &= \frac{1}{R_1}\phi_4 &
+    I_2 &= \frac{1}{R_2}(\phi_1 - \phi_2) &
+    I_3 &= \frac{1}{R_3}(\phi_5 - \phi_1) \\
+    I_4 &= \frac{1}{R_4}(\phi_5 - \phi_3) &
+    I_5 &= \frac{1}{R_5}\phi_5 &
+\end{align*}
+und
+\begin{align*}
+    U_{q1} &= \phi_3 - \phi_4 \Rightarrow \phi_3 = U_{q1} + \phi_4 \\
+    U_{q3} &= \phi_3 - \phi_2 \Rightarrow \phi_2 = U_{q1} + \phi_4 - U_{q3}
+\end{align*}
+Nach Einsetzen ergibt sich
+\begin{align*}
+    \frac{1}{R_3}(\phi_5 - \phi_1) - I_{q2} - \frac{1}{R_2}(\phi_1 - U_{q1} - \phi_4 + U_{q3}) &= 0 \\
+    \frac{1}{R_2}(\phi_1 - U_{q1} - \phi_4 + U_{q3}) - I_{q3} &= 0 \\
+    I_{q3} + \frac{1}{R_4}(\phi_5 - U_{q1} - \phi_4) + I_{q4} - I_{q1} &= 0 \\
+    I_{q1} - \frac{1}{R_1}\phi_4 &= 0 \\
+    I_{q2} - \frac{1}{R_3}(\phi_5 - \phi_1) - \frac{1}{R_4}(\phi_5 - U_{q1} - \phi_4) - I_{q4} - \frac{1}{R_5}\phi_5 &= 0
+\end{align*}
+was zu
+\begin{align*}
+    \left(-\frac{1}{R_3} - \frac{1}{R_2}\right)\phi_1 + \frac{1}{R_2}\phi_4 + \frac{1}{R_3}\phi_5 + \frac{1}{R_2}U_{q1} - \frac{1}{R_2}U_{q3} - I_{q2}  &= 0 \\
+    \frac{1}{R_2}\phi_1 - \frac{1}{R_2}\phi_4 - I_{q3} - \frac{1}{R_2}U_{q1} + \frac{1}{R_2}U_{q3} &= 0 \\
+    - \frac{1}{R_4}\phi_4 + \frac{1}{R_4}\phi_5 - I_{q1} + I_{q3} - \frac{1}{R_4}U_{q1} + I_{q4} &= 0 \\
+    - \frac{1}{R_1}\phi_4 + I_{q1} &= 0 \\
+    \frac{1}{R_3}\phi_1 + \frac{1}{R_4}\phi_4 - \left(\frac{1}{R_3} - \frac{1}{R_4} - \frac{1}{R_5}\right)\phi_5 + \frac{1}{R_4}U_{q1} + I_{q2} - I_{q4} &= 0
+\end{align*}
+umgestellt werden kann, woraus sich schlussendlich
+\begin{align*}
+    \begin{bmatrix}
+        \left(-\frac{1}{R_3} - \frac{1}{R_2}\right) & \frac{1}{R_2} & \frac{1}{R_3} & 0 & 0 \\
+        \frac{1}{R_2} & \frac{1}{R_2} & 0 & 0 & -1 \\
+        0 & - \frac{1}{R_4} & \frac{1}{R_4} & -1 & 1 \\
+        0 & -\frac{1}{R_1}  & 0 & 1 & 0 \\
+        \frac{1}{R_3} & \frac{1}{R_4} & - \left(\frac{1}{R_3} - \frac{1}{R_4} - \frac{1}{R_5}\right) & 0 & 0 \\
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        \phi_1 \\
+        \phi_4 \\
+        \phi_5 \\
+        I_{q1} \\
+        I_{q3}
+    \end{bmatrix}
+    -
+    \begin{bmatrix}
+        -\frac{1}{R_2}U_{q1} + \frac{1}{R_2}U_{q3} + I_{q2} \\
+        \frac{1}{R_2}U_{q1} - \frac{1}{R_2}U_{q3} \\
+        \frac{1}{R_4}U_{q1} - I_{q4} \\
+        0 \\
+        -\frac{1}{R_4}U_{q1} - I_{q2} + I_{q4}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        0 \\ 0 \\ 0 \\ 0 \\ 0
+    \end{bmatrix}
+\end{align*}
+
+\paragraph{Aufgabe 4}
+
+\begin{enumerate}
+    \item $U_{R_1} = U_{q1}$
+    \item $I_{R_1} = \frac{U_{q1}}{R_1}$
+    
+    \item Es gilt
+    \begin{align*}
+        R_{345} = \left(\frac{1}{R_3} + \frac{1}{R_4} + \frac{1}{R_5}\right)^{-1}
+    \end{align*}
+    und somit gem\"a{\ss} der Spannungsteiler-Formel
+    \begin{align*}
+        U_{R_2} = U_{q1}\frac{R_2}{R_2 + R_{345}}
+    \end{align*}
+
+    \item Gem\"a{\ss} der Maschenregel gilt $U_{R_2} + U_{R_5} - U_{q1} = 0$ und somit $U_{R_5} =  U_{q1} - U_{R_2}$. Wieder gem\"a{\ss} der Maschenregel gilt $U_{R_5} - U_{R_4} = 0$ und somit $U_{R_4} = U_{R_5}$.
+\end{enumerate}
+
+\end{document}
