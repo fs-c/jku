@@ -1,0 +1,255 @@
+===========================================
+=== JKU KUSSS Backend Super System 3000 ===
+===========================================
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+1
+Enter student ID
+3
+Enter student name
+Name3
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+1
+Enter student ID
+2
+Enter student name
+Name2
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+1
+Enter student ID
+1
+Enter student name
+Name1
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+6
+1
+2
+3
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+7
+Name1
+Name2
+Name3
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+8
+1 : Name1
+2 : Name2
+3 : Name3
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+1
+Enter student ID
+4
+Enter student name
+Name4
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+6
+1
+2
+3
+4
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+2
+Enter student ID
+1
+Student exists
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+2
+Enter student ID
+5
+Student doesn't exist
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+3
+Enter student ID
+1
+Name1
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+3
+Enter student ID
+2
+Name2
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+4
+4
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+5
+Enter student ID
+4
+Removed student
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+6
+1
+2
+3
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+5
+Enter student ID
+4
+Couldn't remove student
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+8
+1 : Name1
+2 : Name2
+3 : Name3
+Which operation do you want to perform?
+1 - Add student
+2 - Check if student with given student ID exists
+3 - Print student based on student ID
+4 - Print student count
+5 - Remove student
+6 - List all student IDs
+7 - List all student names
+8 - List all student IDs + student names
+X - Exit application
+X
