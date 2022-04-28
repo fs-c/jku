@@ -19,6 +19,10 @@ public class SimpleMap<K, V>  implements Map<K, V> {
 
     @Override
     public void put(K key, V value) {
+        if (get(key) != null) {
+            remove(key);
+        }
+
         list.add(new Entry<>(key, value));
     }
 
