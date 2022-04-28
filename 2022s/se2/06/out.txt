@@ -1,0 +1,45 @@
+===========================================
+=== JKU KUSSS Backend Super System 3000 ===
+===========================================
+1st putIfAbsent successful for student ID 11234567: true
+2nd putIfAbsent successful for student ID 11234567: false
+PHDs:
+16804242	->	Student{name='Herbert Posthofer', subject='Computer Science', degree=PHD}
+11255667	->	Student{name='Markus Mehringer', subject='History of Memes', degree=PHD}
+11255668	->	Student{name='Andreas Schörgenhummer', subject='Artificial Intelligence', degree=PHD}
+11410001	->	Student{name='Raffael Moossahner', subject='Artificial Intelligence', degree=PHD}
+12001447	->	Student{name='Gandalf der Gelbe', subject='Literature', degree=PHD}
+Computer Scientists:
+16804242	->	Student{name='Herbert Posthofer', subject='Computer Science', degree=PHD}
+11598765	->	Student{name='Lucas Macor', subject='Computer Science', degree=MSC}
+Initials:
+16804242	->	HP
+11255667	->	MM
+11255668	->	AS
+11266779	->	GD
+11355555	->	IW
+11410001	->	RM
+11410002	->	SH
+11598765	->	LM
+11898765	->	KK
+12001447	->	GdG
+11234567	->	RR
+Start years:
+16804242	->	68
+11255667	->	12
+11255668	->	12
+11266779	->	12
+11355555	->	13
+11410001	->	14
+11410002	->	14
+11598765	->	15
+11898765	->	18
+12001447	->	20
+11234567	->	12
+Entry for student with three-part name: Student{name='Gandalf der Gelbe', subject='Literature', degree=PHD}
+Entry for student with four-part name: no such student
+All student IDs start with 1: true
+No student name starts with X: true
+Some student(s) studies/study medicine: false
+
+Process finished with exit code 0
