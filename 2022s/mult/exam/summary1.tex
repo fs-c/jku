@@ -1,0 +1,271 @@
+\documentclass[twocolumn]{article}
+
+% Font
+\usepackage[T2A]{fontenc}
+% Language
+\usepackage[ngerman]{babel}
+% Encoding
+\usepackage[utf8]{inputenc}
+
+% Custom header/footer
+\usepackage{fancyhdr}
+
+% Make LaTeX better
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{amsmath}
+
+% Sizing
+\usepackage{geometry}
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm,
+}
+
+% The \term command is used to introduce new terminology. It should only be used when the term is first introduced.
+\newcommand{\term}[1]{\textbf{#1}}
+
+% Visually separate content. Can be used to highlight a certain paragraph or to signify a context break.
+\newcommand{\separator}{\vspace{0.5em}\noindent}
+
+\begin{document}
+
+\section{Text}
+
+\subsection{Schrift und Text als Medium}
+
+\emph{Schrift} ist eine visuelle Darstellungsform der Sprache, zusammengesetzt aus Schrift\emph{zeichen}. \emph{Text} ist \enquote{Gewebe der Sprache}.
+
+Wird eingegeben/weitergegeben über Tastatur, Handschrift, Sprache \ldots und ausgegeben über Monitor, Drucker, \ldots
+
+Speicherung auf physischen Medien wie Festplatten, Papier, Stein, Sand, \ldots
+
+\emph{Syntax} und \emph{Semantik} bescheiben Struktur, Inhalt und Bedeutung von Text.
+
+\subsection{Rechnerinterne Darstellung von Text}
+
+Kenntnis über Aufbau und Einsatz unterschiedlicher Zeichensätze (ASCII, UCS, Unicode, ...)
+
+Das Kodierungsmodell definiert einen konzeptionellen Rahmen zur Abbildung der Menge der abstraken Zeichen auf eine konkrete Kodierung als Bitfolge und dessen interne Speicherung.
+
+\emph{Zeichensatz} ist eine rechnerinterne Darstellung einer Sammlung von Zeichen. Notwendigerweise muss die Anzahl der verfügbaren Bits hinreichend groß sein um alle verwendeten Zeichen eindeutig abbilden zu können.
+
+Wünschenswerte Attribute der \emph{Abbildungsfunktion}:
+\begin{enumerate}
+    \item Codierung in kleinstmögliche Zahlen/Bitfolgen
+    \item Wohldefinierte Ordnung, etwa anhand des Alphabets
+    \item Standardisierung, weltweite Einigung auf eine Abbildungsfunktion
+\end{enumerate}
+
+Die Abbildungsfunktion ist gespeichert als Form einer Codetabelle (code table, character set, \ldots) bei dem jedes Zeichen eine Nummer (code point, position, \ldots) erhält.
+
+\paragraph{ASCII} ist ein \emph{7-Bit} Zeichensatz ($2^7 = 128$), das achte Bit ist immer null.
+
+Erweiterungen in Form von länderspezifischen Varianten (ISO DE/US) und auf 8 Bit (DOS, ANSI).
+
+\paragraph{Unicode} Abbildung aller Schriftzeichen der Welt in einem Zeichensatz (system-, programm- und sprachunabhängig, klarerweise).
+
+Anfangs 16-Bit, mittlerweile 21-Bit (?) und >140k belegte Zeichen. Die Unicode Notation hat die Form $U+0000$ wobei $0000$ durch den Codepoint zu ersetzen ist. Wrapper über ANSI und ISO.
+
+\paragraph{Kodierungsformat} Angabe, wie das Bitmuster der Codetabelle tatsächlich intern gespeichert wird.
+
+Probleme der naheliegenden kanonischen Speicherung (direkt, je 8 Bit in einen Byte speichern) sind Redundanz durch lange Nullfolgen, ebenso ist ASCII nur 7-Bit.
+
+\paragraph{Zeichensätze} wie \emph{UTF} definieren ein Kodierungsformat. UTF unterstützt etwa variabel lange Codewörter. (UTF-8: 1-4 Bytes, UTF-16: 2 oder 4, UTF-32 fix 4 Bytes, kanonisch.)
+
+\paragraph{Fonts} Die \emph{Schriftart} (Typeface) bestimmt das Erscheinungsbild das darzustellenden Zeichens. Der \emph{Schriftsatz} bestimmt die rechnerinterne Darstellung der Erscheinungsbilder, etwa durch Bitmaps (Bild, bestehend aus einzelnen Punkten) oder Vektoren (ähnlich SVG).
+
+Bitmap fonts ist an eine bestimmte Auflösung gekoppelt/angepasst, Skalierung auf unvorhergesehene Auflösungen führt zu Aliasing (\enquote{Verpixelung}) geht aber schnell.
+
+Outline Fonts sind wie alle Vektorgraphiken unabhängig von Auflösungen aber aufwändiger in der Handhabung (Kerningtabelle, rendering Hints, \ldots).
+
+\section{Bild}
+
+\subsection{Wahrnehmungspsychologische Grundlagen}
+
+Licht ist Teil des elektromagnetischen Spektrums, Menschen haben einen Tri-Chromatisches Sehsinn (Blau -- kürzere Wellenlängen, Grün -- mittlere, Rot -- längere). Etwa 6 Million solcher farbempfindlichen Zapfen.
+
+\subsection{Farbmodelle}
+
+\paragraph{RGB} Prinzip der \emph{additiven} Farbmischung durch Angabe der Helligkeit des Rot-, Grün- und Blauanteils. Jeder Anteil wird einzeln quantisiert. 24 bit Farbtiefe führen zu 8 bit je Grundfarbe (also 0-255 pro Farbanteil). Geräteabhängiges Farbmodell: der Wert ist zwar exakt definiert, tatsächliche Darstellung ist allerdings Geräteabhängig.
+
+\paragraph{CMY} Prinzip der \emph{subtraktiven Farbischung}. Mischen von Körperfarben basierend auf der Absorption von Licht, bestimmte Wellenlängen werden herausgefiltert, nicht absorbierte Farben werden reflektiert. Cyan absorbiert Rot, Mangenta Grün, Gelb Blau. Abhängig von bestrahlendem Licht.
+
+\paragraph{YUV} Aufgebaut aus \emph{Luminanzsignal} Y und zwei \emph{Chrominanzsignalen} I/U und Q/V. Verwendung in der Fernsehtechnik zur Steigerung der Übertragungseffizienz. Nur Luminanzsignal: Schwarzweißfernsehen. Luminanz ist wichtiger für Detail-Eindruck als Farbinformation und erhält deswegen mehr Bandbreite.
+
+\paragraph{Colorsubsampling} ist sinnvoll um Speicher zu sparen. Unterschiedliche Zahl von Bits pro Farbkanal. 4:4:4 keine Reduktion, 4:2:2 2/3 Reduktion, 4:2:0, 4:1:1.
+
+\paragraph{Color Lookup Table} ist sinnvoll zum Speichersparen insbesondere beim RGB-Modell. Pixel enthalten Index von Tabelleneintrag in dem die jeweilige Farbe gespeichert ist. GIF etwa 256 Farbeinträge.
+
+\paragraph{Bitmaps/Rastergraphiken} sind einfache Matrix deren Einträge der Pixelwert an der jeweiligen Stelle ist (üblicherweise RGB).
+
+\subsection{JPEG}
+
+\begin{enumerate}
+    \item Zerlegung in Farbkanäle (YCbCr-Farbraum), einfache Matrixmultiplikation von vordefinierten Werten mit den RGB Werten.
+    \item Downsampling (Chroma-Subsampling) der Farbinformationen (4:2:2, in Spalten je zwei Y ein U/V oder 4:2:0, zentral je 4 Y ein U/V).
+    \item Je Kanal Zerlegung in 8x8 Blöcke
+    \item Für jeden Block:
+    \begin{enumerate}
+        \item Disktrete Kosinustransformation. Umwandlung in DCT-Koeffizienten, größere Werte sind \enquote*{oben links}.
+        \item Quantisierung. Die 8x8 DCT-Koeffizienten werden mit Normalisierungstabelle verknüpft (extern vorhanden bzw. muss mit Bild mitgeliefert werden).
+        \item Entropiecodierung. Standardmäßig Huffman-Kodierung, verlustfrei, Präfix-Code, Quellsymbolen werden Codewörter mit verschiedener Länge zugeordnet. Häufiger auftauchende Zeichen werden mit weniger bits repräsentiert als seltener auftauchende.
+    \end{enumerate}
+\end{enumerate}
+
+\paragraph{Zick-Zack Scan} DCT-Koeffizienten werden durch Differenzbildung zu den Koeffizienten des vorhergehenden Blocks codiert und durch eine Zickzack Sequenz angeordnet (0,0), (1,0), (0, 1), (1, 1), (2, 1),\ldots Lange Nullketten sind zu erwarten.
+
+\paragraph{JPEG 2000} Bessere Bildqualität, kürzere Kodier- und Dekodierzeit, niedriger Speicherbedarf. Transformation (Wavelets anstelle von DCT), angewendet auf ganzes Bild (nicht auf Block).
+
+\section{Audio}
+
+\subsection{Wahrnehmungspsychologische Grundlagen}
+
+Schall sind durch Energie hervorgerufen \emph{Schwinguns-} und Wellenvorgänge, verbreiten sich in einem elastischen Medium. (Kinetische Energie beim Anschlag einer Klaviertaste erzeugt Vibration der angeschlagenen Saite, Vibration wird durch den Resonanzraum des Klaviers verstärkt und breitet sich in der Luft aus.)
+
+Dargestellt als Sinusschwingung die Ton einer bestimmten Frequenz entspricht, Wellenlänge ist abhängig vom Medium.
+
+Die \emph{Tonhöhe} ist bestimmt durch die Frequenz (Schwingungen pro Sekunde). Der Hörbereich des menschlichen Ohrs liegt zwischen 16 und 20000 Herz. Je höher der Ton, desto höher die Frequenz.
+
+Der Schalldruck ist ein objektives physikalisches Maß (in Pascal, [pa]) oder normiert auf hörbaren Bereich [0 \ldots 130dB].
+
+Primärempfindungen sind
+\begin{itemize}
+    \item Tonhöhe (versch. Klaviertasten)
+    \item Lautstärke (Boeing vs. Cessna)
+    \item Klangfarbe (etwa gleicher Ton auf versch. Instrumenten)
+\end{itemize}
+
+\paragraph{Frequenzmaskierung} Laute Töne bestimmte Frequenz machen leisere Töne ähnlicher Frequenz unhörbar.
+
+\paragraph{Zeitliche Maskierung} Laute Töne beeinflussen Wahrnehmung frequenähnliche Töne in direkter zeitlicher Nachbarschaft.
+
+\section{Rechnerinterne Darstellung}
+
+\begin{enumerate}
+    \item Aufzeichnung von Audiosignalen. Mikrofon wandelt Schallwelle in elektrisches Signal, Spannungsverlauf ist analog zum Druckschwankungsverlauf an Membran des Mikrofons.
+    \item[An.:] Analoges Signal speichern auf Magnetband, Schallplatte, \ldots
+    \item[Dig.:] Analoges Signal mittels A/D Konverter in binäre Darstellung umwandeln und speichern. Mittels D/A Konverter wieder als Analogsignal an Lautsprecher weitergeben.
+\end{enumerate}
+
+Sollte folgende Eigenschaften berücksichtigen
+\begin{itemize}
+    \item Fidelity. Wahrgenommene Qualität vs. Originalsignal. (Abhängig von Abtastrate und Quantisierungsstufen, mehr ist besser.)
+    \item Bitrate. Bits pro Zeiteinheit des Codierungsergebnisses. (Abhängig von A. und Q., weniger ist besser.)
+    \item Komplexität. Benötigter Aufwand (HW/SW) zur En- und Dekodierung, oft mit Echtzeitanforderung.
+\end{itemize}
+
+\paragraph{Pulse Code Modulation} Abtasten und Quantisieren der Amplitude des Originalwerts. Hoher Bandbreitenbedarf:
+\begin{equation*}
+    \frac{\text{bitrate}}{\text{s}} = \frac{\text{Abtastrate}}{\text{Hz}} \cdot \frac{\text{Bits}}{\text{Abtastwert}} \cdot \text{Kanäle}
+\end{equation*}
+
+Wichtig ist Wahl der Abtastrate (Nyquist Theorem)
+\begin{equation*}
+    \text{Abtastrate} > 2 \cdot \text{max. Frequenz}
+\end{equation*}
+
+Bei der Quantisierung werden abgetatsteten Spannungswerten diskrete Zahlenwerte zugeordnet, etwa 8 oder 16 bit.
+
+\subsection{Kompression}
+
+\begin{itemize}
+    \item Verlustbehaftete Veränderung der Sampling/Quantisierungsparameter. (Weniger Kanäle, weniger Bits pro Sample, weniger Samples/kleiner Samplingfrequenz.)
+    
+    \item Quellcodierungen (Differential PCM, Deltamodulation, Dynamikkompression)
+\end{itemize}
+
+Bei der Differential Pulse Code Modulation wird nur die Differenz zwischen jeweils aufeinanderfolgenden Codeworten gespeichert. Üblicherweise gibt es geringere Differenzen zwischen Nachbarn bzw. allgemein kleine Differenzen auf relativ hohem Wertebereich. Pegelverlust (weniger Quantisierungsbits) schlechtere übertragung von Höhen. (Gibt adaptive Variante mit anpassbarer Anzahl von Quantisierungsbits, etwa zwei Modi.)
+
+Bei Delta-Modulation werden Differenzen mit einem Bit kodiert, entweder Erhöhung oder Senkung um gegebenes (sehr kleines) Delta. Erfordert hochfrequente Abtastung um \enquote{mitzukommen}.  
+
+Dynamikkompression (nichtlineare Quantisierung) baut auf dem Weber-Fechnerschen Grundgesetz der Psychophysik auf: \enquote{Ein Reiz muss gegenüber einem Schwellenreiz logarithmisch wachsen, wenn er als stärker empfunden werden soll.} Leise Geräusche werden also differenzireter wahrgenommen als Laute, müssen genauer quantisiert werden. (Logarithmische Verteilung der Quantisierungsstufen.)
+
+\paragraph{Psychoakustik}
+
+Was nicht gehört wird, soll auch nicht kodiert werden:
+\begin{itemize}
+    \item Herausfiltern von Frequenzen unterhalb der Hörgrenze.
+    \item Filtern auf Basis von Frequenzmaskierung und zeitlicher Maskierung.
+    \item Sub-Band Kodierung.
+    \begin{enumerate}
+        \item Aufteilen des Signals in Teil-Frequenzbänder. (Ähnliche Frequenzen sind \enquote{benachbart}.)
+        \item Ermittlung des Signalpegels für jedes Teilband.
+        \item Für jedes Teilbannd wird Maskierungsschwelle berechnet, Teilbänder die von anderen überdeckt sind, werden nicht kodiert.
+        \item Kodierung der Teilbänder mit jeweils angemessener Bitanzahl.
+    \end{enumerate}
+\end{itemize}
+
+Ein \emph{Codec} ist ein spezifischer Ansatz (Technologie, Algorithmen) zur Kodierung von (Audio-) Daten. \emph{Dateiformate} definieren Aufbau und Struktur der gespeicherten Daten.
+
+\begin{center}
+    \begin{tabular}{l l}\toprule
+        Codec & Format \\\midrule
+        PCM & .wav \\
+        MPEG-1 Audio Layer 3 & .mp3 \\
+        Advanced Audio Coding & .m4a \\
+        Vorbis & .oga \\
+        Windows Media Audio & .wma \\\bottomrule
+    \end{tabular}
+\end{center}
+
+Als \emph{Containerformat} bezeichnet man Formate welche Aufbau und Struktur zur speicherung verschiedener Inhalte (Medientypen) ermöglichen und etwa verschiedene Audio- und Videocodecs enthalten (MP4, OGG, ASF).
+
+Beispiele für Verlustfreue Audiocodecs sind MPEG-4, FLAC und ALAC.
+
+\section{Video}
+
+\subsection{Charakteristika von (Digitalem) Video}
+
+\paragraph{Zeitliche Auflösung} Wahrnehmung von Bewegung. Hier werden
+\begin{itemize}
+    \item physiologische (Sehzellen, Objektverfolgung, Beschleunigungswahrnehmung, Grenze 60 FPS)
+    \item psychologische (Elimination gleichförmiger Bewegungen, Übelkeit bei Unstimmigkeit Beschleunigungswahrnehmen/optische Bewegungswechsel, Grenze 30 FPS)
+\end{itemize}
+Faktoren relevant.
+
+\paragraph{Räumliche Auflösung} Bildformat (Zeilenanzahl, Anzahl Pixel pro Zeile, Ansichtsverhältnis). Interlaced (Halbbilder werden übertragen) oder progressive (Vollbilder) Scanning.
+
+\subsection{Rechnerinterne Darstellung von Video-Daten}
+
+Digitales Video als Folge von Einzelbildern, Reihenfolge und Zeit zwischen zwei Frames muss bei Wiedergabe berücksichtigt werden.
+
+\begin{itemize}
+    \item 576i mit PAL (720x576, 4:2:0, 25 FPS)
+    \item NTSC 480i mit NTSC (720x480, 4:1:1, 30 FPS)
+    \item 1080i60 HDTV (1920x1080, 4:1:1, 60/2 FPS)
+\end{itemize}
+
+Es gibt mehrere Ansätze zur Kompression.
+
+\begin{description}
+    \item[Intra Frame Kodierung] (Motion JPEG) Jedes Bild wird einzeln nach JPEG Algorithmus komprimiert, die Bildfolge wird als Video betrachtet. Keine Abhängigkeiten zwischen Bildern berücksichtigt, beliebige Positionierung innerhalb des Videos möglich. Niedrige Kompressionsrate, keine Berücksichtigung von Audio.
+    
+    \item[Inter Frame Kodierung] Video wird in Bildgruppen zerlegt, erstes Bild jeder Gruppe wird unabhängig Kodiert (Referenzframe, I-Frame), weitere Bilder der Gruppe werden als Differenzbilder zum ersten kodiert.
+    
+    Durch Bewegungsabschätzung werden Bewegungsvektoren zwischen den Frames ermittelt. Der \enquote{Vorhersagefehler} und diese Vektoren können nun Kodieren von Frames in einer Bildgruppe verwendet werden.
+
+    Vergleichskriterien ist etwar die mittlere absolute Differenz der Pixel, die Summe der absoluten Differenzen, quadratischer Fehler, \ldots
+
+    Suchstrategien sind etwa sequentielle Suche, hierarchische Suche (Start mit niedriger Auflösung, Verfeinerung der Suche in Bereich mit bestem Match), 2C-logarithmische Suche (9 Suchblöcke um den aktuellen Block herum, beim besten Match wieder von vorne mit halber Distanz)
+
+    P-Frame aus Vergleich mit vorhergehenden Bildern, B-Frame (bidirectional) aus Vergleich mit vorhergehenden und nachfolgenden Bildern.
+\end{description}
+
+\subsection{H.261}
+
+Einsatzgebiet ist Videotelefonie, Echtzeitanforderung, bewegungsarm, kodiert Intra- und Inter-Frames. Nach Intra-Frame kommen einige Inter-Frames. Weniger Inter-Frames als üblich notwendig wäre aufgrund des Einsatzgebiets.
+
+Grundprinzip der Digitalisierung
+Ansätze der Kompression: Intra-
+Frame-Codierung, Interframe
+Codierung
+Standards Motion JPEG,
+MPEG-1, MPEG-2, MPEG-4,
+MPEG-7, MPEG-21, H.261,
+H.263, H.264
+
+\end{document}
