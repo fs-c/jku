@@ -1,0 +1,186 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 6}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+\begin{enumerate}
+    \item The given subset is linearly dependent.
+    \begin{center}
+        \begin{tabular}{c c c | c}
+            1 & $-1$ & 0 & 0 \\
+            1 & 2 & 6 & 0 \\
+            3 & 1 & 8 & 0 \\
+        \end{tabular}
+        \quad
+        \begin{tabular}{c c c | c}
+            \boxed{1} & $-1$ & 0 & 0 \\
+            0 & 3 & 6 & 0 \\
+            0 & 4 & 8 & 0 \\
+        \end{tabular}
+        \quad
+        \begin{tabular}{c c c | c}
+            1 & $-1$ & 0 & 0 \\
+            0 & \boxed{3} & 6 & 0 \\
+            0 & 0 & 0 & 0 \\
+        \end{tabular}
+    \end{center}
+
+    \item The given subset is linearly dependent.
+    \begin{center}
+        \begin{tabular}{c c c | c}
+            1 & 1 & 1 & 0 \\
+            $t$ & $t-1$ & $t+1$ & 0 \\
+            $t^2$ & $(t-1)^2$ & $(t+1)^2$ & 0 \\
+        \end{tabular}
+        \quad
+        \begin{tabular}{c c c | c}
+            \boxed{1} & 1 & 1 & 0 \\
+            0 & $-1$ & $1$ & 0 \\
+            0 & $-2t+1$ & $2t+1$ & 0 \\
+        \end{tabular}
+        \quad
+        \begin{tabular}{c c c | c}
+            1 & 1 & 1 & 0 \\
+            0 & \boxed{$-1$} & $1$ & 0 \\
+            0 & 0 & 0 & 0 \\
+        \end{tabular}
+    \end{center}
+\end{enumerate}
+
+\paragraph{Exercise 2}
+
+\begin{enumerate}
+    \item First we show that
+    \begin{equation*}
+        \forall\, \vec{u}, \vec{v} \in U \cap W : \vec{u} + \vec{v} \in U \cap W.
+    \end{equation*}
+    Since $U$ is a subspace, for all elements $\vec{u_1}, \vec{u_2} \in U$ we know $\vec{u_1} + \vec{u_2} \in U$. The same holds for the vectors in $W$. We know that the vectors $\vec{u}$ and $\vec{v}$ are in $U$ and $W$. Thus
+    \begin{equation*}
+        \vec{u} + \vec{v} \in U \land \vec{u} + \vec{v} \in W \quad\Longrightarrow\quad \vec{u} + \vec{v} \in U \cap W.
+    \end{equation*}
+
+    Second we show that
+    \begin{equation*}
+        \forall\, \vec{v} \in U \cap W : \forall \lambda \in V : \lambda \cdot \vec{v} \in U \cap W
+    \end{equation*}
+    We again know for all $\vec{u} \in U$ and $\lambda \in V$ that we have $\lambda \cdot \vec{u} \in U$ and analogously for $W$. Thus, since $\vec{v}$ is in both $U$ and $W$ the same reasoning as above applies.
+
+    \item First we show that
+    \begin{equation*}
+        \forall\, \vec{v_1}, \vec{v_2} \in U + W : \vec{v_1} + \vec{v_2} \in U + W.    
+    \end{equation*}
+    Since
+    \begin{align*}
+        \vec{v_1} &= \vec{u_1} + \vec{w_1} \quad (\vec{u_1} \in U, \vec{w_1} \in W) \\
+        \vec{v_2} &= \vec{u_2} + \vec{w_2} \quad (\vec{u_2} \in U, \vec{w_2} \in W)
+    \end{align*}
+    by definition of $U + W$ we can restate the condition to
+    \begin{align*}
+        \vec{v_1} + \vec{v_2} &\in U + W \\
+        \vec{u_1} + \vec{w_1} + \vec{u_2} + \vec{w_2} &\in U + W \\
+        \vec{u_1} + \vec{u_2} + \vec{w_1} + \vec{w_2} &\in U + W
+    \end{align*}
+    which is true since $\vec{u_1} + \vec{u_2} \in U$ and $\vec{w_1} + \vec{w_2} \in W$.
+
+    Second we show that
+    \begin{equation*}
+        \forall\, \vec{v} \in U + W : \forall\, \lambda \in V : \lambda \cdot \vec{v} \in U + W
+    \end{equation*}
+    Since $\vec{v} = \vec{u} + \vec{w}$ (for some vectors $\vec{u}$ and $\vec{w}$ in $U$ and $W$ respectively) we can restate the above condition to
+    \begin{align*}
+         \lambda(\vec{u} + \vec{w}) &\in U + W \\
+         \lambda \cdot \vec{u} + \lambda \cdot \vec{w} &\in U + W
+    \end{align*}
+    which is true since $\lambda \cdot \vec{u} \in U$ and $\lambda \cdot \vec{w} \in W$. (We can decompose the multiplication with $\lambda$ because $V$ is a vector space.)
+\end{enumerate}
+
+\paragraph{Exercise 3}
+
+We show that $W_1 \cup W_2$ is a subspace if and only if $W_1 \subseteq W_2$ or $W_2 \subseteq W_1$.
+
+First we show the \enquote{if}: Assume $W_1 \subseteq W_2$, then $W_1 \cup W_2 = W_2$ which is a subspace. The reasoning for $W_2 \subseteq W_1$ is very similar.
+
+Second we show the \enquote{and only}: Let $w_1 \in W_1$ such that $w_1 \notin W_2$ and $w_2 \in W_2$ with $w_2 \notin W_1$. We claim $w_1 + w_2 \notin W_1 \cap W_2$ --- thus that $W_1 \cup W_2$ is not a subspace if neither is a subset of the other.
+
+Proof by contradiction: Assume that $w_1 + w_2 \in W_1$. Since $-w_1$ is in $W_1$ (it is a subspace) we can construct the statement
+\begin{align*}
+    (w_1 + w_2) - w_1 &\in W_1 \\
+    w_2 &\in W_1
+\end{align*}
+which is a contradiction. Same goes for the assumption that $w_1 + w_2 \in W_2$.
+
+\paragraph{Exercise 5}
+
+\begin{center}
+    \begin{tikzpicture}
+        \begin{axis}[domain=0:3*pi, axis lines=center, width=\linewidth, height=4cm, legend]
+            \addplot[smooth, thick, dashed]{sin(deg(x))};
+            \addlegendentry{$\sin(x)$};
+            \addplot[smooth, dashed]{cos(deg(x))};
+            \addlegendentry{$\cos(x)$};
+            \addplot[smooth, thick]{sin(deg(2*x))};
+            \addlegendentry{$\sin(2x)$};
+            \addplot[smooth, very thick, dotted]{cos(deg(2*x))};
+            \addlegendentry{$\cos(2x)$};
+            \addplot[smooth, dotted]{sin(deg(x))*cos(deg(x))};
+            \addlegendentry{$\sin(x)\cos(x)$};
+        \end{axis}
+    \end{tikzpicture}
+\end{center}
+
+There is no way to add the functions together to get $f(x) = 0$.
+
+\paragraph{Exercise 7}
+
+The base is
+\begin{equation*}
+    \left\{\begin{pmatrix*}
+        1 \\ 0 \\ 0
+    \end{pmatrix*}\begin{pmatrix*}
+        0 \\ 1 \\ 0
+    \end{pmatrix*}\begin{pmatrix*}
+        0 \\ 0 \\ 1
+    \end{pmatrix*}\right\}
+\end{equation*}
+and the dimension of the linear hull is 3.
+
+\end{document}
