@@ -1,0 +1,307 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 6}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+\begin{enumerate}
+    \item We first determine a base of $U$ by noting that $x = -y - z$ solves $x + y + z = 0$ for arbitrary $y$ and $z$ leading to
+    \begin{align*}
+        \begin{pmatrix}
+            x \\ y \\ z
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            -y - z \\ y \\ z
+        \end{pmatrix}
+        =
+        y
+        \begin{pmatrix}
+            -1 \\ 1 \\ 0
+        \end{pmatrix}
+        +
+        z
+        \begin{pmatrix}
+            -1 \\ 0 \\ 1
+        \end{pmatrix}
+    \end{align*}
+    which shows that $(-1, 1, 0)$ and $(-1,0,1)$ form a basis for $U$ (since any element of $U$ can be written as a linear combination of them).
+
+    Consider
+    \begin{align*}
+        \dim(R^3) &= \dim(U) + \dim(R^3/U) \\
+        3 &= 2 + \dim(R^3/U) \\
+        \dim(R^3/U) &= 1
+    \end{align*}
+    thus we are looking for one more element in $R^3$ such that it forms a basis of $R^3$ alongside our existing vectors.
+
+    %TODO
+
+    \item We first determine a base of $U$. By solving the linear system $x + y + z = 0$ and $x + 2y + 3z = 0$.
+    \begin{center}
+        \begin{tabular}{c c c | c}
+            1 & 1 & 1 & 0 \\
+            1 & 2 & 3 & 0
+        \end{tabular}\quad
+        \begin{tabular}{c c c | c}
+            1 & 1 & 1 & 0 \\
+            0 & 1 & 2 & 0
+        \end{tabular}
+    \end{center}
+    Thus
+    \begin{align*}
+        y + 2z &= 0 & x + y + z = 0 \\
+        y &= -2z    & x - 2z + z = 0 \\
+        && x = z
+    \end{align*}
+    leading to
+    \begin{equation*}
+        \begin{pmatrix}
+            x \\ x \\ -2x
+        \end{pmatrix}
+        =
+        x
+        \begin{pmatrix}
+            1 \\ 1 \\ -2
+        \end{pmatrix}
+    \end{equation*}
+    which makes $(1, 1, -2)$ a basis of $U$.
+
+    % TODO
+\end{enumerate}
+
+\paragraph{Exercise 2}
+
+\begin{enumerate}
+    \item To show that the given vectors form an orthogonal system it is necessary to show that they are pairwise orthogonal. (That for any vectors $\vec{v}$ and $\vec{u}$ we have $\vec{v} \cdot \vec{u} = 0$) This is the case here.
+    
+    \item To show that the given vectors form a basis we show that they are linearly independent (skipped, $x_1, \ldots, x_4 = 0$). Since we have four independent vectors of a four-dimensional vector space they form a basis.
+    
+    \item To determine the coordinates of of $\vec{a}$ in relation to the given basis we solve
+    \begin{center}
+        \begin{tabular}{c c c c | c}
+            0 & -10 & 26 & 9 & 6 \\
+            0 & -5 & 47 & -12 & 37 \\
+            1 & 6 & 66 & 4 & 78 \\
+            2 & -3 & -33 & -2 & -39 \\
+        \end{tabular}
+    \end{center}
+    and get $\lambda_1 = 0$, $\lambda_2 = 2$, $\lambda_3 = 1$, $\lambda_4 = 0$.
+\end{enumerate}
+
+\paragraph{Exercise 3}
+
+\begin{enumerate}
+    \item \begin{enumerate}[label=(\roman*)]
+        \item \begin{align*}
+            x_1^2 + 2x_2^2 &\geq 0 \\
+            x_1^2 + 2x_2^2 = 0 &\Leftrightarrow \vec{x} = \vec{0}
+        \end{align*}
+
+        \item \begin{align*}
+            x_1y_1 + 2x_2y_2 & = y_1x_1 + 2y_2x_2
+        \end{align*}
+
+        \item \begin{align*}
+            (\lambda x_1 + \phi y_1)z_1 + 2(\lambda x_2 + \phi y_2)z_2 &= \lambda(x_1z_1 + 2x_2z_2) + \phi(y_1z_1 + 2y_2z_2) \\
+        \lambda x_1 z_1 + \phi y_1 z_1 + 2(\lambda x_2 z_2 + \phi y_2z_2) &= \lambda(x_1z_1 + 2x_2z_2) + \phi(y_1z_1 + 2y_2z_2) \\
+        \lambda x_1 z_1 + \phi y_1 z_1 + 2\lambda x_2 z_2 + 2\phi y_z z_2 &= \lambda(x_1z_1 + 2x_2z_2) + \phi(y_1z_1 + 2y_2z_2)
+        \end{align*}
+    \end{enumerate}
+
+    \item \begin{enumerate}[label=(\roman*)]
+        \item Same as regular scalar product.
+        
+        \item \begin{align*}
+            x_1y_2 + x_2y_1 = y_1x_2 + y_2x_1
+        \end{align*}
+
+        \item \begin{align*}
+            (\lambda x_1 + \phi y_1)z_2 + (\lambda x_2 + \phi y_2)z_1 &= \lambda(x_1z_2 + x_2z_1) + \phi(y_1z_2 + y_2z_1) \\
+            \lambda x_1 z_2 + \phi y_1 z_2 + \lambda x_2 z_1 + \phi y_2 z_1 &= \lambda(x_1z_2 + x_2z_1) + \phi(y_1z_2 + y_2z_1)
+        \end{align*}
+    \end{enumerate}
+
+    \item Not a scalar product.
+    \begin{enumerate}[label=(\roman*)]
+        \item Same as regular scalar product.
+        
+        \item \begin{align*}
+            x_1y_1 + x_2y_1 &= y_1x_1 + y_2x_1 \\
+            x_2y_1 &= y_2x_1 
+        \end{align*}
+        Consider $\vec{x} = (1, 2)$ and $\vec{y} = (3, 4)$, we now have $6 = 4$.
+    \end{enumerate}
+
+    \item Not a scalar product.
+    \begin{enumerate}[label=(\roman*)]
+        \item \begin{align*}
+            x_1 + x_2 + x_1 + x_2 \geq 0
+        \end{align*}
+        Consider $\vec{x} = (-1, 0)$ we now have $-1 + 0 - 1 + 0 \geq 0$.
+    \end{enumerate}
+
+    \item Not a scalar product, definition requires $V \times V \rightarrow \mathbb{R}$ but $R_3 \neq R_2$.
+    
+    \item Can be restated to
+    \begin{align*}
+        \begin{pmatrix}
+            \begin{pmatrix}
+                x_1 \\ x_2 \\ x_3
+            \end{pmatrix}, \begin{pmatrix}
+                y_1 \\ y_2 \\ y_3
+            \end{pmatrix}
+        \end{pmatrix}
+        \mapsto
+        \begin{pmatrix}
+            \langle (x_1,x_2),(y_1,y_2) \rangle \\
+            \langle (x_1,x_3),(y_1,y_3) \rangle \\
+        \end{pmatrix}
+    \end{align*}
+    and is thus a scalar product.
+\end{enumerate}
+
+\paragraph{Exercise 4}
+
+\begin{enumerate}
+    % TODO
+    \item To show that a set of vectors form an orthogonal basis we show that they are a basis (they are linearly independent, done?) and that they are pairwise orthogonal (trivial).
+    
+    \item Since the system
+    \begin{center}
+        \begin{tabular}{c c c | c}
+            1 & 1 & 1 & 5 \\
+            1 & -1 & 0 & 1 \\
+            1 & 1& -1 & 6 \\
+            1 & -1 & 0 & 3 \\
+        \end{tabular}
+    \end{center}
+    does not have a solution, the given vector is not in $U$. (Cannot be constructed from linear combination of vectors in $U$.)
+
+    % TODO
+\end{enumerate}
+
+\paragraph{Exercise 5}
+
+\begin{description}
+    \item[$i = 1$] \begin{equation*}
+        w_1 = u
+    \end{equation*}
+
+    \item[$i = 2$] \begin{align*}
+        w_2 = v - (\proj_{w_1}(v))
+    \end{align*}
+    with
+    \begin{align*}
+        \proj_{w_1}(v) = \frac{v \cdot w_1}{w_1 \cdot w_1} \cdot w_1 &= \begin{pmatrix}
+            2 \\ 2 \\ 2
+        \end{pmatrix}
+    \end{align*}
+    thus
+    \begin{align*}
+        w_2 = \begin{pmatrix}
+            -1 \\ 0 \\ 1
+        \end{pmatrix}.
+    \end{align*}
+
+    \item[$i = 3$] \begin{align*}
+        w_3 = w - (\proj_{w_1}(w) + \proj_{w_2}(w))
+    \end{align*}
+    with
+    \begin{align*}
+        \proj_{w_1}(w) &= \begin{pmatrix}
+            \frac{1}{3} \\ \frac{1}{3} \\ \frac{1}{3}
+        \end{pmatrix}\\
+        \proj_{w_2}(w) &= \begin{pmatrix}
+            \frac{1}{2} \\ 0 \\ -\frac{1}{2}
+        \end{pmatrix}
+    \end{align*}
+    thus
+    \begin{align*}
+        w_3 = \begin{pmatrix}
+            \frac{1}{6} \\ -\frac{1}{3} \\ \frac{1}{6}
+        \end{pmatrix}.
+    \end{align*}
+\end{description}
+
+\paragraph{Exercise 6}
+
+\begin{enumerate}[label=(\roman*)]
+    % TODO
+    \item \begin{align*}
+        x_1^2 + x_1x_2 + x_2x_1 + 2x_2^2 - x_1x_3 - x_3x_1 + 3x_3^2 &\geq 0 \\
+        x_1^2 + 2x_1x_2 + 2x_2^2 - 2x_1x_3 + 3x_3^2 &\geq 0 \\
+        x_1^2 + 2x_2^2 + 3x_3^2 &\geq -2x_1x_2 + 2x_1x_3 
+    \end{align*}
+
+    \item \phantom{i}
+
+    \makebox[\textwidth]{\parbox{1.3\textwidth}{%
+    \begin{align*}
+        x_1y_1+x_1y_2+x_2y_1+2x_2y_2-x_1y_3-x_3y_1+3x_3y_3 &= y_1x_1+y_1x_2+y_2x-1+2y_2x_2-y_1x_3-y_3x_1+3y_3x_3 \\
+        0=0 \\
+    \end{align*}
+    }}
+
+    \item \phantom{i}
+
+    \makebox[\textwidth]{\parbox{1.3\textwidth}{%
+    \begin{align*}
+        & (\lambda x_1 + \phi y_1)z_1 + (\lambda x_1 + \phi y_1)z_2 + (\lambda x_2 + \phi y_2)z_1 + 2(\lambda x_2 + \phi y_2)z_2 - (\lambda x_1 + \phi y_1)z_3 - (\lambda x_3 + \phi y_3)z_1 + 3(\lambda x_3 + \phi y_3)z_3 \\
+        &= \lambda (x_1z_1+x_1z_2+x_2z_1+2x_2z_2-x_1z_3-x_3z_1+3x_3z_3) + \phi ( y_1z_1+y_1z_2+y_2z_1+2y_2z_2-y_1z_3-y_3z_1+3y_3z_3)
+    \end{align*}
+    }}
+\end{enumerate}
+
+\paragraph{Exercise 7}
+
+The angle can be calculated with
+\begin{align*}
+    \cos(\alpha) &= \frac{\langle u, v \rangle}{||u|| \cdot ||v||} = \frac{1}{\sqrt{\left(\sqrt{2}+1\right)^2-2 \sqrt{2}+1} \cdot 1} \\
+    \alpha &= 60\deg
+\end{align*}
+
+\paragraph{Exercise 8}
+
+% TODO
+
+\end{document}
