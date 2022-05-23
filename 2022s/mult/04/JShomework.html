@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG line drawing | anime.js</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+    <link href="style.css" rel="stylesheet">
+    <!-- YOUR CODE -->
+    <!-- YOUR CODE END -->
+
+</head>
+<body>
+<div id="lineDrawing">
+    <!-- YOUR CODE: JKU_RACE.SVG -->
+    <!-- YOUR CODE END -->
+</div>
+
+<!-- Legende -->
+<div class="color-codes">
+    <p><span class="box blue"></span> : Linear</p>
+    <p><span class="box red"></span> : easeInCubic</p>
+    <p><span class="box orange"></span> : easeOutCubic</p>
+    <p><span class="box green"></span> : easeInOutCubic</p>
+</div>
+
+<!-- SVG und Objekte welche entlang des Pfades animiert werden sollen -->     
+<div id="anime-demo">
+
+    <svg height="600" width="600">
+
+        <path d="M17.924491,371.22669 C-40.8224163,330.096785 55.8159214,169.904933 149.113542,140.290736 C237.506627,112.23332 334.475191,267.589247 425.362755,243.174715 C516.250318,218.760182 222.520033,79.3498811 329.67164,46.313377 C436.823248,13.2768729 466.922155,-29.8120262 527.07289,33.94872 C587.223626,97.7094661 639.481181,300.542145 508.274787,317.179919 C377.068392,333.817694 386.529475,339.944208 420.441081,436.993561 C454.352688,534.042913 573.659784,622.526412 402.871038,578.284663 C232.082291,534.042913 366.416231,242.487576 259.744802,261.569024 C153.073372,280.650472 76.6713984,412.356596 17.924491,371.22669 Z"
+              fill="none" stroke="black" stroke-width="1px"></path>
+
+    </svg>
+    <div class="square blue"></div>
+    <div class="square red"></div>
+    <div class="square orange"></div>
+    <div class="square green"></div>
+
+    <div id="controls">
+        <div class="play button">Play</div>
+        <div class="pause button">Pause</div>
+        <div class="restart button">Restart</div>
+    </div>
+
+</div>
+
+    <script>
+    let path = anime.path('#anime-demo path');
+
+    let easings = ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'];
+
+    let motionPath = anime({
+        targets: '.square',
+        easing: function (el, i) {
+            return easings[i];
+        },
+        delay: function (el, i) {
+            return i * 250
+        },
+
+        //YOUR CODE
+        //YOUR CODE END
+    });
+        
+/*YOUR CODE */
+//    document.querySelector('#controls .play').onclick = ;
+//    document.querySelector('#controls .pause').onclick = ;
+//    document.querySelector('#controls .restart').onclick = ;    
+/*YOUR CODE END */
+
+    let lineDrawing = anime({
+        //YOUR CODE
+        //YOUR CODE END
+        loop: true,
+        delay: function (el, i) {
+            return i * 250
+        }
+    });
+
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+</script>
+
+</body>
+</html>

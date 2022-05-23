@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="139px" height="45px" viewBox="0 0 139 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M89,33.39 L89,43.88 L40.74,43.88 L40.74,33.39 L89,33.39 Z M89,0 L89,12.74 L64.85,33.39 L40.74,12.74 L40.74,0 L64.85,20.66 L89,0 Z" id="K" fill="#000000" fill-rule="nonzero"></path>
+        <path d="M117.71,44.5 C130.71,44.5 138.86,37.34 138.86,22.73 L138.86,0 L128.25,0 L128.25,23.19 C128.25,30.84 124.32,34.76 117.85,34.76 C111.38,34.76 107.45,30.7 107.45,22.84 L107.45,0 L96.83,0 L96.83,23.12 C96.83,37.31 104.75,44.54 117.7,44.54 L117.71,44.5 Z" id="U" fill="#000000" fill-rule="nonzero"></path>
+        <path d="M22,26.63 C22,32.21 19.52,34.63 15.52,34.63 C12.15,34.63 9.46,32.84 6.7,29.81 L0,37.24 C3.8585612,41.9610337 9.68484653,44.6304914 15.78,44.47 C21,44.48 25.35,43 28.31,40 C31.27,37 32.86,32.84 32.86,27.12 L32.86,0 L22,0 L22,26.63 Z" id="J" fill="#000000" fill-rule="nonzero"></path>
+    </g>
+</svg>

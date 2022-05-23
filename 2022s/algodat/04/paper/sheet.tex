@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+\usepackage{forest}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algodat --- \textbf{Assignment 4}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\begin{description}
+    \item[Insertion] \phantom{}
+    
+    \begin{enumerate}
+        \item $751 > 579$ (Compare to root node, continue to right side.)
+        \item $751 < 802$ (Compare to right child of root, continue to left side.)
+        \item $751 > 680$ (Compare to left child, continue to right side.)
+        \item $751 < 791$ (Compare to right child, continue to left side.)
+        \item No node found, thus we insert here.
+    \end{enumerate}
+
+    \begin{center}
+        \begin{forest}
+            [579
+                [246
+                    [135]
+                    [468
+                        [,no edge]
+                        [357]
+                    ]
+                ]
+                [802
+                    [680
+                        [,no edge]
+                        [791
+                            [\textbf{751}]
+                            [,no edge]
+                        ]
+                    ]
+                    [913]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item[Removal] Start with the node to remove (579), go right once (802) continue to the left until you hit an empty node on the left (last node is 680). The last node on this path is the successor.
+    
+    The right node of the parent of the successor is assigned to the previous right node of the successor.
+
+    \begin{center}
+        \begin{forest}
+            [\textbf{680}
+                [246
+                    [135]
+                    [468
+                        [,no edge]
+                        [357]
+                    ]
+                ]
+                [802
+                    [791
+                        [751]
+                        [,no edge]
+                    ]
+                    [913]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+\end{description}
+
+\end{document}
