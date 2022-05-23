@@ -1,0 +1,561 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 6}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+\begin{align*}
+    AB &= \begin{pmatrix}
+        7 & 7 & 9 \\
+        10 & 0 & 5 \\
+        6 & 10 & 16 \\
+    \end{pmatrix} & 
+    BA &= \begin{pmatrix}
+        13 & 15 & 6 \\
+        6 & 12 & 4 \\
+        7 & 9 & -2 \\
+    \end{pmatrix}
+\end{align*}
+
+\paragraph{Exercise 2}
+
+\begin{align*}
+    AB = \begin{pmatrix}
+        1 & 1 & 0 & -2 \\
+        7 & -11 & 0 & 7 \\
+    \end{pmatrix}
+\end{align*}
+\begin{align*}
+    B^T &= \begin{pmatrix}
+        0 & 3 & 1 \\
+        2 & -1 & -1 \\
+        0 & 0 & 0 \\
+        1 & 2 & 2 \\
+    \end{pmatrix} &
+    A^T &= \begin{pmatrix}
+        0 & -3 \\
+        1 & 1 \\
+        -2 & 4 \\
+    \end{pmatrix} &
+    B^T A^T &= \begin{pmatrix}
+        1 & -1 \\
+        1 & -11 \\
+        0 & 0 \\
+        -2 & 10 \\
+    \end{pmatrix}
+\end{align*}
+\begin{align*}
+    AC &= \begin{pmatrix}
+        -2 & -2 & -2 & 1 \\
+        -5 & 7 & -2 & -5 \\
+    \end{pmatrix} & 
+    AB + AC &= \begin{pmatrix}
+        -1 & -1 & -2 & -1 \\
+        2 & -4 & -2 & 2 \\
+    \end{pmatrix}
+\end{align*}
+
+\paragraph{Exercise 3}
+
+\begin{enumerate}
+    \item \textbf{True.} Since elements of $A$ and $B$ are in $\mathbb{R}$, we have
+    \begin{align*}
+        A + B
+        =
+        \begin{pmatrix}
+            a_{1,1} + b_{1,1} & \cdots & a_{1,n} + b_{1,n} \\
+            \vdots & \ddots & \vdots \\
+            a_{n,1} + b_{m,1} & \cdots & a_{n,n} + b_{n,n} \\
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            b_{1,1} + a_{1,1} & \cdots & b_{1,n} + a_{1,n} \\
+            \vdots & \ddots & \vdots \\
+            b_{n,1} + a_{n,1} & \cdots & b_{n,n} + a_{n,n} \\
+        \end{pmatrix}
+        =
+        B + A
+    \end{align*}
+
+    \item \textbf{False.} We interpret $A$ as a column vector of row vectors $(a_1, \ldots a_n)$ and $B$ as a row vector of column vectors $(b_1, \ldots, b_n)$ and thus have
+    \begin{align*}
+        AB &= \begin{pmatrix}
+            a_1 \\
+            \vdots \\
+            a_n \\
+        \end{pmatrix} \cdot 
+        \begin{pmatrix}
+            b_1 & \cdots & b_n \\
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            a_1 \cdot b_1 & \cdots & a_1 \cdot b_n \\
+            \vdots & \ddots & \vdots \\
+            a_n \cdot b_1 & \cdots & a_n \cdot b_n \\
+        \end{pmatrix} \neq \\
+        BA &= \begin{pmatrix}
+            b_1 & \cdots & b_n \\
+        \end{pmatrix} \cdot
+        \begin{pmatrix}
+            a_1 \\
+            \vdots \\
+            a_n \\
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            b_1 \cdot a_1 & \cdots & b_1 \cdot a_n \\
+            \vdots & \ddots & \vdots \\
+            b_n \cdot a_1 & \cdots & b_n \cdot a_n \\
+        \end{pmatrix}
+    \end{align*}
+    
+    \item \textbf{True.}
+    \begin{align*}
+        A &= \begin{pmatrix}
+            a & b \\ c & d \\
+        \end{pmatrix} & 
+        A^T &= \begin{pmatrix}
+            a & c \\ b & d \\
+        \end{pmatrix} & 
+        AA^T &= \begin{pmatrix}
+            a^2 + b^2 & ac + bd \\
+            ac + bd & c^2 + d^2 \\
+        \end{pmatrix}
+    \end{align*}
+    \begin{align*}
+        A &= \begin{pmatrix}
+            a_{1,1} & \cdots & a_{1,n} \\
+            \vdots & \ddots & \vdots \\
+            a_{n,1} & \cdots & a_{n,n} \\
+        \end{pmatrix} & 
+        A^T &= \begin{pmatrix}
+            a_{1,1} & \cdots & a_{n,1} \\
+            \vdots & \ddots & \vdots \\
+            a_{1,n} & \cdots & a_{n,n} \\
+        \end{pmatrix}
+    \end{align*}
+    \begin{align*}
+        AA^T &= \begin{pmatrix}
+            \sum_{k = 1}^{n} a_{k,1}^2 & \cdots & \sum_{k = 1}^{n} a_{1,k} \cdot a_{n,k} \\
+            \vdots & \ddots & \vdots \\
+            \sum_{k = 1}^{n} a_{n, k} \cdot a_{1,k} & \cdots & \sum_{k = 1}^{n} a_{n, k}^2
+        \end{pmatrix}
+    \end{align*}
+    Clearly, $AA^T$ is symmetrical.
+    
+    % \begin{align*}
+    %     AA = \begin{pmatrix}
+    %         1 & 2 \\ 3 & 4 \\
+    %     \end{pmatrix} \cdot 
+    %     \begin{pmatrix}
+    %         1 & 2 \\ 3 & 4 \\
+    %     \end{pmatrix}
+    %     &=
+    %     \begin{pmatrix}
+    %         7 & 10 \\ 15 & 22 \\
+    %     \end{pmatrix} &
+    %     AA^T &= \begin{pmatrix}
+    %         7 & 15 \\ 10 & 22 \\
+    %     \end{pmatrix} &
+    %     (AA^T)^T &=
+    %     \begin{pmatrix}
+    %         7 & 10 \\ 15 & 22 \\
+    %     \end{pmatrix} &
+    % \end{align*}
+
+    \item \textbf{False.} \begin{align*}
+        AA^T &= \begin{pmatrix}
+            7 & 15 \\ 10 & 22 \\
+        \end{pmatrix} & A^T &= \begin{pmatrix}
+            1 & 3 \\ 2 & 4 \\
+        \end{pmatrix} & A^T A &= \begin{pmatrix}
+            10 & 14 \\ 14 & 20 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \textbf{False.} \begin{align*}
+        \begin{pmatrix}
+            1 & 0 \\ 0 & 2 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            1 & 2 \\ 3 & 4 \\
+        \end{pmatrix} = \begin{pmatrix}
+            1 & 2 \\ 6 & 8 \\
+        \end{pmatrix} \neq \begin{pmatrix}
+            1 & 2 \\ 3 & 4 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            1 & 0 \\ 0 & 2 \\
+        \end{pmatrix} = \begin{pmatrix}
+            1 & 4 \\ 3 & 8 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \textbf{True.} \begin{align*}
+        A &= \begin{pmatrix}
+            a_1 & 0 & \ldots & 0 \\
+            0 & a_2 & \ldots & 0 \\
+            \vdots & \vdots & \vdots & \vdots \\
+            0 & 0 & \cdots & a_n \\
+        \end{pmatrix}
+        &
+        B &= \begin{pmatrix}
+            b_1 & 0 & \ldots & 0 \\
+            0 & b_2 & \ldots & 0 \\
+            \vdots & \vdots & \vdots & \vdots \\
+            0 & 0 & \cdots & b_n \\
+        \end{pmatrix}
+    \end{align*}
+
+    \begin{align*}
+        AB = \begin{pmatrix}
+            a_1b_1 & 0 & \ldots & 0 \\
+            0 & a_2b_2 & \ldots & 0 \\
+            \vdots & \vdots & \vdots & \vdots \\
+            0 & 0 & \cdots & a_n b_n \\
+        \end{pmatrix} = BA
+    \end{align*}
+
+    \item \textbf{False.} Since according to the script distributivity holds, we have 
+    \begin{align*}
+        (A + B)^2 = (A + B)(A + B) = A(A + B) + B(A + B) = A^2 + AB + BA + B^2
+    \end{align*}
+    which shows that the above statement is only equal to $A^2 + 2AB + B^2$ if $AB = BA$.
+
+    \item \textbf{True.} In accordance to the previous point, we need only show that $E_n \cdot A = E_n \cdot A$ which is trivially true.
+    
+    \item \textbf{False.} \begin{align*}
+        A &= \begin{pmatrix}
+            1 & 0 \\ 0 & 0 \\
+        \end{pmatrix} &
+        B &= \begin{pmatrix}
+            1 & 0 \\ 0 & 3 \\
+        \end{pmatrix} &
+        C &= \begin{pmatrix}
+            1 & 0 \\ 0 & 4 \\
+        \end{pmatrix}
+    \end{align*}
+    \begin{align*}
+        AB = AC &= \begin{pmatrix}
+            1 & 0 \\ 0 & 0 \\
+        \end{pmatrix} \quad \text{but} \quad B \neq C
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Exercise 4}
+
+\begin{enumerate}
+    \item \begin{align*}
+        \begin{pmatrix}
+            0 & 1 \\ -1 & 0
+        \end{pmatrix}^2 = \begin{pmatrix}
+            -1 & 0 \\
+            0 & -1 \\
+        \end{pmatrix} = -I
+    \end{align*}
+
+    \item \begin{align*}
+        aI &= \begin{pmatrix}
+            a & 0 \\ 0 & a \\
+        \end{pmatrix} &
+        cI &= \begin{pmatrix}
+            c & 0 \\ 0 & c \\
+        \end{pmatrix} &
+        bJ &= \begin{pmatrix}
+            0 & b \\ -b & 0 \\
+        \end{pmatrix} &
+        dJ &= \begin{pmatrix}
+            0 & d \\ -d & 0 \\
+        \end{pmatrix} 
+    \end{align*}
+
+    \begin{align*}
+        aI + bJ &= \begin{pmatrix}
+            a & b \\ -b & a \\
+        \end{pmatrix} &
+        cI + dJ &= \begin{pmatrix}
+            c & d \\ -d & c \\
+        \end{pmatrix} & 
+        (aI + bJ)(cI + dJ) &= \begin{pmatrix}
+            ac - bd & ad + bc \\
+            -ad - bc & ac - bd \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{enumerate}[label={(\roman*)}]
+        \item Associativity of addition and multiplication. For arbitrary $x, y, z \in \mathcal{C}$ we have for addition 
+        \begin{align*}
+            &\begin{pmatrix}
+                x_1 & x_2 \\ -x_2 & x_1 \\
+            \end{pmatrix} + \left(
+                \begin{pmatrix}
+                    y_1 & y_2 \\ -y_2 & y_1 \\
+                \end{pmatrix}
+                +
+                \begin{pmatrix}
+                    z_1 & z_2 \\ -z_2 & z_1 \\
+                \end{pmatrix}
+            \right)\\
+            = &\begin{pmatrix}
+                x_1 + y_1 + z_1 & x_2 + y_2 + z_2 \\
+                -x_2 - y_2 - z_2 & x_1 + y_1 + z-1 \\
+            \end{pmatrix}\\
+            = &
+            \left(
+                \begin{pmatrix}
+                    x_1 & x_2 \\ -x_2 & x_1 \\
+                \end{pmatrix} + 
+                \begin{pmatrix}
+                    y_1 & y_2 \\ -y_2 & y_1 \\
+                \end{pmatrix}
+            \right)
+            +
+            \begin{pmatrix}
+                z_1 & z_2 \\ -z_2 & z_1 \\
+            \end{pmatrix}
+        \end{align*}
+        and similarly for multiplication
+        \begin{align*}
+            \begin{pmatrix}
+                x_1 & x_2 \\ -x_2 & x_1 \\
+            \end{pmatrix} \cdot \left(
+                \begin{pmatrix}
+                    y_1 & y_2 \\ -y_2 & y_1 \\
+                \end{pmatrix}
+                \cdot
+                \begin{pmatrix}
+                    z_1 & z_2 \\ -z_2 & z_1 \\
+                \end{pmatrix}
+            \right) = \left(
+                \begin{pmatrix}
+                    x_1 & x_2 \\ -x_2 & x_1 \\
+                \end{pmatrix} \cdot 
+                \begin{pmatrix}
+                    y_1 & y_2 \\ -y_2 & y_1 \\
+                \end{pmatrix}
+            \right)
+            \cdot
+            \begin{pmatrix}
+                z_1 & z_2 \\ -z_2 & z_1 \\
+            \end{pmatrix}
+        \end{align*}
+        which follows trivially from the associativity of matrix multiplication. (Which itself follows trivially from the associativity of function composition.)
+
+        \item Existence of neutral element for addition and multiplication. For any matrix $x$
+        \begin{align*}
+            x + \begin{pmatrix}
+                0 & 0 \\ 0 & 0 \\
+            \end{pmatrix} = x
+        \end{align*}
+        The additive neutral element is in $\mathcal{C}$ for $a = b = 0$.
+        \begin{align*}
+            \begin{pmatrix}
+                x_1 & x_2 \\ x_3 & x_4
+            \end{pmatrix} \begin{pmatrix}
+                1 & 0 \\
+                0 & 1 \\
+            \end{pmatrix} = \begin{pmatrix}
+                x_1 & x_2 \\ x_3 & x_4
+            \end{pmatrix} 
+        \end{align*}
+        The multiplicative neutral element is in $\mathcal{C}$ for $a = 1$ and $b = 0$.
+
+        \item Existence of inverses for addition and multiplication.
+        \begin{align*}
+            \begin{pmatrix}
+                x_1 & x_2 \\ -x_2 & x_1 \\
+            \end{pmatrix} +
+            \begin{pmatrix}
+                y_1 & y_2 \\ -y_2 & y_1 \\
+            \end{pmatrix} &=
+            \begin{pmatrix}
+                0 & 0 \\ 0 & 0 \\
+            \end{pmatrix} \\
+            \begin{pmatrix}
+                y_1 & y_2 \\ -y_2 & y_1 \\
+            \end{pmatrix} &=
+            \begin{pmatrix}
+                -x_1 & -x_2 \\ x_2 & -x_1 \\
+            \end{pmatrix}
+        \end{align*}
+        For an element in $\mathcal{C}$ with given $a, b \in \mathbb{R}$ the additive inverse is the element with $-a, -b$.
+
+        A 2x2 matrix is invertible if and only if its determinant is nonzero. In the given case the determinant is $x_1^2 - (x_2 \cdot -x_2) = x_1^2 + x_2^2$ which is zero only if $x_1$ and $x_2$ are both zero. Since that is equivalent to the additive inverse we can discard that case.
+
+        \item Commutativity of addition and multiplication.
+        \begin{align*}
+            \begin{pmatrix}
+                x_1 & x_2 \\ -x_2 & x_1 \\
+            \end{pmatrix} +
+            \begin{pmatrix}
+                y_1 & y_2 \\ -y_2 & y_1 \\
+            \end{pmatrix} =
+            \begin{pmatrix}
+                x_1 + y_1 & x_2 + y_2 \\ -x_2 - y_2 & x_1 - y_1 \\
+            \end{pmatrix} =
+            \begin{pmatrix}
+                y_1 & y_2 \\ -y_2 & y_1 \\
+            \end{pmatrix} +
+            \begin{pmatrix}
+                x_1 & x_2 \\ -x_2 & x_1 \\
+            \end{pmatrix}
+        \end{align*}
+        \begin{align*}
+            \begin{pmatrix}
+                x_1 & x_2 \\ -x_2 & x_1 \\
+            \end{pmatrix}
+            \begin{pmatrix}
+                y_1 & y_2 \\ -y_2 & y_1 \\
+            \end{pmatrix} =
+            \begin{pmatrix}
+                x_1y_1 - x_2y_2 & x_1y_2 + x_2y_1 \\
+                -x_2y_1 - x_1y_2 & -x_2y_2 + x_1y_1 \\
+            \end{pmatrix} =
+            \begin{pmatrix}
+                y_1 & y_2 \\ -y_2 & y_1 \\
+            \end{pmatrix}
+            \begin{pmatrix}
+                x_1 & x_2 \\ -x_2 & x_1 \\
+            \end{pmatrix}
+        \end{align*}
+
+        \item Distributivity of multiplication over addition. Let $x, y, z \in \mathcal{C}$ be arbitrary.
+        \begin{align*}
+            (x(y + z))_{i, j} &= \sum_{k = 1}^{n} x_{i, k} \cdot (y_{k, j} + z_{k, j}) = \sum_{k = 1}^{n} x_{i, k} \cdot y_{k, j} + x_{i, k} \cdot z_{k, j} \\ &= \sum_{k = 1}^{n} x_{i, k} \cdot y_{k, j} + \sum_{k = 1}^{n} x_{i, k} \cdot z_{k, j} = (xy)_{i, j} + (xz)_{i, j}
+        \end{align*}
+    \end{enumerate}
+\end{enumerate}
+
+\paragraph{Exercise 5}
+
+The given matrix is invertible for all $k \neq -1$. The inverses are
+\begin{align*}
+    \begin{pmatrix}
+        1 & 0 & 0 \\
+        0 & \frac{1}{k + 1} & \frac{k}{k + 1} \\
+        0 & \frac{1}{k + 1} & -\frac{1}{k + 1} \\
+    \end{pmatrix}
+\end{align*}
+
+% \paragraph{Exercise 6}
+
+% \begin{align*}
+%     \begin{pmatrix}
+%         x & x \\
+%         x & x
+%     \end{pmatrix} \cdot \begin{pmatrix}
+%         x \\ x
+%     \end{pmatrix}
+% \end{align*}
+
+% \begin{align*}
+%     \begin{pmatrix}
+%         x_2 & 3x_1 + x_3 & x_1 - x_2 \\
+%     \end{pmatrix}\begin{pmatrix}
+%         t^0 \\ t^1 \\ t^2
+%     \end{pmatrix}
+% \end{align*}
+
+% \begin{align*}
+%     \begin{pmatrix}
+%         x_2 + (3x_1 + x_3) \cdot -1 + (x_1 - x_2)(-1^2) \\
+%         x_2 + (3x_1 + x_3)2 + (x_1 - x_2)(2^2) \\
+%     \end{pmatrix}
+% \end{align*}
+
+\paragraph{Exercise 7}
+
+\begin{enumerate}
+    \item \begin{align*}
+        \begin{pmatrix}
+            1 & 2 & 4 \\ 0 & 1 & 1 \\ 2 & 2 & 6 \\
+        \end{pmatrix}\begin{pmatrix}
+            x \\ y \\ z \\
+        \end{pmatrix} = \begin{pmatrix}
+            x + 2y + 4z \\ y + z \\ 2x + 2y + 6z \\ 
+        \end{pmatrix} = \begin{pmatrix}
+            0 \\ 0 \\ 0
+        \end{pmatrix}
+    \end{align*} 
+    After solving the linear system of equations this is true for $y = \frac{x}{2}$, $z = -\frac{x}{2}$ with arbitrary $x \in \mathbb{R}$.
+    
+    \item \begin{align*}
+        \begin{pmatrix}
+            x & y & z \\
+        \end{pmatrix}\begin{pmatrix}
+            1 & 2 & 4 \\ 0 & 1 & 1 \\ 2 & 2 & 6 \\
+        \end{pmatrix} = \begin{pmatrix}
+            x + 2z \\ 2x + y + 2z \\ 4x + y + 6z \\
+        \end{pmatrix} = \begin{pmatrix}
+            0 & 0 & 0 \\
+        \end{pmatrix}
+    \end{align*}
+    After solving the linear system of equations this is true for $y = -x$, $z = -\frac{x}{2}$ with arbitrary $x \in \mathbb{R}$.
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            x \\ 0 \\ 2x
+        \end{pmatrix} + \begin{pmatrix}
+            2y \\ y \\ 2y
+        \end{pmatrix} + \begin{pmatrix}
+            4z \\ z \\ 6z
+        \end{pmatrix} = \begin{pmatrix}
+            x + 2y + 4z \\ y + z \\ 2x + 2x + 6z
+        \end{pmatrix} = \begin{pmatrix}
+            1 \\ 2 \\ -2
+        \end{pmatrix}
+    \end{align*}
+    After solving the linear system of equations this is true for $y = \frac{x}{2} + \frac{7}{2}$, $z = -\frac{x}{2} - \frac{3}{2}$ with arbitrary $x \in \mathbb{R}$.
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            x \\ 2x + y \\ 4x + y
+        \end{pmatrix} + \begin{pmatrix}
+            2z \\ 2z \\ 6z
+        \end{pmatrix} = \begin{pmatrix}
+            x + 2z \\ 2x + y + 2z \\ 4x + y + 6z
+        \end{pmatrix} = \begin{pmatrix}
+            -1 \\ 0 \\ -2
+        \end{pmatrix}
+    \end{align*}
+    After solving the linear syste mof equations this is true for $y = 1 - x$, $z = -\frac{x}{2} - \frac{1}{2}$ with arbitrary $x \in \mathbb{R}$.
+\end{enumerate}
+
+\end{document}
