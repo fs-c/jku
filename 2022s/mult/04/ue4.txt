@@ -1,0 +1,5 @@
+- Mir fällt kein Grund ein (der mir in der Praxis begegnen würde) SMIL zu verwenden, insbesondere aufgrund des schlechten Browser-Supports. Zusätzlich: Relativ hohe Komplexität; selbst wenn es für eine Nische gut passen würde, wäre es für das Projekt im Allgemeinen sinnvoller, es nicht zu verwenden, um die ingsgesamt verwendeten Technologien klein zu halten. 
+
+- CSS Animationen verwende ich für alles was ohne JS geht. Etwa kleine UI-Animations wie ein auf- und zugehendes Menu, die flüssig sein müssen.
+
+- JS Animationen verwende ich für alles was mit CSS nicht geht. (Bzw. was mit CSS unvertretbar viel Komplexität mit sich bringen würde.) Etwa ein bewegter Graph oder Animationen in einem Webbasierten Spiel.
