@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+\usepackage{forest}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algodat --- \textbf{Assignment 5}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\begin{enumerate}[label=(\alph*)]
+    \item In my case, $n_1 = 118$, $n_2 = 4$, $n_3 = 75$ and $n_4 = 1$.
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}\toprule
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\\midrule
+            107 \\
+            79 & 107 \\
+            79 & 107 & 118 \\
+            59 & 79 & 107 & 118 \\
+            4 & 59 & 79 & 107 & 118 \\
+            4 & 59 & 62 & 79 & 107 & 118 \\
+            4 & 23 & 59 & 62 & 79 & 107 & 118 \\
+            4 & 23 & 47 & 59 & 62 & 79 & 107 & 118 \\
+            4 & 23 & 47 & 59 & 62 & 75 & 79 & 107 & 118 \\
+            4 & 19 & 23 & 47 & 59 & 62 & 75 & 79 & 107 & 118 \\
+            4 & 19 & 23 & 24 & 47 & 59 & 62 & 75 & 79 & 107 & 118 \\
+            1 & 4 & 19 & 23 & 24 & 47 & 59 & 62 & 75 & 79 & 107 & 118 \\
+            1 & 4 & 6 & 19 & 23 & 24 & 47 & 59 & 62 & 75 & 79 & 107 & 118 \\\bottomrule
+        \end{tabular}
+    \end{center}
+
+    \item \phantom{} \begin{center}
+        \begin{tabular}{c c c c c c c c c c c l}\toprule
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & remarks \\\midrule
+            54 & 28 & 39 & 8 & 17 & 20 & 21 & 5 & 2 & 15 & 1 & \\
+            1 & 28 & 39 & 8 & 17 & 20 & 21 & 5 & 2 & 15 & & replace root with the far right node on lowest level  \\
+            39 & 28 & 1 & 8 & 17 & 20 & 21 & 5 & 2 & 15 & & 1st downheap, candidates were indices 1 and 2 \\
+            39 & 28 & 21 & 8 & 17 & 20 & 1 & 5 & 2 & 15 & & 2nd downheap, candidates were indices 5 and 6 \\
+            &&&&&&&&&&& done, no more candidates
+        \end{tabular}
+    \end{center}
+\end{enumerate}
+
+\end{document}
