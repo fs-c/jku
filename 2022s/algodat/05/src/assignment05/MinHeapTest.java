@@ -1,4 +1,6 @@
-import assignment05.MinHeap.MinHeap;
+package assignment05;
+
+import assignment05.MinHeap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -151,7 +153,7 @@ public class MinHeapTest {
 		} catch (Exception ex) {
 			exCaught = ex;
 		}
-		assertNull(exCaught, "heapPQ.insert() could not be tested as no MinHeap could be created: " + exCaught);
+		assertNull(exCaught, "heapPQ.insert() could not be tested as no assignment4.MinHeap could be created: " + exCaught);
 		
 		try {
 			heap.insert(2);
@@ -185,7 +187,7 @@ public class MinHeapTest {
 		} catch (Exception ex) {
 			exCaught = ex;
 		}
-		assertNull(exCaught, "heapPQ.insert() could not be tested as no MinHeap could be created: " + exCaught);
+		assertNull(exCaught, "heapPQ.insert() could not be tested as no assignment4.MinHeap could be created: " + exCaught);
 
 		try {
 			heap.insert(2);
@@ -219,7 +221,7 @@ public class MinHeapTest {
 		} catch (Exception ex) {
 			exCaught = ex;
 		}
-		assertNull(exCaught, "heapPQ.insert() could not be tested as no MinHeap could be created: " + exCaught);
+		assertNull(exCaught, "heapPQ.insert() could not be tested as no assignment4.MinHeap could be created: " + exCaught);
 
 		try {
 			heap.insert(2);
@@ -641,7 +643,7 @@ public class MinHeapTest {
 		} catch (Exception ex) {
 			exCaught = ex;
 		}
-		assertNull(exCaught, "heapPQ.size() could not be tested as no MinHeap could be created: " + exCaught);
+		assertNull(exCaught, "heapPQ.size() could not be tested as no assignment4.MinHeap could be created: " + exCaught);
 		
 		try {
 			assertEquals(0, heap.size(), "heapPQ.size() for empty heap failed: ");
@@ -686,7 +688,7 @@ public class MinHeapTest {
 		} catch (Exception ex) {
 			exCaught = ex;
 		}
-		assertNull(exCaught, "PQ-Heap runtimeTest could not be executed as no MinHeap could be created: " + exCaught);
+		assertNull(exCaught, "PQ-Heap runtimeTest could not be executed as no assignment4.MinHeap could be created: " + exCaught);
 		
 		int runs = 1000;
 		long s = System.currentTimeMillis();
