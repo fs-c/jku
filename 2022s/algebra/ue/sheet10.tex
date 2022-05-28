@@ -1,0 +1,619 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 10}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+\begin{enumerate}
+    \item \begin{align*}
+        \begin{pmatrix}
+            0 & 1 & 0 \\
+            1 & 0 & 0 \\
+            0 & 0 & 1 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{21} & a_{22} & a_{23} \\
+            a_{11} & a_{12} & a_{13} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            0 & 1 & 0 \\
+            1 & 0 & 0 \\
+            0 & 0 & 1 \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{12} & a_{11} & a_{13} \\
+            a_{22} & a_{21} & a_{23} \\
+            a_{32} & a_{31} & a_{33} \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 2 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            2a_{31} & 2a_{32} & 2a_{33} \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            1 & 0 & 0 \\
+            0 & 3 & 0 \\
+            0 & 0 & 1 \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{11} & 3a_{12} & a_{13} \\
+            a_{21} & 3a_{22} & a_{23} \\
+            a_{31} & 3a_{32} & a_{33} \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 2 & 1 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            2a_{21} + a_{31} & 2a_{212} + a_{32} & 2a_{23} + a_{33} \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 2 & 1 \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{11} & a_{12} + 2a_{13} & a_{13} \\
+            a_{21} & a_{22} + 2a_{23} & a_{23} \\
+            a_{31} & a_{32} + 2a_{33} & a_{33} \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            0 & 1 & 0 \\
+            0 & 0 & 1 \\
+            1 & 0 & 0 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+            a_{11} & a_{12} & a_{13} \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            a_{11} & a_{12} & a_{13} \\
+            a_{21} & a_{22} & a_{23} \\
+            a_{31} & a_{32} & a_{33} \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            0 & 1 & 0 \\
+            0 & 0 & 1 \\
+            1 & 0 & 0 \\
+        \end{pmatrix} &= \begin{pmatrix}
+            a_{13} & a_{11} & a_{12} \\
+            a_{23} & a_{21} & a_{22} \\
+            a_{33} & a_{31} & a_{32} \\
+        \end{pmatrix}
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Exercise 2}
+
+\begin{align*}
+    R_{2,1}(-3) \cdot 
+    \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        -3 & 0 & -6 & -12 \\
+        0 & -2 & 2 & 3 \\
+        0 & -6 & 4 & 11 \\
+    \end{pmatrix}
+    &=
+    \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & -2 & 2 & 3 \\
+        0 & -6 & 4 & 11 \\
+    \end{pmatrix} \\
+    R_{4,2}(-2) \cdot R_{3,2}\left(-\frac{2}{3}\right) \cdot \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & -2 & 2 & 3 \\
+        0 & -6 & 4 & 11 \\
+    \end{pmatrix} &= \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & 0 & 2 & 5 \\
+        0 & 0 & 4 & 17 \\
+    \end{pmatrix} \\
+    R_{4,3}(-2) \cdot \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & 0 & 2 & 5 \\
+        0 & 0 & 4 & 17 \\
+    \end{pmatrix}
+    &=
+    \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & 0 & 2 & 5 \\
+        0 & 0 & 0 & 7 \\
+    \end{pmatrix}
+\end{align*}
+
+\begin{align*}
+    R_{4,3}(-2) \cdot R_{4,2}(-2) \cdot R_{3,2}\left(-\frac{2}{3}\right) \cdot R_{2,1}(-3) \cdot \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        -3 & 0 & -6 & -12 \\
+        0 & -2 & 2 & 3 \\
+        0 & -6 & 4 & 11 \\
+    \end{pmatrix} &= \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & 0 & 2 & 5 \\
+        0 & 0 & 0 & 7 \\
+    \end{pmatrix}
+\end{align*}
+
+\begin{align*}
+    \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        -3 & 0 & -6 & -12 \\
+        0 & -2 & 2 & 3 \\
+        0 & -6 & 4 & 11 \\
+    \end{pmatrix}
+    &=
+    R_{4,3}(2) \cdot 
+    R_{4,2}(2) \cdot 
+    R_{3,2}\left(\frac{2}{3}\right) \cdot 
+    R_{2,1}(3) \cdot
+    \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & 0 & 2 & 5 \\
+        0 & 0 & 0 & 7 \\
+    \end{pmatrix} \\
+    \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        -3 & 0 & -6 & -12 \\
+        0 & -2 & 2 & 3 \\
+        0 & -6 & 4 & 11 \\
+    \end{pmatrix}
+    &=
+    \begin{pmatrix}
+        1 & 0 & 0 & 0 \\
+        3 & 1 & 0 & 0 \\
+        0 & \frac{2}{3} & 1 & 0 \\
+        0 & 2 & 2 & 1 \\
+    \end{pmatrix} \cdot \begin{pmatrix}
+        -1 & 1 & -2 & -3 \\
+        0 & -3 & 0 & -3 \\
+        0 & 0 & 2 & 5 \\
+        0 & 0 & 0 & 7 \\
+    \end{pmatrix}
+\end{align*}
+
+\paragraph{Exercise 3}
+
+\begin{enumerate}
+    \item \begin{align*}
+        R_{4,3}(-3) \cdot
+        R_{3,1}(-1) \cdot 
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            1 & 0 & -1 & 1 \\
+            0 & 0 & -3 & 0 \\
+        \end{pmatrix} = \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            1 & 0 & -1 & 1 \\
+            0 & 0 & -3 & 0 \\
+        \end{pmatrix}
+        &= 
+        \begin{pmatrix}
+            1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 \\
+            1 & 0 & 1 & 0 \\
+            0 & 0 & 3 & 1 \\
+        \end{pmatrix} \cdot 
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        A\vec{x} = \vec{0} \quad\rightarrow\quad LU(\vec{x}) = \vec{0} \quad\rightarrow\quad L(U\vec{x}) = \vec{0}
+    \end{align*}
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 \\
+            1 & 0 & 1 & 0 \\
+            0 & 0 & 3 & 1 \\
+        \end{pmatrix} \cdot 
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            x_1 \\ x_2 \\ x_3 \\ x_4 \\
+        \end{pmatrix} =
+        \begin{pmatrix}
+            0 \\ 0 \\ 0 \\ 0 \\ 
+        \end{pmatrix}
+    \end{align*}
+
+    Let
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            x_1 \\ x_2 \\ x_3 \\ x_4 \\
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            y_1 \\ y_2 \\ y_3 \\ y_4 \\
+        \end{pmatrix}
+    \end{align*}
+    and now the previous system becomes
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 \\
+            1 & 0 & 1 & 0 \\
+            0 & 0 & 3 & 1 \\
+        \end{pmatrix} \cdot 
+        \begin{pmatrix}
+            y_1 \\ y_2 \\ y_3 \\ y_4 \\
+        \end{pmatrix} =
+        \begin{pmatrix}
+            0 \\ 0 \\ 0 \\ 0 \\ 
+        \end{pmatrix}
+    \end{align*}
+    with $\vec{y} = \vec{0}$. Now we can restate the intermediate system to
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            x_1 \\ x_2 \\ x_3 \\ x_4 \\
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            0 \\ 0 \\ 0 \\ 0 \\ 
+        \end{pmatrix}
+    \end{align*}
+    with $\vec{x} = \vec{0}$.
+
+    \item \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 \\
+            1 & 0 & 1 & 0 \\
+            0 & 0 & 3 & 1 \\
+        \end{pmatrix} \cdot 
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            x_1 \\ x_2 \\ x_3 \\ x_4 \\
+        \end{pmatrix} =
+        \begin{pmatrix}
+            5 \\ -4 \\ 6 \\ 3 \\ 
+        \end{pmatrix}
+    \end{align*}
+
+    Let
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            x_1 \\ x_2 \\ x_3 \\ x_4 \\
+        \end{pmatrix} = \begin{pmatrix}
+            y_1 \\ y_2 \\ y_3 \\ y_4 \\
+        \end{pmatrix}
+    \end{align*}
+    and now the previous system becomes
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 \\
+            1 & 0 & 1 & 0 \\
+            0 & 0 & 3 & 1 \\
+        \end{pmatrix} \cdot 
+        \begin{pmatrix}
+            y_1 \\ y_2 \\ y_3 \\ y_4 \\
+        \end{pmatrix} =
+        \begin{pmatrix}
+            5 \\ -4 \\ 6 \\ 3 \\ 
+        \end{pmatrix}
+    \end{align*}
+    with $y_1 = 5$, $y_2 = -4$, $y_3 = 1$, $y_4 = 0$. Now we can restate the intermediate system to
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 0 & 0 & 2 \\
+            0 & -3 & 1 & 2 \\
+            0 & 0 & -1 & -1 \\
+            0 & 0 & 0 & 3 \\
+        \end{pmatrix} \cdot \begin{pmatrix}
+            x_1 \\ x_2 \\ x_3 \\ x_4 \\
+        \end{pmatrix} = \begin{pmatrix}
+            5 \\ -4 \\ 1 \\ 0 \\
+        \end{pmatrix}
+    \end{align*}
+    with $x_4 = 0$, $x_3 = -1$, $x_2 = 1$ and $x_1 = 5$.
+\end{enumerate}
+
+\paragraph{Exercise 4}
+
+The inverse of the given matrix is
+
+\begin{center}
+    \makebox[0pt]{
+    \begin{tabular}{c c c c | c c c c}
+        1 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 1 & 0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 \\
+        1 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$ \quad
+    \begin{tabular}{c c c c | c c c c}
+        1 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 1 & 0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 \\
+        0 & -1 & 0 & 0 & -1 & 0 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$ \quad
+    \begin{tabular}{c c c c | c c c c}
+        1 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 1 & 0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1 & -1 & 1 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$
+    }
+
+    \makebox[0pt]{
+    \begin{tabular}{c c c c | c c c c}
+        1 & 1 & 0 & 0 & 1  & 0 & 0 & 0 \\
+        0 & 1 & 0 & 1 & 0  & 1 & 0 & 0 \\
+        0 & 0 & 1 & 1 & 0  & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1 & -1 & 1 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$ \quad
+    \begin{tabular}{c c c c | c c c c}
+        1 & 1 & 0 & 0 & 1  & 0  & 0 &  0 \\
+        0 & 1 & 0 & 1 & 0  & 1  & 0 &  0 \\
+        0 & 0 & 1 & 0 & 1  & -1 & 1 & -1 \\
+        0 & 0 & 0 & 1 & -1 & 1  & 0 &  1 \\
+    \end{tabular} \quad $\rightarrow$ \quad
+    \begin{tabular}{c c c c | c c c c}
+        1 & 1 & 0 & 0 & 1  & 0  & 0 &  0 \\
+        0 & 1 & 0 & 0 & 1  & 0  & 0 & -1 \\
+        0 & 0 & 1 & 0 & 1  & -1 & 1 & -1 \\
+        0 & 0 & 0 & 1 & -1 & 1  & 0 &  1 \\
+    \end{tabular} \quad $\rightarrow$
+    }
+\end{center}
+\begin{align*}
+    \begin{pmatrix}
+        0 & 0 & 0 & 1 \\
+        1 & 0 & 0 & -1 \\
+        1 & -1 & 1 & -1 \\
+        -1 & 1 & 0 & 1 \\
+    \end{pmatrix}.
+\end{align*}
+
+\begin{center}
+    \makebox[0pt]{
+    \begin{tabular}{c c c c | c c c c}
+        0 & 0 & 0 & 1 &     1 & 0 & 0 & 0 \\
+        1 & 0 & 0 & -1 &    0 & 1 & 0 & 0 \\
+        1 & -1 & 1 & -1 &   0 & 0 & 1 & 0 \\
+        -1 & 1 & 0 & 1 &    0 & 0 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$ \quad 
+    \begin{tabular}{c c c c | c c c c}
+        1 & 0 & 0 & 0 &     1 & \boxed{1} & 0 & 0 \\
+        1 & 0 & 0 & -1 &    0 & 1 & 0 & 0 \\
+        1 & -1 & 1 & -1 &   0 & 0 & 1 & 0 \\
+        -1 & 1 & 0 & 1 &    0 & 0 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$ \quad 
+    \begin{tabular}{c c c c | c c c c}
+        1 & 0 & 0 & 0 &     1 & 1 & 0 & 0 \\
+        0 & 1 & 0 & 0 &     0 & 1 & 0 & \boxed{1} \\
+        1 & -1 & 1 & -1 &   0 & 0 & 1 & 0 \\
+        -1 & 1 & 0 & 1 &    0 & 0 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$ 
+    }
+
+    \makebox[0pt]{
+    \begin{tabular}{c c c c | c c c c}
+        1 & 0 & 0 & 0 &     1 & 1 & 0 & 0 \\
+        0 & 1 & 0 & 0 &     0 & 1 & 0 & 1 \\
+        0 & 0 & 1 & 0 &     0 & 0 & 1 & \boxed{1} \\
+        -1 & 1 & 0 & 1 &    0 & 0 & 0 & 1 \\
+    \end{tabular} \quad $\rightarrow$ \quad 
+    \begin{tabular}{c c c c | c c c c}
+        1 & 0 & 0 & 0 &     1 & 1 & 0 & 0 \\
+        0 & 1 & 0 & 0 &     0 & 1 & 0 & 1 \\
+        0 & 0 & 1 & 0 &     0 & 0 & 1 & 1 \\
+        0 & 0 & 0 & 1 &     \boxed{1} & \boxed{-1} & 0 & 1 \\
+    \end{tabular} 
+    }
+\end{center}
+
+\begin{align*}
+    A^{-1} = R_{4,2}(-1) \cdot R_{4,1}(1) \cdot R_{3,4}(1) \cdot R_{2,4}(1) \cdot R_{1,2}(1)
+\end{align*}
+
+\paragraph{Exercise 5}
+
+\begin{enumerate}
+    \item The (two) columns are linearly independent thus the rank is 2.
+    \item The zero matrix has rank zero.
+    \item The columns are linearly dependent, the largest set of linearly independent columns has one element, thus the rank is 1.
+    \item[d) -- g)] See c).
+\end{enumerate}
+
+\paragraph{Exercise 6}
+
+\begin{enumerate}
+    \item Using only elementary transformations,
+    \begin{align*}
+        P_1^{-1} = T_{1,3} \cdot T_{2,3}, \quad \text{thus} \quad
+        \begin{pmatrix}
+            0 & 0 & 1 \\
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item The given matrix is equivalent to the permutation
+    \begin{align*}
+        \begin{pmatrix}
+            1 & 2 & 3 \\
+            2 & 3 & 1 \\
+        \end{pmatrix}, \quad \text{whose inverse is} \quad
+        \begin{pmatrix}
+            1 & 2 & 3 \\
+            3 & 1 & 2 \\
+        \end{pmatrix}, \quad \text{which is equvalent to} \quad
+        \begin{pmatrix}
+            0 & 0 & 1 \\
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \phantom{} \begin{center}
+        \begin{tabular}{c c c c c c | c c c c c c}
+            1 & 0 & 0 & 0 & 0 & 0   & 0 & 0 & 1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 & 0 & 0   & 1 & 0 & 0 & 0 & 0 & 0 \\
+            0 & 0 & 1 & 0 & 0 & 0   & 0 & 0 & 0 & 0 & 0 & 1 \\
+            0 & 0 & 0 & 1 & 0 & 0   & 0 & 1 & 0 & 0 & 0 & 0 \\
+            0 & 0 & 0 & 0 & 1 & 0   & 0 & 0 & 0 & 0 & 1 & 0 \\
+            0 & 0 & 0 & 0 & 0 & 1   & 0 & 0 & 0 & 1 & 0 & 0 \\
+        \end{tabular}
+    \end{center}
+
+    \item \phantom{} \begin{align*}
+        \begin{pmatrix}
+            0 & 0 & 1 & 0 & 0 & 0 \\
+            1 & 0 & 0 & 0 & 0 & 0 \\
+            0 & 0 & 0 & 0 & 0 & 1 \\
+            0 & 1 & 0 & 0 & 0 & 0 \\
+            0 & 0 & 0 & 0 & 1 & 0 \\
+            0 & 0 & 0 & 1 & 0 & 0 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item \begin{align*}
+        (P \cdot P^T)_{i,j} &= \sum_{k = 1}^n P_{i, k} \cdot P^T_{k, j} \\
+        &= \sum_{k = 1}^n P_{i, k} \cdot P_{j, k}.
+    \end{align*}
+    Consider that $P_{i, k}$ and $P_{j, k}$ are both in the same column. Only one element in a column may be nonzero. Thus the only way for their product to be nonzero is if $i = j$, or
+    \begin{align*}
+        \sum_{k = 1}^n P_{i, k} \cdot P_{j, k} = \begin{cases}
+            1 & \text{if}\,\, i = j \\
+            0 & \text{otherwise} \\
+        \end{cases}
+    \end{align*}
+    This is the definition of the identity matrix.
+\end{enumerate}
+
+\end{document}
