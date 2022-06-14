@@ -11,6 +11,15 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RadixSortTest {
+	private void _customPrintBucketList(ArrayList<ArrayList<ArrayList<Integer>>> bucketList) {
+		for (ArrayList<ArrayList<Integer>> bucket : bucketList) {
+			System.out.println("Bucket:");
+			for (ArrayList<Integer> bucketContent : bucket) {
+				System.out.println("\t" + bucketContent);
+			}
+		}
+	}
+
 	/**
 	 * ************************************
 	 * Test RadixSort
@@ -28,6 +37,7 @@ public class RadixSortTest {
 		ArrayList<Integer> result = null;
 		try {
 			result = RadixSort.sort(testArrayRadix7.clone());
+			_customPrintBucketList(RadixSort.getBucketlistSnapshots());
 		} catch(Exception ex) {
 			exCaught = ex;
 		}
