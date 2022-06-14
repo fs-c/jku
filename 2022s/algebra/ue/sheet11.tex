@@ -1,0 +1,215 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algebra --- \textbf{Exercise Sheet 11}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+\begin{enumerate}
+    \item Linear.
+    \begin{align*}
+        f(\lambda u + \mu v) &= \lambda f(u) + \mu f(v) \\
+        f\left(\begin{pmatrix}
+            \lambda u_1 + \mu v_1 \\
+            \lambda u_2 + \mu v_2 \\
+            \lambda u_3 + \mu v_3 \\
+        \end{pmatrix}\right) &= \begin{pmatrix}
+            \lambda(u_1 + 3u_2 + 4u_3) \\
+            \lambda u_3
+        \end{pmatrix}
+        +
+        \begin{pmatrix}
+            \mu(v_1 + 3v_2 + 4v_3) \\
+            \mu v_3
+        \end{pmatrix} \\
+        \begin{pmatrix}
+            \lambda u_1 + \mu v_1 + 3(\lambda u_2 + \mu v_2) + 4(\lambda u_3 + \mu v_3) \\
+            \lambda u_3 + \mu v_3 \\
+        \end{pmatrix} &= \begin{pmatrix}
+            \lambda(u_1 + 3u_2 + 4u_3) + \mu(v_1 + 3v_2 + 4v_3) \\
+            \lambda u_3 + \mu v_3
+        \end{pmatrix}
+    \end{align*}
+
+    \item Not linear. The first equation produces $u_1v_2$ and $v_1u_2$ in the first row, which has no chance of happening in the second equation; they are not equal.
+    \begin{align*}
+        f(u + v) &= f\left(\begin{pmatrix}
+            u_1 + v_1 \\
+            u_2 + v_2 \\
+            u_3 + v_3 \\
+        \end{pmatrix}\right) = \begin{pmatrix}
+            u_1 + v_1 + 2(u_2 + v_2) + (u_1 + v_1)(u_2 + v_2) + u_3 + v_3 \\
+            u_1 + v_1 + u_2 + v_2 + u_3 + v_3 \\
+        \end{pmatrix} \\
+    \end{align*}
+    \begin{align*}
+        f(u) + f(v) = \begin{pmatrix}
+            u_1 + 2u_2 + u_1u_2 + u_3 \\
+            u_1 + u_2 + u_3 \\
+        \end{pmatrix} + \begin{pmatrix}
+            v_1 + 2v_2 + v_1v_2 + v_3 \\
+            v_1 + v_2 + v_3 \\
+        \end{pmatrix} \\ = \begin{pmatrix}
+            u_1 + 2u_2 + u_1u_2 + u_3 + v_1 + 2v_2 + v_1v_2 + v_3 \\
+            u_1 + u_2 + u_3 + v_1 + v_2 + v_3
+        \end{pmatrix}
+    \end{align*}
+
+    \item Not linear because $\lambda f(u) + \mu f(v)$ will necessarily have $\lambda + \mu$ in it. The statements are not equal. \begin{align*}
+        f(\lambda u + \mu v) =
+        f\left(\begin{pmatrix}
+            \lambda u_1 + \mu v_1 \\
+            \lambda u_2 + \mu v_2 \\
+            \lambda u_3 + \mu v_3 \\
+        \end{pmatrix}\right) =
+        \lambda u_1 + \mu v_1 + \lambda u_2 + \mu v_2 + \lambda u_3 + \mu v_3 + 1
+    \end{align*}
+
+    \item Not linear. \begin{align*}
+        f(\lambda u + \mu v) = f\left(\begin{pmatrix}
+            \lambda u_1 + \mu v_1 \\
+            \lambda u_2 + \mu v_2 \\
+        \end{pmatrix}\right) = \begin{pmatrix}
+            \lambda u_2 + \mu v_2 \\
+            \lambda u_1 + \mu v_1 \\
+        \end{pmatrix} = \lambda\begin{pmatrix}
+            u_2 \\
+            u_1 \\
+        \end{pmatrix} + \mu\begin{pmatrix}
+            v_2 \\
+            v_1 \\
+        \end{pmatrix} \neq \lambda\begin{pmatrix}
+            u_1 \\
+            u_2 \\
+        \end{pmatrix} + \mu\begin{pmatrix}
+            v_1 \\
+            v_2 \\
+        \end{pmatrix}
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Exercise 3}
+
+\begin{enumerate}
+    \item \begin{align*}
+        \begin{pmatrix}
+            1 \\ -1 \\
+        \end{pmatrix}
+    \end{align*}
+
+    \item 
+\end{enumerate}
+
+\paragraph{Exercise 4}
+
+\begin{enumerate}
+    \item The vectors in both B and C are linearly independent and thus both form a base of $R^2$.
+    \begin{center}
+        \begin{tabular}{c c | c}
+            1 & -1 & 0 \\
+            1 & 1 & 0 \\
+        \end{tabular}\quad
+        \begin{tabular}{c c | c}
+            1 & -1 & 0 \\
+            0 & 2 & 0 \\
+        \end{tabular}\qquad and \qquad \begin{tabular}{c c | c}
+            2 & 3 & 0 \\
+            1 & -2 & 0 \\
+        \end{tabular}\quad
+        \begin{tabular}{c c | c}
+            2 & 3 & 0 \\
+            0 & -3.5 & 0 \\
+        \end{tabular}
+    \end{center}
+    
+    \item Since
+    \begin{center}
+        \begin{tabular}{c c | c}
+            2 & 3 & 1 \\
+            1 & -2 & 1 \\
+        \end{tabular}\quad
+        \begin{tabular}{c c | c}
+            2 & 3 & 1 \\
+            0 & $-\frac{7}{2}$ & $\frac{1}{2}$ \\
+        \end{tabular} \quad with $x_1 = \frac{5}{7}$ and $x_2 = -\frac{1}{7}$
+    \end{center}
+    \begin{center}
+        \begin{tabular}{c c | c}
+            2 & 3 & -1 \\
+            1 & -2 & 1 \\
+        \end{tabular}\quad
+        \begin{tabular}{c c | c}
+            2 & 3 & -1 \\
+            0 & $-\frac{7}{2}$ & $\frac{3}{2}$ \\
+        \end{tabular} \quad with $x_1 = \frac{1}{7}$ and $x_2 = -\frac{3}{7}$
+    \end{center}
+    we have
+    \begin{align*}
+        A_C^B = \begin{pmatrix}
+            \frac{5}{7} & \frac{1}{7} \\
+            -\frac{1}{7} & -\frac{3}{7} \\
+        \end{pmatrix}.
+    \end{align*}
+
+    \item \begin{align*}\begin{pmatrix}
+        \frac{3}{2} & \frac{1}{2} \\
+        -\frac{1}{2} & -\frac{5}{2} \\
+    \end{pmatrix}\end{align*}
+
+    \item \phantom{} \begin{center}
+        \begin{tabular}{c c | c}
+            1 & -1 & 2 \\
+            1 & 1 & 1 \\
+        \end{tabular} \quad \text{and} \begin{tabular}{c c | c}
+            1 & -1 & 3 \\
+            1 & 1 & -2 \\
+        \end{tabular}
+    \end{center}
+
+    \begin{align*}
+        \begin{pmatrix}
+            \frac{1}{7} & -\frac{3}{7} \\
+            \frac{1}{2} & -\frac{5}{2} \\
+        \end{pmatrix}
+    \end{align*}
+\end{enumerate}
+
+\end{document}
