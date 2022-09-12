@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{pmboxdraw}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+\usepackage{listings}
+
+% Drawings
+\usepackage{tikz}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Betriebssysteme --- \textbf{Übung 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\R}{\mathbb{R}\ \\\ \{0\}}
+
+\newcommand{\cmod}{\text{mod}}
+
+\newcommand{\bO}{\text{O}}
+
+\begin{document}
+
+\section*{Aufgabe 1}
+
+\begin{enumerate}
+    \item \begin{verbatim}
+usera@debian:~$ ls -la
+total 24
+drwxr-xr-x 2 usera usera 4096 Jul 13 05:43 .
+drwxr-xr-x 8 root  root  4096 Jul 13 05:43 ..
+-rw-r--r-- 1 usera usera  220 Aug  4  2021 .bash_logout
+-rw-r--r-- 1 usera usera 3526 Aug  4  2021 .bashrc
+-rw-r--r-- 1 usera usera  113 Jul 13 05:43 .git
+-rw-r--r-- 1 usera usera  807 Aug  4  2021 .profile
+usera@debian:~$ cat .git
+This should be a hidden file. How did you find it? :)
+The password for the user 'userb' is 'verysecretpassword'.
+usera@debian:~$ su - userb
+Password: 
+userb@debian:~$\end{verbatim}
+
+    Fix: Passwort sollte niemals irgendwo in plaintext herumliegen. (rm -f /home/usera/.git)
+
+    \item In /etc/passwd findet sich die Zeile
+    \begin{verbatim}
+userc:$1$qHwfvXyB$LkeyCyWB6iYz3xI.F4j7V.:1010:1010::/home/userc:/bin/bash\end{verbatim}
+    mit dem Hinweis, es handle sich um einen salted MD5 hash mit preimage 1234. Der salt ist \enquote{qHwfvXyB}, der hash \enquote{LkeyCyWB6iYz3xI.F4j7V.}.
+
+    Fix: Alle user sollten shadowed passwords verwenden (hashes in /etc/shadow), user C neu einrichten.
+
+    \item 
+\end{enumerate}
+
+\end{document}
