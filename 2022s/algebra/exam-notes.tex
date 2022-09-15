@@ -1,0 +1,130 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{multicol}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\begin{document}
+
+\begin{multicols}{2}
+
+\section*{Vektoren}
+
+\begin{align*}
+    \begin{pmatrix*}
+        u_1 \\
+        u_2 \\
+        u_3
+    \end{pmatrix*} \times \begin{pmatrix*}
+        v_1 \\
+        v_2 \\
+        v_3
+    \end{pmatrix*} = \begin{pmatrix*}
+        (u_2v_3) - (u_3v_2) \\
+        (u_3v_1) - (u_1v_3) \\
+        (u_1v_2) - (v_2u_1) 
+    \end{pmatrix*}
+\end{align*}
+
+Die Länge eines Vektors ist $\sqrt{v_1^2 + \ldots v_n^2}$.
+
+Der Vektor $\vec{n} = \vec{u} \times \vec{v}$ ist normal auf die Vektoren $\vec{u}$ und $\vec{v}$.
+
+Die Normalenform einer Ebene $E$ in $\mathbb{R}^3$ ist
+\begin{align*}
+    E = \{\ \vec{x} \in \mathbb{R}^3\ |\ (\vec{x} - \vec{a})\vec{n} = 0\ \}
+\end{align*}
+mit $\vec{n}$ normal auf $\vec{a}$.
+
+Von Gleichungsform $ax + by + cz = d$ einer Ebene auf Normalenform: Normalvektor ist $(a\ b\ c)$, dann $\vec{a}$ finden mit $\vec{a}\vec{n} = d$.
+
+Orthogonalisierung einer Basis $\{v_1, \ldots, v_n\}$:
+\begin{enumerate}[label={\arabic*)}]
+    \item $w_1 = v_1$, dann für $i = 2, \ldots, n$ 
+    \item $w_i = v_i - (\text{proj}_{w_1}(v_i) + \ldots + \text{proj}_{w_{i - 1}}(v_i))$
+\end{enumerate}
+mit
+\begin{align*}
+    \text{proj}_u(v) = \frac{\langle u, v\rangle}{\langle u, u\rangle} \cdot u
+\end{align*}
+
+\section*{Matrizen}
+
+Eine (quadr.) Matrix $A$ ist \emph{singulär} wenn $\text{det}(A) = 0$, also wenn sie nicht invertierbar ist, bzw. ihre Spalten linear abhängig sind. Anderfalls ist sie \emph{regulär}.
+
+\begin{align*}
+    \text{det}\left(\begin{pmatrix*}
+        a_{1,1} & a_{1,2} \\
+        a_{2,1} & a_{2,2}
+    \end{pmatrix*}\right) &= a_{1,1}a_{2,2} - a_{1,2}a_{2,1}
+    % \text{det}\left(\begin{pmatrix*}
+    %     a_{1,1} & a_{1,2} & a_{1,3} \\
+    %     a_{2,1} & a_{2,2} & a_{2,3} \\
+    %     a_{3,1} & a_{3,2} & a_{3,3}
+    % \end{pmatrix*}\right) &= a_{1,1}a_{2,2}a_{3,3} + a_{1,2}a_{2,3}a_{3,1} + a_{1,3}a_{2,1}a_{2,3} - a_{1,3}a_{2,2}a_{3,1} - a_{1,1}a_{2,3}a_{3,2} - a_{1,2}a_{2,1}a_{3,3}
+\end{align*}
+
+Eine Basistransformationsmatrix $A_C^B$ (\enquote{B ausgedr. durch C}) ist
+\begin{align*}
+    A_C^B = \left((v_1)_C\ \cdots\ (v_n)_C\right)
+\end{align*}
+mit $B = \{ v_1, \ldots, v_n \}$.
+
+Eigenwerte einer Matrix $A$ sind Nullstellen von
+\begin{align*}
+    \chi_A(\lambda) = \text{det}(A - \lambda E_n).
+\end{align*}
+Algebraische Vielfachheit ist die Potenz der Nullstelle. Dimension des Eigenraums ist geometrische Vielfachheit. Es gilt alg. V. $\geq$ geo. V.
+
+Der Eigenraum zu einem Eigenwert $\lambda$ ist
+\begin{align*}
+    E_{A,\lambda} = \text{Ker}(A - \lambda E_n) \\
+    \{ \vec{v}\ |\ (A - \lambda E_n) = \vec{0} \}
+\end{align*}
+
+Zur Diagonalisierung ($\lambda$ sind Eigenwerte, $v$ sind Eigenräume):
+\begin{align*}
+    P^{-1} \cdot A \cdot P &= \text{diag}(\lambda_1, \ldots, \lambda_n) \quad \text{mit} \\ 
+    P &= (v_1, \ldots v_n)
+\end{align*}
+Nur möglich wenn für alle Werte alg. V. = geo V.
+
+Zeilen- und Spaltenraum ist die lineare Hülle der Zeilen- bzw. Spaltenvektoren. (Auf Dimension aufpassen!)
+
+\section*{Strukturen}
+
+$\mathbb{Z}_n$ ist dann ein Körper wenn $n$ prim ist.
+
+\section*{Polynome}
+
+Sei $p = a_nx^n + \cdots + a_1x + a_0$. Wenn $p$ eine Nullstelle $\frac{a}{b} \in \mathbb{Q}$ besitzt dann $a\,|\,a_0$ und $b\,|\,a_n$. (Bei Polynom in $\mathbb{Z}_n$ ist oft ausprobieren aller möglichen Nullstellen einfacher.) 
+
+\end{multicols}
+
+\end{document}
