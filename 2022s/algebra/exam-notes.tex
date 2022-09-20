@@ -140,15 +140,33 @@ Vertauschungsmatrix $T_{i,j}$ vertauscht Zeilen $i$ und $j$. In Einheitsmatrix Z
 
 Es gilt $\text{dim}\,Z(A) = \text{dim}\,S(A) = \text{Rg}(A)$. Alle Nichtnull-Zeilen der Matrix in Zeilenstufenf. bilden Basis von $Z(A)$. Spalten der urspr. Matrix $A$ in denen in Zeilenstufenf. ein Pivot-El. ist sind Basis von $S(A)$. Ausserdem $\dim\,Z(A) + \dim\,\text{Ker}(A) = n$ bei $A^{m \times n}$.
 
+\begin{align*}
+    \text{dim}\,\text{Ker}(A) = n - \text{Rg}(A) \\
+    \text{dim}\,\text{Coker}(A) = m - \text{Rg}(A)
+\end{align*}
+
 \section*{Strukturen}
 
 $\mathbb{Z}_n$ ist dann ein Körper wenn $n$ prim ist. Ein $x \in \mathbb{Z}_n$ ist dann teilbar wenn $\text{ggT(n, x) = 1}$.
 
+In der Menge $\mathbb{Z}_n[x]/(f)$ sind $n^{\text{deg}(f)}$ Elemente. Das multiplikative Inverse eines Elements einer solchen Menge kann durch den EEA ermittelt werden.
+
+Beim EEA gilt
+\begin{align*}
+    u_i = u_{i - 2} - (u_{i - 1} \cdot q_{i}) \\
+\end{align*}
+(Selbiges gilt für $v$.)
+
 \section*{Polynome}
 
-Sei $p = a_nx^n + \cdots + a_1x + a_0$. Wenn $p$ eine Nullstelle $\frac{a}{b} \in \mathbb{Q}$ besitzt dann $a\,|\,a_0$ und $b\,|\,a_n$. (Bei Polynom in $\mathbb{Z}_n$ ist oft ausprobieren aller möglichen Nullstellen einfacher.) 
+Für Nullst. von $a_2x^2 + a_1x + a_0$
+\begin{align*}
+    \frac{-a_1 \pm \sqrt{a_1^2 - 4a_0a_2}}{2a_2}
+\end{align*}
 
-Hat ein Pol. eine Nullst. $n$ so enthält es den Faktor $(x - n)$. 
+Sei $p = a_nx^n + \cdots + a_1x + a_0$. Wenn $p$ eine Nullstelle $\frac{a}{b} \in \mathbb{Q}$ besitzt dann $a\,|\,a_0$ und $b\,|\,a_n$. (Bei Polynom in $\mathbb{Z}_n$ ist oft ausprobieren aller möglichen Nullstellen einfacher. Bei Polynom in $\mathbb{Q}$ sind alle Nullst. $\frac{a}{b}$, \enquote{erraten} werden \emph{alle} Nullstellen.) 
+
+Hat ein Pol. eine Nullst. $n$ so enthält es den Faktor $(x - n)$. Somit ist es nicht reduzibel. Alles in $\mathbb{C}$ ist reduzibel (kompl. Lösungsformel). Wenn in $\mathbb{Z}_n$ Nullstelle dann reduzibel.
 
 \end{multicols}
 
