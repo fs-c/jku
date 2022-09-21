@@ -1,0 +1,223 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{multicol}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+
+\begin{multicols}{1}
+
+\section*{Architecture}
+
+Simplified registers are instruction register (\code{ir}), program counter (\code{pc}) and stack pointer (\code{sp}).
+
+A simplified \emph{Von-Neumann Cycle} looks like
+
+\begin{enumerate}
+    \item \code{pc = startValue} (initialize program counter)
+    \item \code{ir = mem[pc]} (fetch instruction from memory)
+    \item \code{pc = pc + 1} (advance program counter)
+    \item \code{execute(ir)} (execute instruction)
+    \item handle interrupt
+    \item go to 2)
+\end{enumerate}
+
+and is divided into a fetch stage and an execute stage. The \enquote{handle interrupt} step is
+\begin{enumerate}
+    \item is interrupt pending? if no continue normally, otherwise continue here
+    \item save \code{pc}
+    \item disable the interrupt
+    \item \code{pc = isrAddr}
+\end{enumerate}
+where \code{isrAddr} is the Interrupt Service Routine (ISR). This central distribution point is called \enquote{interrupt handler}.
+
+\subsection*{Bootup sequence}
+\begin{enumerate}
+    \item Level 1 bootloader (UEFI/BIOS, \ldots) initializes basic hardware
+    \item Level 2 bootloader (grub, Windows Boot Manager), reads drives to initiate booting the OS
+    \item OS kernel, initializes (almost) all hardware
+    \item OS usermode (services, applications)
+\end{enumerate}
+
+\subsection*{Rings}
+
+\begin{description}
+    \item[Usermode] subset of instructions, restrictions on memory access
+    \item[Kernelmode] no restrictions, used by OS kernel 
+\end{description}
+
+From kernel to usermode: write to register. From user to kernelmode: Syscall.
+
+\subsection*{SMP (Symmetric Multiprocessing)}
+
+Processors of similar capability can share main memory, I/O components, etc. Used in mulit-core processors.
+
+1st level cache is per-core, 2nd level cache is usually shared.
+
+\section*{Processes and Threads}
+
+A program is a set of instructions and static data. \emph{Processes} are instances of running programs, they have their own state (registers, resources, \ldots). A process is either running, ready or blocked.
+
+A process contains at least one but usually many \emph{threads}, which share address space, file handles, etc. Threads are thus usually faster to create and switch between than processes. Threads still have their own execution context (registers, priority, \emph{stack}, \ldots).
+
+\subsection*{IPC (Interprocess Communication)}
+
+Communication between processes (or threads) requires some shared medium. Threads have shared memory, processes can use
+\begin{itemize}
+    \item files (in a shared file system)
+    \item named pipes (pseudo files)
+    \item anonymous pipes (shell connecting \code{stdout} of one process to \code{stdout} of another)
+    \item sockets (client/server communication)
+\end{itemize}
+
+Race conditions are a common problem. (When results depend on order of execution.)
+
+\section*{Scheduling}
+
+\emph{Short-Term} Scheduling is classified to be either
+\begin{itemize}
+    \item \emph{non-preemptive} (running tasks cannot be interrupted from outside, except for interrupts)
+    \item \emph{preemptive} (running tasks can be suspended in favor of other tasks, doesn't require cooperation from the processes)
+\end{itemize}
+
+Some important scheduling algorithms are
+\begin{itemize}
+    \item First Come First Served (FCFS)
+    \item Shortest Job first (SJF) and Shortest Remaining Time Next (SRTN)
+    \item Priority queuing (optionally with aging)
+    \item Round-Robin (RR)
+\end{itemize}
+
+\paragraph{Shortest Job First} does as the name implies. It minimizes \emph{waiting time} of a set of processes. For interative systems this isn't always a high priority (they should optimize for minimal time until the task is started). 
+
+\paragraph{Round-Robin} A small time interval called \emph{quantum} is defined. After one quantum is elapsed, switch to the next task in the queue and add previously running one to the end.
+
+\paragraph{Priority Scheduling} Processes are assigned a priority class. Processes with higher priority are executed first. Execution within a priority class is decided by another algorithm (eg. RR).
+
+A problem with naiive priority scheduling is \emph{starvation}, when processes with low priority are never executed because new processes with higher priority are added. One solution is \emph{aging}, where priority of a process is increased based on its waiting time so far.
+
+\section*{Memory}
+
+The layers of memory in order of usual capacity are
+\begin{itemize}
+    \item Registers
+    \item CPU Caches
+    \item Main Memory (RAM)
+    \item Flash
+    \item Hard disk 
+\end{itemize}
+
+\subsection*{Relative and Absolute Addresses}
+
+There are two options for address binding
+\begin{itemize}
+    \item absolute memory addresses (small microcontrollers, I/O drivers, \ldots)
+    \item relative memory addresses (translated to absolute addresses at load or run time, stored in the program as if it were loaded at address zero, then adjusted by the loader later)
+\end{itemize}
+
+A loader is part of the OS that\ldots
+\begin{enumerate}
+    \item loads a program to be started from disk,
+    \item adapts addresses if necessary (see below)
+    \item and starts the program
+\end{enumerate}
+
+If the loader needs to adapt addresses (ergo if relative memory addresses are used) there are two options:
+
+\begin{description}
+    \item[Relocatable code] has a compiler generated \emph{relocation table}, containing pointers to all relative addresses inside the binary. The loader then changes all those relative addresses to absolute ones by adding the base.
+    \item[Position-independent code (PIE)] is compiled to run at arbitrary memory locations by (eg.) only using relative addressing/jumps or other internal address translation methods. This creates a run time overhead.
+\end{description}
+
+\subsection*{Logical and Physical Addresses}
+
+There are two ways to view a memory address.
+
+\begin{description}
+    \item[Logical addresses] are from the point of view of a program, also called virtual addresses. The logical/virtual address space is the set of all possible addresses that are provided to processes.
+    \item[Physical address] is the real address on system RAM. The physical address space are all available physical addresses. 
+\end{description}
+
+The mapping between them can happen in the \emph{Memory Management Unit} (MMU) of the CPU. This is essentially hardware support for adding a base to an address given as an offset.
+
+The OS takes care of tracking logical address spaces (protecting them from each other). The MMU can take care of the simple logical to physical mapping. But the OS needs to reconfigure the MMU at run time with the correct base addresses.
+
+\subsection*{Paging}
+
+Logical address space is split into fixed size blocks called \emph{pages}. Physical address space is split into fixed size blocks called \emph{page frames}. (They have the same size.)
+
+Interpret logical address as \code{page number} + \code{offset}. (For an address with $m$ bits, first $m - n$ bits are the page number, following $b$ bits are the offset).
+
+A page table keeps track of the mapping between pages and page frames. It contains pointers to the actual page frames. The mapping logic is implemented in hardware inside the MMU.
+
+Every process appears to have its own private logical address space and has its own page table. Every memory access operations now needs to go through the page table (special hardware cache, translation look-aside buffer).
+
+Page table entries usually have additional bits to keep track of state. For example valid (currently assigned?), modified (dirty?), referenced, protection (read-only, no-exec), \ldots
+
+\paragraph{Shared Pages} allow assigning one page frame to multiple processes (thus to multiple pages). This is useful for sharing code (SO/DLL) and data (IPC).
+
+\emph{Copy-on-Write} is a situation in which a process attempts to write to a shared data page with the read-only bit set. The OS catches the access, creates a copy of the page and then lets the process write to the new copy. This means that creating process with shared pages cheap as long as they don't diverge.
+
+\paragraph{Virtual Memory} is a mechanism for overcommiting memory. Only a subset of memory pages are mapped to physical page frames. Currently inactive pages are stored on mass storage (\emph{swap files}).
+
+A \emph{page fault} occurs when a process tries to access a page which is not in main memory (shown by the \emph{valid} bit in the page table entry). MMU notices this and raises a \emph{page fault}. OS then swaps in (fetches) the page from disk and adjusts the page table entry (set valid bit, set page frame number). Then the instruction is restarted. If necessary the OS might also swap out some other page to make space.
+
+\paragraph{Security} Preventing attacks at OS level:
+\begin{itemize}
+    \item Data Execution Prevention (no-exec bit on data sections)
+    \item Address Space Layout Randomization (ASLR)
+\end{itemize}
+
+\subsection*{Page Replacement Algorithms}
+
+OS sometimes has to choose a page to evict.
+
+\paragraph{Optimal Algorithm} Evict the page that will next be referenced at the latest point in the future.
+
+This algorithm cannot be implemented, future cannot be predicted accurately enough.
+
+\paragraph{Least Recently Used} Evict the page that hos not been referenced for the longest time period.
+
+\paragraph{Clock Replacemenet Algorithm} Make the page table a circular list, can be imagined to be a \enquote{clock}, the \enquote{hand} points to a given item. When a page fault occurs: Advance the hand, if the page now being pointed to by the hand has use bit zero, evict and replace that page. Otherwise if the use bit is one, set it to zero and advance the hand.
+
+\paragraph{Thrashing} is the situation where there are many processes relative to the available physical memory, thus processes create many page faults because each has a small amount of page frames. OS is then mainly busy with swapping pages in and out.
+
+\section*{File Systems}
+
+Mass storage devices have two main operations, reading and writing a block of some hardware-defined block size. File systems are an abstraction over this, they exist to provide a consistent API.
+
+The logical unit of organization is the file, which is a collection of blocks coupled with metadata.
+
+
+
+\end{multicols}
+
+\end{document}

@@ -1,0 +1,140 @@
+Klausur 2015:
+
+	Allgemeines
+		Vielleicht 1-2 Multiple-Choice Fragen
+		Eher breit gefragt auf das Grundverständnis - einige Tiefenfragen sind dabei.
+		Es geht um das Gesamtkonzept
+		Code in der Klausur:
+			Wenn Beispiele mit Pseudo-Code: Keine Vorgabe über die Programmiersprache! In einer Art Pseudo-Code.
+			Es darf auch beschrieben werden (Code-Form ist meist kürzer & deutlicher)
+			Syntax ist irrelevant, das Konzept muss verständlich sein mit dem Code.
+			Code auswendig lernen nicht nötig!
+		Unterschiede zwischen Konzepten werden gerne gefragt
+
+	Paging
+		Wie werden Adressen aufgeteilt?
+		logische/physische Adressen - Unterschiede, Aufbau
+		Probleme bei zu großer/kleiner size der Page
+		Mapping
+		MMU - was macht das OS damit?
+		Shared Pages - wieso?
+		Copy-and-write Paging
+		Virtual-Memory/Caching Zusammenhang/Unterschied
+		Was ist ein PAGEFAULT? Unterschied SEGFAULT-PAGEFAULT
+		Algorithmen für Page-Replacement - wie könnte ein Page-replacement aussehen?
+		Grundbegriff über Securitymaßnahmen
+
+	FileSystems
+		Grunkonzepte
+		Dateitypen - aus Sicht eines Dateisystems
+		FileSys-Layouts: Nicht notwending die genauen Details zu können (iNodes, etc.)
+			Partitions sind wichtig!
+			Zusammenhang von Partitions & Dateisystemen (Jede Partition mit einem eigenen Dateisytems)
+		Blöcke
+			Was ist Fragmentierung?
+			Warum nicht alle Dateien kontinuierlich hintereinander?
+		iNode
+			Wie ist das Mapping zwischen Dateien, Inhalt von Dateien &
+			Hilft iNode gegen externe Fragmentierung oder gegen interne Fragmentierung?
+
+	Parallelausführung
+		Grundbegriffe - jeder Prozess für sich sequentiell, Spezialfall: Interleaved
+		Concurrency vs. Synchronization / Grenzen der Paralellisierbarkeit (Was kann man paralell machen, was kann man sequentiell machen?)
+		Überblick über die 3 parallel computing systems (Unterschiede zwischen den Systemen)
+		Details eher von Praxisrelevanten (Multicore als Spezialfall von Multiprozessor)
+		Symmetric multi prozessing - Was macht es aus?
+		Multi-prozessor synchronization - Wie muss man synchronisieren?
+		Message-Passing (vlt. aus Sicht von Multi-Computer-Systems)
+		Remote-Calls - entfernte Methodenaufrufe
+		Verteilte Systeme - eher auf Überblicksebene
+		Producer-Consumer Problem - im Detail verstehen! Verstehen wie kann eine Race-Condition entstehen? Was kann ich dagegen unternehmen?
+		Mutal-Exclusion - 4 Anforderungen (alle 4 relevant!)
+		Mutal-Exclusion - TSL (Grundverständnis) - Wie kann ich von Software aus TSL verwenden?
+		Spin-Lock - Begrifflichkeit, Wie funktioniert er? Wie hängt er mit der Hardware zusammen?
+		Semaphore, Mutex - Unterschied zwischen den beiden
+		Monitor
+		Deadlock - Definition, 4 Eigenschaften, Dining Philosophers als Deadlock-Beispiel, Handling von Deadlocks (Wie verhindere ich Deadlocks?) (Wieso kann Gegenmaßnahme X einen Deadlock verhindern?)
+		Deadlock vs. Starvation - Was ist Starvation? Was ist der Unterschied dazwischen?
+
+	Security
+		Grundbegriffe - Security vs. Safety, Standardbegriffe von Security
+		Usabilty ist ein wesentliches Problem von Security (Passwörter z.B.) - Tradeoff Usability/Security
+		Threats to OS - Security ist wo relevant für das OS? Querverbindung zu den vorherigen Bereichen, Speicherschutz
+		Authentifizierung
+		DAC-access Matrix - Wie speichern Dateisysteme Zugriffsrechte ab?, Zugriffsrechte, (Querverbindung zu FileSystems!), Grundkonzept ist sehr wichtig! Wie funktionieren Dateisystemberechtigungen!
+		Trusted Systems - Grundbegriff (keine genaue Argumentation), Begrifflichkeit, Warum soll ein Kernel so klein wie möglich sein? (Bezüglich Trusted Sytems)
+		Virtualisierung als Securitymaßnahme - Hypervisor ist kleiner als ein OS, Virtualisierung
+		Sandbox - Virtualisierung: Sandbox hat nur 1 Kernel überall, Virtualisierung hat einen Kernel noch extra
+		Container = Sandbox; Container ist keine Virutalisierung! Eher vergleichbar mit den Namespaces
+		VMM - Typ1 vs. Typ2 , Paravirtualisierung vs. Vollvirtualisierung, Virtualisierung vs. Emulation
+		VMM Varianten - Was ist z.B. VMBox für ein Typ?
+		Effizente Virtualisierung in Software - Grundverständnis, wie wirkt sich Virtualisierung auf die Unterscheidung Userspace/Kernelspace aus? Wie wird mit dem System umgegangen? Wie können Kernel voneinander getrennt werden? Grundverständnis, was Virtualisierung für das OS bedeutet.
+
+	Embedded & RealTime-OS
+		Grundkonzepte - Was macht ein Embedded OS/RealTime-OS aus? Hard Real Time vs. Soft Real Time,
+		EDF-Scheduling - Verstehen wie er funktioniert, Warum kein EDF für normale Benutzeranwendungen wie z.B. Firefox? (Keine genaue Zeitangabe bis wann sie fertig sein, keine Deadline bekannt)
+		Power Management - Unwichtig fürs Durchkommen, Material für Noten 1-2, (ACPI für die Interessierten)
+
+	Case Study: Linux & Android (Mehr ein Kontrollkapitel)
+		- Sehr genau auf Verständnis anschauen! Wenn man sich hier nirgends fragt "Wieso geht das so", dann wahrscheinlich alles gut. (Benchmark für das eigene Wissen)
+
+		Linux Kernel Tasks - Wie werden Prozesse erzeugt? Fork vs. Exec (Thread vs. Prozess, Shared Paging, PAGE_FAULT, Copy-on-Write, Memory-Management, etc.)
+		ext-FileSysteme: Wenn man's verstanden hat, dann sollte das FileSystem-Thema gut sein. Journaling sollte dann auch sitzen
+		RPC bei Android (Mechanismen des Multicomputings in Android)
+
+		Tipp: Android App Prozesses - wie unter Android Prozesse erzeugt werden sollte durchgedacht werden. Lernen über Prozesse & Speichermanagement (Copy&Write, Prozess wird vorinitialisiert, alle Pages/Shared Pages werden geladen, damit dann per fork() schnell erzeugt wird - auch wie das mit der Android Sandbox zusammenhängt)
+
+		Activities eher unrelevant
+
+		Wie hängt die Android-Sandbox mit dem Erstellen von Prozessen zusammen - wieder zur Kontrolle
+
+Klausur 2013:
+
+	sehr detailierte Fragen über Virtualisierung
+		Bare Metal, Hosted, Paravirtualisierung,...
+
+	Inode Dateisystem aufzeichnen
+
+ 	PageReplacementStrategie aufzeichnen
+
+	DirtyBit
+
+	unterschied zwischen Deadlock und Starvation
+
+	einige Kreuzerlfragen zu Deadlocks (Spinlock,...)
+
+	Log Structured Dateisysteme beschreiben
+
+	_____________________________________________________
+
+	hmm also ich kann mich an die folgenden Fragen erinnern:
+
+	Definition Virtualisierung, Paravirtualisierung
+	Von-Neumann-Zyklus
+	Wozu Interrupts, zwei Beispiele angeben
+	Definition Race Condition
+	Beispiel mit LRU
+	Unterschied Threads und Prozess
+	Unterschied Deadlocks und Starvation
+	Inodes mit Zeichnung
+	Dirty Bit
+
+	Es waren noch ein paar Multiple Choice Fragen,
+	wobei für eine falsche Antwort ein Punkt abgezogen wurde.
+	Es waren noch ein paar andere Fragen dabei, an die ich mich grad nicht erinnere.
+
+Klausur 2011:
+
+	Was ist der Zweck des Dirty-Bits im Zusammenhang mit Replacement-Strategien?
+
+	NUR (Not Used Recently) ist eine Approximierung welchen Verfahrens?
+
+	Beschreiben Sie die Vorgangsweise bei der NUR-Replacementstrategie. Was passiert bei einem Pagingstring von 7 0 1 0 2? Nehmen Sie dazu fehlende Bedingungen beliebig an.
+
+	Welche Schritte muss ein Betriebssystem nach dem Trap ausf\'fchren, um einen Page Fault zu behandeln?
+
+	Zeichnen Sie ein zweistufiges Paging!
+
+	Was versteht man unter dem Lokalitätsprinzip?
+
+	Welche Arten von Fragmentierung können bei seitenverwalteteten Systemen auftreten und welche nicht?
