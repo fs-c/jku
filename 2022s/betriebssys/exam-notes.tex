@@ -212,11 +212,139 @@ This algorithm cannot be implemented, future cannot be predicted accurately enou
 
 \section*{File Systems}
 
-Mass storage devices have two main operations, reading and writing a block of some hardware-defined block size. File systems are an abstraction over this, they exist to provide a consistent API.
+Mass storage devices have two main operations: Reading and writing a block of some hardware-defined block size. File systems are an abstraction over this, they exist to provide a consistent API.
 
 The logical unit of organization is the file, which is a collection of blocks coupled with metadata.
 
+\paragraph{File Metadata} will usually include
+\begin{itemize}
+    \item Name (depending on charset and locale, \emph{human readable}, at least \enquote{8.3} naming scheme)
+    \item Type (not always)
+    \item Location (pointer to physical or logical address of file, \emph{persistent})
+    \item Size
+    \item Permissions (owner, groups; who can do what)
+    \item Data \& Time (created, last change, last access)
+    \item Flags (hidden, temporary, \ldots)
+\end{itemize}
 
+\paragraph{OS Tasks} in regards to files are
+\begin{itemize}
+    \item Creating and deleting files
+    \item Structuring files in a hierarchy
+    \item Reading and modifying data in files
+    \item Persisting the files on storage mediums (support multiple concurrent mediums, different file systems)
+    \item Controlling access to files (user/process permissions, context, \ldots)
+\end{itemize}
+
+\paragraph{Special File Types} might include \emph{directories}, \emph{character} and \emph{block device} files (eg. UNIX for device I/O), \emph{named pipes}, \emph{sockets}, hard or soft \emph{links}.
+
+File systems organize data in blocks, comparable to pages for memory. Physical block size (\emph{sector}) depends on storage medium (HDD 4kb, SSD 1MB). Logical block size represents a fixed number of sectors (\emph{quantum}, usually $2^n$).
+
+\paragraph{Journaling file systems} address the issue of inconsistency on OS crash (file system may be left inconsistent, caches may not be written and lost, \ldots). Each action is performed as an atomic \emph{transaction}, the steps are written to a \emph{journal} and removed once performed. If a non-empty journal is found on bootup, just execute the steps.
+
+\paragraph{Virtual file systems} are an abstraction over concrete file systems that unify them under a single root tree. Different file systems are mounted at different directories, transparent to the user. 
+
+\subsection*{Allocation Strategies}
+
+\emph{Contiguous} file allocation is simple and fast, but files cannot be expanded. Lots of external fragmentation (holes between allocated blocks that won't be filled). Useful for write-once media (optical CD), otherwise not so much.
+
+Allocation with a \emph{linked list} is better, every cluster has a link to the next one. Random access is slow, free clusters have to be tracked in a separate list (or something).
+
+Alternative: \emph{File Allocation Table} (FAT). A linked list of pointers to clusters is kept at the beginning of a file system. Random access is improved because usually the whole FAT will be in RAM. Special FAT entry value denotes an empty cluster, no need for a separate list.
+
+\emph{Indexed} allocation keeps data about file allocation combined per file. Eg. the first cluster of a file will contain pointers to the clusters of that file (in order). High overhead for small files (each file needs at least one index block). Free cluster management is easy, just assign them all to a special file or keep track in a bitmap (one bit for every cluster).
+
+A variation on indexed allocation (\emph{RUNs}) stores \code{(cluster pointer, size)} pairs in the index block. This is useful if many blocks will be allocated continuously, data in index blocks will be smaller. Used by NTFS.
+
+\subsection*{Disk Layout}
+
+Most mass storage devices are divided into \emph{partitions}. (Tracked in the MBR for old BIOS implementations or GUID Partition Table, GPT, for UEFI.)
+
+A bootup sequence with an MBR disk layout will look like
+\begin{enumerate}
+    \item BIOS loads MBR, which
+    \item analzes the Partition Table and starts the Partition Boot Record, which starts
+    \item OS bootstrap, which loads the OS
+\end{enumerate}
+
+\section*{Concurrency}
+
+Process are executed either sequentially or concurrently. Concurrent processes are either \emph{independent} (if they use different data regions) or \emph{interacting} if they use shared data. Coordination between concurrent processes is called \emph{synchronization}.
+
+\paragraph{Producer-Consumer Problem} Several producers and consumers operate on a shared object. Particular example: Shared counter that is increased by producers and decreased by consumers. Concurrent access leads to a race condition.
+
+This motivates the concept of \emph{mutual exclusion}: Define \emph{critical regions} which only one process can enter at a time. Requirements are
+\begin{itemize}
+    \item mutual exclusion (obviously, only one process can be inside a CR at any time)
+    \item no assumptions (order of execution, \ldots are arbitrary)
+    \item progrss (no process not currently in a CR may block another process from entering that CR)
+    \item fairness (each process must be able to enter a CR in finite time)
+\end{itemize}
+
+\emph{Test and Set Lock} reads a memory word and writes another value to it in a single atomic CPU instruction. During this, the memory bus must be locked.
+
+\begin{description}
+    \item[Spin Lock] Test and Set Lock is used in a spinlock. Between the spinlock and setting the bit to false is the CR. Relies on atomic writing. Inefficient in case the lock takes a while to acquire.
+\end{description}
+
+This section could be expanded significantly.
+
+\section*{Security}
+
+\emph{Security} is preventing losses due to intentional actions by malovelent actors. \emph{Safety} is preventing losses due to unintentional actions, usually by benevolent actors.
+
+\paragraph{Basic Security Requirements} are \emph{confidentiality} (prevention of unauthorized disclosure), \emph{integrity} (prevention of information or system modification) and \emph{availabilty} (ensuring access to and use of information). Also called CIA triad.
+
+When security and \emph{usabilty} collide, usabilty always wins.
+
+\paragraph{Computer System Layers} are Applications $>$ Kernel $>$ Hypervisor/UEFI $>$ Firmware $>$ Hardware.
+
+\paragraph{Threats} Attacking running processes with higher privileges (defended against with eg. ASLR), accessing memory not assigned to own process (MMU, paging), accessing files without permission, \ldots
+
+\paragraph{Access Control Policies} are
+
+\begin{description}
+    \item[Discretionary Access Control (DAC)] based on the identity of the requestor and on access rules set by the owner of the entity. The controls are discretionary in the sense that a subject can pass it's permissions on to any other subject. Typical subject classes are: world (all subjects), group (of subjects) and owner.
+    \item[Mandatory Access Control (MAC)] based on comparing security labels with security clearances; mandatory because owner may not be able to delegate access (as opposed to DAC).
+    \item[Role-Based Access Control (RBAC)] based on roles that users/processes have within a system and rules based on those roles. 
+\end{description}
+
+Access control matrices are often stored as an
+
+\begin{itemize}
+    \item \emph{Access Control List} (ACL), a column of the access control matrix which contains subjects and their access rights on a given object
+    \item \emph{Capability Vector}, a row of the access control matrix which contains objects and the access rights a given subject has on them 
+\end{itemize}
+
+\paragraph{Trusted computing base} (TCB) is a portion of a system that enforces a particular policy, must be resistant to tampering and circumvention. Informally, these are the components that one \emph{has} to trust, for the system to be trustworthy.
+
+\section*{Virtualization}
+
+\ldots is an abstraction of the resources used by some software which runs in a virtual machine.
+
+\begin{itemize}
+    \item better efficiency in the use of physical system resources (supposedly)
+    \item support for multiple distinct OS
+    \item additional security concerns
+\end{itemize}
+
+An additional layer, a \emph{hypervisor} (virtual machine manager, \emph{VMM}) should guarantee safety, fidelity and effieciency.
+
+Different possibilities for a VMM implementation
+
+\begin{itemize}
+    \item on top of host OS (\emph{type 2}, eg. VirtualBox, VMWare Workstation) vs. bare-metal (\emph{type 1}, eg. Hyper-V, L4)
+    \item \emph{full virtualization} (unmodified guest OS, worst performance) vs. \emph{paravirtualization} (guest OS aware, special syscalls) vs. compartmentalization within a single OS kernel (\emph{containers}, not real virtualization, eg. Docker)
+    \item \emph{emulation} is possible but slow
+\end{itemize}
+
+\section*{Embedded and Real-Time}
+
+The correctnes of a real-time OS depends not only on logical computation results but also on the time in which the results are produced.
+
+\emph{Deadlines} for some actions need to be kept: either guarantee to finish a task within a time period or guarantee that the system reacts within a time period. With \emph{hard real time} it is critical that deadlines are met at all times, with \emph{soft real time} it's tolerable if some are missed.
+
+\emph{Priority inversion} example: Process with low priority holds a resource which a process with high priority wants to access.
 
 \end{multicols}
 
