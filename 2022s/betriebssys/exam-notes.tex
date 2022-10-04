@@ -342,6 +342,8 @@ Different possibilities for a VMM implementation
 
 The correctnes of a real-time OS depends not only on logical computation results but also on the time in which the results are produced.
 
+Important requirements for RTOS are being deterministic, responsive, reliable and fail-soft opertaion (fail in a way that minimizes consequences).
+
 \emph{Deadlines} for some actions need to be kept: either guarantee to finish a task within a time period or guarantee that the system reacts within a time period. With \emph{hard real time} it is critical that deadlines are met at all times, with \emph{soft real time} it's tolerable if some are missed.
 
 \emph{Priority inversion} example: Process with low priority holds a resource which a process with high priority wants to access.

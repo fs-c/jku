@@ -54,15 +54,19 @@
 
 Die Länge eines Vektors ist $\sqrt{v_1^2 + \ldots v_n^2}$.
 
-Der Vektor $\vec{n} = \vec{u} \times \vec{v}$ ist normal auf die Vektoren $\vec{u}$ und $\vec{v}$.
+Der Vektor $\vec{n} = \vec{u} \times \vec{v}$ ist normal auf die Vektoren $\vec{u}$ und $\vec{v}$. Zwei Vektoren sind dann normal wenn ihr Skalarprodukt null ist.
 
 Die Normalenform einer Ebene $E$ in $\mathbb{R}^3$ ist
 \begin{align*}
     E = \{\ \vec{x} \in \mathbb{R}^3\ |\ (\vec{x} - \vec{a})\vec{n} = 0\ \}
 \end{align*}
-mit $\vec{n}$ normal auf $\vec{a}$.
+mit $\vec{n}$ normal auf $\vec{a}$. Parameterform ist
+\begin{align*}
+    E = \{\ \vec{a} + \lambda\vec{u} + \sigma\vec{v}\ | \lambda, \sigma \in \mathbb{R} \}
+\end{align*}
+wobei $a$ übl. Ortsvektor und $u, v$ ausgehend von $a$.
 
-Von Gleichungsform $ax + by + cz = d$ einer Ebene auf Normalenform: Normalvektor ist $(a\ b\ c)$, dann $\vec{a}$ finden mit $\vec{a}\vec{n} = d$.
+Von Gleichungsform $ax + by + cz = d$ einer Ebene auf Normalenform: Normalvektor ist $(a\ b\ c)^T$, dann $\vec{a}$ finden mit $\vec{a}\vec{n} = d$. Von Parameterform in Normalenform: $n = u \times v$, $a$ bleibt. Von Normalenform auf Gleichungsform: Ausrechnen.
 
 Orthogonalisierung einer Basis $\{v_1, \ldots, v_n\}$:
 \begin{enumerate}[label={\arabic*)}]
@@ -73,7 +77,7 @@ mit
 \begin{align*}
     \text{proj}_u(v) = \frac{\langle u, v\rangle}{\langle u, u\rangle} \cdot u
 \end{align*}
-(Wenn $v_1, \ldots, v_n$ keine Basis bilden bzw. linear abhängig sind funktioniert es auch, dann ist aber ein $w_i = \vec{0}$.)
+(Wenn $v_1, \ldots, v_n$ keine Basis bilden bzw. linear abhängig sind funktioniert es auch, dann ist aber ein $w_i = \vec{0}$. Vektoren $w_i$ können beliebig skaliert werden.)
 
 Vektoren eines Orthogonalsystems sind immer linear unabhängig.
 
@@ -115,6 +119,12 @@ Eine Basistransformationsmatrix $A_C^B$ (\enquote{B ausgedr. durch C}) ist
 \end{align*}
 mit $B = \{ v_1, \ldots, v_n \}$.
 
+Alle $v \in K^n \backslash \{\vec{0}\}$ mit
+\begin{align*}
+    A \cdot v = \lambda \cdot v
+\end{align*}
+heißen Eigenvektoren, $\lambda$ sind zugehörige Eigenwerte.
+
 Eigenwerte einer Matrix $A$ sind Nullstellen von
 \begin{align*}
     \chi_A(\lambda) = \text{det}(A - \lambda E_n).
@@ -126,7 +136,6 @@ Der Eigenraum zu einem Eigenwert $\lambda$ ist
     E_{A,\lambda} = \text{Ker}(A - \lambda E_n) \\
     \{ \vec{v}\ |\ (A - \lambda E_n) = \vec{0} \}
 \end{align*}
-
 Zur Diagonalisierung ($\lambda$ sind Eigenwerte, $v$ sind Eigenräume):
 \begin{align*}
     P^{-1} \cdot A \cdot P &= \text{diag}(\lambda_1, \ldots, \lambda_n) \quad \text{mit} \\ 
@@ -139,7 +148,6 @@ Zeilen- und Spaltenraum ist die lineare Hülle der Zeilen- bzw. Spaltenvektoren.
 Vertauschungsmatrix $T_{i,j}$ vertauscht Zeilen $i$ und $j$. In Einheitsmatrix Zeilen $i$ u. $j.$ vertauschen. Skalierungsm. $S_i(\lambda)$ skaliert Zeile $i$ mit $\lambda$. Additionsmatrix $R_{i,j}(\lambda)$ addiert das $\lambda$-fache der Zeile $j$ zur Zeile $i$. In Einheitsmatrix $\lambda$ bei $(i, j)$.
 
 Es gilt $\text{dim}\,Z(A) = \text{dim}\,S(A) = \text{Rg}(A)$. Alle Nichtnull-Zeilen der Matrix in Zeilenstufenf. bilden Basis von $Z(A)$. Spalten der urspr. Matrix $A$ in denen in Zeilenstufenf. ein Pivot-El. ist sind Basis von $S(A)$. Ausserdem $\dim\,Z(A) + \dim\,\text{Ker}(A) = n$ bei $A^{m \times n}$.
-
 \begin{align*}
     \text{dim}\,\text{Ker}(A) = n - \text{Rg}(A) \\
     \text{dim}\,\text{Coker}(A) = m - \text{Rg}(A)
@@ -147,7 +155,11 @@ Es gilt $\text{dim}\,Z(A) = \text{dim}\,S(A) = \text{Rg}(A)$. Alle Nichtnull-Zei
 
 \section*{Strukturen}
 
-$\mathbb{Z}_n$ ist dann ein Körper wenn $n$ prim ist. Ein $x \in \mathbb{Z}_n$ ist dann teilbar wenn $\text{ggT(n, x) = 1}$.
+$\mathbb{Z}_n$ ist dann ein Körper wenn $n$ prim ist. Ein $x \in \mathbb{Z}_n$ ist dann teilbar wenn $\text{ggT(n, x) = 1}$. Die Gleichung
+\begin{align*}
+    ax + by = c
+\end{align*}
+hat dann eine Lösung in $\mathbb{N}$ wenn $\text{ggT}(a, b)\ |\ c$.
 
 In der Menge $\mathbb{Z}_n[x]/(f)$ sind $n^{\text{deg}(f)}$ Elemente. Das multiplikative Inverse eines Elements einer solchen Menge kann durch den EEA ermittelt werden.
 
