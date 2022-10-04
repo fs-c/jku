@@ -10,7 +10,7 @@ jobs:
       - name: Build .tex files
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: "**/**/*.tex"
+          root_file: "./**/*.tex"
           glob_root_file: true
           work_in_root_file_dir: true
           pre_compile: set +e
@@ -19,4 +19,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pdf-files
-          path: "**/**/*.pdf"
+          path: "**/*.pdf"
