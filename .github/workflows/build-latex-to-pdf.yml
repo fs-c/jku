@@ -8,7 +8,7 @@ jobs:
       - name: Fetch repository
         uses: actions/checkout@v3
       - name: Build .tex files
-        uses: fs-c/latex-action@v2
+        uses: fs-c/latex-action@master
         with:
           root_file: ./**/*.tex
           glob_root_file: true
