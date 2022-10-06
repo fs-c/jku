@@ -21,7 +21,7 @@ jobs:
           path: ./**/*.pdf
       - name: Remove all non-PDF files
         run: |
-          find . ! -name '*.pdf' -delete
+          find . -type f ! -name '*.pdf' -delete
       - name: Push output to fsoc.space
         uses: cpina/github-action-push-to-another-repository@main
         env:
