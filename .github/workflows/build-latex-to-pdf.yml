@@ -2,7 +2,7 @@ name: Build LaTeX Files to PDF
 on: [push]
 
 jobs:
-  build-and-upload:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch repository
@@ -19,3 +19,19 @@ jobs:
         with:
           name: pdf-files
           path: ./**/*.pdf
+      - name: Bundle PDFs in one place
+        run: |
+          shopt -s extglob globstar nullglob
+          mkdir __temp
+          mv ./**/*.pdf __temp
+          ls -la __temp
+      - name: Push output to fsoc.space
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.FSOCSPACE_SSH_DEPLOY_KEY }}
+        with:
+          source-directory: __temp
+          destination-github-username: fs-c
+          destination-repository-name: fsoc.space
+          target-branch: master
+          target-directory: public/jku
