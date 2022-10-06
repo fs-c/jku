@@ -19,18 +19,15 @@ jobs:
         with:
           name: pdf-files
           path: ./**/*.pdf
-      - name: Bundle PDFs in one place
+      - name: Remove all non-PDF files
         run: |
-          shopt -s extglob globstar nullglob
-          mkdir __temp
-          mv ./**/*.pdf __temp
-          ls -la __temp
+          find . ! -name '*.pdf' -delete
       - name: Push output to fsoc.space
         uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.FSOCSPACE_SSH_DEPLOY_KEY }}
         with:
-          source-directory: __temp
+          source-directory: .
           destination-github-username: fs-c
           destination-repository-name: fsoc.space
           target-branch: master
