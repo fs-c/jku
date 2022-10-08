@@ -1,0 +1,160 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.} Für $n = 0$ gilt
+\begin{align*}
+    \sum_{i = 0}^{0}r^i = r^0 = 1 = \frac{1 - r}{1 - r},
+\end{align*}
+Wir nehmen nun an, dass
+\begin{align*}
+    \sum_{i = 0}^n r^i = \frac{1 - r^{n + 1}}{1 - r},
+    % \quad\Longrightarrow\quad \sum_{i = 0}^{n + 1} r^i = \frac{1 - r^{n + 2}}{1 - r}
+\end{align*}
+und zeigen
+\begin{align*}
+    \sum_{i = 0}^{n + 1} r^i = \frac{1 - r^{n + 2}}{1 - r}.
+\end{align*}
+Nachdem
+\begin{align*}
+    \sum_{i = 0}^{n + 1} r^i = r^{n + 1} + \sum_{i = 0}^{n} r^i
+\end{align*}
+muss weiters
+\begin{align*}
+    \frac{1 - r^{n + 2}}{1 - r} &= r^{n + 1} + \frac{1 - r^{n + 1}}{1 - r} \\
+    &= \frac{r^{n + 1}(1 - r)}{1 - r} + \frac{1 - r^{n + 1}}{1 - r} \\
+    &= \frac{r^{n + 1}(1 - r) + 1 - r^{n + 1}}{1 - r} \\
+    &= \frac{r^{n + 1} - r^{n + 2} + 1 - r^{n + 1}}{1 - r} \\
+    &= \frac{1 - r^{n + 2}}{1 - r}.
+\end{align*}
+
+\paragraph{Aufgabe 2.} \begin{enumerate}
+    \item Für $n = 1$ haben wir $\sum_{k = 1}^{1} (2k - 1) = 2 - 1 = 1 = 1^2$. Unter Annahme von $\sum^n_{k = 1}(2k - 1) = n^2$ soll nun $\sum^{n + 1}_{k = 1}(2k - 1) = (n + 1)^2$ gelten. Wir haben
+    \begin{align*}
+        \sum^{n + 1}_{k = 1}(2k - 1) = 2(n + 1) - 1 + \sum^{n}_{k = 1}(2k - 1) = 2n + 1 + \sum^{n}_{k = 1}(2k - 1)
+    \end{align*}
+    und zeigen nun (siehe binomische Formel)
+    \begin{align*}
+        (n + 1)^2 &= 2n + 1 + n^2 \\
+        n^2 + 2n + 1 &= 2n + 1 + n^2 \\
+    \end{align*}
+
+    \item Für $n = 1$ haben wir $\sum_{k = 1}^{1}k^3 = 1 = (\sum_{k = 1}^1k)^2$. Unter Annahme von $\sum_{k = 1}^n k^3 = (\sum^n_{k = 1}k)^2$ soll nun $\sum^{n + 1}_{k = 1}k^3 = (\sum^{n + 1}_{k = 1}k)^2$ gelten. 
+    \begin{align*}
+        \sum^{n + 1}_{k = 1}k^3 &= \left(\sum^{n + 1}_{k = 1}k\right)^2 \\
+        (n + 1)^3 + \sum^{n}_{k = 1}k^3 &= \left(\sum^{n + 1}_{k = 1}k\right)^2 \\
+        (n + 1)^3 + \left(\sum^n_{k = 1}k\right)^2 &= \left(\sum^{n + 1}_{k = 1}k\right)^2 \\
+        (n + 1)^3 + \left(\frac{n(n + 1)}{2}\right)^2 &= \left(\frac{(n + 1)(n + 2)}{2}\right)^2 \\
+        (n + 1)^3 + \frac{(n(n + 1))^2}{4} &= \frac{((n + 1)(n + 2))^2}{4} \\
+        (n + 1)^3 + \frac{n^2 + 2 n^3 + n^4}{4} &= \frac{4 + 12 n + 13 n^2 + 6 n^3 + n^4}{4} \\
+        1 + 3 n + 3 n^2 + n^3 + \frac{n^2 + 2 n^3 + n^4}{4} &= \frac{4 + 12 n + 13 n^2 + 6 n^3 + n^4}{4} \\
+        4 + 12 n + 13 n^2 + 6 n^3 + n^4 &= 4 + 12 n + 13 n^2 + 6 n^3 + n^4
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Aufgabe 3.} Für $n = 1$ gilt $(1 + x)^1 = 1 + x \geq 1 + x$. Unter Annahme von $(1+x)^n \geq 1 + nx$ soll nun $(1+x)^{n + 1} \geq 1 + (n + 1)x$ gelten.
+\begin{align*}
+    (1+x)^{n + 1} &\geq 1 + (n + 1)x \\
+    (1+x)(1+x)^{n} &\geq 1 + nx + x \\
+    (1+x)(1 + nx) &\geq 1 + nx + x \quad\text{(Einsetzen eines $\leq$ Wertes)}\\
+    1 + nx + x + n(x^2) &\geq 1 + nx + x \\
+    n(x^2) &\geq 0
+\end{align*}
+Letzterer Ausdruck ist wahr nachdem $x^2$ sicher positiv oder Null ist und $n \geq 1$.
+
+\paragraph{Aufgabe 4.}
+\begin{enumerate}
+    \item Seien $a$ und $b$ neutrale Elemente bezüglich der Addition in $K$ und $x$ und $y$ neutrale Elemente bezüglich der Multiplikation in $K$.
+    \begin{align*}
+        a + b = a \quad\text{und}\quad a + b = b, \quad\text{demzufolge $a = b$.} \\
+        xy = x \quad\text{und}\quad xy = y, \quad\text{demzufolge $x = y$.}
+    \end{align*}
+    \item Seien $x$ und $y$ additive Inverse von $a$ in $K$. (Verwendet Assoziativität der Addition.)
+    \begin{align*}
+        x = x + 0 = x + (a + y) = (x + a) + y = 0 + y = y
+    \end{align*}
+    \item Seien $x$ und $y$ multiplikative Inverse von $a$ in $K$ mit $a \neq 0$. (Verwendet Assoziativität der Multiplikation.)
+    \begin{align*}
+        x = x \cdot 1 = x \cdot (a \cdot y) = (x \cdot a) \cdot y = 1 \cdot y = y
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Aufgabe 5.}
+\begin{enumerate}
+    \item Zu zeigen ist $c^{-1}d^{-1} = (cd)^{-1}$, anders formuliert
+    \begin{align*}
+        (c^{-1}d^{-1})(cd) = cc^{-1}dd^{-1} = 1 \cdot 1 = 1.
+    \end{align*}
+    (Verwendet Assoziativität und Kommutativität der Multiplikation in der ersten Umformung, und die Eindeutigkeit des multiplikativen Inverses für die Schlussfolgerung.)
+    \item Zu zeigen ist
+    \begin{align*}
+        \frac{a}{c} + \frac{b}{d} = ac^{-1} + bd^{-1} &= ac^{-1}dd^{-1} + bd^{-1}cc^{-1} \\
+        &= c^{-1}d^{-1}(ad + bc) \\
+        &= (ad + bc)(cd)^{-1} = \frac{ad + bc}{cd}
+    \end{align*}
+    (Verwendet Neutralelement, \enquote{Herausheben} und 5a.
+\end{enumerate}
+
+\paragraph{Aufgabe 6.}
+\begin{enumerate}[label=\arabic*)]
+    \setcounter{enumi}{6}
+    \item Es gibt ein $\frac{1}{1} \in \mathbb{Q}$ mit $\frac{1}{1} \cdot \frac{a}{b} = \frac{a}{b}$ für alle $\frac{a}{b} \in \mathbb{Q}$.
+    \begin{align*}
+        \frac{1}{1} \cdot \frac{a}{b} = \frac{1 \cdot a}{1 \cdot b} = \frac{a}{b}
+    \end{align*}
+    \item Für alle $\frac{a}{b} \neq 0 \in \mathbb{Q}$ gibt es ein $\frac{x}{y} \in \mathbb{Q}$ mit $\frac{a}{b} \cdot \frac{x}{y} = 1$. Sei $\frac{x}{y} = \frac{b}{a}$.
+    \begin{align*}
+        \frac{a}{b} \cdot \frac{b}{a} = \frac{ab}{ba} = ab(ba)^{-1} = aa^{-1}bb^{-1} = 1
+    \end{align*}
+    \item Für $\frac{p_1}{q_1}, \frac{p_2}{q_2}, \frac{p_3}{q_3} \in \mathbb{Q}$ gilt
+    \begin{align*}
+        \frac{p_1}{q_1} \cdot \left(\frac{p_2}{q_2} + \frac{p_3}{q_3}\right) = \frac{p_1}{q_1} \cdot \frac{p_2q_3 + p_3q_2}{q_2q_3} = \frac{p_1}{q_1} \cdot \left(\frac{p_2q_3}{q_2q_3} + \frac{p_3q_2}{q_2q_3}\right) = \frac{p_1}{q_1} \cdot \left(\frac{p_2}{q_2} + \frac{p_3}{q_3}\right)
+    \end{align*}
+\end{enumerate}
+
+% \paragraph{Aufgabe 7.} Für die Assoziativität gilt es zu zeigen, dass
+% \begin{align*}
+%     \sum_{n = 0}^{\infty}a_nx^n \cdot \left(\sum_{n = 0}^{\infty}b_nx^n \cdot \sum_{n = 0}^{\infty}c_nx^n\right) &= \sum_{n = 0}^{\infty}a_nx^n \cdot \sum_{n = 0}^{\infty}\left(\sum_{k = 0}^{n} b_k c_{n - k}\right)x^n \\
+%     %&= \sum_{n = 0}^{\infty}\left(\sum_{k = 0}^{n}a_\right)
+%     %&= \left(\sum_{n = 0}^{\infty}a_nx^n \cdot \sum_{n = 0}^{\infty}b_nx^n\right) \cdot \sum_{n = 0}^{\infty}c_nx^n
+% \end{align*}
+
+\end{document}

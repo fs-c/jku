@@ -52,7 +52,7 @@ public class SchoolClass {
             throw new IllegalArgumentException("teacher is already booked for this unit");
         }
 
-        lessons.put(unit, new Lesson(unit, subject, this));
+        lessons.put(unit, new Lesson(unit, subject, this, teacher));
     }
 
     @Override

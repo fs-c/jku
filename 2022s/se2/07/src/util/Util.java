@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class Util {
+
     /**
      * Filters a collection by the given predicate
      * @param coll the collection

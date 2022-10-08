@@ -11,18 +11,13 @@ public class School {
     private Set<SchoolClass> schoolClasses = new HashSet<>();
 
     public School() {
-        // TODO
     }
 
     public void defineTeachers(Teacher...teachers) {
-        // TODO
-
         this.teachers = Set.of(teachers);
     }
 
     public void defineClasses(SchoolClass...classes) {
-        // TODO
-
         this.schoolClasses = Set.of(classes);
     }
 
@@ -33,11 +28,15 @@ public class School {
     }
 
     public List<Lesson> getLessons(Predicate<? super Lesson> filter, Comparator<Lesson> sorting) {
-        return Util.filter(
+        final var list = Util.filter(
                 schoolClasses.stream().flatMap((c) -> c.getLessons().stream())
-                        .sorted(sorting).collect(Collectors.toList())
+                        .collect(Collectors.toList())
                 , filter
         );
+
+        list.sort(sorting == null ? Lesson::compareTo : sorting);
+
+        return list;
     }
 
     public static Predicate<Lesson> forClass(SchoolClass schoolClass) {
@@ -53,12 +52,12 @@ public class School {
     }
 
     public static Predicate<Lesson> withTeacher(Teacher teacher) {
-        return (l) -> ;
+        return (l) -> l.teacher().equals(teacher);
     }
 
-    public final static Comparator<Lesson> sortedByClass = null; // TODO
+    public final static Comparator<Lesson> sortedByClass = Comparator.comparing((Lesson l) -> l.schoolClass().getId());
 
-    public final static Comparator<Lesson> sortedByTeacher = null; // TODO
+    public final static Comparator<Lesson> sortedByTeacher = Comparator.comparing((Lesson l) -> l.teacher().getName());
 
-    public final static Comparator<Lesson> sortedBySubject = null; // TODO
+    public final static Comparator<Lesson> sortedBySubject = Comparator.comparing(Lesson::subject);
 }

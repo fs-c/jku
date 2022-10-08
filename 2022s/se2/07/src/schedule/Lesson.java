@@ -3,7 +3,7 @@ package schedule;
 import java.util.Objects;
 
 public record Lesson(
-        Unit unit, Subject subject, SchoolClass schoolClass
+        Unit unit, Subject subject, SchoolClass schoolClass, Teacher teacher
 ) implements Comparable<Lesson> {
     @Override
     public int compareTo(Lesson o) {

@@ -16,15 +16,15 @@ import static schedule.Unit.*;
 
 public class SchoolApp {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
         School school = new School();
 
-		Teacher maier = new Teacher("Maier", German, English);
-		Teacher auer = new Teacher("Auer", Bio, Geo);
-		Teacher reisner = new Teacher("Reisner", Math, Chemistry);
-		Teacher ebner = new Teacher("Ebner", Math, Physics);
-		Teacher fischer = new Teacher("Fischer", Sports, History);
+        Teacher maier = new Teacher("Maier", German, English);
+        Teacher auer = new Teacher("Auer", Bio, Geo);
+        Teacher reisner = new Teacher("Reisner", Math, Chemistry);
+        Teacher ebner = new Teacher("Ebner", Math, Physics);
+        Teacher fischer = new Teacher("Fischer", Sports, History, English);
         school.defineTeachers(maier, auer, reisner, ebner, fischer);
 
         SchoolClass a1 = new SchoolClass("1A", English, German, Math, Physics, Sports);
@@ -83,7 +83,21 @@ public class SchoolApp {
             Out.println(lesson);
         }
 
-        // TODO: 3 more queries
+        List<Lesson> a1mon = school.getLessons(forClass(a1).and(onDay(MON)));
+        Out.println("\n1A, Unterrichtsstunden am Montag");
+        for (Lesson lesson: a1mon) {
+            Out.println(lesson);
+        }
+
+        Out.println("\n1A, Unterrichtsstunden in Mathematik");
+        for (Lesson lesson : school.getLessons(forClass(a1).and(forSubject(Math)))) {
+            Out.println(lesson);
+        }
+
+        Out.println("\nAlle Unterrichtsstunden in Physik");
+        for (Lesson lesson : school.getLessons(forSubject(Physics))) {
+            Out.println(lesson);
+        }
     }
 
 }

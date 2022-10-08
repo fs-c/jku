@@ -6,11 +6,15 @@ public class Teacher {
     private final String name;
     private final Set<Subject> subjects;
 
-    private Set<Lesson> lessons = new TreeSet<>();
+    private final Set<Lesson> lessons = new TreeSet<>();
 
     public Teacher(String name, Subject... subjects) {
         this.name = name;
         this.subjects = Set.of(subjects);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void assignLesson(Lesson lesson) {
@@ -22,7 +26,7 @@ public class Teacher {
     }
 
     // We are assuming that the name is unique, so we only care about the name
-    // when checking equality and getting the hashcode.
+    // when checking equality and getting the hash.
 
     @Override
     public boolean equals(Object o) {
