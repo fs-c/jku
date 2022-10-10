@@ -1,4 +1,4 @@
-name: Build LaTeX Files to fsoc.space
+name: Build LaTeX Files to files repo
 on: [push]
 
 jobs:
@@ -14,21 +14,16 @@ jobs:
           glob_root_file: true
           work_in_root_file_dir: true
           continue_on_error: true
-      - name: Upload artifact for testing
-        uses: actions/upload-artifact@v3
-        with:
-          name: pdf-files
-          path: ./**/*.pdf
       - name: Remove all non-PDF files
         run: |
           find . -type f ! -name '*.pdf' -delete
-      - name: Push output to fsoc.space
+      - name: Push output to files repository
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          SSH_DEPLOY_KEY: ${{ secrets.FSOCSPACE_SSH_DEPLOY_KEY }}
+          SSH_DEPLOY_KEY: ${{ secrets.FILES_SSH_DEPLOY_KEY }}
         with:
           source-directory: .
           destination-github-username: fs-c
-          destination-repository-name: fsoc.space
-          target-branch: workbench
-          target-directory: public/jku
+          destination-repository-name: files
+          target-branch: archive
+          target-directory: jku/build
