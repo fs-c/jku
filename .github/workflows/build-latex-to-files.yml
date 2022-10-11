@@ -1,5 +1,10 @@
 name: Build LaTeX Files to files repo
-on: [push]
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.tex'
 
 jobs:
   build-and-push:
