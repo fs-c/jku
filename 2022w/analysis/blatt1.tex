@@ -150,12 +150,17 @@ Letzterer Ausdruck ist wahr nachdem $x^2$ sicher positiv oder Null ist und $n \g
     \end{align*}
 \end{enumerate}
 
-% \paragraph{Aufgabe 7.} Für die Assoziativität gilt es zu zeigen, dass
-% \begin{align*}
-%     \sum_{n = 0}^{\infty}a_nx^n \cdot \left(\sum_{n = 0}^{\infty}b_nx^n \cdot \sum_{n = 0}^{\infty}c_nx^n\right) &= \sum_{n = 0}^{\infty}a_nx^n \cdot \sum_{n = 0}^{\infty}\left(\sum_{k = 0}^{n} b_k c_{n - k}\right)x^n \\
-%     %&= \sum_{n = 0}^{\infty}\left(\sum_{k = 0}^{n}a_\right)
-%     %&= \left(\sum_{n = 0}^{\infty}a_nx^n \cdot \sum_{n = 0}^{\infty}b_nx^n\right) \cdot \sum_{n = 0}^{\infty}c_nx^n
-% \end{align*}
+\paragraph{Aufgabe 7.} Für die Assoziativität gilt es zu zeigen, dass
+\begin{align*}
+    \sum_{n = 0}^{\infty}a_n x^n \cdot \left(\sum_{n = 0}^{\infty}b_n x^n \cdot \sum_{n = 0}^{\infty}c_n x^n\right) &= \left(\sum_{n = 0}^{\infty}a_n x^n \cdot \sum_{n = 0}^{\infty}b_n x^n\right) \cdot \sum_{n = 0}^{\infty}c_n x^n \\
+    \sum_{n = 0}^{\infty}a_n x^n \cdot \left(\sum_{m = 0}^{\infty}\sum_{k = 0}^{\infty}b_{m} c_{k} x^{m + k}\right) &= \left(\sum_{n = 0}^{\infty} \sum_{m = 0}^{\infty} a_n b_m x^{n + m}\right) \cdot \sum_{k = 0}^{\infty}c_k x^k \\
+    \sum_{n = 0}^{\infty}\sum_{m = 0}^{\infty}\sum_{k = 0}^{\infty}a_n b_m c_k x^{n + m + k} &= \sum_{n = 0}^{\infty}\sum_{m = 0}^{\infty}\sum_{k = 0}^{\infty}a_n b_m c_k x^{n + m + k}
+\end{align*}
+Für die Kommutativität gilt es zu zeigen, dass
+\begin{align*}
+    \sum_{n = 0}^{\infty} a_n x^n \cdot \sum_{n = 0}^{\infty} b_n x^n &= \sum_{n = 0}^{\infty} b_n x^n \cdot \sum_{n = 0}^{\infty} a_n x^n \\
+    \sum_{n = 0}^{\infty}\sum_{m = 0}^{\infty}a_n b_m x^{n + m} &= \sum_{n = 0}^{\infty}\sum_{m = 0}^{\infty}b_n a_m x^{n + m}
+\end{align*}
 
 \paragraph{Aufgabe 8.} Angenommen $\sqrt{3} \in \mathbb{Q}$, dann gibt es $x, y \in \mathbb{Z}$ mit $\sqrt{3} = \frac{x}{y}$ wobei angenommen werden kann, dass $\text{ggT}(x, y) = 1$. Aus der Annahme folgt
 \begin{align*}
