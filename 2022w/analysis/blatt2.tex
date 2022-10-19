@@ -1,0 +1,213 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 2.}
+
+\begin{itemize}
+    \item Assoziativität:
+    \begin{align*}
+        (x_1, x_2) \xor ((y_1, y_2) \xor (z_1, z_2)) &= ((x_1, x_2) \xor (y_1, y_2)) \xor (z_1, z_2) \\
+        (x_1, x_2) \xor (y_1 + z_1, y_2 + z_2) &= (x_1 + y_1, x_2 + y_2) \xor (z_1, z_2) \\
+        (x_1 + y_1 + z_1, x_2 + y_2 + z_2) &= (x_1 + y_1 + z_1, x_2 + y_2 + z_2)
+    \end{align*}
+    \begin{align*}
+        (x_1, x_2) * ((y_1, y_2) * (z_1, z_2)) &= ((x_1, x_2) * (y_1, y_2)) * (z_1, z_2) \\
+        (x_1, x_2) * (y_1z_1, y_1z_2 + y_2z_1) &= (x_1y_1, x_1y_2 + x_2y_1) * (z_1, z_2) \\
+        (x_1y_1z_1, x_1(y_1z_2 + y_2z_1) + x_2y_1z_1) &= (x_1y_1z_1, x_1y_2z_2 + (x_1y_2 + x_2y_1)z_1) \\
+        (x_1y_1z_1, x_1y_1z_2 + x_1y_2z_1 + x_2y_1z_1) &\neq (x_1y_1z_1, x_1y_2z_2 + x_1y_2z_1 + x_2y_1z_1)
+    \end{align*}
+    Operation $*$ ist nicht assoziativ.
+
+    \item Kommutativität:
+    \begin{align*}
+        (x_1, x_2) \xor (y_1, y_2) &= (y_1, y_2) \xor (x_1, x_2) \\
+        (x_1 + y_1, x_2 + y_2) &= (x_1 + y_1, x_2 + y_2)
+    \end{align*}
+    \begin{align*}
+        (x_1, x_2) * (y_1, y_2) &= (y_1, y_2) * (x_1, x_2) \\
+        (x_1y_1, x_1y_2 + x_2y_1) &= (y_1x_1, y_1x_2 + y_2x_1)
+    \end{align*}
+
+    \item Neutrale Elemente:
+    \begin{align*}
+        (x_1, x_2) \xor (0, 0) = (x_1 + 0, x_2 + 0) = (x_1, x_2)
+    \end{align*}
+    \begin{align*}
+        (x_1, x_2) * (1, 0) = (x_1 \cdot 1, x_1 \cdot 0 + x_2 \cdot 1) = (x_1, x_2)
+    \end{align*}
+
+    \item Invertierbarkeit:
+    \begin{align*}
+        (x_1, x_2) \xor (-x_1, -x_2) = (x_1 - x_1, x_2 - x_2) = (0, 0)
+    \end{align*}
+    \begin{align*}
+        &(x_1, x_2) * (x_1', x_2') = (x_1x_1', x_1x_2' + x_2x_1') = (1, 0) \\
+        \Rightarrow&\  x_1x_1' = 1\ \Rightarrow\ x_1' = x_1^{-1} \\
+        \Rightarrow&\  x_1x_2' + x_2x_1' = 0\ \Rightarrow\ x_2' = 0 \quad \text{aber $x_2x_1'$ nur dann null wenn $x_2 = x_2$}
+    \end{align*}
+    Operation $*$ hat nicht für alle Elemente ein Inverses.
+
+    \item Distributivität
+    \begin{align*}
+        (x_1, x_2) * ((y_1, y_2) \xor (z_1, z_2)) &= ((x_1, x_2) * (y_1, y_2)) \xor ((x_1, x_2) * (z_1, z_2)) \\
+        (x_1, x_2) * (y_1 + z_1, y_2 + z_2) &= (x_1y_1, x_1y_2 + x_2y_1) \xor (x_1z_1, x_1z_2 + x_2z_1) \\
+        (x_1(y_1 + z_1), x_1(y_2 + z_2) + x_2(y_1 + z_1)) &= (x_1y_1 + x_1z_1, x_1y_2 + x_2y_1 + x_1z_2 + x_2z_1) \\
+        (x_1y_1 + x_1z_1), x_1y_2 + x_1z_2 + x_2y_1 + x_2z_1) &= (x_1y_1 + x_1z_1, x_1y_2 + x_2y_1 + x_1z_2 + x_2z_1) \\
+    \end{align*}
+\end{itemize}
+
+\paragraph{Aufgabe 3.} Sei $x = \frac{k}{n} \in \mathbb{Q}$, also $k, n \in \mathbb{Z}$. Wir berechnen nun die Dezimaldarstellung von $x$ und verwenden dafür \enquote{Division mit Rest}: Es gibt für alle $p, q \in \mathbb{Z}$ eindeutige $a, b \in \mathbb{Z}$ mit
+\begin{align*}
+    p = aq + b \quad \text{mit $0 \leq b < |q|$}
+\end{align*}
+Wir nennen von nun an $a$ den Quotient und $b$ den Rest von $\frac{p}{q}$.
+
+Der Teil links vom Dezimalpunkt ist der Quotient von $k$ und $n$, mit Rest $r_0$. Die folgenden Ziffern (rechts vom Dezimalpunkt) berechnen sich durch
+\begin{center}
+    \begin{tabular}{c c}
+        $i$ &  \\
+        1 & Quotient von $10r_0$ und $n$ \\
+        2 & Quotient von $10r_1$ und $n$\\
+        \vdots & \vdots \\
+    \end{tabular}
+\end{center}
+wobei $r_i$ der Rest der Division im Schritt $i$ ist. Der Rest ist immer zwischen 0 und $|q| - 1$, also muss sich nach mindestens $|q|$ Schritten eine Ziffer wiederholen, bzw. ein Muster bilden.
+
+\paragraph{Aufgabe 4.} Gegeben sei eine periodische Zahl $x = a.b\overline{c}$ wobei $a$, $b$ und $c$ eine Folge von Ziffern sind und $c$ periodisch ist. Sei $n = \lceil\log_{10}(b)\rceil$ die Anzahl der Ziffern in $b$ dann kann der periodische Teil durch $10^nx = ab.\overline{c}$ isoliert werden. Ein nicht periodischer Teil ist also kein Problem.
+
+Sei $x = a.\overline{c}$ und $m$ die Anzahl der Ziffern in $c$. Dann kann $\overline{c}$ als geometrische Reihe geschrieben werden.
+\begin{align*}
+    x &= a + c + 10^{-m}c + 10^{-2m}c + \cdots
+\end{align*}
+Multiplikation mit $10^m - 1$ führt nun zu
+\begin{align*}
+    (10^m - 1)x &= (10^m - 1)a + 10^{m}(c + 10^{-m}c + 10^{-2m}c + \cdots) - (c + 10^{-m} + 10^{-2m}c + \cdots) \\
+    &= (10^m - 1)a + (10^{m}c + c + 10^{-m}c + \cdots) - (c + 10^{-m} + 10^{-2m}c + \cdots) \\
+    &= (10^m - 1)a + 10^{m}c
+\end{align*}
+Nachdem $c$ aus $m$ Ziffern besteht ist $10^mc$ eine ganze Zahl. Demzufolge
+\begin{align*}
+    x = \frac{(10^m - 1)a + 10^mc}{(10^m - 1)}
+\end{align*}
+wobei $(10^m - 1)a \in \mathbb{Z}$ und $(10^m - 1) \in \mathbb{N}$, wie gefordert.
+
+\paragraph{Aufgabe 5.}
+\begin{enumerate}
+    \item $74.73\overline{64}$
+    \item $28.84\overline{0}$
+    \item \begin{align*}
+        x &= 123.421\overline{124} \\
+        1000x &= 123421.\overline{124} \\
+        1000000x &= 123421124.\overline{124} \\
+        1000000x - 1000x &= 123421124.\overline{124} \\
+        999000x &= 123297703 \\
+        x &= \frac{123297703}{999000}
+    \end{align*}
+    \item Ja. $3 \cdot 0.\overline{3} = 0.\overline{9}$ und $3 \cdot \frac{1}{3} = 1$ also $0.\overline{9} = 1$.
+\end{enumerate}
+
+\paragraph{Aufgabe 6.} \begin{enumerate}
+    \item Injektiv, zwei Studenten werden nie die selbe Matrikelnummer haben. Nicht surjektiv, es gibt nur endlich viele Studenten (aber unendlich Elemente in $\mathbb{N}$).
+    \item Undefiniert für $f_2(0)$ weil $0 \not\in \mathbb{N}$. Ansonsten surjektiv (alle $\mathbb{N}$ werden getroffen) aber nicht injektiv (jedes $n \in \mathbb{N}$ wird zwei mal getroffen).
+    \item Bijektiv, $z \geq 0$ werden auf gerade Zahlen in $\mathbb{N}$ abgebildet, $z < 0$ auf ungerade.
+    \item Surjektiv (stetig mit Minimum -1 und Maximum 1, trifft also alle $[-1, 1]$ mindestend einmal) aber nicht injektiv ($\cos(x) = \cos(x + 2\pi)$).
+    \item Bijektiv. Siehe obiges Argument aber diesmal entspricht die Definitionsmenge einer halben Periode, ergo nichts doppelt.
+\end{enumerate}
+
+\paragraph{Aufgabe 7.}
+
+Es seien $f: A \rightarrow B$, $h_1, h_2: X \rightarrow A$ und $g_1, g_2: B \rightarrow Y$ beliebige Funktionen.
+
+\begin{enumerate}
+    \item Wir wollen zeigen, dass
+    \begin{align*}
+        \forall\, x, y \in A\, :\, x \neq y \Rightarrow f(x) \neq f(y) \quad \Longleftrightarrow \quad \forall\, h_1, h_2\, :\, f \circ h_1 = f \circ h_2 \Rightarrow h_1 = h_2.
+    \end{align*}
+    Angenommen die linke Seite gilt, es gibt also keine ungleichen $x, y$ derart, dass $f(x) = f(y)$. Seien $h_1, h_2$ nun Abbildungen von einer beliebigen Menge $X$ auf $A$. Wenn für alle $x \in X$ gilt, dass $f(h_1(x)) = f(h_2(x))$ dann muss gemäß unserer Annahme auch $h_1(x) = h_2(x)$ gelten.
+
+    Angenommen die linke Seite gilt nicht, es gibt also ungleiche $x, y$ mit $f(x) = f(y)$. Dann gilt auch die rechte Seite nicht, denn dann gibt es $h_1, h_2$ mit $f(h_1(x)) = f(h_2(x))$ aber $h_1(x) \neq h_2(x)$. Man wähle etwa $f(x) = 0$, $h_1(x) = 1$ und $h_2(x) = 2$. Dann gilt $f(h_1(x)) = f(h_2(x))$ aber $h_1 \neq h_2$.
+
+    \item Wir wollen zeigen, dass
+    \begin{align*}
+        \forall\, y \in B\, :\, \exists\, x \in A\, :\, f(x) = y \quad \Longleftrightarrow \quad \forall\, g_1, g_2\, :\, g_1 \circ f = g_2 \circ f \Rightarrow g_1 = g_2.
+    \end{align*}
+    Angenommen es gibt für alle $b \in B$ ein $a \in A$ mit $f(a) = b$. Weiters sei angenommen, dass $g_1(f(a)) = g_2(f(a))$ für alle $a \in A$. Nachdem klarerweise $f(a) = f(a)$ und $f$ alle Elemente von $B$ erreicht gilt deshalb auch $g_1 = g_2$.
+
+    Angenommen es gibt ein $b \in B$ für das es kein $a \in A$ mit $f(a) = b$ gibt. Das ist etwa für $f(x) = 0$ der Fall. Man wähle weiters $g_1(x) = x$ und $g_2(x) = 2x$. Dann gilt zwar $g_1(f(0)) = g_2(f(0))$ aber nicht $g_1 = g_2$.
+\end{enumerate}
+
+\paragraph{Aufgabe 8.}
+\begin{itemize}
+    \item Reflexivität:
+    \begin{align*}
+        (x_1, x_2) \leq_1 (x_1, x_2) \\
+        (x_1 < x_1) \lor (x_1 = x_1 \land x_2 \leq x_2) \\
+        \bot \lor (\top \land \top) \\
+        \top
+    \end{align*}
+    
+    \item Antisymmetrie:
+    \begin{align*}
+        (x_1, x_2) \leq_1 (y_1, y_2) \land (y_1, y_2) \leq_1 (x_1, x_2) &\Rightarrow (x_1, x_2) = (y_1, y_2) \\
+        ((x_1 < y_1) \lor (x_1 = y_1 \land x_2 \leq y_2)) \land ((y_1 < x_1) \lor (y_1 = x_1 \land y_2 \leq x_2)) &\Rightarrow (x_1, x_2) = (y_1, y_2)
+    \end{align*}
+    Sei $x_1 < y_1$, dann gilt der linke Teil, nicht aber der Rechte wegen $y_1 \not< x_1$ und $y_1 \neq x_1$. Es muss also $x_1 \geq y_1$. Dann gilt der linke Teil nur wenn $x_1 = y_1$ und zusätzlich $x_2 \leq y_2$. Dann gilt der rechte Teil nur wenn auch $y_2 \leq x_2$. Somit muss also $(x_1, x_2) = (y_1, y_2)$.
+
+    \item Transitivität:
+    \begin{align*}
+        (x_1, x_2) \leq_1 (y_1, y_2) \land (y_1, y_2) \leq_1 (z_1, z_2) \Rightarrow (x_1, x_2) \leq_1 (z_1, z_2) \\
+        ((x_1 < y_1) \lor (x_1 = y_1 \land x_2 \leq y_2)) \land ((y_1 < z_1) \lor (y_1 = z_1 \land y_2 \leq z_2)) \\ \Rightarrow ((x_1 < z_1) \lor (x_1 = z_1 \land x_2 \leq z_2))
+    \end{align*}
+    Seien $(x_1, x_2)$, $(y_1, y_2)$ und $(z_1, z_2)$ derart, dass die linke Seite der Implikation gilt.
+
+    Dann haben wir also entweder $x_1 < y_1$ und $y_1 < z_1$ woraus sofort $x_1 < z_1$ folgt. Oder $x_1 = y_1 = z_1$ und $x_2 \leq y_2 \leq z_2$ woraus sofort $x_1 = z_1$ und $x_2 \leq z_2$ folgt.
+    
+    \item Totalität:
+    \begin{align*}
+        (x_1, x_2) \leq_1 (y_1, y_2) &\lor (y_1, y_2) \leq_1 (x_1, x_2) \\
+        ((x_1 < y_1) \lor (x_1 = y_1 \land x_2 \leq y_2)) &\lor ((y_1 < x_1) \lor (y_1 = x_1 \land y_2 \leq x_2))
+    \end{align*}
+
+    Klarerweise gilt entweder $x_1 < y_1$, $x_1 > y_1$ oder $x_1 = y_1$ in den ersten beiden Fällen gilt die Aussage trivialerweise. Wenn $x_1 = y_1$ muss zusätzlich gelten, dass $x_2 \leq y_2$ oder $y_2 \leq x_2$. Nachdem $\leq$ auf $\mathbb{R}$ eine Totalordnung ist trifft das zu.
+\end{itemize}
+
+\end{document}
