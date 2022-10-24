@@ -1,0 +1,44 @@
+
+Procedure ADJUST_ALL_SALARIES compiled
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+no rows selected
+
+3 rows deleted.
+
+
+Procedure ADJUST_ALL_SALARIES compiled
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+FIRST_NAME           LAST_NAME                     SALARY
+-------------------- ------------------------- ----------
+Max                  Mustermann                      8000
+Simone               Musterfrau                      4000
+Julia                Musterfrau                     10000
+
+
+3 rows deleted.
+

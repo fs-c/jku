@@ -1,0 +1,54 @@
+SQL> -- Exercise 1a)
+SQL> 
+SQL> SET ECHO ON
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE create_dept (
+  2      dept_name departments.department_name%TYPE, loc_id locations.location_id%TYPE
+  3  ) AS
+  4      dummy_loc_id locations.location_id%TYPE;
+  5  BEGIN
+  6      -- attempt to fetch location with the given id, will throw NO_DATA_FOUND 
+  7      -- if it doesn't exist
+  8      SELECT location_id INTO dummy_loc_id FROM locations WHERE location_id = loc_id;
+  9  
+ 10      -- insert the new department, leave manager empty
+ 11      INSERT INTO departments VALUES (
+ 12          departments_seq.NEXTVAL, dept_name, NULL, loc_id
+ 13      );
+ 14  EXCEPTION
+ 15      WHEN NO_DATA_FOUND THEN
+ 16          DBMS_OUTPUT.PUT_LINE('Could not find location with the given ID.');
+ 17  END create_dept;
+ 18  /
+
+Procedure CREATE_DEPT compiled
+
+SQL> 
+SQL> -- run tests (first two run fine, third one will fail because the location doesn't exist)
+SQL> EXEC create_dept('Test Department 1', 1000);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC create_dept('Test Department 2', 3200);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC create_dept('Test Department 3', 1);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- verify
+SQL> SELECT * FROM departments WHERE department_name LIKE 'Test Department _';
+
+DEPARTMENT_ID DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+          450 Test Department 1                                1000
+          460 Test Department 2                                3200
+
+SQL> 
+SQL> -- cleanup
+SQL> DELETE FROM departments WHERE department_name LIKE 'Test Department _';
+
+2 rows deleted.
+

@@ -1,0 +1,145 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 3}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+\begin{enumerate}
+    \item Aus Funktionsplot ergibt sich: Bijektiv (für $x$ gegen $-1$ nähert sich der Wert $\infty$ an) mit $f^{-1} = f$.
+    \item Bijektiv mit $g^{-1}(x) = \frac{x + 1}{3}$.
+    \item Nicht injektiv, $h_1(-1) = -3 = h_1(1)$ aber surjektiv (für alle $y \in [-4,\infty)$ gibt es ein $x \in \mathbb{R}$ mit $y = x^2 - 4$ weil $\sqrt{y + 4} \in \mathbb{R}$).
+    \item Injektiv weil es gibt keine ungleichen $x_1, x_2$ mit $x_1^2 = x_2^2$, also auch keine mit $x_1^2 - k = x_2^2 -k$. Nicht surjektiv weil es kein $x \in \mathbb{R}$ (geschweige denn $x \in [0, \infty)$) gibt mit $x^2 - 4 = -5$ bzw. $x^2 = -1$. 
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\paragraph{Aufgabe 3.}
+
+\begin{enumerate}
+    \item Assoziativität, Kommutativität und Distributivität können angenommen werden. Es gibt Neutralelemente zur Addition (0, 0) und Multiplikation (1, 0). Jedes Element (x, y) hat ein additives Inverses (-x, -y) und ein multiplikatives Inverses ()
+\end{enumerate}
+
+\paragraph{Aufgabe 4.} 
+
+\begin{enumerate}
+    \item Sei $n = \text{deg}(a)$ und $m = \text{deg}(b)$. Dann ist die Addition
+    \begin{align*}
+        &(a_nx^n + \cdots + a_1x + a_0) + (b_mx^m + \cdots + b_1x + b_0) \\
+        =\ &a_nx^n + \cdots + (a_m + b_m)x^m + \cdots + (a_1 + b_1)x + (a_0 + b_0) 
+    \end{align*}
+    wieder in $P$ weil
+    \begin{itemize}
+        \item für $n > m$ gilt, dass $\text{lc}(a + b) = \text{lc}(a)$ und wir wissen, dass $\text{lc}(a) \geq 0$
+        \item für $n < m$ gilt, dass $\text{lc}(a + b) = \text{lc}(b)$ und wir wissen, dass $\text{lc}(a) \geq 0$
+        \item für $n = m$ gilt, dass $\text{lc}(a + b) = \text{lc}(a) + \text{lc}(b)$ und wir wissen, dass $\text{lc}(a) \geq 0$ und $\text{lc}(b) \geq 0$ und somit $\text{lc}(a) + \text{lc}(b) \geq 0$.
+    \end{itemize}
+    Die Multiplikation
+    \begin{align*}
+        &(a_nx^n + \cdots + a_1x + a_0) + (b_mx^m + \cdots + b_1x + b_0) \\
+        =\ &\sum_{k = 0}^n (a_kb_mx^{m + k} + \cdots + a_kb_1x^{1 + k} + a_kb_0x^k)
+    \end{align*}
+    ist ebenfalls wieder in $P$ weil in der ausgerechneten Summe der erste Term $a_nb_mx^{m + n}$ sein wird, und $a_nb_m \geq 0$ wie oben.
+
+    \item \begin{itemize}
+        \item Reflexivität. $a \preccurlyeq a$ ist trivialerweise in $P$ weil $\text{lc}(a - a = 0) = 0 \geq 0$.
+        
+        \item Antisymmetrie. Wenn $a \preccurlyeq b$ (also $b - a \in P$) und $b \preccurlyeq a$ (also $a - b \in P$) dann muss $a = b$.
+        \begin{align*}
+            &(b_mx^m + \cdots + b_1x + b_0) - (a_nx^n + \cdots + a_1x + a_0) \\
+            =\ &-a_nx^n + \cdots + (b_m - a_m)x^m + \cdots + (b_1 - a_1)x + (b_0 - a_0) 
+        \end{align*}
+        \begin{align*}
+            &(a_nx^n + \cdots + a_1x + a_0) - (b_mx^m + \cdots + b_1x + b_0) \\
+            =\ &a_nx^n + \cdots + (a_m - b_m)x^m + \cdots + (a_1 - b_1)x + (a_0 - b_0) 
+        \end{align*}
+        Es muss also $\text{deg}(a) = \text{deg}(b)$ sonst ist für eines der Polynome der erste Koeffizient sicher negativ. Aus demselben Grund muss $a_m \geq b_m$ und $b_m \geq a_m$ und somit $a_m = b_m$. Wenn aber $a_m = b_m$ dann ist $a_m - b_m = b_m - a_m = 0$. Dann werden $a_{m - 1}$ und $b_{m - 1}$ die führenden Koeffizienten, für die nun wieder dasselbe gilt. Also muss $a - b = 0$ bzw. $a = b$.
+        
+        \item Transitivität. Wenn $a \preccurlyeq b$ und $b \preccurlyeq c$ dann muss $a \preccurlyeq c$.
+        \begin{align*}
+            &(b_mx^m + \cdots + b_1x + b_0) - (a_nx^n + \cdots + a_1x + a_0) \\
+            =\ &-a_nx^n + \cdots + (b_m - a_m)x^m + \cdots + (b_1 - a_1)x + (b_0 - a_0) 
+        \end{align*}
+        \begin{align*}
+            &(c_kx^k + \cdots + c_1x + c_0) - (b_mx^m + \cdots + b_1x + b_0) \\
+            =\ &-b_mx^m + \cdots + (c_k - b_k)x^k + \cdots + (c_1 - b_1)x + (c_0 - b_0) 
+        \end{align*}
+        Es muss $\text{deg}(b) \geq \text{deg}(a)$ und $\text{deg}(c) \geq \text{deg}(b)$ wegen der Implikationsannahme $a, b, c \in P$. Also muss auch $\text{deg}(c) \geq \text{deg}(a)$. Deswegen muss im Polynom $c - a$ also der führende Koeffizient jener von $c$ sein, $\text{lc}(c - a) = c_k$ . Somit $c - a \in P$ bzw. $a \preccurlyeq c$.
+        
+        %Zu zeigen ist, dass jetzt auch
+        %\begin{align*}
+        %    &(c_kx^k + \cdots + c_1x + c_0) - (a_nx^n + \cdots + a_1x + a_0) \\
+        %    =\ &c_kx^k + \cdots + (c_b - a_b)x^n + \cdots + (c_1 - a_1)x + (c_0 - a_0)
+        %\end{align*}
+        %in $P$ ist. Wir wissen $c \in P$ und sehen, dass $\text{lc}(c - a) = c_k$ also gilt auch $c - a \in P$ bzw. $a \preccurlyeq c$.
+
+        \item Totalität. Es muss immer $a \preccurlyeq b$ und/oder $b \preccurlyeq a$ gelten. Wenn $a \preccurlyeq b$ nicht gilt, dann ist $\text{lc}(b - a) < 0$ --- also \emph{entweder} $\text{deg}(a) > \text{deg}(b)$ oder $n = \text{deg}(a) = \text{deg}(b)$ und $a_n > b_n$. In beiden Fällen gilt klarerweise $b \preccurlyeq a$.
+    \end{itemize}
+\end{enumerate}
+
+\paragraph{Aufgabe 5.} Angenomen ein Polynom $f$ hat eine Nullstelle $\frac{s}{t} \in \mathbb{Q}$, dann
+\begin{align*}
+    a_nx^n + \cdots + a_1x + a_0 &= 0 \\
+    a_n\left(\frac{s}{t}\right)^n + a_n\left(\frac{s}{t}\right)^{n - 1} + \cdots + a_1\left(\frac{s}{t}\right) + a_0 &= 0 \\
+    a_ns^n + a_ns^{n - 1}t + \cdots + a_1st^{n - 1} + a_0t^n &= 0 \\
+    s\left(a_ns^{n - 1} + a_ns^{n - 2}t + \cdots + a_1t^{n - 1}\right) &= -a_0t^n
+\end{align*}
+Also $s\ |\ a_0t^n$. Gemäß der Annahme sind $s$ und $t$ teilerfremd, also $s\ |\ a_0$. Der selbe Prozess kann auch für $t\ |\ a_n$ angewendet werden ($a_ns^n$ auf rechte Seite, links $t$ herausheben).
+
+\paragraph{Aufgabe 6.}
+\begin{enumerate}
+    \item Die Werte von $\sqrt{p}$ sind äquivalent zu den Nullstellen der Funktion $f(x) = x^2 - p$. Wenn $p$ prim ist dann sind die möglichen rationalen Nullstellen von $f$ also $\pm p$. Klarerweise sind das keine Nullstellen, also hat $f$ keine rationalen Nullstellen wenn $p$ prim ist, bzw. $\sqrt{p}$ keine rationalen Werte.
+    
+    \item 2 und 3 sind Primzahlen also sind $\sqrt{2}$ und $\sqrt{3}$ irrational. Die Summe zweier irrationalen Zahlen kann nicht rational sein.
+\end{enumerate}
+
+Die rationalen Nullstellen von $32x^4 - 12x^3 - 55x^2 - 17x + 3$ sind alle jene $\frac{s}{t} \in \mathbb{Q}$ mit $s\ |\ 3$ und $t\ |\ 32$. Also $-\frac{3}{4}$ und $\frac{1}{8}$.
+
+\paragraph{Aufgabe 7.} 
+
+\paragraph{Aufgabe 8.}
+\begin{align*}
+    \frac{BC}{AB} = \frac{BH}{BC} &\quad\text{und}\quad \frac{AC}{AB} = \frac{AH}{AC} \\
+    BC^2 = AB \cdot BH &\quad\text{und}\quad AC^2 = AB \cdot AH \\
+    BC^2 + AC^2 &= AB \cdot BH + AB \cdot AH \\
+    BC^2 + AC^2 &= AB \cdot (BH + AB) \\
+    BC^2 + AC^2 &= AB^2
+\end{align*}
+
+\end{document}

@@ -23,6 +23,7 @@
 % Drawings
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usetikzlibrary{automata,positioning} 
 
 % Adjust header and footer
 \usepackage{fancyhdr}
@@ -42,9 +43,9 @@
 
 \paragraph{Exercise 1.2} The minimal number of parameters (pairwise distances) that is required to completely specify a TSP instance is $\begin{psmallmatrix}
     n \\ 2
-\end{psmallmatrix}$, the binomial coefficient $n$ over 2. Given a set with $n$ elements it describes the number of subsets with exactly $k$ (in our case 2) elements.
+\end{psmallmatrix}$, the binomial coefficient $n$ over 2. Given a set with $n$ elements it describes the number of subsets with exactly $k$ (in our case 2) elements. (Sub\emph{sets}, thus the order is irrelevant, as required.)
 
-\paragraph{Exercise 1.4} The number of possible routes as a function of the number of cities is $f(n) = \begin{bsmallmatrix}n \\ 1\end{bsmallmatrix}$, the $n$th stirling number of the first kind with $k = 1$. There are $n!$ different ways of arranging the $n$ cities into a route, but many of them are identical from our perspective. See for example all $4! = 26$ permutations of $\{1, 2, 3, 4\}$,
+\paragraph{Exercise 1.4} The number of possible routes as a function of the number of cities is $f(n) = \begin{bsmallmatrix}n \\ 1\end{bsmallmatrix}$, the $n$th stirling number of the first kind with $k = 1$. There are $n!$ different ways of arranging the $n$ cities into a route, but many of them are identical from our perspective. See for example all $4! = 24$ permutations of $\{1, 2, 3, 4\}$,
 \begin{align*}
     (1, 2, 3, 4) &= (2, 3, 4, 1) = (3, 4, 1, 2) = (4, 1, 2, 3) \\
     (2, 1, 3, 4) &= (3, 4, 2, 1) = (4, 2, 1, 3) = (1, 3, 4, 2) \\
@@ -53,7 +54,7 @@
     (2, 3, 1, 4) &= (4, 2, 3, 1) = (3, 1, 4, 2) = (1, 4, 2, 3) \\
     (3, 2, 1, 4) &= (4, 3, 2, 1) = (1, 4, 3, 2) = (2, 1, 4, 3)
 \end{align*}
-of which only six are unique. The number of permutations on $n$ elements with one cycle describes this nicely.
+which only admit six different \emph{cycles} of length four. The expression $\begin{bsmallmatrix}n \\ 1\end{bsmallmatrix}$ reprents the number of permutations over $n$ elements with one cycle, which is what we are looking for.  
 
 \paragraph{Problem 1.9} See Exercises 1.2 and 1.4.
 
@@ -62,5 +63,39 @@ of which only six are unique. The number of permutations on $n$ elements with on
 \paragraph{Problem 1.11} We want to show that: \enquote{Every symbol from a given alphabet can be represented as a bitstring. This representation is one-to-one and only scales logarithmically in alphabet size.} Consider an alphabet $A$ with $n$ symbols where each symbol $a_0, a_1, \ldots, a_{n - 1}$ can be represented by an unique integer. Because we can use the index of an element as its integer counterpart, at least one such representation exists
 
 We can uniquely represent an integer $c$ as a bitstring $b$ through the following algorithm: Zero all bits in $b$. Find the largest $x$ such that $2^x$ divides $c$. Set $b_x$ to one and set $c$ to $c - 2^x$. Continue until $c$ is zero. The length of such a bitstring is determined by the $x$ of the first iteration, so the first $x$ such that $2^x\ |\ c$. Given only $c$, the length of the resulting bitstring will thus be $\lfloor log_2(c) \rfloor$.
+
+\paragraph{Exercise 2.1} The relevant state diagram is
+\begin{center}
+    \begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]  
+        \node[state,initial] (odd) {odd};
+        \node[state,accepting] (even) [right of=odd]  {even};
+
+        \path[->] (odd) edge[bend left, above] node {0, 2, 4, 6, 8} (even);
+        \path[->] (even) edge[bend left, below] node {1, 3, 5, 7, 9} (odd);
+
+        \path[->] (odd) edge [loop above] node {1, 3, 5, 7, 9} ();
+        \path[->] (even) edge [loop above] node {0, 2, 4, 6, 8} ();
+    \end{tikzpicture}
+\end{center}
+The runtime of this machine is equal to the length of the decimal encoding, thus $\lfloor \log_{10}(n) \rfloor + 1$. This is very similar to the runtime of a binary parity checking machine since both of them have logarithmic growth, but because $\log_{k + 1}$ grows slower than $\log_{k}$ our machine is slightly faster.
+
+\paragraph{Exercise 2.2} The relevant state diagram is
+\begin{center}
+    \begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]  
+        \node[state] (odd) {odd};
+        \node[state,initial,accepting] (even) [left of=odd]  {even};
+
+        \path[->] (odd) edge[bend right, above] node {1} (even);
+        \path[->] (even) edge[bend right, below] node {1} (odd);
+
+        \path[->] (odd) edge [loop above] node {0} ();
+        \path[->] (even) edge [loop above] node {0} ();
+    \end{tikzpicture}
+\end{center}
+For $n = 2$ it is equivalent to XNOR.
+
+\paragraph{Exercise 2.4} No.
+
+\paragraph{Exercise 2.6} No.
 
 \end{document}

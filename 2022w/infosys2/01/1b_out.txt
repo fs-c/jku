@@ -1,0 +1,130 @@
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE add_employee(
+  2      fname employees.first_name%TYPE, lname employees.last_name%TYPE,
+  3      email employees.email%TYPE, phone employees.phone_number%TYPE,
+  4      emp_job_id employees.job_id%TYPE, salary employees.salary%TYPE,
+  5      dept_id employees.department_id%TYPE
+  6  ) AS
+  7      dummy_job_id jobs.job_id%TYPE;
+  8      dummy_dept_id departments.department_id%TYPE;
+  9  BEGIN
+ 10      -- attempt to fetch job and dept with the given ids, will throw NO_DATA_FOUND 
+ 11      -- if either doesn't exist
+ 12      SELECT job_id INTO dummy_job_id FROM jobs WHERE emp_job_id = job_id;
+ 13      SELECT department_id INTO dummy_dept_id FROM departments
+ 14          WHERE department_id = dept_id;
+ 15  
+ 16      INSERT INTO employees VALUES (
+ 17          employees_seq.NEXTVAL, fname, lname, email, phone, SYSDATE, 
+ 18          emp_job_id, salary, NULL, NULL, dept_id
+ 19      );
+ 20  EXCEPTION
+ 21      WHEN NO_DATA_FOUND THEN
+ 22          DBMS_OUTPUT.PUT_LINE('Given job or department does not exist.');
+ 23  END add_employee;
+ 24  /
+
+Procedure ADD_EMPLOYEE compiled
+
+SQL> 
+SQL> -- run tests, first two run fine the others have wrong inputs
+SQL> EXEC add_employee('Max', 'Mustermann', 'max@muster.at', '06999339838', 'IT_PROG', 8000, 230);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Simone', 'Musterfrau', 'simone@muster.at', '06999339839', 'IT_PROG', 7000, 240);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Max', '1Wrong', 'max@muster.at', '06999339838', 'DOESNT_EXIST', 8000, 230);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Max', 'Wrong1', 'max@muster.at', '06999339838', 'IT_PROG', 8000, 0);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Max', '2Wrong', 'max@muster.at', '06999339838', 'DOESNT_EXIST', 8000, 0);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- verify
+SQL> SELECT * FROM employees WHERE first_name = 'Max' OR first_name = 'Simone';
+
+EMPLOYEE_ID FIRST_NAME           LAST_NAME                 EMAIL                     PHONE_NUMBER         HIRE_DATE JOB_ID         SALARY COMMISSION_PCT MANAGER_ID DEPARTMENT_ID
+----------- -------------------- ------------------------- ------------------------- -------------------- --------- ---------- ---------- -------------- ---------- -------------
+        225 Max                  Mustermann                max@muster.at             06999339838          24-OCT-22 IT_PROG          8000                                     230
+        226 Simone               Musterfrau                simone@muster.at          06999339839          24-OCT-22 IT_PROG          7000                                     240
+
+SQL> 
+SQL> -- cleanup
+SQL> DELETE FROM employees WHERE email LIKE '%@muster.at';
+
+2 rows deleted.
+
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE add_employee(
+  2      fname employees.first_name%TYPE, lname employees.last_name%TYPE,
+  3      email employees.email%TYPE, phone employees.phone_number%TYPE,
+  4      emp_job_id employees.job_id%TYPE, salary employees.salary%TYPE,
+  5      dept_id employees.department_id%TYPE
+  6  ) AS
+  7      dummy_job_id jobs.job_id%TYPE;
+  8      dummy_dept_id departments.department_id%TYPE;
+  9  BEGIN
+ 10      -- attempt to fetch job and dept with the given ids, will throw NO_DATA_FOUND 
+ 11      -- if either doesn't exist
+ 12      SELECT job_id INTO dummy_job_id FROM jobs WHERE emp_job_id = job_id;
+ 13      SELECT department_id INTO dummy_dept_id FROM departments
+ 14          WHERE department_id = dept_id;
+ 15  
+ 16      INSERT INTO employees VALUES (
+ 17          employees_seq.NEXTVAL, fname, lname, email, phone, SYSDATE, 
+ 18          emp_job_id, salary, NULL, NULL, dept_id
+ 19      );
+ 20  EXCEPTION
+ 21      WHEN NO_DATA_FOUND THEN
+ 22          DBMS_OUTPUT.PUT_LINE('Given job or department does not exist.');
+ 23  END add_employee;
+ 24  /
+
+Procedure ADD_EMPLOYEE compiled
+
+SQL> 
+SQL> -- run tests, first two run fine the others have wrong inputs
+SQL> EXEC add_employee('Max', 'Mustermann', 'max@muster.at', '06999339838', 'IT_PROG', 8000, 230);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Simone', 'Musterfrau', 'simone@muster.at', '06999339839', 'IT_PROG', 7000, 240);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Max', '1Wrong', 'max1@muster.at', '06999339838', 'DOESNT_EXIST', 8000, 230);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Max', 'Wrong1', 'max2@muster.at', '06999339838', 'IT_PROG', 8000, 0);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Max', '2Wrong', 'max3@muster.at', '06999339838', 'DOESNT_EXIST', 8000, 0);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- verify
+SQL> SELECT * FROM employees WHERE first_name = 'Max' OR first_name = 'Simone';
+
+EMPLOYEE_ID FIRST_NAME           LAST_NAME                 EMAIL                     PHONE_NUMBER         HIRE_DATE JOB_ID         SALARY COMMISSION_PCT MANAGER_ID DEPARTMENT_ID
+----------- -------------------- ------------------------- ------------------------- -------------------- --------- ---------- ---------- -------------- ---------- -------------
+        228 Simone               Musterfrau                simone@muster.at          06999339839          24-OCT-22 IT_PROG          7000                                     240
+        227 Max                  Mustermann                max@muster.at             06999339838          24-OCT-22 IT_PROG          8000                                     230
+
+SQL> 
+SQL> -- cleanup
+SQL> DELETE FROM employees WHERE email LIKE '%@muster.at';
+
+2 rows deleted.
+
