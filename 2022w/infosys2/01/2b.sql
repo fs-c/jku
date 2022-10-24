@@ -1,5 +1,7 @@
 -- Exercise 2b)
 
+SET ECHO ON
+
 CREATE OR REPLACE PROCEDURE adjust_all_salaries
 AS
     CURSOR c_emp_ids IS SELECT * FROM employees;

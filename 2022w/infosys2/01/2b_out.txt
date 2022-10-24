@@ -1,0 +1,50 @@
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE adjust_all_salaries
+  2  AS
+  3      CURSOR c_emp_ids IS SELECT * FROM employees;
+  4  BEGIN
+  5      FOR emp IN c_emp_ids LOOP
+  6          adjust_salary(emp.employee_id);
+  7      END LOOP;
+  8  END adjust_all_salaries;
+  9  /
+
+Procedure ADJUST_ALL_SALARIES compiled
+
+SQL> 
+SQL> -- create employees with 1. correct, 2. low and 3. high salary for their job
+SQL> -- IT_PROG is [4000, 10000]
+SQL> EXEC add_employee('Max', 'Mustermann', 'max@muster.at', '06999339838', 'IT_PROG', 8000, 230);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Simone', 'Musterfrau', 'simone@muster.at', '06999339839', 'IT_PROG', 3000, 240);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Julia', 'Musterfrau', 'julia@muster.at', '06999339839', 'IT_PROG', 11000, 240);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- test
+SQL> EXEC adjust_all_salaries();
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- verify
+SQL> SELECT first_name, last_name, salary FROM employees WHERE email LIKE '%@muster.at';
+
+FIRST_NAME           LAST_NAME                     SALARY
+-------------------- ------------------------- ----------
+Simone               Musterfrau                      4000
+Julia                Musterfrau                     10000
+Max                  Mustermann                      8000
+
+SQL> 
+SQL> -- cleanup
+SQL> DELETE FROM employees WHERE email LIKE '%@muster.at';
+
+3 rows deleted.
+

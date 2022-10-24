@@ -1,5 +1,7 @@
 -- Exercise 2a)
 
+SET ECHO ON
+
 CREATE OR REPLACE PROCEDURE adjust_salary(emp_id employees.employee_id%TYPE)
 AS
     current_job employees.job_id%TYPE;
