@@ -1,0 +1,493 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{forest}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algorithms and Data Structures --- \textbf{Assignment 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+
+\begin{document}
+
+\paragraph{Exercise 1.}
+\begin{enumerate}
+    \item Valid.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [7, label=2
+                [4, label=1
+                    [2, label=0]
+                    [,phantom]
+                ]
+                [9, label=1
+                    [,phantom]
+                    [10, label=0]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Invalid, 9 is unbalanced.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [7, label=3
+                [4, label=1
+                    [2, label=0]
+                    [,phantom]
+                ]
+                [9, label=2
+                    [,phantom]
+                    [10, label=1
+                        [,phantom]
+                        [23, label=0]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Invalid, not a binary tree ($9 < 23$).
+    
+    \item Valid.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [9, label=3
+                [1, label=2
+                    [0, label=0]
+                    [2, label=1
+                        [,phantom]
+                        [3, label=0]
+                    ]
+                ]
+                [15, label=2
+                    [10, label=0]
+                    [22, label=1
+                        [,phantom]
+                        [25, label=0]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Invalid. Node 4 is unbalanced.
+    \item Valid.
+\end{enumerate}
+
+\paragraph{Exercise 2.}
+\begin{enumerate}[label=\arabic*.]
+    \item Insert 0.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [0]
+        \end{forest}
+    \end{center}
+
+    \item Insert 5.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [0
+                [,phantom]
+                [5]
+            ]
+        \end{forest}
+    \end{center}
+    
+    \item Insert 6.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [0
+                [,phantom]
+                [5
+                    [,phantom]
+                    [6]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+    Rebalance.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [5
+                [0]
+                [6]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Insert 10.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [5
+                [0]
+                [6
+                    [,phantom]
+                    [10]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Insert 1.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [5
+                [0
+                    [,phantom]
+                    [1]
+                ]
+                [6
+                    [,phantom]
+                    [10]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Insert 2.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,circle,draw}
+            [5
+                [0
+                    [,phantom]
+                    [1
+                        [,phantom]
+                        [2]
+                    ]
+                ]
+                [6
+                    [,phantom]
+                    [10]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+    Rebalance.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [5
+                [1
+                    [0]
+                    [2]
+                ]
+                [6
+                    [,phantom]
+                    [10]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Insert 8.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [5
+                [1
+                    [0]
+                    [2]
+                ]
+                [6
+                    [,phantom]
+                    [10
+                        [8]
+                        [,phantom]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+    Rebalance.
+    \begin{center}    
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [5
+                [1
+                    [0]
+                    [2]
+                ]
+                [8
+                    [6]
+                    [10]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+\end{enumerate}
+
+\paragraph{Exercise 3.}
+
+Insert 33.
+\begin{center}
+    \begin{forest}
+        for tree={inner sep=4pt,draw,circle}
+        [50
+            [22
+                [10
+                    [5]
+                    [12]
+                ]
+                [31
+                    [29]
+                    [32
+                        [,phantom]
+                        [33]
+                    ]
+                ]
+            ]
+            [60
+                [55]
+                [74
+                    [,phantom]
+                    [75]
+                ]
+            ]
+        ]
+    \end{forest}
+\end{center}
+
+Insert 34.
+\begin{center}
+    \begin{forest}
+        for tree={inner sep=4pt,draw,circle}
+        [50
+            [22
+                [10
+                    [5]
+                    [12]
+                ]
+                [31
+                    [29]
+                    [32
+                        [,phantom]
+                        [33
+                            [,phantom]
+                            [34]
+                        ]
+                    ]
+                ]
+            ]
+            [60
+                [55]
+                [74
+                    [,phantom]
+                    [75]
+                ]
+            ]
+        ]
+    \end{forest}
+\end{center}
+
+Rebalance.
+\begin{center}
+    \begin{forest}
+        for tree={inner sep=4pt,draw,circle}
+        [50
+            [22
+                [10
+                    [5]
+                    [12]
+                ]
+                [31
+                    [29]
+                    [33
+                        [32]
+                        [34]
+                    ]
+                ]
+            ]
+            [60
+                [55]
+                [74
+                    [,phantom]
+                    [75]
+                ]
+            ]
+        ]
+    \end{forest}
+\end{center}
+
+\paragraph{Exercise 4.}
+
+\begin{enumerate}
+    \item Remove 4.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [{}
+                [2,
+                    [1]
+                    [3]
+                ]
+                [6
+                    [5]
+                    [7
+                        [,phantom]
+                        [8]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+    
+    5 is the inorder successor.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [5
+                [2
+                    [1]
+                    [3]
+                ]
+                [6
+                    [,phantom]
+                    [7
+                        [,phantom]
+                        [8]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+    
+    Rebalance starting from parent of (now removed) successor, 6.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [5
+                [2
+                    [1]
+                    [3]
+                ]
+                [7
+                    [6]
+                    [8]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    \item Remove 22.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [50
+                [{}
+                    [10
+                        [5
+                            [1]
+                            [,phantom]
+                        ]
+                        [12]
+                    ]
+                    [31
+                        [,phantom]
+                        [32]
+                    ]
+                ]
+                [60
+                    [55]
+                    [74
+                        [,phantom]
+                        [75]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    31 is the inorder successor.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [50
+                [31
+                    [10
+                        [5
+                            [1]
+                            [,phantom]
+                        ]
+                        [12]
+                    ]
+                    [32]
+                ]
+                [60
+                    [55]
+                    [74
+                        [,phantom]
+                        [75]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+
+    Rebalance starting from 50, which is balanced. First unbalanced node is 31; rebalance.
+    \begin{center}
+        \begin{forest}
+            for tree={inner sep=4pt,draw,circle}
+            [50
+                [10
+                    [5
+                        [1]
+                        [,phantom]
+                    ]
+                    [31
+                        [12]
+                        [32]
+                    ]
+                ]
+                [60
+                    [55]
+                    [74
+                        [,phantom]
+                        [75]
+                    ]
+                ]
+            ]
+        \end{forest}
+    \end{center}
+\end{enumerate}
+
+\end{document}
