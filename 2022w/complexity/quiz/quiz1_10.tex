@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning,shapes,shapes.geometric} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\tikzset{elliptic state/.style={draw,ellipse}}
+
+\begin{center}
+    \begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto,initial text=]
+        \node[state, initial] (q0) {$\{q_0\}$};
+        \node[elliptic state, double, right of=q0] (q12) {$\{q_1, q_2\}$};
+        \node[state, accepting, below of=q12] (q2) {$\{q_2\}$};
+        \node[state, left of=q2] (e) {$\emptyset$};
+
+        \path[->] (e) edge [loop left] node {0, 1} (e);
+
+        \path[->] (q0) edge [loop above] node {1} (q0);
+        \path[->] (q0) edge [] node {0} (q12);
+        \path[->] (q12) edge [loop right] node {1} (q12);
+        \path[->] (q12) edge [] node {0} (q2);
+        \path[->] (q2) edge [loop right] node {0} (q2);
+        \path[->] (q2) edge [] node {1} (e);
+    \end{tikzpicture}
+\end{center}
+
+\end{document}
