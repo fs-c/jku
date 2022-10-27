@@ -10,6 +10,7 @@
 \usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{tabularx}
+\usepackage{hyperref}
 
 % Proper tables and centering for overfull ones
 \usepackage{booktabs}
@@ -53,7 +54,20 @@
 \paragraph{Aufgabe 3.}
 
 \begin{enumerate}
-    \item Assoziativität, Kommutativität und Distributivität können angenommen werden. Es gibt Neutralelemente zur Addition (0, 0) und Multiplikation (1, 0). Jedes Element (x, y) hat ein additives Inverses (-x, -y) und ein multiplikatives Inverses ()
+    \item Assoziativität, Kommutativität und Distributivität können angenommen werden. Es gibt Neutralelemente zur Addition $(0, 0)$ und Multiplikation $(1, 0)$. Jedes Element $(x, y)$ hat ein additives Inverses $(-x, -y)$. Für das multiplikative Inverse muss
+    \begin{align*}
+        ax - by = 1 \quad\text{und}\quad ay + bx = 0
+    \end{align*}
+    also
+    \begin{align*}
+        \left(\frac{x}{x^2 + y^2}, -\frac{y}{x^2 + y^2}\right).
+    \end{align*}
+
+    \item Kann kein geordneter Körper sein weil
+    \begin{align*}
+        (0, 1)^2 = (0 \cdot 0 - 1 \cdot 1, 0 \cdot 1 + 1 \cdot 0) = (-1, 0)
+    \end{align*}
+    und das Quadrat eines Elements immer $\geq 0$ sein muss.
 \end{enumerate}
 
 \paragraph{Aufgabe 4.} 
@@ -126,7 +140,7 @@ Also $s\ |\ a_0t^n$. Gemäß der Annahme sind $s$ und $t$ teilerfremd, also $s\ 
 \begin{enumerate}
     \item Die Werte von $\sqrt{p}$ sind äquivalent zu den Nullstellen der Funktion $f(x) = x^2 - p$. Wenn $p$ prim ist dann sind die möglichen rationalen Nullstellen von $f$ also $\pm p$. Klarerweise sind das keine Nullstellen, also hat $f$ keine rationalen Nullstellen wenn $p$ prim ist, bzw. $\sqrt{p}$ keine rationalen Werte.
     
-    \item 2 und 3 sind Primzahlen also sind $\sqrt{2}$ und $\sqrt{3}$ irrational. Die Summe zweier irrationalen Zahlen kann nicht rational sein.
+    \item 2 und 3 sind Primzahlen also sind $\sqrt{2}$ und $\sqrt{3}$ irrational. Die Summe zweier irrationalen Zahlen ist entweder Null oder irrational.
 \end{enumerate}
 
 Die rationalen Nullstellen von $32x^4 - 12x^3 - 55x^2 - 17x + 3$ sind alle jene $\frac{s}{t} \in \mathbb{Q}$ mit $s\ |\ 3$ und $t\ |\ 32$. Also $-\frac{3}{4}$ und $\frac{1}{8}$.
@@ -134,6 +148,9 @@ Die rationalen Nullstellen von $32x^4 - 12x^3 - 55x^2 - 17x + 3$ sind alle jene 
 \paragraph{Aufgabe 7.} 
 
 \paragraph{Aufgabe 8.}
+
+\href{https://commons.wikimedia.org/wiki/File:Pythagoras_similar_triangles_simplified.svg}{Illustration}.
+
 \begin{align*}
     \frac{BC}{AB} = \frac{BH}{BC} &\quad\text{und}\quad \frac{AC}{AB} = \frac{AH}{AC} \\
     BC^2 = AB \cdot BH &\quad\text{und}\quad AC^2 = AB \cdot AH \\
