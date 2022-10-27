@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity} --- Special Topic 1}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\section*{Computing Power is Everywhere}
+
+Rechenleistung, \enquote{Dinge die etwas berechnen können}, muss nicht in klassischen Chips passieren. Historisch: Siehe etwa Babbage's nie realisierte Analytical Engine oder Zuse's Z1. Solche Maschinen sind nicht Turing complete (z. B. keine Speichermöglichkeit) aber \emph{functional complete}. Zeitgemäße Spielereien: 4-Bit Rechner mit Dominos oder Wasser (greedy cup) sind realisierbar.
+
+Aber auch \enquote{Maschinen} die \emph{turing complete} sind müssen nicht wie ein klassischer Computer aussehen. So können etwa durch die Beziehungen und wechselseitigen Effekte zwischen Magic: The Gathering Karten (und einem Tape aus umfunktionierten Karten) alle notwendigen Features einer Turingmaschine realisert werden. (Weitere offensichtlichere Beispiele: Alle Spiele mit funktionierenden logic gates: Factorio, Terraria, Shenzhen, \ldots, Minecraft?)
+
+\subsection*{Minecraft}
+
+\paragraph{Turing Machine}
+
+Realisierung einer DFA ist durch wechselseitige Steuerung von minecarts und redstone relativ trivial möglich. \emph{Transition matrix} realisiert durch Schienennetz, ein minecart (vgl. \%rip) kann alle states erreichen. Das Stellwerk bekommt input und stellt die Schienen so ein, dass das minecart die entsprechenden state transitions durchmacht.
+
+Der tape head ist ebenfalls ein minecart, das durch redstone Ansteuerung bzw. Schienenstellung immer eine Stelle nach links oder rechts bewegt werden kann. Auf den Ruheplätzen sind Druckplatten die die aktuelle Position abrufbar machen.
+
+\paragraph{Computer?} Alle Logikgatter können mit redstone umgesetzt werden, also ist eine ALU etc. möglich. Arbeitsspeicher ist durch ein paar Tricks auch umsetzbar und überraschend gut skalierbar. Also können alle notwendigen Teile einer recht simplistischen CPU realisiert werden.
+
+Aber: Control units sind kompliziert, ein ordentliches instruction set zu implementieren ist nontrivial, glücklicherweise reicht hier ein recht vereinfachtes. Die control unit kann in etwa wie eine DFA aufgebaut werden.
+
+\end{document}
