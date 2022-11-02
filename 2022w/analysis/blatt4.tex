@@ -1,0 +1,120 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{hyperref}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 4}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.} Zu zeigen ist
+\begin{align*}
+    |a + b| \leq |a| + |b|.
+\end{align*}
+Es gilt $|x| = \max(x, -x)$. Dann ist $|a + b| = \max(a + b, -(a + b)) = \max(a + b, -a - b)$. Weiters, nachdem $\pm x \leq |x|$, 
+\begin{align*}
+    a + b &\leq |a| + b \leq |a| + |b|, \quad \text{und} \\
+    -a - b &\leq |a| - b \leq |a| + |b|.
+\end{align*}
+
+\paragraph{Aufgabe 2.}
+\begin{align*}
+    0 &\leq (x - y)^2 &\text{Quadrat einer reellen Zahl ist $\geq 0$} \\
+    0 &\leq x^2 - 2xy + y^2 \\
+    4xy &\leq x^2 + 2xy + y^2 \\
+    4xy &\leq (x + y)^2 \\
+    \sqrt{xy} &\leq \frac{x + y}{2} &\text{Quadratwurzel, dann Division durch 2} \\
+\end{align*}
+
+\paragraph{Aufgabe 3.}
+
+\begin{enumerate}[]
+    \item $\frac{2}{\sqrt{5}}$
+    \item $\frac{\sqrt{5}}{3}$
+    \item $\frac{1}{\sqrt{2}}$
+\end{enumerate}
+
+\paragraph{Aufgabe 4.}
+
+Wir haben $\lim_{n \to \infty} |a_n| = 0$. Für beliebiges $\epsilon > 0$ gibt es ein $n_\epsilon$ mit $|0 - |a_n|| < \epsilon$ für $n > n_\epsilon$. Weil $|0 - |a_n|| = ||a_n|| = |a_n| = |0 - a_n|$ gilt auch $|0 - a_n| < \epsilon$ und somit $\lim_{n \to \infty} a_n = 0$.
+
+\paragraph{Aufgabe 5.}
+
+Sei $(a_n)$ eine Folge die gegen $a$ konvergiert. Für ein $\epsilon > 0$ gibt es also $n_\epsilon$ derart, dass
+\begin{align*}
+    |a_n - a| < \epsilon& \quad \Longrightarrow \quad |a_n| < |a| + \epsilon &\text{(für alle $n \geq n_\epsilon$)}
+\end{align*}
+Für alle $n \geq n_\epsilon$ haben wir nun also $|a| + \epsilon$ als obere Schranke. Es gibt endlich viele $1 \leq n < n_\epsilon$ also können wir durch $a_m = \max(a_1, a_2, \ldots, a_{n_\epsilon - 1})$ eine obere Schranke für $n < n_\epsilon$ finden. Die obere Schranke für $(a_n)$ ist dann $\max(a_m, |a| + 1)$.
+
+Die untere Schranke lässt sich analog konstruieren, unter Verwendung von $\min$ und $|a| - \epsilon$.
+
+\paragraph{Aufgabe 6.}
+
+Angenommen die gegebene Folge $(a_n)$ konvergiert gegen ein $a$. Für alle $\epsilon > 0$ muss es also ein $n_\epsilon$ geben, mit $|a - a_n| < \epsilon$ für $n \geq n_\epsilon$. Sei $\epsilon = \frac{1}{2}$. Es gibt kein $a$ derart, dass für alle $n > n_\epsilon$ gilt
+\begin{align*}
+    |a - 1| < \frac{1}{2} \quad \text{und} \quad |a + 1| < \frac{1}{2} \\
+    |a - 1| + |a + 1| < 1
+\end{align*}
+
+\paragraph{Aufgabe 7.}
+
+Zu zeigen ist, dass $\lim_{n \to \infty} \frac{1}{\sqrt{n}} = 0$ gilt.
+
+\begin{enumerate}
+    \item Sei $\epsilon > 0$ und $n_\epsilon = \frac{2}{\epsilon^2}$. Dann gilt
+    \begin{align*}
+        |a - a_n| = \left|0 - \frac{1}{\sqrt{n}}\right| = \frac{1}{\sqrt{n}}
+        = \frac{1}{\sqrt{\frac{2}{\epsilon^2}}}
+        = \frac{1}{\frac{\sqrt{2}}{e}}
+        = \frac{e}{\sqrt{2}} < e
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Aufgabe 8.}
+
+Sei $(a_n)$ eine gegen $a$ konvergierende Folge. Für alle $\epsilon > 0$ gibt es also ein $n_\epsilon$ ab dem für alle $n \geq n_\epsilon$ 
+\begin{align*}
+    |a - a_n| &< \epsilon
+\end{align*}
+Dann gilt auch
+\begin{align*}
+    \lambda|a - a_n| &< \lambda\epsilon \\
+    |\lambda a - \lambda a_n| &< \lambda\epsilon
+\end{align*}
+für alle $\epsilon > 0$ und ab jeweiligen $n_\epsilon$. Somit konvergiert $(\lambda a_n)$ gegen $\lambda a$ wenn $(a_n)$ gegen $a$ konvergiert.
+
+\end{document}
