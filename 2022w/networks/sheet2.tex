@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{listings}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Computernetzwerke --- \textbf{Übung 2}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}
+    \item Wenn keine Verbindung zum Internet notwendig ist; interne Kommunikationen und Abläufe.
+
+    \item Die folgenden drei Blöcke sind reserviert
+    \begin{lstlisting}[gobble=8]
+        10.0.0.0        -   10.255.255.255  (10/8 prefix)
+        172.16.0.0      -   172.31.255.255  (172.16/12 prefix)
+        192.168.0.0     -   192.168.255.255 (192.168/16 prefix)
+    \end{lstlisting}
+
+    \item Die privaten Adressenbereiche der fusionierenden Firmen könnten Überschneidungen aufweisen, private Adressen müssen klarerweise nicht global eindeutig sein. 
+\end{enumerate}
+
+\paragraph{Aufgabe 2.} 
+
+\begin{enumerate}
+    \item \lstinline{18.37.100.203}
+
+    \item \lstinline{00110100.00000000.10110100.11011100}
+
+    \item \begin{enumerate}
+        \item Nein, die jeweiligen Netzwerkteile sind ungleich (\lstinline{210.210.210} $\neq$ \lstinline{210.210.211}).
+        \item Ja, \lstinline{15.1} = \lstinline{15.1}.
+        \item Nein. Konvertierung in Bitmuster
+        \begin{lstlisting}[gobble=12]
+            16.17.18.19
+            00010000.00010001.00010010.00010011
+
+            16.17.64.1
+            00010000.00010001.01000000.00000001
+        \end{lstlisting}
+        zeigt, dass die ersten 18 bits nicht gleich sind. Ergo nicht im selben Subnetz.
+    \end{enumerate}
+\end{enumerate}
+
+\paragraph{Aufgabe 3.}
+
+\begin{enumerate}
+    \item \begin{lstlisting}[gobble=8]
+        92.168.1.0/26       (Alpha)
+        92.168.1.64/26      (Bravo)
+        92.168.1.128/26     (Charlie)
+        92.168.1.192/26     (Delta)
+    \end{lstlisting}
+
+    \item \begin{lstlisting}[gobble=8]
+        92.168.1.0/25       (Alpha)     [128]
+        92.168.1.128/26     (Delta)     [64]
+        92.168.1.192/27     (Bravo)     [32]
+        92.168.1.224/27     (Charlie)   [32]
+    \end{lstlisting}
+\end{enumerate}
+
+\end{document}
