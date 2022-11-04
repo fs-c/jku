@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity} --- Special Topic 2}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\usepackage{hyperref}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\section*{Swarm Intelligence}
+
+\paragraph{Origins} When Alan Turing designed his eponymous model for an abstract machine, he was likely inspired by \enquote{human computers}, persons tasked with performing mathematical calculations, and thus (somewhat abstractly) by human biology. A posteriori this assumption is quite natural; traditional computers (now using the contemporary interpretation of the term) are similar to humans in problem-solving related structure: A strong, expensive processing unit collects information and produces output of some kind. Importantly, this unit alone is responsible for every part of the (conscious) decision making; we call it a \emph{central} processing unit (think x86).
+
+\paragraph{Nature} A different approach, still inspired by biology but moving away from humans, is to consider animals which form colonies, like bees or ants. Individually, these animals are incapable of surviving, they have no powerful central unit. But taken together as a unit they can solve reasonably complex problems with similar or better success than organisms with centralised processing power --- the whole is greater than the sum of its parts. In fact, ant behaviour has inspired novel avenues for approaching pathfinding (think TSP). Even unicellular organisms like variants of slime mold, a very weird kind of organism, have been shown to be able to form a near-optimal network through a given number of points.
+
+\paragraph{Cellular Automata} This motivates the concept of cellular automata: Using a network of minimal DFAs (cells) with very limited states instead of one gigantic one. Cells are viewed as being in an $n$-dimensional grid and change their state based on the state of their neighbours. For a one-dimensional grid, there exist a very finite number of possible configurations --- Stephen Wolfram characterized them all. Particularly interesting is his \enquote{Rule 30}, which evolves to form a seemingly random pattern. This is notable because we started with a very simple deterministic model and somehow got to a point where it looks unpredicatable, and just in one dimension.
+
+\paragraph{Game of Life} Conway's Game of Life is a cellular automaton on a two-dimensional grid, where the rules are loosely inspired by real life in the sense that cells \enquote{live} or \enquote{die} based on conditions that can be compared to under- and overpopulation and reproduction. This automaton is well studied and many patterns (still lifes, oscillators, \enquote{spaceships} --- constructs which move themselves) are known. One particularly interesting kind of construct are \enquote{glider guns}, constructs which create gliders (a kind of spaceship). (This means that there exist patterns which can grow indefinitely.) Using this and other known constructs, one can fully simulate a Turing machine. This arguably very simple network of interconnected cells is \emph{turing complete}.
+
+\paragraph{Outlook} While the anthropocentric approach is common, it is probably not optimal for some situations. Nature, having evolved over a very long time, can provide much inspiration in this regard. This change in approach does not have to be fundamental, i.e. maybe we shouldn't immediately discard all our contemporary computers --- we can also apply it to just algorithmic design and potentially get improvements. Attempt to start thinking along the lines of swarm intelligence, not always focused on a single central unit. (This is already happening in robotics, where the focus is moving away from building what are effectively just improved humans to building swarms of significantly cheaper drones.)
+
+\end{document}
+
+Turing Inspiration: human comupters (central unit, CPU) inspired by biology? octopus, magpie; strong expensive central unit, collect info and produce output; successful blueprint
+
+other concept: bees, ants, (many simple individuals collaburate, whole > parts); but no central unit!; very good tsp algorithm is based on ants (pheromones, random walk); Schleimpilz is very basic organism between animal and plant but can build nearly optimal routes; -> usable as blueprint?
+
+cellular automata: not one big processing unit but network of tiny DFAs (cells) with 2 states (dead, alive), transition depends on neighbors, stephen wolfram characterized all one dim configs, rule 30 is seemingly random (!, snail coloring)
+
+we want more power: use 2d grid -> conway, too many to fully characterize, interesting (can find many kinds of stuff; still life, osdcillators, spaceships, ...); can simulate turing (!)
+
+anthropocentric approach common; not the best approach? nature has many alterntaives: inspiration! change doesn't have to be fundamental (change CPU) can just change algorithm; distinct strengths/weaknesses; maybe start thinking like swarm intelligence (a conway)
+
+robotics: many tiny drones (why just create better human)
