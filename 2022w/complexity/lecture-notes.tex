@@ -58,8 +58,6 @@ which only admit six different \emph{cycles} of length four. The expression $\be
 
 \paragraph{Problem 1.9} See Exercises 1.2 and 1.4.
 
-\paragraph{Numericals 1.10} Not implemented, getting the pairwise distances would be a hassle.
-
 \paragraph{Problem 1.11} We want to show that: \enquote{Every symbol from a given alphabet can be represented as a bitstring. This representation is one-to-one and only scales logarithmically in alphabet size.} Consider an alphabet $A$ with $n$ symbols where each symbol $a_0, a_1, \ldots, a_{n - 1}$ can be represented by an unique integer. Because we can use the index of an element as its integer counterpart, at least one such representation exists
 
 We can uniquely represent an integer $c$ as a bitstring $b$ through the following algorithm: Zero all bits in $b$. Find the largest $x$ such that $2^x$ divides $c$. Set $b_x$ to one and set $c$ to $c - 2^x$. Continue until $c$ is zero. The length of such a bitstring is determined by the $x$ of the first iteration, so the first $x$ such that $2^x\ |\ c$. Given only $c$, the length of the resulting bitstring will thus be $\lfloor log_2(c) \rfloor$.
@@ -92,10 +90,38 @@ The runtime of this machine is equal to the length of the decimal encoding, thus
         \path[->] (even) edge [loop above] node {0} ();
     \end{tikzpicture}
 \end{center}
-For $n = 2$ it is equivalent to XNOR.
+For $n = 2$ it is equivalent to XNOR. (Choosing the odd state to be the accepting state would make it equivalent to XOR.)
 
-\paragraph{Exercise 2.4} No.
+\paragraph{Exercise 3.3} By definition we call a finite string $x = x_0 \cdots x_{n - 1}$ a palindrome if
+\begin{align*}
+    x_{n - 1}x_{n - 2} \cdots x_1x_0 &= x_0x_1 \cdots x_{n - 2}x_{n - 1}.
+\end{align*}
+From this we can write down $n - 1$ constraints:
+\begin{align*}
+    x_{n - 1} &= x_0  &  x_{n - 2} &= x_1  &  x_{n - 3} &= x_2  &\cdots&&  x_{n - k} &= x_{k - 1}
+\end{align*}
+for $k = 1, \ldots, n - 1$. But it is clear that some of these constraints are effectively duplicates. Some consideration reveals that exactly $\lfloor n/2 \rfloor$ of them are unique. This is effectively what Lemma 3.2 is about. \emph{I suspect the concrete equation given in Lemma 3.2 is false, didn't continue.}
 
-\paragraph{Exercise 2.6} No.
+% But that lemma reads
+% \begin{align*}
+%     x_k = x_{n - 1 - k}\quad\text{for all $k = 1, \ldots, \lfloor n/2 \rfloor$}
+% \end{align*}
+% which is wrong because it doesn't consider the first and last characters (abb is a palindrome, according to it). It could be fixed by letting $k$ start from 0. In this case we get 
+
+\paragraph{Exercise 3.5}
+
+\begin{enumerate}
+    \item Consider the binary alphabet and let $n \in \mathbb{N}$ be an odd number. Each palindrome $x$ of length $n$ must obey exactly $\lfloor n / 2 \rfloor$ constraints, see Exercise 3.3. In particular, only the first $\lfloor n / 2 \rfloor$ bits are relevant for determining whether or not $x$ is a palindrome. There are a total of $2^{\lfloor n / 2 \rfloor}$ distinct bitstrings of length $\lfloor n / 2 \rfloor$.
+    
+    The number of palindromes of length $n$ is thus $2^{\lfloor n / 2 \rfloor}$.
+
+    \item The only part of the above that depends on alphabet length is determining the amount of unique strings of a given length. It can be generalized by letting $N$ be our alphabet size, then there are a total of $N^{\lfloor n/2 \rfloor}$ strings of length $\lfloor n / 2 \rfloor$.
+\end{enumerate}
+
+\paragraph{Exercise 3.7} For $M = 0$ we have $0 = 0$. Assume that $\sum_{j = 0}^{M}j = M(M + 1)/2$ holds. We show
+\begin{align*}
+    \sum_{j = 1}^{M + 1}j = \sum_{j = 0}^{M} + M + 1 = \frac{M(M + 1)}{2} + M + 1 = \frac{M(M + 1) + 2M + 2}{2} = \frac{M^2 + 3M + 2}{2} \\
+    = \frac{(M + 1)(M + 2)}{2}
+\end{align*}
 
 \end{document}
