@@ -1,0 +1,76 @@
+SQL> 
+SQL> -- add column
+SQL> -- ALTER TABLE departments ADD employees_count number(6);
+SQL> 
+SQL> -- intial setup
+SQL> UPDATE departments SET employees_count = (
+  2      SELECT COUNT(*) FROM employees
+  3      WHERE employees.department_id = departments.department_id
+  4  );
+
+27 rows updated.
+
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER update_employees_count
+  2  AFTER INSERT OR UPDATE OR DELETE ON employees
+  3  BEGIN
+  4      UPDATE departments SET employees_count = (
+  5          SELECT COUNT(*) FROM employees
+  6          WHERE employees.department_id = departments.department_id
+  7      );
+  8  END update_employees_count;
+  9  /
+
+Trigger UPDATE_EMPLOYEES_COUNT compiled
+
+SQL> 
+SQL> -- initial count
+SQL> SELECT department_name, employees_count FROM departments WHERE department_id = 50 OR department_id = 60;
+
+DEPARTMENT_NAME                EMPLOYEES_COUNT
+------------------------------ ---------------
+Shipping                                    45
+IT                                           5
+
+SQL> 
+SQL> -- add an employee and verify
+SQL> EXEC add_employee('Max', 'Mustermann', 'max@muster.at', '06999339838', 'IT_PROG', 8000, 50);
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT department_name, employees_count FROM departments WHERE department_id = 50 OR department_id = 60;
+
+DEPARTMENT_NAME                EMPLOYEES_COUNT
+------------------------------ ---------------
+Shipping                                    46
+IT                                           5
+
+SQL> 
+SQL> -- move the employee to another department and verify
+SQL> UPDATE employees SET department_id = 60 WHERE email = 'max@muster.at';
+
+1 row updated.
+
+SQL> SELECT department_name, employees_count FROM departments WHERE department_id = 50 OR department_id = 60;
+
+DEPARTMENT_NAME                EMPLOYEES_COUNT
+------------------------------ ---------------
+Shipping                                    45
+IT                                           6
+
+SQL> 
+SQL> -- remove the employee and verify
+SQL> DELETE FROM employees WHERE email = 'max@muster.at';
+
+1 row deleted.
+
+SQL> SELECT department_name, employees_count FROM departments WHERE department_id = 50 OR department_id = 60;
+
+DEPARTMENT_NAME                EMPLOYEES_COUNT
+------------------------------ ---------------
+Shipping                                    45
+IT                                           5
+
+SQL> 
+SQL> -- cleanup
+SQL> -- ALTER TABLE departments DROP COLUMN employees_count;

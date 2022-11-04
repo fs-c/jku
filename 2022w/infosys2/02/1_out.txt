@@ -1,0 +1,67 @@
+SQL> -- Exercise 1)
+SQL> 
+SQL> SET ECHO ON
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER adjust_salary_trigger
+  2  BEFORE INSERT OR UPDATE OF salary ON employees
+  3  FOR EACH ROW
+  4  DECLARE
+  5      min_salary jobs.min_salary%TYPE;
+  6      max_salary jobs.max_salary%TYPE;
+  7  BEGIN
+  8      dbms_output.put_line('adjust salary trigger called');
+  9  
+ 10      SELECT min_salary, max_salary INTO min_salary, max_salary FROM jobs
+ 11      WHERE job_id = :NEW.job_id;
+ 12  
+ 13      dbms_output.put('current salary is ');
+ 14      dbms_output.put_line(:NEW.salary);
+ 15  
+ 16      IF :NEW.salary < min_salary THEN
+ 17          dbms_output.put_line('adjusted upwards');
+ 18          :NEW.salary := min_salary;
+ 19      ELSIF :NEW.salary > max_salary THEN
+ 20          dbms_output.put_line('adjusted downwards');
+ 21          :NEW.salary := max_salary;
+ 22      END IF;
+ 23  END adjust_salary_trigger;
+ 24  /
+
+Trigger ADJUST_SALARY_TRIGGER compiled
+
+SQL> 
+SQL> -- create employees with 1. correct, 2. low and 3. high salary for their job
+SQL> -- IT_PROG is [4000, 10000]
+SQL> EXEC add_employee('Max', 'Mustermann', 'max@muster.at', '06999339838', 'IT_PROG', 8000, 230);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Simone', 'Musterfrau', 'simone@muster.at', '06999339839', 'IT_PROG', 3000, 240);
+
+PL/SQL procedure successfully completed.
+
+SQL> EXEC add_employee('Julia', 'Musterfrau', 'julia@muster.at', '06999339839', 'IT_PROG', 11000, 240);
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- verify that updating also gets adjusted
+SQL> UPDATE employees SET salary = 10000 WHERE email = 'max@muster.at';
+
+1 row updated.
+
+SQL> 
+SQL> --- verify
+SQL> SELECT first_name, last_name, salary FROM employees WHERE email LIKE '%@muster.at';
+
+FIRST_NAME           LAST_NAME                     SALARY
+-------------------- ------------------------- ----------
+Max                  Mustermann                     10000
+Simone               Musterfrau                      4000
+Julia                Musterfrau                     10000
+
+SQL> 
+SQL> -- cleanup
+SQL> DELETE FROM employees WHERE email LIKE '%@muster.at';
+
+3 rows deleted.

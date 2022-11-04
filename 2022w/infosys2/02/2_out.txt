@@ -1,0 +1,46 @@
+SQL> -- Exercise 2)
+SQL> 
+SQL> SET ECHO ON
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER verify_manager_trigger
+  2  BEFORE INSERT OR UPDATE OF manager_id ON departments
+  3  FOR EACH ROW
+  4  DECLARE
+  5      manger_department employees.department_id%type;
+  6  BEGIN
+  7      IF :NEW.manager_id IS NOT NULL THEN
+  8          SELECT department_id INTO manger_department FROM employees
+  9          WHERE employee_id = :NEW.manager_id;
+ 10  
+ 11          IF manger_department != :NEW.department_id THEN
+ 12              raise_application_error(-20001, 'Mitarbeiter kann nicht als Abteilungsleiter eingesetzt werden.');
+ 13          END IF;
+ 14      END IF;
+ 15  END verify_manager_trigger;
+ 16  /
+
+Trigger VERIFY_MANAGER_TRIGGER compiled
+
+SQL> 
+SQL> -- verify update
+SQL> UPDATE departments SET manager_id = 201 WHERE department_id = 10;
+
+Error starting at line : 23 in command -
+UPDATE departments SET manager_id = 201 WHERE department_id = 10
+Error report -
+ORA-20001: Mitarbeiter kann nicht als Abteilungsleiter eingesetzt werden.
+ORA-06512: at "IFS22.VERIFY_MANAGER_TRIGGER", line 9
+ORA-04088: error during execution of trigger 'IFS22.VERIFY_MANAGER_TRIGGER'
+
+SQL> 
+SQL> -- verify insert
+SQL> INSERT INTO departments (department_id, department_name, manager_id, location_id)
+  2  VALUES (departments_seq.NEXTVAL, 'Test Department', 100, 1000);
+
+Error starting at line : 26 in command -
+INSERT INTO departments (department_id, department_name, manager_id, location_id)
+VALUES (departments_seq.NEXTVAL, 'Test Department', 100, 1000)
+Error report -
+ORA-20001: Mitarbeiter kann nicht als Abteilungsleiter eingesetzt werden.
+ORA-06512: at "IFS22.VERIFY_MANAGER_TRIGGER", line 9
+ORA-04088: error during execution of trigger 'IFS22.VERIFY_MANAGER_TRIGGER'
