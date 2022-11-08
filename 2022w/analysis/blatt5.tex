@@ -1,0 +1,204 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{hyperref}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 5}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.} Sei $\epsilon > 0$. Dann gibt es ein $N$ derart, dass für alle $n \geq N$ gilt
+\begin{align*}
+    |a - a_n| &< e & |a - c_n| &< e
+\end{align*}
+(Finde $N_1$ für $a_n$ und $N_2$ für $c_n$, dann ist $N = \max(N_1, N_2)$.) Insbesondere gilt jetzt
+\begin{align*}
+    a - \epsilon &< a_n &  a + \epsilon > c_n
+\end{align*}
+und wegen $a_n \leq b_n \leq c_n$ weiters
+\begin{align*}
+    a - \epsilon < a_n &\leq b_n \leq c_n < a + \epsilon \\
+    a - \epsilon &< b_n < a + \epsilon \\
+    -\epsilon &< b_n - a < \epsilon \\
+    |b_n - a| &< \epsilon,
+\end{align*}
+also $\lim b_n = a$.
+
+\paragraph{Aufgabe 2.}
+\begin{enumerate}
+    \item \begin{align*}
+        \lim \frac{2n^2 + 3n + 1}{4n^2 - 5n - 1} = \lim \frac{\frac{2n^2 + 3n + 1}{n^2}}{\frac{4n^2 - 5n - 1}{n^2}} = \lim \frac{2 + \frac{3}{n} + \frac{1}{n^2}}{4 - \frac{5}{n} - \frac{1}{n^2}} = \frac{\lim 2 + \lim \frac{3}{n} + \lim \frac{1}{n^2}}{\lim 4 - \lim \frac{5}{n} - \lim \frac{1}{n^2}} = \frac{1}{2}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim \frac{5n^2 - n + 1}{5n^3 + 5n^2 + 5n - 1} = \lim\frac{\frac{5n^2 - n + 1}{n^3}}{\frac{5n^3 + 5n^2 + 5n - 1}{n^3}} = \lim\frac{\frac{5}{n} - \frac{1}{n^2} + \frac{1}{n^3}}{5 + \frac{5}{n} + \frac{5}{n^2} - \frac{1}{n^3}} = \lim \frac{0}{\cdots} = 0
+    \end{align*}
+
+    \item \begin{align*}
+        \lim \left(4n - \frac{(2n - 1)^2}{n}\right) = \lim \frac{4n^2 - (2n - 1)^2}{n} = \lim \frac{4n^2 - 4n^2 + 4n - 1}{n} = \lim \frac{4n - 1}{n} \\
+        = \lim 4 - \frac{1}{n} = 4
+    \end{align*}
+
+    \item Weg falsch?
+    \begin{align*}
+        \lim \left(\sqrt{n  + 1} - \sqrt{n}\right) = \lim \sqrt{n + 1} - \lim \sqrt{n} = \sqrt{\lim (n + 1)} - \sqrt{\lim n} = \infty - \infty = 0
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Aufgabe 3.}
+\begin{enumerate} 
+    \item
+    % Weg falsch. \begin{align*}
+    %     \lim \frac{n!}{2^n} = \frac{\lim (n \cdot (n - 1) \cdot (n - 2) \cdots 1)}{\lim 2^n} = \frac{\lim n \cdot \lim \cdots}{\lim 2^n} = \frac{\lim n \cdot (\cdots)}{\lim 2^n} = \frac{\infty}{\cdots} = \infty
+    % \end{align*}
+    Wegen
+    \begin{align*}
+        \frac{n!}{2^n} = \frac{n(n - 1)(n - 2)\cdots 1}{2 \cdot 2 \cdot 2 \cdots 2} = \frac{n}{2} \cdot \frac{n - 1}{2} \cdot \frac{n - 2}{2} \cdot \frac{1}{2} \geq \frac{n}{4}
+    \end{align*}
+    haben wir $\frac{n}{4}$ als untere Schranke. Aber $\lim \frac{n}{4} = \infty$ also $\lim \frac{n!}{2^n} = \infty$.
+
+    \item Durch \begin{align*}
+        \frac{n!}{n^n} = \frac{n(n - 1)(n - 2)\cdots 1}{n \cdot n \cdot n \cdots n} = 1 \cdot \frac{n - 1}{n} \cdot \frac{n - 2}{n} \cdots \frac{1}{n} \leq \frac{1}{n}
+    \end{align*}
+    finden wir eine obere Schranke $\lim \frac{1}{n} = 0$. Klarerweise gilt als untere Schranke $\frac{n!}{n^n} > 0$. Also muss $\lim \frac{n!}{n^n} = 0$.
+\end{enumerate}
+
+\paragraph{Aufgabe 4.}
+\begin{enumerate}
+    \item \begin{align*}
+        \lim \sqrt{\frac{n + 1}{16n + 1}} = \sqrt{\lim \frac{n + 1}{16n + 1}} = \sqrt{\lim \frac{\frac{n + 1}{n}}{\frac{16n + 1}{n}}} = \sqrt{\lim \frac{1 + \frac{1}{n}}{16 + \frac{1}{n}}} = \sqrt{\frac{1}{16}} = \frac{1}{4}
+    \end{align*}
+
+    \item Wegen
+    \begin{align*}
+        \lim \frac{1 - n^2}{1 - n^3} = \lim \frac{\frac{1 - n^2}{n^3}}{\frac{1 - n^3}{n^3}} = \lim \frac{\frac{1}{n^3} - \frac{1}{n}}{\frac{1}{n^3} - 0} = 0
+    \end{align*}
+    ist auch $\lim (-1)^n \frac{1 - n^2}{1 - n^3} = 0$.
+
+    \item \begin{align*}
+        \lim \frac{1 + 2 + \cdots + n}{n^2} = \lim \frac{1}{n^2} + \lim \frac{2}{n^2} + \cdots + \lim \frac{n}{n^2} = 0
+    \end{align*}
+\end{enumerate}
+
+\paragraph{Aufgabe 5.}
+
+\paragraph{Aufgabe 6.}
+\begin{enumerate}
+    \item Für $q = 0$ ist $q^n$ konstant und der Grenzwert trivial. Für $0 < q < 1$ ist $q^n$ monoton fallend und $> 0$. Für $-1 < q < 0$ ist $q^n$ monoton steigend und $< 0$. Also $\lim a_n = 0$.
+    
+    \item $1^n = 1$ also $\lim a_n = 1$.
+    
+    \item Für alle $t \in \mathbb{R}$ soll für $n \geq N$ gelten, dass $|q^n| \geq t$. Man wähle $N = log_q(t)$, dann ist $|q^N| = t$ und weil $q^n$ monoton steigend ist auch $q^n \geq t$.
+    
+    \item Man wähle $t = 2$, dann gilt für alle $n$, dass $(-1)^n \leq 2$, also hat $(-1)^n$ nicht den uneigentlichen Grenzwert $\infty$.
+\end{enumerate}
+
+\paragraph{Aufgabe 7.} Sei $\epsilon > 0$ und $M$ eine obere Schranke für $(a_n)$ und $(b_n)$. Für $(a_n)$ und $(b_n)$ gibt es jeweils $N_1, N_2$ wo für $n \geq N_1, N_2$
+\begin{align*}
+    |a - a_n| &< \frac{\epsilon}{2M} & |b - b_n| &< \frac{\epsilon}{2M}
+\end{align*}
+Dann gilt
+\begin{align*}
+    |ab - a_nb_n| &= |(a - a_n)b_n + a(b_n - b)| \\
+    &\leq |a - a_n||b_n| + |a||b_n - b| \\
+    &\leq M|a - a_n| + M|b_n - b| \quad \text{$M$ ist sicher grösser als $|b_n|, |a|$} \\
+    &< M\frac{\epsilon}{2M} + M\frac{\epsilon}{2M} = \frac{\epsilon}{2} + \frac{\epsilon}{2} < \epsilon
+\end{align*}
+
+\paragraph{Aufgabe 8.}
+\begin{enumerate}
+    \item Es gilt
+    \begin{align*}
+        \left(1 + \frac{1}{n}\right)^n &< \left(1 + \frac{1}{n}\right)^{n + 1} \\
+        \left(1 + \frac{1}{n}\right)^n &< \left(1 + \frac{1}{n}\right)^{n} \cdot \left(1 + \frac{1}{n}\right)
+    \end{align*}
+    weil $\left(1 + \frac{1}{n}\right) > 1$.
+
+    \item Für $n = 0$ gilt
+    \begin{align*}
+        (1 + b)^0 &= \sum_{k = 0}^{0} \begin{pmatrix}
+            0 \\k
+        \end{pmatrix}b^k \\
+        1 &= \begin{pmatrix}
+            0 \\0
+        \end{pmatrix}b^0  = 1
+    \end{align*}
+    Angenommen es gilt
+    \begin{align*}
+        (1 + b)^n &= \sum_{k = 0}^{n} \begin{pmatrix}
+            n \\k
+        \end{pmatrix}b^k,
+    \end{align*}
+    dann gilt
+    \begin{align*}
+        (1 + b)^{n + 1} &= (1 + b)^n \cdot (1 + b) \\
+        &= \sum_{k = 0}^{n} \begin{pmatrix}
+            n \\k
+        \end{pmatrix}b^k \cdot (1 + b) \\
+        &= \sum_{k = 0}^{n} \begin{pmatrix}
+            n \\k
+        \end{pmatrix}b^k + \sum_{k = 0}^{n} \begin{pmatrix}
+            n \\k
+        \end{pmatrix}b^{k + 1} \\
+        &= \sum_{k = 0}^{n} \begin{pmatrix}
+            n \\k
+        \end{pmatrix}b^k + \sum_{k = 1}^{n} \begin{pmatrix}
+            n \\k - 1
+        \end{pmatrix}b^{k} + \begin{pmatrix} n \\ n \end{pmatrix}b^{n + 1} \\
+        &= \sum_{k = 0}^{n} \left(\begin{pmatrix}
+            n \\k
+        \end{pmatrix} + \begin{pmatrix*}
+            n \\ k - 1
+        \end{pmatrix*}\right)b^k + b^{n + 1} \\
+        &= \sum_{k = 0}^{n} \begin{pmatrix*}
+            n + 1 \\
+            k
+        \end{pmatrix*}b^k + b^{n + 1} \\
+        &= \sum_{k = 0}^{n + 1} \begin{pmatrix*}
+            n + 1 \\
+            k
+        \end{pmatrix*}b^k
+    \end{align*}
+
+    \item Für $n = 1$ gilt $2^{0} = 1 < 2$. Sei also $n > 1$, dann
+    \begin{align*}
+        \sum_{k = 1}^n 2^{-(k - 1)} = 1 + 2^{-1} + 2^{-2} + \cdots + 2^{-{n - 1}}
+    \end{align*}
+    Es gilt $x^{-y} = \frac{1}{x^y}$, hier also $2^{-n} = \frac{2^{-(n - 1)}}{2}$; jedes Glied der Summe ist halb so groß wie das vorhergehende. Die Summe fängt bei 1 an, ist also $< 2$.
+\end{enumerate}
+
+\end{document}
