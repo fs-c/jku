@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning,shapes,shapes.geometric} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity} --- Quiz 2/8}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+Assume for the sake of contradiction that \textsc{Palindrome} is regular. Then the pumping lemma must hold for a certain pumping length $l$. Let $x = 0^l10^l \in \text{\textsc{Palindrome}}$, then $|x| = 2l + 1 \leq l$. By the pumping lemma we can now decompose this string into substrings $u, v, w$ with $x = uvw$ such that
+\begin{align*}
+    v &\neq \epsilon, & |uv| &\leq l, & uv^kw \in \text{\textsc{Palindrome} for all $k \geq 0$}.
+\end{align*}
+Because $uvw = 0^l10^l$, the substring $uv$ can not include any 1s since it can't be long enough to reach the single 1, which is at $l + 1$. So we conclude $v = 0^i$ for some $i \geq 1$ (not $\geq 0$ because $i \neq \epsilon$). By the above conditions we can \enquote{pump up} $uvw$ by repeating $v$ an arbitrary amount of times $k$. Let $k = 2$, then
+\begin{align*}
+    uv^2w = 0^{l + i}10^l
+\end{align*}
+must also be in \textsc{Palindrome}. It clearly isn't since $0^{l + k} \neq 0^l$ or rather $l + k \neq l$ because $k = 2$.
+
+\end{document}
