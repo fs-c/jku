@@ -1,0 +1,135 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{hyperref}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 6}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.} Es gilt
+\begin{align*}
+    \lim \left(\sin(n) \cdot \frac{1}{n}\right) = \lim\sin(n) \cdot \lim\frac{1}{n} = 0
+\end{align*}
+weil $\sin(n)$ beschränkt ist und $\lim \frac{1}{n} = 0$.
+
+\paragraph*{Aufgabe 2.}
+\begin{align*}
+    a_{n + 1} = \sqrt{2a_n} = \sqrt{2\sqrt{2a_{n - 1}}} = \sqrt{2\sqrt{2\sqrt{2a_{n - 2}}}} = \sqrt{2} \cdot \sqrt[4]{2} \cdot \sqrt[8]{2} \cdot \sqrt[8]{a_{n - 2}} 
+\end{align*}
+
+\paragraph{Aufgabe 3.} Weil $T$ eine obere Schranke ist, gilt $a_n \leq T$ für alle $n$.
+\begin{align*}
+    T_n = \max\{a_1, a_2, \ldots, a_n\} \quad \text{und} \quad a_1 \leq T, a_2 \leq T, \ldots, a_n \leq T \quad \text{somit} \quad \max\{a_1, a_2, \ldots, a_n\} \leq T
+\end{align*}
+Also gilt $T_n \leq T$.
+
+\paragraph*{Aufgabe 4.} $T_n$ ist nach oben durch $T$ beschränkt und monoton wachsend (wegen $\max$), also gibt es ein eindeutiges $\lim T_n = T_0$. $T_0$ ist $\geq a_n$ für alle $n$ aber auch $\in (a_n)$, also das Maximum und somit auch das Supremum. 
+
+\paragraph*{Aufgabe 5.}
+\begin{enumerate}
+    \item Wir interessieren uns nur für gerade $n$, andernfalls ist $a_n$ negativ und für das $\sup$ irrelevant.
+    \begin{align*}
+        A_k = \sup_{n \geq k} a_n = \sup_{n \geq 1}a_{n + k - 1} = 2 + \frac{1}{k}
+    \end{align*}
+    Nachdem $\lim A_k = 2$ ist $\lim \sup \cdots = 2$.
+
+    \item $(b)_n$ ist nicht nach oben beschränkt ($\lim b_n = \infty$), es gilt somit $\limsup_{k \to \infty} = \infty$.
+    
+    \item Wir sind wieder nur an geraden $n$ interessiert und haben
+    \begin{align*}
+        C_k = \frac{1}{n} \quad \text{somit} \quad \limsup_{n \to \infty} c_n = 0
+    \end{align*}
+\end{enumerate}
+
+\paragraph*{Aufgabe 6.}
+
+Sei $k \in \mathbb{N}$, und
+\begin{align*}
+    A_k = \sup \{a_k, a_{k + 1}, \ldots\} \quad &\Longrightarrow \quad \limsup_{n \to \infty} a_n = \lim_{k \to \infty} A_k \\
+    B_k = \sup \{a_k, a_{k + 1}, \ldots\} \quad &\Longrightarrow \quad \limsup_{n \to \infty} b_n = \lim_{k \to \infty} B_k \\
+    C_k = \sup \{a_k + b_k, a_{k + 1} + b_{k + 1}, \ldots\} \quad &\Longrightarrow \quad \limsup_{n \to \infty} (a_n + b_n) = \lim_{k \to \infty} C_k
+\end{align*}
+Wähle ein $k$, dann gilt für $n \geq k$
+\begin{align*}
+    a_n + b_n \leq A_k + B_k
+\end{align*}
+weil $A_k$ und $B_k$ jeweils das Supremum, also die (kleinste) obere Schranke sind. Klarerweise gilt somit
+\begin{align*}
+    C_k \leq A_k + B_k \quad \text{bzw.} \quad \sup_{n \geq k} (a_n + b_n) \leq \sup_{n \geq k} a_n + \sup_{n \geq k} b_n.
+\end{align*}
+was für (a) zu zeigen war, mit $K = 1$.
+
+Für (b) reicht es, den Limes auf beiden Seiten anzuwenden
+\begin{align*}
+    \lim_{k \to \infty} \sup_{n \geq k} (a_n + b_n) &\leq \lim_{k \to \infty} \sup_{n \geq k} a_n + \lim_{k \to \infty} \sup_{n \geq k} b_n \\
+    \limsup_{n \to \infty} (a_n + b_n) &\leq \limsup_{n \to \infty} a_n + \limsup_{n \to \infty} b_n
+\end{align*}
+
+\paragraph*{Aufgabe 7.}
+
+Sei $(a_n)$ eine konvergente Folge mit $\lim a_n = a$, sie ist also beschränkt --- es gibt ein $\sup a_n$ für alle $n$. Sei $A_k = \sup_{n \geq k} a_n$. Klarerweise ist $A_k \geq A_{k + 1} \geq A_{k + 2} \geq \cdots$, die Folge ist monoton fallend. Weiters ist $(A_k)$ wie $(a_n)$ beschränkt, somit gibt es ein $\lim_{k \to \infty}\sup_{n \geq k}a_n$ bzw. ein $\limsup_{n \to \infty}a_n = A$.
+
+Sei $\epsilon > 0$, dann gilt für alle $n \geq N_1$
+\begin{align*}
+    |a - a_n| < \epsilon
+\end{align*}
+Klarerweise gilt dann für alle $n \geq N_2$
+\begin{align*}
+    |a - \sup_{k \geq n} a_k| < \epsilon.
+\end{align*}
+
+\paragraph*{Aufgabe 8.}
+\begin{enumerate}
+    \item ?
+
+    \item ?
+
+    \item Sei $(a_n)$ eine auf $a$ konvergierende Folge mit Häufungspunkten $a, b$ und $a \neq b$. Sei $\epsilon = \frac{|a - b|}{2}$, dann gibt es für alle $n > N$
+    \begin{align*}
+        |a_n - a| &< \epsilon
+    \end{align*}
+    aber wegen
+    \begin{align*}
+        |a_n - b| = |a_n - a + a - b| \geq ||a_n - a| - |a - b|| = ||a_n - a| - 2\epsilon| = 2\epsilon - |a_n - a| \not> \epsilon
+    \end{align*}
+    kann es nicht unendliche viele Punkte die willkürlich nahe an $b$ kommen geben. Also kann $b$ kein Häufungspunkt sein.
+
+    \item $k$ für $k > 0$.
+\end{enumerate}
+
+\end{document}
