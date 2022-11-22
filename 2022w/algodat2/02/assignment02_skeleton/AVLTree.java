@@ -1,7 +1,5 @@
 package assignment02;
 
-import java.util.function.Function;
-
 public class AVLTree implements IAVLTree {
 
 	private AVLNode root;
@@ -79,6 +77,14 @@ public class AVLTree implements IAVLTree {
 	public boolean insert(int key, float value) {
 		AVLNode node = new AVLNode(key, value);
 
+		if (root == null) {
+			this.root = node;
+
+			size++;
+
+			return true;
+		}
+
 		if (!bstInsert(node, root)) {
 			return false;
 		}
@@ -87,7 +93,16 @@ public class AVLTree implements IAVLTree {
 
 		for (AVLNode cur = node.parent; cur != null; cur = cur.parent) {
 			AVLNode parent = cur.parent;
+
+			if (parent == null) {
+				break;
+			}
+
 			AVLNode grandparent = parent.parent;
+
+			if (grandparent == null) {
+				break;
+			}
 
 			if (!isBalanced(grandparent)) {
 				rebalance(cur, parent, grandparent);
@@ -138,7 +153,9 @@ public class AVLTree implements IAVLTree {
 			return;
 		}
 
-		array[index] = node.value;
+		// array[index] = node.value;
+
+		System.out.format("node: %f, index: %d\n", node.value, index);
 
 		toArrayPreOrder(node.left, array,  2 * index + 1);
 		toArrayPreOrder(node.right, array, 2 * index + 2);
