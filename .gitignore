@@ -29,3 +29,6 @@ git_ignore_*
 !2022s/algebra/ue/*.pdf
 !2022s/mult/exam/*.pdf
 testFSTree
+
+out
+.project

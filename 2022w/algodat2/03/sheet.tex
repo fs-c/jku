@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{forest}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Algorithms and Data Structures --- \textbf{Assignment 3}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+
+\begin{document}
+
+\paragraph{Prefilling}
+
+\begin{itemize}
+    \item Insert 32.
+    
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+              &   &   &   &   &   &   &   & 32&   &    &    &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 8.
+
+    \item Insert 19.
+
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+              &   &   &   &   &   &   & 19& 32&   &    &    &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 7.
+
+    \item Insert 24.
+
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+            24&   &   &   &   &   &   & 19& 32&   &    &    &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 0.
+
+    \item Insert 39.
+
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+            24&   &   & 39&   &   &   & 19& 32&   &    &    &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 3.
+
+    \item Insert 27.
+
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+            24&   &   & 39&   &   &   & 19& 32& 27&    &    &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 3, 9.
+
+    \item Insert 7. (Begin of student ID insertion, 751.)
+    
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+            24&   &   & 39&   &   &   & 19& 32& 27&    & 7  &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 7, 3, 11.
+
+    \item Insert 5.
+    
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+            24&   &   & 39&   & 5 &   & 19& 32& 27&    & 7  &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 5.
+
+    \item Insert 1.
+    
+    \begin{center}
+        \begin{tabular}{c c c c c c c c c c c c c}
+            0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+            24& 1 &   & 39&   & 5 &   & 19& 32& 27&    & 7  &    \\
+        \end{tabular}
+    \end{center}
+
+    Probing Sequence: 1.
+\end{itemize}
+
+\end{document}
