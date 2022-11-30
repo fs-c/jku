@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.testng.Assert.assertEquals;
 
 
 public class Assignment02Test {
