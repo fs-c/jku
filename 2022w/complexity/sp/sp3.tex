@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity} --- Special Topic 3}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\usepackage{hyperref}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\section*{Time Hierarchy Theorem}
+
+Informally, the theorem states that given more time, a Turing machine can solve more problems. Formally, if $f(n)$ is a time-honest function then
+\begin{align*}
+    \mathsf{DTIME}(f(n)) \subsetneq \mathsf{DTIME}\left(f(n)^2 \right),
+\end{align*}
+with the understanding that this can be restated in more general terms (as in the lecture notes).
+
+As suggested, I will prove a weaker version, showing that $\mathsf{DTIME}(f(n))$ is smaller than (thus a strict subset of) $\mathsf{DTIME}(f(2n + 1)^3)$. Following a hint from the lecture notes, let $A$ be the language that contains all TMs which accept an input after at most $f(|x|)$ steps.
+
+\end{document}
