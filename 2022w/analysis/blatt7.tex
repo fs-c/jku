@@ -51,7 +51,18 @@
 
 \paragraph{Aufgabe 2.}
 
-\paragraph{Aufgabe 3.} Sei $x_n$ eine Folge die auf $x$ konvergiert. Weil $f$ stetig in $x$ ist, konvergiert $(f(x_n))$ gegen $f(x)$. Weil $g$ stetig in $f(x)$ ist, konvergiert $(g(f(x_n)))$ gegen $g(f(x))$. Also ist $g \circ f$ stetig in $x$.
+\paragraph{Aufgabe 3.}
+Es gilt
+\begin{align*}
+    \lim_{n \to x} f(n) &= f(x)\ &\text{weil $f$ stetig in $x$ ist und} \\
+    \lim_{n \to f(x)} g(n) &= g(f(x))\ &\text{weil $g$ stetig in $f(x)$ ist.}
+\end{align*}
+Wir wollen zeigen, dass $\lim_{n \to x} g(f(n)) = g(f(x))$.
+\begin{align*}
+    \lim_{n \to x} g(f(n)) &= \lim_{n \to f(x)} g(n) \\
+    &= g\left(\lim_{n \to f(x)} n\right) & \text{weil $g$ stetig in $f(x)$}\\
+    &= g\left(f(x)\right)
+\end{align*}
 
 \paragraph{Aufgabe 4.} $f(x) = 0$, überall in $\mathbb{R}$ stetig.
 
@@ -63,18 +74,20 @@ Ist eine Funktion $f$ in $x_0$ stetig dann gilt: Für alle $\epsilon > 0$ gibt e
 \end{align*}
 (Definition nach Weierstrass und Jordan.)
 
-Wähle $\epsilon = 1/2$. Zwischen zwei rationalen Zahlen gibt es immer eine irrationale Zahl, also finden wir für beliebig kleine $\delta$ mindestens eine irrationale Zahl die einen Sprung $>\epsilon$ verursacht. Zwischen zwei reellen Zahl gibt es immer eine eine rationale Zahl \ldots\ selbes Konzept.
+Wähle ein $\epsilon \leq 1$. Zwischen zwei rationalen Zahlen gibt es immer eine reelle Zahl, also finden wir für beliebig kleine $\delta$-Umgebungen mindestens eine reelle Zahl die einen Sprung mit Distanz 1 (also $\geq \epsilon$) verursacht. Zwischen zwei reellen Zahlen gibt es immer eine eine rationale Zahl \ldots\ selbes Argument. (Rationale Zahlen liegen dicht in $\mathbb{R}$.)
 
 \paragraph{Aufgabe 6.}
 \begin{enumerate}
-    \item Die Vorzeichenfunktion ist in $x = 0$ unstetig, sonst stetig.
+    \item Die Vorzeichenfunktion ist in $x = 0$ unstetig, sonst stetig. (Siehe Skript.)
     \item \begin{align*}
         f: \mathbb{R} \rightarrow \mathbb{R}, f(x) = \begin{cases}
             x, & \text{wenn $x \in \mathbb{Q}$} \\
-            -x & \text{sonst}
+            0 & \text{sonst}
         \end{cases}
     \end{align*}
-    ist in $x = 0$ stetig, sonst unstetig.
+    Klarerweise gilt $\lim_{x \to 0} f(x) = f(0) = 0$ weil selbiges sowohl für $f_1(x) = x$ und $f_2(x) = 0$ gilt. Also ist $f$ stetig in 0.
+
+    Weil aber sowohl die rationalen als auch die irrationalen Zahlen dichte Teilmengen von $\mathbb{R}$ sind, kann es keinen weiteren Punkt geben an dem die Funktion stetig ist. (Siehe Aufgabe 5.)
 \end{enumerate}
 % https://planetmath.org/functioncontinuousatonlyonepoint
 
