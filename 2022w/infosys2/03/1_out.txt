@@ -1,0 +1,981 @@
+
+Error starting at line : 121 in command -
+DROP TABLE unterkuenfte
+Error report -
+ORA-00942: table or view does not exist
+00942. 00000 -  "table or view does not exist"
+*Cause:    
+*Action:
+
+Error starting at line : 122 in command -
+DROP TABLE wellnesseinrichtungen
+Error report -
+ORA-00942: table or view does not exist
+00942. 00000 -  "table or view does not exist"
+*Cause:    
+*Action:
+
+Error starting at line : 123 in command -
+DROP TABLE regionen
+Error report -
+ORA-00942: table or view does not exist
+00942. 00000 -  "table or view does not exist"
+*Cause:    
+*Action:
+
+Error starting at line : 125 in command -
+DROP TYPE region_type FORCE
+Error report -
+ORA-04043: object REGION_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 126 in command -
+DROP TYPE wellness_ranked_table FORCE
+Error report -
+ORA-04043: object WELLNESS_RANKED_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 127 in command -
+DROP TYPE wellness_ranked_type FORCE
+Error report -
+ORA-04043: object WELLNESS_RANKED_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 128 in command -
+DROP TYPE wellness_table FORCE
+Error report -
+ORA-04043: object WELLNESS_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 129 in command -
+DROP TYPE wellness_type FORCE
+Error report -
+ORA-04043: object WELLNESS_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 130 in command -
+DROP TYPE zimmer_table FORCE
+Error report -
+ORA-04043: object ZIMMER_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 131 in command -
+DROP TYPE unterkunft_table FORCE
+Error report -
+ORA-04043: object UNTERKUNFT_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 132 in command -
+DROP TYPE unterkunft_type FORCE
+Error report -
+ORA-04043: object UNTERKUNFT_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 133 in command -
+DROP TYPE entity_type FORCE
+Error report -
+ORA-04043: object ENTITY_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 134 in command -
+DROP TYPE addresse_type FORCE
+Error report -
+ORA-04043: object ADDRESSE_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 135 in command -
+DROP TYPE zimmer_type FORCE
+Error report -
+ORA-04043: object ZIMMER_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 136 in command -
+DROP TYPE hotel_type FORCE
+Error report -
+ORA-04043: object HOTEL_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 137 in command -
+DROP TYPE privatunterkunft_type FORCE
+Error report -
+ORA-04043: object PRIVATUNTERKUNFT_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 125 in command -
+DROP TYPE region_type FORCE
+Error report -
+ORA-04043: object REGION_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 126 in command -
+DROP TYPE wellness_ranked_table FORCE
+Error report -
+ORA-04043: object WELLNESS_RANKED_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 127 in command -
+DROP TYPE wellness_ranked_type FORCE
+Error report -
+ORA-04043: object WELLNESS_RANKED_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 128 in command -
+DROP TYPE wellness_table FORCE
+Error report -
+ORA-04043: object WELLNESS_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 129 in command -
+DROP TYPE wellness_type FORCE
+Error report -
+ORA-04043: object WELLNESS_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 130 in command -
+DROP TYPE zimmer_table FORCE
+Error report -
+ORA-04043: object ZIMMER_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 131 in command -
+DROP TYPE unterkunft_table FORCE
+Error report -
+ORA-04043: object UNTERKUNFT_TABLE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 132 in command -
+DROP TYPE unterkunft_type FORCE
+Error report -
+ORA-04043: object UNTERKUNFT_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 133 in command -
+DROP TYPE entity_type FORCE
+Error report -
+ORA-04043: object ENTITY_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 134 in command -
+DROP TYPE addresse_type FORCE
+Error report -
+ORA-04043: object ADDRESSE_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 135 in command -
+DROP TYPE zimmer_type FORCE
+Error report -
+ORA-04043: object ZIMMER_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 136 in command -
+DROP TYPE hotel_type FORCE
+Error report -
+ORA-04043: object HOTEL_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Error starting at line : 137 in command -
+DROP TYPE privatunterkunft_type FORCE
+Error report -
+ORA-04043: object PRIVATUNTERKUNFT_TYPE does not exist
+04043. 00000 -  "object %s does not exist"
+*Cause:    An object name was specified that was not recognized by the system.
+           There are several possible causes:
+           - An invalid name for a table, view, sequence, procedure, function,
+           package, or package body was entered. Since the system could not
+           recognize the invalid name, it responded with the message that the
+           named object does not exist.
+           - An attempt was made to rename an index or a cluster, or some
+           other object that cannot be renamed.
+*Action:   Check the spelling of the named object and rerun the code. (Valid
+           names of tables, views, functions, etc. can be listed by querying
+           the data dictionary.)
+
+Type ADDRESSE_TYPE compiled
+
+
+Type ZIMMER_TYPE compiled
+
+
+Type ENTITY_TYPE compiled
+
+
+Type HOTEL_TYPE compiled
+
+
+Type WELLNESS_TYPE compiled
+
+
+Type WELLNESS_TABLE compiled
+
+
+Type WELLNESS_RANKED_TYPE compiled
+
+
+Type ZIMMER_TABLE compiled
+
+
+Type UNTERKUNFT_TYPE compiled
+
+
+Type HOTEL_TYPE compiled
+
+
+Type PRIVATUNTERKUNFT_TYPE compiled
+
+
+Type UNTERKUNFT_TABLE compiled
+
+
+Type WELLNESS_RANKED_TABLE compiled
+
+
+Type REGION_TYPE compiled
+
+
+Table UNTERKUENFTE created.
+
+
+Table WELLNESSEINRICHTUNGEN created.
+
+
+Table REGIONEN created.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+2 rows updated.
+
+
+1 row inserted.
+
+
+Error starting at line : 110 in command -
+INSERT INTO regionen VALUES (
+    0, 'Region', 'First Region',
+    CAST(MULTISET(SELECT REF(u) FROM unterkuenfte u) AS unterkunft_table),
+    wellness_ranked_table(
+        wellness_ranked_type((SELECT REF(w) FROM wellnesseinrichtungen w WHERE w.id = 0), 1),
+        wellness_ranked_type((SELECT REF(w) FROM wellnesseinrichtungen w WHERE w.id = 1), 2)
+    )
+)
+Error at Command Line : 114 Column : 9
+Error report -
+SQL Error: ORA-00932: inconsistent datatypes: expected REF IFS22.WELLNESS_RANKED_TYPE got IFS22.WELLNESS_RANKED_TYPE
+00932. 00000 -  "inconsistent datatypes: expected %s got %s"
+*Cause:    
+*Action:
+
+Error starting at line : 63 in command -
+CREATE OR REPLACE TYPE wellness_ranked_table AS TABLE OF wellness_ranked_type;
+Error report -
+ORA-02303: cannot drop or replace a type with type or table dependents
+02303. 00000 -  "cannot drop or replace a type with type or table dependents"
+*Cause:    An attempt was made to drop or replace a type that has
+           type or table dependents.
+*Action:   For DROP TYPE, drop all type(s) and table(s) depending on the
+           type and then retry the operation, or use the FORCE option.
+           For CREATE TYPE, drop all type(s) and table(s) depending on the
+           type and then retry the operation, or drop all table(s) depending
+           on the type and retry with the FORCE option.
+
+Table UNTERKUENFTE dropped.
+
+
+Table WELLNESSEINRICHTUNGEN dropped.
+
+
+Table REGIONEN dropped.
+
+
+Type REGION_TYPE dropped.
+
+
+Type WELLNESS_RANKED_TABLE dropped.
+
+
+Type WELLNESS_RANKED_TYPE dropped.
+
+
+Type WELLNESS_TABLE dropped.
+
+
+Type WELLNESS_TYPE dropped.
+
+
+Type ZIMMER_TABLE dropped.
+
+
+Type UNTERKUNFT_TABLE dropped.
+
+
+Type UNTERKUNFT_TYPE dropped.
+
+
+Type ENTITY_TYPE dropped.
+
+
+Type ADDRESSE_TYPE dropped.
+
+
+Type ZIMMER_TYPE dropped.
+
+
+Type HOTEL_TYPE dropped.
+
+
+Type PRIVATUNTERKUNFT_TYPE dropped.
+
+
+Type ADDRESSE_TYPE compiled
+
+
+Type ZIMMER_TYPE compiled
+
+
+Type ENTITY_TYPE compiled
+
+
+Type HOTEL_TYPE compiled
+
+
+Type WELLNESS_TYPE compiled
+
+
+Type WELLNESS_TABLE compiled
+
+
+Type WELLNESS_RANKED_TYPE compiled
+
+
+Type ZIMMER_TABLE compiled
+
+
+Type UNTERKUNFT_TYPE compiled
+
+
+Type HOTEL_TYPE compiled
+
+
+Type PRIVATUNTERKUNFT_TYPE compiled
+
+
+Type UNTERKUNFT_TABLE compiled
+
+
+Type WELLNESS_RANKED_TABLE compiled
+
+
+Type REGION_TYPE compiled
+
+
+Table UNTERKUENFTE created.
+
+
+Table WELLNESSEINRICHTUNGEN created.
+
+
+Table REGIONEN created.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+2 rows updated.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+Table UNTERKUENFTE dropped.
+
+
+Table WELLNESSEINRICHTUNGEN dropped.
+
+
+Table REGIONEN dropped.
+
+
+Type REGION_TYPE dropped.
+
+
+Type WELLNESS_RANKED_TABLE dropped.
+
+
+Type WELLNESS_RANKED_TYPE dropped.
+
+
+Type WELLNESS_TABLE dropped.
+
+
+Type WELLNESS_TYPE dropped.
+
+
+Type ZIMMER_TABLE dropped.
+
+
+Type UNTERKUNFT_TABLE dropped.
+
+
+Type UNTERKUNFT_TYPE dropped.
+
+
+Type ENTITY_TYPE dropped.
+
+
+Type ADDRESSE_TYPE dropped.
+
+
+Type ZIMMER_TYPE dropped.
+
+
+Type HOTEL_TYPE dropped.
+
+
+Type PRIVATUNTERKUNFT_TYPE dropped.
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE addresse_type AS OBJECT (
+  2      strasse     VARCHAR2(20),
+  3      hausnummer  VARCHAR2(5),
+  4      plz         VARCHAR2(5),
+  5      ort         VARCHAR2(20)
+  6  );
+  7  /
+
+Type ADDRESSE_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE zimmer_type AS OBJECT (
+  2      kategorie   VARCHAR(20),
+  3      betten      NUMBER(4),
+  4      zimmer      NUMBER(4)
+  5  );
+  6  /
+
+Type ZIMMER_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE entity_type AS OBJECT (
+  2      id      NUMBER(4),
+  3      name    VARCHAR2(20)
+  4  ) NOT FINAL NOT INSTANTIABLE;
+  5  /
+
+Type ENTITY_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE hotel_type;
+  2  /
+
+Type HOTEL_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE wellness_type UNDER entity_type (
+  2      ort     VARCHAR2(20),
+  3      art     VARCHAR2(20),
+  4      hotel   REF hotel_type
+  5  );
+  6  /
+
+Type WELLNESS_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE wellness_table AS TABLE OF REF wellness_type;
+  2  /
+
+Type WELLNESS_TABLE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE wellness_ranked_type AS OBJECT (
+  2      wellness    REF wellness_type,
+  3      rang        NUMBER(4)
+  4  );
+  5  /
+
+Type WELLNESS_RANKED_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE zimmer_table AS TABLE OF zimmer_type;
+  2  /
+
+Type ZIMMER_TABLE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE unterkunft_type UNDER entity_type (
+  2      addresse    addresse_type,
+  3      zimmer      zimmer_table
+  4  ) NOT FINAL NOT INSTANTIABLE;
+  5  /
+
+Type UNTERKUNFT_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE hotel_type UNDER unterkunft_type (
+  2      hotelkategorie  VARCHAR2(20),
+  3      wellness        wellness_table
+  4  );
+  5  /
+
+Type HOTEL_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE privatunterkunft_type UNDER unterkunft_type (
+  2      beschreibung    VARCHAR(20)
+  3  );
+  4  /
+
+Type PRIVATUNTERKUNFT_TYPE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE unterkunft_table AS TABLE OF REF unterkunft_type;
+  2  /
+
+Type UNTERKUNFT_TABLE compiled
+
+SQL> CREATE OR REPLACE TYPE wellness_ranked_table AS TABLE OF wellness_ranked_type;
+  2  /
+
+Type WELLNESS_RANKED_TABLE compiled
+
+SQL> 
+SQL> CREATE OR REPLACE TYPE region_type UNDER entity_type (
+  2      beschreibung        VARCHAR(20),
+  3      reg_unterkuenfte    unterkunft_table,
+  4      reg_wellness        wellness_ranked_table
+  5  );
+  6  /
+
+Type REGION_TYPE compiled
+
+SQL> 
+SQL> --------------------------------------------------------------------------------
+SQL> 
+SQL> --- create tables
+SQL> 
+SQL> CREATE TABLE unterkuenfte OF unterkunft_type
+  2      NESTED TABLE zimmer STORE AS nested_zimmer;
+
+Table UNTERKUENFTE created.
+
+SQL> 
+SQL> CREATE TABLE wellnesseinrichtungen OF wellness_type;
+
+Table WELLNESSEINRICHTUNGEN created.
+
+SQL> 
+SQL> CREATE TABLE regionen OF region_type
+  2      NESTED TABLE reg_unterkuenfte STORE AS nested_unterkuenfte
+  3      NESTED TABLE reg_wellness STORE AS nested_wellness_ranked;
+
+Table REGIONEN created.
+
+SQL> 
+SQL> -- add some wellness facilities
+SQL> 
+SQL> INSERT INTO wellnesseinrichtungen VALUES (0, 'Wellness 1', 'Ort', 'Art', NULL);
+
+1 row inserted.
+
+SQL> INSERT INTO wellnesseinrichtungen VALUES (1, 'Wellness 2', 'Ort', 'Art', NULL);
+
+1 row inserted.
+
+SQL> 
+SQL> --- add some accommodations and associate the hotel with the wellness stuff
+SQL> 
+SQL> INSERT INTO unterkuenfte VALUES (hotel_type(
+  2      0, 'Unterkunft 1', addresse_type('Gasse', '2a', '4020', 'Linz'),
+  3      zimmer_table(zimmer_type('Romantikzimmer', 2, 24), zimmer_type('Juniorsuite', 4, 12)),
+  4      '4*', CAST(MULTISET(SELECT REF(w) FROM wellnesseinrichtungen w) AS wellness_table)
+  5  ));
+
+1 row inserted.
+
+SQL> 
+SQL> UPDATE wellnesseinrichtungen w SET hotel = (
+  2      SELECT TREAT(REF(u) AS REF hotel_type) FROM unterkuenfte u WHERE u.id = w.hotel.id
+  3  );
+
+2 rows updated.
+
+SQL> 
+SQL> INSERT INTO unterkuenfte VALUES (privatunterkunft_type(
+  2      1, 'Unterkunft 2', addresse_type('Weg', '1', '4060', 'Leonding'),
+  3      zimmer_table(zimmer_type('Gartensuite', 6, 8)), 'Privat 1'
+  4  ));
+
+1 row inserted.
+
+SQL> 
+SQL> --- add a region
+SQL> 
+SQL> INSERT INTO regionen VALUES (
+  2      0, 'Region', 'First Region',
+  3      CAST(MULTISET(SELECT REF(u) FROM unterkuenfte u) AS unterkunft_table),
+  4      wellness_ranked_table(
+  5          wellness_ranked_type((SELECT REF(w) FROM wellnesseinrichtungen w WHERE w.id = 0), 1),
+  6          wellness_ranked_type((SELECT REF(w) FROM wellnesseinrichtungen w WHERE w.id = 1), 2)
+  7      )
+  8  );
+
+1 row inserted.
+
+SQL> 
+SQL> --- cleanup
+SQL> 
+SQL> DROP TABLE unterkuenfte;
+
+Table UNTERKUENFTE dropped.
+
+SQL> DROP TABLE wellnesseinrichtungen;
+
+Table WELLNESSEINRICHTUNGEN dropped.
+
+SQL> DROP TABLE regionen;
+
+Table REGIONEN dropped.
+
+SQL> 
+SQL> DROP TYPE region_type FORCE;
+
+Type REGION_TYPE dropped.
+
+SQL> DROP TYPE wellness_ranked_table FORCE;
+
+Type WELLNESS_RANKED_TABLE dropped.
+
+SQL> DROP TYPE wellness_ranked_type FORCE;
+
+Type WELLNESS_RANKED_TYPE dropped.
+
+SQL> DROP TYPE wellness_table FORCE;
+
+Type WELLNESS_TABLE dropped.
+
+SQL> DROP TYPE wellness_type FORCE;
+
+Type WELLNESS_TYPE dropped.
+
+SQL> DROP TYPE zimmer_table FORCE;
+
+Type ZIMMER_TABLE dropped.
+
+SQL> DROP TYPE unterkunft_table FORCE;
+
+Type UNTERKUNFT_TABLE dropped.
+
+SQL> DROP TYPE unterkunft_type FORCE;
+
+Type UNTERKUNFT_TYPE dropped.
+
+SQL> DROP TYPE entity_type FORCE;
+
+Type ENTITY_TYPE dropped.
+
+SQL> DROP TYPE addresse_type FORCE;
+
+Type ADDRESSE_TYPE dropped.
+
+SQL> DROP TYPE zimmer_type FORCE;
+
+Type ZIMMER_TYPE dropped.
+
+SQL> DROP TYPE hotel_type FORCE;
+
+Type HOTEL_TYPE dropped.
+
+SQL> DROP TYPE privatunterkunft_type FORCE;
+
+Type PRIVATUNTERKUNFT_TYPE dropped.
+

@@ -1,0 +1,176 @@
+SQL> SET ECHO ON
+SQL> 
+SQL> --- setup
+SQL> 
+SQL> CREATE TABLE Person (
+  2      Nr NUMBER(4) PRIMARY KEY,
+  3      Name VARCHAR2(15));
+
+Table PERSON created.
+
+SQL> 
+SQL> CREATE TABLE Bediensteter (
+  2      Nr NUMBER(4) PRIMARY KEY,
+  3      Gehalt NUMBER(6));
+
+Table BEDIENSTETER created.
+
+SQL> 
+SQL> CREATE TABLE Professor (
+  2      Nr NUMBER(4) PRIMARY KEY,
+  3      HabilThema VARCHAR2(30));
+
+Table PROFESSOR created.
+
+SQL> 
+SQL> INSERT INTO Person VALUES (1, 'Person');
+
+1 row inserted.
+
+SQL> INSERT INTO Person VALUES (2, 'Bediensteter');
+
+1 row inserted.
+
+SQL> INSERT INTO Person VALUES (3, 'Professor');
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO Bediensteter VALUES (2, 2000);
+
+1 row inserted.
+
+SQL> INSERT INTO Bediensteter VALUES (3, 3000);
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO Professor VALUES (3, 'A');
+
+1 row inserted.
+
+SQL> 
+SQL> --- types
+SQL> 
+SQL> CREATE TYPE person_t AS OBJECT (
+  2      Nr NUMBER(4),
+  3      Name VARCHAR2(15)) NOT FINAL;
+  4  /
+
+Type PERSON_T compiled
+
+SQL> 
+SQL> CREATE TYPE bediensteter_t UNDER person_t (
+  2      Gehalt NUMBER(6)) NOT FINAL;
+  3  /
+
+Type BEDIENSTETER_T compiled
+
+SQL> 
+SQL> CREATE TYPE professor_t UNDER bediensteter_t (
+  2      HabilThema VARCHAR2(30));
+  3  /
+
+Type PROFESSOR_T compiled
+
+SQL> 
+SQL> --- views
+SQL> 
+SQL> CREATE OR REPLACE VIEW personen_v OF person_t WITH OBJECT OID(Nr) AS
+  2      SELECT person_t(p.Nr, p.Name)
+  3      FROM Person p;
+
+View PERSONEN_V created.
+
+SQL> /
+SQL> 
+SQL> SELECT * FROM personen_v;
+
+        NR NAME           
+---------- ---------------
+         1 Person         
+         2 Bediensteter   
+         3 Professor      
+
+SQL> 
+SQL> CREATE OR REPLACE VIEW bedienstete_v OF bediensteter_t WITH OBJECT OID(Nr) AS
+  2      SELECT bediensteter_t(p.Nr, p.Name, b.Gehalt)
+  3      FROM Bediensteter b, Person p
+  4      WHERE b.Nr = p.Nr;
+
+View BEDIENSTETE_V created.
+
+SQL> /
+SQL> 
+SQL> SELECT * FROM bedienstete_v;
+
+        NR NAME                GEHALT
+---------- --------------- ----------
+         2 Bediensteter          2000
+         3 Professor             3000
+
+SQL> 
+SQL> CREATE OR REPLACE VIEW professoren_attribs_v OF professor_t WITH OBJECT OID(Nr) AS
+  2      SELECT p.Nr, p.Name, b.Gehalt, pr.HabilThema
+  3      FROM Professor pr, Bediensteter b, Person p
+  4      WHERE pr.Nr = b.Nr AND b.Nr = p.Nr;
+
+View PROFESSOREN_ATTRIBS_V created.
+
+SQL> /
+SQL> 
+SQL> SELECT * FROM professoren_attribs_v;
+
+        NR NAME                GEHALT HABILTHEMA                    
+---------- --------------- ---------- ------------------------------
+         3 Professor             3000 A                             
+
+SQL> 
+SQL> CREATE OR REPLACE VIEW nur_bedienstete_v OF bediensteter_t WITH OBJECT OID(Nr) AS
+  2      SELECT bediensteter_t(b.Nr, b.Name, b.Gehalt)
+  3      FROM bedienstete_v b, Professor p
+  4      WHERE p.Nr != b.Nr;
+
+View NUR_BEDIENSTETE_V created.
+
+SQL> /
+SQL> 
+SQL> SELECT * FROM nur_bedienstete_v;
+
+        NR NAME                GEHALT
+---------- --------------- ----------
+         2 Bediensteter          2000
+
+SQL> 
+SQL> --- cleanup
+SQL> 
+SQL> DROP VIEW personen_v;
+
+View PERSONEN_V dropped.
+
+SQL> 
+SQL> DROP TABLE Professor;
+
+Table PROFESSOR dropped.
+
+SQL> DROP TABLE Bediensteter;
+
+Table BEDIENSTETER dropped.
+
+SQL> DROP TABLE Person;
+
+Table PERSON dropped.
+
+SQL> 
+SQL> DROP TYPE professor_t;
+
+Type PROFESSOR_T dropped.
+
+SQL> DROP TYPE bediensteter_t;
+
+Type BEDIENSTETER_T dropped.
+
+SQL> DROP TYPE person_t;
+
+Type PERSON_T dropped.
+
