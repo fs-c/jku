@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning,shapes,shapes.geometric} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity} --- Quiz 2/25}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\begin{enumerate}
+    \item 
+
+    \item A general algorithm is as follows:
+    \begin{enumerate}[label=(\arabic*)]
+        \item Initially, let $l = 0$ and $u = N$ be lower and upper bounds for the set that contains the smallest divisor of $N$.
+        \item Loop: (divide and conquer -- bsearch inspiration)
+        \begin{enumerate}
+            \item Let $m = \lfloor(l + u)/2\rfloor$.
+            \item If there is a divisor $\leq m$ adjust the upper bound $u = m$. Otherwise adjust the lower bound $l = m$.
+            \item Continue until $u - l = 1$, the final element is the smallest divisor.
+        \end{enumerate}
+    \end{enumerate}
+    In every loop iteration the set size is cut in half. Since $N \leq 2^{n}$ we can have at most $n$ such iterations until the set has at most one element. The time complexity of the algorithm is thus in $O(n^4)$. 
+\end{enumerate}
+
+\end{document}
