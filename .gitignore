@@ -14,6 +14,7 @@ git_ignore_*
 *.out
 *.class
 *.o
+*.bkp
 
 # LaTeX build
 *.aux

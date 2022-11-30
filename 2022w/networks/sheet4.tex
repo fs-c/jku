@@ -1,0 +1,96 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{listings}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Computernetzwerke --- \textbf{Übung 4}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}[label=\roman*.]
+    \item Application Layer. Die Basis f\"ur Kommunikation im Internet, verwendet um \enquote{Hypertext} (\"ubl. HTML) zu transportieren. Bis HTTP/2 TCP, HTTP/3 QUIC aufbauend auf UDP. Port 80. 
+    
+    \item Application Layer. Verwendet um Daten zu \"ubertragen, \"ubl. mithilfe eines FTP-Clients. TCP/20 f\"ur transfer, TCP/21 f\"ur control.
+    
+    \item Network Layer. Versendet Pakete u\"ber Netzwerkgrenzen basierend auf IP-Adressen.
+    
+    \item Physical Layer und Data Link Layer. Erm\"oglicht kabelgebundene Computernetzwerke (etwa LANs).
+    
+    \item Application Layer. Siehe i., aber versendet mit TLS um Sicherheit, Integrit\"at und Authentizität zu gew\"ahrleisten. Port 443.
+    
+    \item Data Link Layer. Verwendet um in einem Netzwerk automatisch IP Adressen (etc.) zu verteilen. Ein DHCP-Server spricht mit Clients die den DHCP protocal stack verwenden. UDP/67 Server, UDP/68 Client.
+    
+    \item Network Layer. Verwendet um low-level Fehler- bzw. Statusmeldungen zu zu versenden, insb. von Routern.
+    
+    \item Application Layer. Verwendet um Netzwerke zu Verwalten (Router, Server, etc. \"uberwachen und kontrollieren). Agent empfangt auf UDP/161, Manager empfangt auf UDP/162.
+    
+    \item Application Layer. Assoziiert Domain Namen mit IP Adressen. 53/UDP bzw. TCP.
+    
+    \item Application Layer. Erweiterung von SSH um (sicheren) Datentransfer zu erm\"oglichen. TCP/22.
+    
+    \item Application Layer. Verwendet von Mail-Clients um Mails von einem Mailserver abzufragen. \"Ublicherweise werden alle Mails auf dem Mailserver gespeichert und sind so abfragbar. TCP/143.
+    
+    \item Application Layer. Verwendet von Mail-Clients um Mails von einem Mailserver abzufragen. Mails werden \"ublicherweise nicht auf dem Server gespeichert, sondern gel\"oscht sobald sie vom Client abgefragt wurden. (Mittlerweile de facto von IMAP abgel\"ost.) TCP/110.
+    
+    \item Application Layer. Verwendet von Mailservern um Mails zu versenden/erhalten. TCP/25 f\"ur server-server TCP/587 f\"ur client-server.
+    
+    \item Session Layer, Application Layer (?, passt nicht wirklich in das OSI Modell). Verwendet um Netzwerkkommunikation abh\"or und f\"alschungssicher zu machen. Wei ein \enquote{wrapper} um regul\"are Verbindung vorstellbar.
+    
+    \item Application Layer. Verwendet f\"ur remote login und command line execution auf (\"ubl.) Servern, abgesichert durch asymmetrische Kryptographie. TCP/22.
+    
+    \item Application Layer. Obsoleter Vorg\"anger von SSH mit \"ahnlicher Funktionalit\"at aber keiner Verschl\"usselung. TCP/23.
+\end{enumerate}
+
+\paragraph{Aufgabe 2.}
+
+\begin{enumerate}
+    \item Erfasst wurde
+    \begin{enumerate}
+        \item DHCP Discover, broadcast vom Client ohne requested IP address. Teilt dem Server mit, dass er eine IP Adresse will.
+        \item DHCP Offer. Server bietet Client die Addresse 192.168.0.10 an.
+        \item DHCP Request. Client broadcastet eine Anfrage, diese Addresse zu bekommen.
+        \item DHCP ACK. Server best\"atigt die Anfrage, die Addresse ist jetzt dem Client zugewiesen.
+    \end{enumerate}
+
+    \item Auf L2 k\"onnte man Frames sehen. (Frame 1: 314 bytes on wire (2512 bits), 314 bytes captured (2512 bits) \ldots) Auf L3 k\"onnte man Pakete mit assoziierten IP Addressen sehen. (Internet Protocol Version 4, Src: 192.168.0.1, Dst: 192.168.0.10 \ldots) Auf L4 lebt UDP, hier werden Ports relevant. (User Datagram Protocol, Src Port: 67, Dst Port: 68 \ldots) Auf L7 sieht man dann die ganze DHCP Nachricht.
+    
+    \item 192.168.0.10
+\end{enumerate}
+
+\end{document}
