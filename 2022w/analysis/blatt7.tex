@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{hyperref}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 7}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.} (Sei $\tilde{x} \in \mathbb{R}$ und $(h_n)$ eine Nullfolge.)
+\begin{align*}
+    \lim f(\tilde{x} + h_n) = \lim |\tilde{x} + h_n| = \begin{cases}
+        \lim (\tilde{x} + h_n) = \tilde{x} + \lim h_n = \tilde{x} \\
+        \lim (-\tilde{x} - h_n) = -\tilde{x} - \lim h_n = -\tilde{x}
+    \end{cases} = |\tilde{x}| = f(\tilde{x})
+\end{align*}
+
+\paragraph{Aufgabe 2.}
+
+\paragraph{Aufgabe 3.} Sei $x_n$ eine Folge die auf $x$ konvergiert. Weil $f$ stetig in $x$ ist, konvergiert $(f(x_n))$ gegen $f(x)$. Weil $g$ stetig in $f(x)$ ist, konvergiert $(g(f(x_n)))$ gegen $g(f(x))$. Also ist $g \circ f$ stetig in $x$.
+
+\paragraph{Aufgabe 4.} $f(x) = 0$, überall in $\mathbb{R}$ stetig.
+
+\paragraph{Aufgabe 5.}
+
+Ist eine Funktion $f$ in $x_0$ stetig dann gilt: Für alle $\epsilon > 0$ gibt es $\delta > 0$ derart, dass für alle $x$
+\begin{align*}
+    |x - x_0| < \delta \quad\Longrightarrow\quad |f(x) - f(x_0)| < \epsilon
+\end{align*}
+(Definition nach Weierstrass und Jordan.)
+
+Wähle $\epsilon = 1/2$. Zwischen zwei rationalen Zahlen gibt es immer eine irrationale Zahl, also finden wir für beliebig kleine $\delta$ mindestens eine irrationale Zahl die einen Sprung $>\epsilon$ verursacht. Zwischen zwei reellen Zahl gibt es immer eine eine rationale Zahl \ldots\ selbes Konzept.
+
+\paragraph{Aufgabe 6.}
+\begin{enumerate}
+    \item Die Vorzeichenfunktion ist in $x = 0$ unstetig, sonst stetig.
+    \item \begin{align*}
+        f: \mathbb{R} \rightarrow \mathbb{R}, f(x) = \begin{cases}
+            x, & \text{wenn $x \in \mathbb{Q}$} \\
+            -x & \text{sonst}
+        \end{cases}
+    \end{align*}
+    ist in $x = 0$ stetig, sonst unstetig.
+\end{enumerate}
+% https://planetmath.org/functioncontinuousatonlyonepoint
+
+\paragraph{Aufgabe 7.}
+Es gilt
+\begin{align*}
+    f(xy) &= x\, f(y) & f(yx) &= y\, f(x)
+\end{align*}
+und somit
+\begin{align*}
+    x\, f(y) &= y\, f(x) \\
+    \frac{f(y)}{y} &= \frac{f(x)}{x}.
+\end{align*}
+Unsere Funktionen sind also notwendigerweise lineare Funktionen $f(x) = cx + d$ für $c, d \in \mathbb{R}$. Klarerweise sind dieses Funktionen wegen
+\begin{align*}
+    \lim f(x + h_n) = \lim (cx + ch_n + d) = cx + d + \lim ch_n = cx = f(x)
+\end{align*}
+global stetig.
+
+\paragraph{Aufgabe 8.} Nachdem $f$ stetig in einem Punkt $x'$ ist, gilt 
+\begin{align*}
+    \lim_{x \to x'} f(x) = f(x').
+\end{align*}
+Wir wollen zeigen, dass für beliebige $\tilde{x}$ auch $\lim_{x \to \tilde{x}}f(x) = f(\tilde{x})$ gilt.
+\begin{align*}
+    \lim_{x \to \tilde{x}} f(x) &= \lim_{x \to x'} f(x - x' + \tilde{x}) \\
+    &= \lim_{x \to x'} (f(x) - f(x') + f(\tilde{x})) \\
+    &= (\lim_{x \to x'}f(x)) - f(x') + f(\tilde{x}) \\
+    &= f(x') - f(x') + f(\tilde{x}) \\
+    &= f(\tilde{x})
+\end{align*}
+Ist eine additive Funktion stetig in einem beliebigen Punkt, ist sie auch global stetig.
+
+\end{document}
