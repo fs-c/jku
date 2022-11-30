@@ -45,12 +45,22 @@
 
 \section*{Time Hierarchy Theorem}
 
-Informally, the theorem states that given more time, a Turing machine can solve more problems. Formally, if $f(n)$ is a time-honest function then
+Informally, the theorem states that given more time, a Turing machine can solve more problems. (In other words, more languages can be decided with more time.) One way to state it formally is that if $f$ and $g$ are time-honest functions with $f(n) \log f(n) = O(g(n))$, then
 \begin{align*}
-    \mathsf{DTIME}(f(n)) \subsetneq \mathsf{DTIME}\left(f(n)^2 \right),
+    \mathsf{DTIME}(f(n)) \subsetneq \mathsf{DTIME}\left(g(n)\right).
 \end{align*}
-with the understanding that this can be restated in more general terms (as in the lecture notes).
+As suggested, I have chosen to present a proof of a weaker version, showing that $\mathsf{DTIME}(n)$ is a strict subset of $\mathsf{DTIME}(n^{1.5})$. The following are notes based on the proof presented in \emph{Computational Complexity: A Modern Approach} by S. Arora and B. Barak, available on p. 66 of the public draft.
 
-As suggested, I will prove a weaker version, showing that $\mathsf{DTIME}(f(n))$ is smaller than (thus a strict subset of) $\mathsf{DTIME}(f(2n + 1)^3)$. Following a hint from the lecture notes, let $A$ be the language that contains all TMs which accept an input after at most $f(|x|)$ steps.
+Let $M_x$ be the TM represented by a string $x$ with outputs $\{0, 1\}$ and let $U$ be an Universal TM (i.e. an \enquote{interpreter} of TMs, which is itself a TM). Now consider a TM $D$ which, given as input $x$, runs $U$ for $|x|^{1.4}$ steps, simulating the execution of $M_x$ on $x$. If an output $M_x(x)$ is obtained in time it outputs $1 - M_x(x)$, the opposite. Otherwise it outputs zero.
+
+Clearly, $D$ finishes execution within $n^{1.4}$ steps since it only lets $U$ run for as many steps and doesn't do anything else that scales with $n$. Thus the language decided by $D$ is in $\mathsf{DTIME}(n^{1.5})$. The following will show that this language is not in $\mathsf{DTIME}(n)$, thus providing a proof of the initial statement.
+
+For the sake of contradiction assume that there exists a TM $M$ which decides the same language as $D$ but runs in time $kn$ for input sizes $n$ where $k$ is a constant factor independent of $n$. Then for all possible inputs $x$ we have $M(x) = D(x)$: The machines are functionally equivalent but $M$ runs in linear time.
+
+The time needed to simulate $M$ on $U$ is at most $ck|x|\log|x|$ for some constant $c$ which is independent of $x$. (This makes use of the general statement that the runtime of an Universal TM is bounded by $cT \log T$ where the simulated machine halts within $T$ steps.) Naturally, at some point $n^{1.4}$ will grow larger than $ckn \log n$. Let $n_0$ be the smallest $n$ such that this is the case and let $x$ (representing the TM $M_x$) have a length of $n_0$. Then $D(x)$ will obtain the output of $M(x)$ within $|x|^{1.4}$ steps (since it stops at that point) but by definition we have
+\begin{align*}
+    D(x) = 1 - M(x) \neq M(x),
+\end{align*}
+and have arrived at a contradiction.
 
 \end{document}
