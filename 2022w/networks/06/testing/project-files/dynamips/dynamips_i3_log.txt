@@ -1,0 +1,19 @@
+Dec 02 14:35:32.877 HYPERVISOR: Release 0.2.22-amd64/Linux (tag 2022052400)
+Dec 02 14:35:32.878 HYPERVISOR: Started on IP = localhost, TCP port = 50561.
+Dec 02 14:35:32.886 HYPERVISOR: exec_cmd: hypervisor version 
+Dec 02 14:35:32.886 HYPERVISOR: exec_cmd: hypervisor working_dir /home/fsoc/Projects/jku/2022w/networks/06/testing/project-files/dynamips 
+Dec 02 14:35:32.886 GENERAL: working_dir=/home/fsoc/Projects/jku/2022w/networks/06/testing/project-files/dynamips
+Dec 02 14:35:32.887 HYPERVISOR: exec_cmd: ethsw create Switch3 
+Dec 02 14:35:33.139 HYPERVISOR: exec_cmd: nio create_udp udp-12a25092-0706-478c-beb1-1f2eb8a6633b 10004 127.0.0.1 10005 
+Dec 02 14:35:33.140 HYPERVISOR: exec_cmd: ethsw add_nio Switch3 udp-12a25092-0706-478c-beb1-1f2eb8a6633b 
+Dec 02 14:35:33.158 HYPERVISOR: exec_cmd: ethsw set_access_port Switch3 udp-12a25092-0706-478c-beb1-1f2eb8a6633b 10 
+Dec 02 14:35:33.212 HYPERVISOR: exec_cmd: nio create_udp udp-e5561f52-26fa-4207-8a7f-0a231a843d50 10006 127.0.0.1 10007 
+Dec 02 14:35:33.212 HYPERVISOR: exec_cmd: ethsw add_nio Switch3 udp-e5561f52-26fa-4207-8a7f-0a231a843d50 
+Dec 02 14:35:33.219 HYPERVISOR: exec_cmd: ethsw set_access_port Switch3 udp-e5561f52-26fa-4207-8a7f-0a231a843d50 20 
+Dec 02 14:35:33.412 HYPERVISOR: exec_cmd: nio create_udp udp-10bb4834-ac66-4049-9891-909954065690 10011 127.0.0.1 10010 
+Dec 02 14:35:33.412 HYPERVISOR: exec_cmd: ethsw add_nio Switch3 udp-10bb4834-ac66-4049-9891-909954065690 
+Dec 02 14:35:33.421 HYPERVISOR: exec_cmd: ethsw set_dot1q_port Switch3 udp-10bb4834-ac66-4049-9891-909954065690 20 
+Dec 02 14:49:12.398 HYPERVISOR: exec_cmd: nio bind_filter udp-12a25092-0706-478c-beb1-1f2eb8a6633b 2 capture 
+Dec 02 14:49:12.398 HYPERVISOR: exec_cmd: nio setup_filter udp-12a25092-0706-478c-beb1-1f2eb8a6633b 2 en10mb /home/fsoc/Projects/jku/2022w/networks/06/testing/project-files/captures/Switch3_Ethernet0_to_PC3_Ethernet0.pcap 
+Dec 02 16:10:01.287 HYPERVISOR: exec_cmd: nio bind_filter udp-e5561f52-26fa-4207-8a7f-0a231a843d50 2 capture 
+Dec 02 16:10:01.288 HYPERVISOR: exec_cmd: nio setup_filter udp-e5561f52-26fa-4207-8a7f-0a231a843d50 2 en10mb /home/fsoc/Projects/jku/2022w/networks/06/testing/project-files/captures/Switch3_Ethernet1_to_PC4_Ethernet0.pcap 
