@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity} --- Special Topic 4}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\usepackage{hyperref}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\section*{Complexity-Theoretic Explanations of Natural Phenomena}
+
+Some motivation for these thoughts on complexity theory in the context of nature is the observation that (natural) systems \enquote{want} to minimize their total (free) energy. In particular, increasing the reciprocal structure of molecules will usually lead to decreasing free energy. An example of this is crystallization, which could thus be viewed as a dynamic optimization problem --- minimizing energy by coming up with a good structure --- with many parameters. Such a problem is made significantly more difficult with high temperatures (energy) and impurities (other molecules, like salt in water).
+
+A perhaps more straightforward but still interesting avenue of approach is magnetism. We consider a number of particles arranged in a lattice, each with a magnetic field simplified to $\uparrow$ or $\downarrow$ (spin). Neighbouring particles interact with each other based on their spin. The properties of the material (in other words, the kind of particles we are dealing with) determine the sign and magnitude of the energy that is \enquote{produced} by neighbours --- for example ferromagnetic materials \enquote{like} having exclusively $\uparrow$s or $\downarrow$s and this will be a configuration that minimizes energy for them.
+
+Minimizing the energy in a system is the object of the ground state problem, where the ground state of a system is its stationary state of lowest energy. This is trivial for ferromagnetic materials which have two such states, all molecules $\uparrow$ or all molecules $\downarrow$. But as mentioned, with added factors this becomes much harder.
+
+Formally, the ground state problem can be stated in the context of a graph with $n$ vertices (atoms) and $m$ edges (couplings). As established, a vertex can have two values, either $\uparrow$ or $\downarrow$. Edges are weighted by their energy,
+\begin{align*}
+    C(x_i, x_j) &= J_{i, j}\phi(x_i, x_j) & \phi(x_i, x_j) = \text{1 if $x_i$ is equal to $x_j$, 0 otherwise} 
+\end{align*}
+where $J_{i, j}$ depends on the material. It would be $>0$ for ferromagnetic materials, for example. The total energy of the system is the sum of the energies of all couplings, this is usually negated to fit with the model of decreasing energy.
+
+We can formulate this problem in way that is in 3-SAT, as in
+\begin{align*}
+    f(x_0, \ldots, x_{n - 1}) = C_1(x_{1_1}, x_{2_1}, x_{3_1}) \land \cdots
+\end{align*}
+but this isn't particularly great because we need pairings of three spin locations but we originally restricted ourself to looking at pairs only. Nevertheless, an important conclusion is that the ground state problem with couplings among 3 particles is NP-hard.
+
+Another approach is to limit ourselves to anti-ferromagnetism. We thus consider likewise vertices to be \enquote{bad}, so our energy function is the number of vertices which are equal in spin. The goal is to minimize this. In particular, this is equivalent to finding the maximum cut of our graph of particles, that is, a partition of the vertices into sets such that the number of edges between them is as large as possible. Since Max-Cut is NP-complete, the anti-ferromagnic ground state problem on general graphs is NP-hard, but the decision version is NP-complete.
+
+\end{document}
+
+
+bergkristall v glas )regulares vs irreguläres pattern
+
+water (3 states), microsystems want to minimize energey, structured config is usually lowest energy config, high temp (motion) and impurities (other molecules) can prevent it
+
+crystallizsation as a dynamic optimization problem (minimize energy) with many parameters, external effects and impurities make it harder, maybe nature cannot solve it (explanation for glass, subzero-tmep water, ...)
+
+magnetism and ground state problem; particles in lattice, each with magnetic field, overall energy is sum of coupling energies. material properties determine whether or not particles "want" to have a certain field (ferromagnetic, antiferro...). sign and size of couplings depend on this.
+
+ground state problem, find lowest total energey configuration. ferromagnetic has easy solution, all up, all down. but with other added molecules this becomes a lot more difficult.
+
+formally: grapth with n vertices (atoms) and m edges (couplings), trivial chain for 1d example. vertex can have two values (up, down). edges are weighted with their energy. edge energy is calculated with C(x_i, x_j) = J_{i, j} (equal)(x_i, x_j). energy of the system $H$ is sum of coupling energies. (for forromagnetism, J will be positive, otherwise negative). total energy is negated (convention, we want energy to "decrease"). problem: minimize $H$.
+
+first a: formulate as 3sat problem. minimizing it reveals max sat. max sat is at least as hard as 3 sat. (3sat: f(x_0, ..., x_{n - 1}) = C_1(x_1_1, x_2_1, x_3_1) \land ...). ground state problem with couplings among 3 particles is NP-hard. (this isn't super great because we need pairings of three spin locations but we originally restricted ourself to looking at pairs only)
+
+second a: likewise vertices are bad, so our energy function is the number of vertices which are likewise. we want to minimize this. max-cut: we want to find two groups such that there are a maximal amount of edges between them. (maximal amount of serrated edges.) max-cut is NP-complete. the anti ferromagnic ground state problem on general graphs is np jard. the decision version is np complete.
