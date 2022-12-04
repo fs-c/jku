@@ -1,6 +1,7 @@
 *.zip
 
 .idea/
+*.iml
 
 # For se1/generateCover
 *.log
