@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:ns="http://www.cis.jku.at/IFS2/Ue4_sales" targetNamespace="http://www.cis.jku.at/IFS2/Ue4_sales"
+	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<!-- type definitions -->
+	
+	<complexType name="customer_t">
+		<sequence>
+			<element name="name" type="string" />
+			<element name="address" type="string" />
+			<element name="city" type="string" />
+			<element name="state" type="string" />
+			<element name="zip" type="string" />
+			<element name="area" type="string" />
+			<element name="phone" type="string" />
+			<element name="repid" type="positiveInteger" />
+			<element name="creditlimit" type="positiveInteger" />
+			<element name="comments" type="string" minOccurs="0" />
+			
+			<element name="ord" type="ns:order_t" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	
+		<attribute name="custid" type="positiveInteger" use="required" />
+	</complexType>
+	
+	<complexType name="order_t">
+		<sequence>
+			<element name="orderdate" type="string" />
+			<element name="commplan" type="string" minOccurs="0" />
+			<element name="shipdate" type="string" />
+			<element name="total" type="string" />
+			
+			<element name="item" type="ns:item_t" maxOccurs="unbounded" />
+		</sequence>
+		
+		<attribute name="ordid" type="positiveInteger" use="required" />
+	</complexType>
+	
+	<complexType name="item_t">
+		<sequence>
+			<element name="product_ref">
+				<complexType>
+					<attribute name="ref" use="required" type="positiveInteger" />
+				</complexType>
+			</element>
+		
+			<element name="actualprice" type="decimal" />
+			<element name="qty" type="positiveInteger" />
+			<element name="itemtot" type="decimal" />
+		</sequence>
+		
+		<attribute name="itemid" type="positiveInteger" use="required" />
+	</complexType>
+	
+	<complexType name="product_t">
+		<sequence>
+			<element name="descrip" type="string" />
+
+			<element name="price" maxOccurs="unbounded">
+				<complexType>
+					<sequence>
+						<element name="stdprice" type="string" />
+						<element name="minprice" type="string" />
+						<element name="startdate" type="string" />
+						<element name="enddate" type="string" minOccurs="0" />
+					</sequence>
+				</complexType>
+			</element>
+		</sequence>
+		
+		<attribute name="prodid" type="positiveInteger" use="required" />
+	</complexType>
+	
+	<!-- implementation -->
+		
+	<element name="sales">
+		<complexType>
+			<sequence>
+				<element name="customer" type="ns:customer_t" maxOccurs="unbounded" />
+				
+				<element name="product" type="ns:product_t" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+
+		<key name="customer_key">
+			<selector xpath="ns:customer" />
+			<field xpath="@custid" />
+		</key>
+		
+		<key name="order_key">
+			<selector xpath="ns:customer/ord" />
+			<field xpath="@ordid" />
+		</key>
+		
+		<key name="item_key">
+			<selector xpath="ns:customer/ord/item" />
+			<field xpath="@itemid" />
+		</key>
+
+		<key name="product_key">
+			<selector xpath="ns:product" />
+			<field xpath="@prodid" />
+		</key>
+		
+		<keyref name="product_keyref" refer="ns:product_key">
+			<selector xpath="ns:customer/ord/item/product_ref" />
+			<field xpath="@ref" />
+		</keyref>
+	</element>
+</schema>

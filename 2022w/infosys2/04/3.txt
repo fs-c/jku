@@ -1,0 +1,80 @@
+SQL> 
+SQL> -- a)
+SQL> SELECT e.employee_id, XMLElement("emp",
+  2      XMLAttributes(employee_id, last_name, job_title),
+  3      XMLForest(salary, min_salary, max_salary)
+  4  ) FROM employees e, jobs j WHERE department_id = 90 AND e.job_id = j.job_id;
+
+EMPLOYEE_ID XMLELEMENT("EMP",XMLATTRIBUTES(EMPLOYEE_ID,LAST_NAME,JOB_TITLE),XMLFOREST(SALARY
+----------- --------------------------------------------------------------------------------
+        100 <emp EMPLOYEE_ID="100" LAST_NAME="King" JOB_TITLE="President"><SALARY>24000</SAL
+            ARY><MIN_SALARY>20080</MIN_SALARY><MAX_SALARY>40000</MAX_SALARY></emp>          
+
+        101 <emp EMPLOYEE_ID="101" LAST_NAME="Kochhar" JOB_TITLE="Administration Vice Presid
+            ent"><SALARY>17000</SALARY><MIN_SALARY>15000</MIN_SALARY><MAX_SALARY>30000</MAX_
+            SALARY></emp>                                                                   
+
+        102 <emp EMPLOYEE_ID="102" LAST_NAME="De Haan" JOB_TITLE="Administration Vice Presid
+            ent"><SALARY>17000</SALARY><MIN_SALARY>15000</MIN_SALARY><MAX_SALARY>30000</MAX_
+            SALARY></emp>                                                                   
+
+
+3 rows selected. 
+
+SQL> 
+SQL> -- b)
+SQL> SELECT XMLElement("dep", 
+  2      XMLElement("meta", XMLAttributes(d.department_id), XMLElement("name", d.department_name)),
+  3      XMLElement("stats",
+  4          XMLElement("empcount", COUNT(employee_id)),
+  5          XMLElement("avgsal", AVG(salary))
+  6      )
+  7  ) FROM departments d, employees e
+  8  WHERE d.department_id = e.department_id AND department_name = 'Sales' OR department_name = 'Marketing' OR department_name = 'IT' GROUP BY d.department_id, d.department_name;
+
+XMLELEMENT("DEP",XMLELEMENT("META",XMLATTRIBUTES(D.DEPARTMENT_ID),XMLELEMENT("NA
+--------------------------------------------------------------------------------
+<dep><meta DEPARTMENT_ID="60"><name>IT</name></meta><stats><empcount>107</empcou
+nt><avgsal>6461.83177570093457943925233644859813084</avgsal></stats></dep>
+
+<dep><meta DEPARTMENT_ID="80"><name>Sales</name></meta><stats><empcount>34</empc
+ount><avgsal>8955.88235294117647058823529411764705882</avgsal></stats></dep>
+
+<dep><meta DEPARTMENT_ID="20"><name>Marketing</name></meta><stats><empcount>107<
+/empcount><avgsal>6461.83177570093457943925233644859813084</avgsal></stats></dep
+>
+
+
+3 rows selected. 
+
+SQL> 
+SQL> -- c)
+SQL> SELECT XMLElement("region",
+  2      XMLAttributes(r.region_id, r.region_name),
+  3      (SELECT XMLAgg(XMLElement("country",
+  4          XMLAttributes(c.country_id, c.country_name),
+  5          (SELECT XMLAgg(XMLElement("location",
+  6              XMLAttributes(l.location_id, l.postal_code, l.city)))
+  7          FROM locations l
+  8          WHERE l.country_id = c.country_id)))
+  9      FROM countries c
+ 10      WHERE c.region_id = r.region_id))
+ 11  FROM regions r WHERE r.region_name = 'Asia';
+
+XMLELEMENT("REGION",XMLATTRIBUTES(R.REGION_ID,R.REGION_NAME),(SELECTXMLAGG(XMLEL
+--------------------------------------------------------------------------------
+<region REGION_ID="3" REGION_NAME="Asia"><country COUNTRY_ID="JP" COUNTRY_NAME="
+Japan"><location LOCATION_ID="1200" POSTAL_CODE="1689" CITY="Tokyo"></location><
+location LOCATION_ID="1300" POSTAL_CODE="6823" CITY="Hiroshima"></location></cou
+ntry><country COUNTRY_ID="CN" COUNTRY_NAME="China"><location LOCATION_ID="2000" 
+POSTAL_CODE="190518" CITY="Beijing"></location></country><country COUNTRY_ID="IN
+" COUNTRY_NAME="India"><location LOCATION_ID="2100" POSTAL_CODE="490231" CITY="B
+ombay"></location></country><country COUNTRY_ID="AU" COUNTRY_NAME="Australia"><l
+ocation LOCATION_ID="2200" POSTAL_CODE="2901" CITY="Sydney"></location></country
+><country COUNTRY_ID="SG" COUNTRY_NAME="Singapore"><location LOCATION_ID="2300" 
+POSTAL_CODE="540198" CITY="Singapore"></location></country><country COUNTRY_ID="
+ML" COUNTRY_NAME="Malaysia"></country></region>
+
+
+1 row selected. 
+

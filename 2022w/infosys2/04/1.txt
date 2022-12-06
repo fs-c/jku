@@ -1,0 +1,14 @@
+a) /sales/product
+b) *                        (* = alle kindelemente von context node)
+c) *                        (unterschied zw knoten und element?)
+d) */*                      (kinder aller kindelemente = enkel elemente von context node)
+e) //customer/@custid
+f) //@*                     (// = alle elemente ausgehend von root, @* = alle attribute von context node)
+g) /sales/product[2]
+h) /sales/product[last()]
+i) /sales/customer[3]/ord[2]
+j) ./price
+k) //item[product_ref[@ref=100861]]     (alle elemente die [] erfuellen)
+l) //customer[2][ord[@ordid=610]]
+m) //customer[creditlimit=10000]
+n) //customer[name][comments]
