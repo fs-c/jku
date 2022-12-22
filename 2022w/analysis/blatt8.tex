@@ -47,17 +47,16 @@
 \end{align*}
 Gemäß der Definition von $\tilde{f}$ kann nun zu
 \begin{align*}
-    |\tilde{x} - x_0| < \delta\ &\Rightarrow\ |f(\tilde{x}) - M| < \epsilon \\
-    &\Rightarrow\ |f(\tilde{x}) - \tilde{f}(x_0)| < \epsilon
+    |\tilde{x} - x_0| < \delta\ &\Rightarrow\ |f(\tilde{x}) - M| < \epsilon
 \end{align*}
-umgeformt werden, das entspricht der $(\epsilon, \delta)$-Definition des Limits bzw. $\lim_{x \to x_0}f(x) = M$. Wenn die Funktion nicht stetig an $x_0$ ist gibt es solche $\epsilon$ und $\delta$ nicht --- dann hat die Funktion an dieser Stelle auch kein entsprechendes Limit. 
+umgeformt werden, das entspricht der $(\epsilon, \delta)$-Definition des Limits bzw. $\lim_{x \to x_0}f(x) = M$. Wenn die Funktion nicht stetig an $x_0$ ist gibt es solche $\epsilon$ und $\delta$ von Anfang an nicht --- dann kann die Funktion an dieser Stelle auch kein entsprechendes Limit haben. 
 
-Dann gilt für andere aber gleichartig gewählte $\epsilon$ und $\delta$, dass
-\begin{align*}
-    |\tilde{x} - x_0| < \delta\ &\Rightarrow\ |f(\tilde{x}) - M| < \epsilon \\
-    &\Rightarrow\ |f(\tilde{x}) - \tilde{f}(x_0)| < \epsilon
-\end{align*}
-weil $\tilde{f}(x) = f(x)$ für alle $x \neq x_0$.
+% Dann gilt für andere aber gleichartig gewählte $\epsilon$ und $\delta$, dass
+% \begin{align*}
+%     |\tilde{x} - x_0| < \delta\ &\Rightarrow\ |f(\tilde{x}) - M| < \epsilon \\
+%     &\Rightarrow\ |f(\tilde{x}) - \tilde{f}(x_0)| < \epsilon
+% \end{align*}
+% weil $\tilde{f}(x) = f(x)$ für alle $x \neq x_0$.
 
 \paragraph{Aufgabe 2.} Seien
 \begin{align*}
@@ -95,24 +94,16 @@ Die Addition zweier stetiger Funktionen ist stetig. Es gilt \begin{align*}
     f(x) + g(x) = \max(f(x), g(x)) + \min(f(x), g(x)),
 \end{align*} somit muss $\min(f, g)$ stetig sein.
 
-\paragraph{Aufgabe 6.}
+\paragraph{Aufgabe 6.} Die gegebene Funktion ist die Thomaesche Funktion. Sei $x \in \mathbb{R} \backslash \mathbb{Q}$. Sei $\epsilon > 0$ und wähle $n \in \mathbb{N}$ mit $1/n < \epsilon$. Es gibt endliche viele reduzierte rationale Zahlen $r = p/q$ im Intervall $(x - 1, x + 1)$ für ein $q$ mit $1 \geq q \geq n$. Sei $\delta$ die kleinste Distanz zwischen $x$ und einem solchen $r$. Dann gilt $\delta > 0$ weil $x \not\in \mathbb{Q}$.
+
+Wenn $|x - y| < \delta$ dann ist entweder $y$ irrational, und somit $f(y) = 0$. Oder $y = p/q$ mit $q > n$, und somit $f(y) = 1/q < 1/n < \epsilon$. In beiden Fällen gilt $|f(x) - f(y)| = |f(y)| < \epsilon$ wegen $f(x) = 0$, also
+\begin{align*}
+    |x - y| < \delta\ \Rightarrow\ |f(x) - f(y)| < \epsilon.
+\end{align*}
+Somit ist $f$ stetig für $x \in \mathbb{R} \backslash \mathbb{Q}$. (Vgl. \href{https://www.math.ucdavis.edu/~hunter/intro_analysis_pdf/ch7.pdf}{Introduction to Analysis, Chapter 7}.)
 
 \paragraph{Aufgabe 7.}
 
-% \begin{align*}
-%     \lim_{x \to x_0} \frac{
-%         \left(\frac{1}{n + 1}x^{n + 1}\right) - \left(\frac{1}{n + 1}x_0^{n + 1}\right)
-%     }{x - x_0}
-% \end{align*}
-
-\begin{align*}
-    \lim_{x \to x_0} \frac{\cdots}{x - x_0} = 0
-\end{align*}
-
 \paragraph{Aufgabe 8.}
-
-\begin{align*}
-    \lim_{\epsilon \to 0} \frac{1}{2\epsilon} \cdots = \infty
-\end{align*}
 
 \end{document}
