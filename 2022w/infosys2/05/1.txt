@@ -1,0 +1,34 @@
+a)
+for $c in /sales/customer
+where $c/city = "BURLINGAME" and ($c/ord/total) > 5000
+return (
+	<customer id="{$c/@custid}">
+		{$c/name}
+		{$c/city}
+	</customer>
+)
+
+b)
+for $p in /sales/product
+where count($p/price) > 2
+return (
+	<product>
+		{$p/@prodid}
+		{$p/descrip}
+		{$p/price}
+	</product>
+)
+
+c)
+for $i in /sales/customer/ord/item,
+	$p in /sales/product[$i/product_ref/@ref = @prodid]
+let $minPrice := fn:head($p/price)/minprice
+where fn:number($i/actualprice) < fn:number($minPrice)
+return (
+	<pos>
+		{$i/../@ordid}
+		{$p/@prodid}
+		{$i/actualprice}
+		{$minPrice}
+	</pos>
+)
