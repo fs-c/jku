@@ -1,0 +1,79 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{hyperref}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 9}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+Wegen $0 \leq a_k$ ist $\sum_{k = 1}^{\infty} a_k$ monoton wachsend. Nach Annahme divergiert $\sum_{k = 1}^{\infty} a_k$, somit ist sie unbeschr\"ankt. Wegen $a_k \leq b_k$ gilt $\sum_{k = 1}^{\infty} a_k \leq \sum_{k = 1}^{\infty} b_k$, damit muss auch $b_k$ unbeschr\"ankt und somit divergent sein.
+
+\paragraph{Aufgabe 2.}
+
+Nach Annahme ist $\sum_{k = 1}^{\infty} |a_k|$ konvergent. Demnach muss auch $\sum_{k = 1}^{\infty} 2|a_k|$ konvergent sein. Wegen $0 \leq a_k + |a_k| \leq 2|a_k|$ ist gem\"a\ss\ des Majorantenkriteriums $\sum_{k = 1}^{\infty} (a_k + |a_k|)$ konvergent. Dann ist auch $\sum_{k = 1}^{\infty} a_k = \sum_{k = 1}^{\infty} (a_k + |a_k|) - \sum_{k = 1}^{\infty} |a_k|$ konvergent, weil es die Differenz zweier konvergenter Reihen ist.
+
+\paragraph{Aufgabe 3.}
+
+\begin{enumerate}
+    \item Wegen $\lim_{k \to \infty} \frac{2k^2 + 1}{3k(k + 1)} = \frac{2}{3} \neq 0$ ist die Reihe divergent.
+    
+    \item
+    %Es gilt
+    %\begin{align*}
+    %    \lim \left(\frac{\frac{\log (n + 1)}{n + 1}}{\frac{\log(n)}{n}}\right) = 1
+    %\end{align*}
+    %und somit ist die Reihe gem\"a\ss/ des Quotientenkriteriums divergent.
+
+    \item 
+    
+    \item (Harmonische Reihe\footnote{\url{https://web.williams.edu/Mathematics/lg5/harmonic.pdf}}.) Angenommen die Reihe konvergiert mit
+    \begin{align*}
+        H = 1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \frac{1}{5} + \frac{1}{6} + \frac{1}{7} + \frac{1}{8} + \cdots
+    \end{align*}
+    Dann ist mit 
+    \begin{align*}
+        H &\geq 1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{4} + \frac{1}{6} + \frac{1}{6} + \frac{1}{8} + \frac{1}{8} + \cdots \\
+        &\geq 1 + \frac{1}{2} + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \cdots \\
+        &\geq \frac{1}{2} + H
+    \end{align*}
+    ein Widerspruch gegeben.
+\end{enumerate}
+
+\end{document}
