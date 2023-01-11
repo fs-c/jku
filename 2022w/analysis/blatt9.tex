@@ -24,6 +24,7 @@
 % Drawings
 \usepackage{tikz}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
 % Adjust header and footer
 \usepackage{fancyhdr}
@@ -75,5 +76,71 @@ Nach Annahme ist $\sum_{k = 1}^{\infty} |a_k|$ konvergent. Demnach muss auch $\s
     \end{align*}
     ein Widerspruch gegeben.
 \end{enumerate}
+
+\paragraph{Aufgabe 4.}
+
+\begin{align*}
+    \sum \frac{4}{4k^2 - 1} = 4 \sum\frac{1}{4k^2 - 1} \\
+    \frac{1}{4k^2 - 1} = \frac{1}{(2k - 1)(2k + 1)} = \frac{1}{4k - 2} - \frac{1}{4k + 2} \\
+    \sum \left(\frac{1}{4k - 2} - \frac{1}{4k + 2}\right) \\
+    = \left(\frac{1}{2} - \frac{1}{6}\right) + \left(\frac{1}{6} - \frac{1}{10}\right) + \left(\frac{1}{10} - \frac{1}{14}\right) + \cdots + \left(\frac{1}{4n - 6} - \frac{1}{4n - 2}\right) + \left(\frac{1}{4n - 2} - \frac{1}{4n + 2}\right) \\
+    = \frac{1}{2} - \frac{1}{4n + 2}\\
+    \lim \left(\frac{1}{n} - \frac{1}{4n + 2}\right) = \frac{1}{2} \\
+    \sum \frac{4}{4k^2 - 1} = 4 \cdot \frac{1}{2} = 2
+\end{align*}
+
+\paragraph{Aufgabe 5.}
+
+Seien $\sum a_k$ und $\sum b_k$ zwei Reihen mit den Partialsummen $(s_n)$ und $(t_n)$ derart, dass es ein $N$ mit $a_k = b_k$ f\"ur alle $k \geq N$ gibt. Dann gilt
+\begin{align*}
+    s_n = \sum_{k = 1} a_k = a_1 + a_2 + \cdots + a_{N - 1} + \sum_{k = N} a_k
+\end{align*}
+und
+\begin{align*}
+    t_n &= \sum_{k = 1} b_k = b_1 + b_2 + \cdots + b_{N - 1} + \sum_{k = N} a_k \\
+    &= s_n - (a_1 + a_2 + \cdots + a_{N - 1}) + (b_1 + b_2 + \cdots + b_{N - 1}).
+\end{align*}
+Angenommen $\sum b_k$ konvergiert, es gibt also $\lim t_n = t$. Dann sei
+\begin{align*}
+    c = (a_1 + a_2 + \cdots + a_{N - 1}) + (b_1 + b_2 + \cdots + b_{N - 1})
+\end{align*}
+eine von $n$ unabh\"angige Konstante. Nun gilt
+\begin{align*}
+    t_n &= s_n - C \\
+    \lim t_n &= \lim s_n - C \\
+    \lim s_n &= t + C,
+\end{align*}
+also konvergiert auch $(s_n)$ bzw. $\sum a_k$.
+
+\paragraph{Aufgabe 6.}
+
+\begin{enumerate}
+    \item Wegen $\lim \frac{1}{\sqrt[n]{n}} = 1 \neq 0$ ist die Reihe divergent.
+    
+    \item Wegen $\lim \left(n-\frac{\left(n^2+n+1\right)}{n}\right) = -1 \neq 0$ ist die Reihe divergent.
+    
+    \item Wegen $\lim |\frac{n!}{n^{2n}}|^{\frac{1}{n}} = \lim \frac{\sqrt[n]{n!}}{n^2} = 0 < 1$ ist die Reihe konvergent.
+\end{enumerate}
+
+\paragraph{Aufgabe 7.}
+
+\begin{enumerate}
+    \item \begin{align*}
+        \lim \left|\frac{(n+1)!x^{n+1}}{n!x^n}\right| = \lim \left|\frac{(n+1)!x}{n!}\right| = |x| \lim \left|\frac{(n+1)!}{n!}\right| = |x| \infty
+    \end{align*}
+    Konvergenzradius ist 0.
+
+    \item \begin{align*}
+        \lim \left|\frac{(n + 2)(n + 3)\left(\frac{x}{2}\right)^{n + 1}}{(n + 1)(n + 2)\left(\frac{x}{2}\right)^{n}}\right| = \lim \left|\frac{(n + 3)\left(\frac{x}{2}\right)}{n + 1}\right| = \left|\frac{x}{2}\right|\lim\left|\frac{n + 3}{n + 1}\right| = \left|\frac{x}{2}\right|
+    \end{align*}
+    Konvergenzradius ist 2.
+
+    \item \begin{align*}
+        \lim \left|\frac{x^n}{(\ln(n))^n}\right|^{\frac{1}{n}} = \lim \left|\frac{x}{\ln(n)}\right| = |x|\lim \left|\frac{1}{\ln(n)}\right| = 0
+    \end{align*}
+    Konvergenzradius ist $\infty$.
+\end{enumerate}
+
+\paragraph{Aufgabe 8.}
 
 \end{document}
