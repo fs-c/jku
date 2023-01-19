@@ -1,0 +1,33 @@
+a)
+
+T2 wird wegen write a zurueckgesetzt.
+
+(85)    (75)    (100)
+T1      T2      T3          tr(a)   tw(a)   tr(b)   tw(b)   tr(c)   tw(c)   tr(d)   tw(d)
+        read a              75      0       0       0       0       0       0       0
+                read a      100     0       0       0       0       0       0       0
+        write b             100     0       0       75      0       0       0       0
+write d                     100     0       0       75      0       0       0       85
+                write d     100     0       0       75      0       0       0       100
+        read c              100     0       0       75      75      0       0       100
+        write a             100 (k) 0       0       75      75      0       0       100
+write c                     100     0       0       75      75      85      0       100
+                write c     100     0       0       75      75      100     0       100
+                read b      100     0       100     75      75      100     0       100
+
+b)
+
+T3 wird wegen write d zurueckgesetzt.
+
+(80)    (70)    (65)
+T1      T2      T3          tr(a)   tw(a)   tr(b)   tw(b)   tr(c)   tw(c)   tr(d)   tw(d)
+        read a              70      0       0       0       0       0       0       0
+                read a      70      0       0       0       0       0       0       0
+        write b             70      0       0       70      0       0       0       0
+write d                     70      0       0       70      0       0       0       80
+                write d     70      0       0       70      0       0       0       80 (k)
+        read c              70      0       0       70      70      0       0       80
+        write a             70      70      0       70      70      0       0       80
+write c                     70      70      0       70      70      80      0       80
+                write c     70      70      0       70      70      80      0       80
+                read b      70      70      0       70      70      80      0       80
