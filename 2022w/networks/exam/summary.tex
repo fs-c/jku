@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{multicol}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+
+\begin{multicols}{1}
+
+\section*{Referenzmodelle}
+
+\ldots beschreiben Netzarchitekturen, also Protokolle und Schichten, lassen dabei die Implementierung offen.
+
+\paragraph{ISO/OSI} besteht aus
+
+\begin{enumerate}
+    \item Physical Layer. (Bitübertragung; Repeater und Hubs)
+    \item Data Link Layer. (Data Frames, Checksums; MAC, ARP, Bridges, Switches -- LAN-Bereich)
+    \item Network Layer. (Routing; IP, Router -- Weltweit)
+    \item Transport Layer. (end-to-end Zuver\-lässig\-keit; TCP, UDP)
+    \item Session Layer. (Recovery points, Duplex; RPC)
+    \item Presentation Layer.
+    \item Application Layer. (DNS, HTTP, SMTP)
+\end{enumerate}
+
+Kritik: Presentation und Session Layer könnten im Application Layer sein. Data Link und Network Layer sind sehr voll. Error control wiederholt sich auf mehreren Schichten.
+
+\paragraph{TCP/IP} ist ein alternatives Modell das nur aus Application (OSI 7, 6, 5), Transport (4), Network (3) und Host-to-Net (2, 1) besteht. Nur für TCP/IP Netzarchitektur geeignet, keine klare Unterscheidung zwischen Dienst, Protokoll und Schnittstelle.
+
+\paragraph{Hybrides Modell} nach Tanenbaum vereint Application Presentation und Session Layer im Application Layer und ist sonst äquivalent zu OSI.
+
+\section*{Klassifikation}
+
+\begin{description}
+    \item[LAN] Örtlich begrenzter Bereich (Raum, Ge\-bäu\-de, \ldots) im Besitz einer Organisation. Übl. hohe Übertragungsleistung mit geringer Fehlerrate, diverse Topologien.
+    \item[MAN, WAN] Motropolitan u. Wide Area Networks, große und unkontrollierte Wege (z.B. öff. Straßen).
+    \item[Internet] Netzwerk-Verbund der obigen Typen.
+\end{description}
+
+Private Netze befinden sich im \enquote*{Besitz} einer Organisation und werden ausschließlich durch diese genutzt. Investitionskosten voll vom Besitzer getragen, keine nennenswerten nutzungsabhängigen Kosten (aber: Strom, Wartung, Support, \ldots). Keine Sicherheitsprobleme von außen, Protokolle müssen nicht beachtet werden.
+
+Öffentliche Netze befinden sich im \enquote*{Besitz} eines Netzbetreibers und werden von dessen Kunden genutzt. Er trägt die Investitionskosten, nutzungsabhängige Kosten fallen für den Kunden an (ggf. als flatrate). Erhebliche Sicherheitsprobleme (interessantes Ziel), (müssen) internationalen Normen/Standards folgen.
+
+VPN verhält sich wie privates Netz, baut aber auf der Infrastruktur eines öffentlichen Netzes auf. Private Protokolle über öffentl. Netze, oft billiger als ein Kabel von Standort A zu Standort B zu legen. In diesem Kontext ist ein Tunnel eine virtuelle p2p Verbindung von zwei Knoten.
+
+\paragraph{???cast} Unicast an Nachbarn, Broadcast an alle, Multicast an manche, Anycast an einen beliebigen.
+
+\paragraph{???plex} Simplex ist unidirektional, Duplex ist bidirektional. Bei Full-Duplex kann gleichzeitg gesendet und empfangen werden, bei Half-Duplex nicht. Multiplex siehe folgenden Abschnitt.
+
+\paragraph{Topologie} ist logische Struktur von Netzen (Stern, Ring, Bus, \ldots). Relevant: gibt es Single Point of Failure (SPoF) bzw. wie beeinträchtigt Ausfall einer Komponente den Rest, wie läuft Uni/Broadcast?
+
+\section*{Multiplex}
+
+Ziel: Aufzeilung einer bestehenden Verbung (Leitung) in mehrere unabhängige Kanäle.
+
+\paragraph{Statisches Aufteilen} \emph{Frequency Division Multiplexing} teilt das Frequenzband in sparierte gentrennt nutzbare Kanäle, jeder Sender/Empfänger hat einen eigenen Frequenzbereich.
+
+\emph{Time Division Multiplexing} 
+
+\end{multicols}
+
+\end{document}
