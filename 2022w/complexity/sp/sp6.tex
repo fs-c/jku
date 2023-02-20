@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{automata,positioning} 
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{\textbf{Computational Complexity} --- Special Topic 6}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\usepackage{hyperref}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\section*{The Deutsch-Josza Algorithm}
+
+\paragraph{Essentials} We will describe quantum computation in terms of circuits as opposed to TMs. These circuits are time-reversible. Wires contain qubits, which are either $|0\rangle$, $|1\rangle$ or both (then we call the configuration a \emph{superposition}). Superposition collapse when they are inspected.
+
+\paragraph{Minimal Circuit} A prototypical quantum circuit has four phases:
+
+\begin{enumerate}[label=\arabic*.]
+    \item Encode input bitstring (0, 1) into qubits ($|0\rangle$, $|1\rangle$)
+    \item Enter superpositions
+    \item Apply some Boolean circuit
+    \item Revert superpositions
+    \item Measure output wires (once again 0, 1)
+\end{enumerate}
+
+\emph{I didn't write down the full example, but suffice to say that we were able to construct a quantum circuit which determines whether a 1-bit function is constant or balanced using a single query. A conventional approach would naturally need two.}
+
+\paragraph{Deutsch-Josza} The above generalizes to $n$-bit functions $\{0, 1\}^n \to \{0, 1\}$, meaning that there exists a quantum circuit to determine whether such a function is balanced or constant \emph{in a single query}. A conventional approach would require $O(2^n)$ function queries (worst case).
+
+Although it's somewhat contrived, the algorithm demonstrates an exponential quantum advantage. Other problems that can be approached with similar ideas include factoring (Shor), solving linear systems, machine learning, \ldots
+
+\end{document}
