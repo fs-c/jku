@@ -39,6 +39,22 @@
 \newcommand{\xor}{\, \oplus\, }
 \newcommand{\id}{\text{id}}
 
+\newcommand{\showsolutions}{\empty}
+
+% If #1 is defined insert #2, otherwise insert #3.
+% \ifndef{somecommand}{\emph{not defined}}{\emph{defined}}
+\makeatletter
+\newcommand{\ifndef}[3]{%
+    \@ifundefined{#1}{%
+        #2
+    }{
+        #3
+    }%
+}%
+\makeatother
+
+\newcommand{\solution}[1]{\ifndef{showsolutions}{\empty}{\emph{#1}}}
+
 \begin{document}
 
 \section*{Multiple Choice}
@@ -62,9 +78,17 @@
     
     \item Jede nach oben beschränkte und monoton fallende Folge $(a_n)$ besitzt einen Grenzwert. (2x)
     
-    \item Wenn $f$ in $\mathbb{R}$ stetig ist, dann ist $f$ in jedem endlichen Intervall von $\mathbb{R}$ integrierbar.
+    \item Wenn $f$ in $\mathbb{R}$ stetig ist, dann ist $f$ in jedem endlichen Intervall von $\mathbb{R}$ integrierbar. (2x)
         
     \item Jede reelle Zahl kann mit einem Algorithmus berechnet werden.
+    
+    \item Jede Funktion ist berechenbar.
+    
+    \item Sei $a_n \in (0, 1)^{\infty}$. Konvergiert $(\sqrt{a_n})$ dann konvergiert auch $(a_n)$.
+    
+    \item Jede nach unten beschränkte und monoton steigende Folge besitzt einen Grenzwert.
+    
+    \item Sei $f$ eine beliebige Funktion in $R$. Wenn $f$ auf $\mathbb{R}$ differenzierbar ist, dann ist $\frac{1}{f}$ in $\mathbb{R}$ stetig.
 \end{enumerate}
 
 \section*{Definitionen}
@@ -76,16 +100,20 @@ Sei $f: \mathbb{R} \to \mathbb{R}$ eine Funktion und $x_0 \in \mathbb{R}$. Defin
     \item $f$ ist differenzierbar auf $\mathbb{R}$ (alt. stetig)
 \end{enumerate}
 
+Definieren Sie: $(a_n)$ konvergiert gegen den Grenzwert $M \in \mathbb{R}$.
+
 \section*{Beweise}
 
 Seien $f$ und $g$ differenzierbare Funktionen auf $\mathbb{R}$. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - 2g(x)$ stetig auf $\mathbb{R}$ ist. (2x)
 
 Seien $f$ und $g$ in $\mathbb{R}$ stetige Funktionen. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - g(x)$ stetig in $\mathbb{R}$ ist.
 
-Sei $f : \mathbb{R} \to \mathbb{R}$ eine Funktion. Zeigen oder widerlegen Sie
+Sei $f : \mathbb{R} \to \mathbb{R}$ eine Funktion. Zeigen oder widerlegen Sie (alt. mit Nullfolgen)
 \begin{enumerate}
     \item Wenn $f^2$ differenzierbar auf $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
     \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
+    \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist auch $f^2$ stetig in $\mathbb{R}$.
+    \item Wenn $f^2$ stetig in $\mathbb{R}$ ist, dann ist auch $f$ stetig in $\mathbb{R}$,
 \end{enumerate}
 
 \section*{Rekurrenzen}
@@ -97,6 +125,12 @@ Finden Sie eine Rekurrenz $g_n$ mit
         (1 - 2x - x^2)\left(\sum_{n=0}^{\infty}g_nx^n\right) = 1
     \end{align*} (2x)
 \end{enumerate}
+
+Bestimmen Sie eine Formel für $f_n \in \mathbb{R}$ (eine Rekurrenz mit den entsprechenden Startwerten $f_0, f_1, f_2 \in \mathbb{Q}$) mit
+
+\begin{align*}
+    (1 + 3x + 2x^2 + x^3)\left(\sum_{n = 0}^{\infty}f_nx^n\right)
+\end{align*}
 
 \section*{Grenzwerte}
 
@@ -124,6 +158,14 @@ Finden Sie eine Rekurrenz $g_n$ mit
 
     \item \begin{align*}
         \lim_{x \to 0} \frac{2x + x^2 + 2x^{10}}{e^{3x} - e{x}}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{n \to \infty} \frac{e^n + e^{n^2} + 5e^{n^3}}{1 + e^{n^3}}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{x \to 0} \frac{2x + x^2 + 2x^5}{e^{x^2} - e^{2x}}
     \end{align*}
 \end{enumerate}
 \end{multicols}
@@ -171,12 +213,24 @@ Entscheiden Sie, ob folgende Reihen konvergieren.
     \item \begin{align*}
         \sum_{n = 1}^{\infty} \frac{1}{n + \pi}
     \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{n^2}{5n^2 + 2^{-n} + 2}
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{10^n}{(2n)!}
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{2^{4n + 1}}{n^n}
+    \end{align*}
 \end{enumerate}
 \end{multicols}
 
 \section*{Stammfunktionen}
 
-\begin{multicols}{3}
+\begin{multicols}{4}
 \begin{enumerate}
     \item \begin{align*}
         \int x e^{4x}
@@ -192,6 +246,15 @@ Entscheiden Sie, ob folgende Reihen konvergieren.
     \end{align*}
     \item \begin{align*}\int \sin(x)^2\end{align*}
     \item \begin{align*}\int \sin(x)e^{\cos(x)}\end{align*}
+    \item \begin{align*}
+        \int x^2 \sin(x^3)
+    \end{align*}
+    \item \begin{align*}
+        \int x^2 e^x
+    \end{align*}
+    \item \begin{align*}
+        \int \ln(5x)
+    \end{align*}
 \end{enumerate}
 \end{multicols}
 
