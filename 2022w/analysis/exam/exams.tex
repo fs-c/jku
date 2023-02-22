@@ -29,7 +29,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhead[L]{Analysis}
-\fancyhead[R]{Klausuren 2021 --- 2020}
+\fancyhead[R]{23a, 21a, 20b, 20a}
 \fancyfoot[C]{}
 \fancyfoot[R]{\thepage}
 % Stop fancyhdr complaints
@@ -66,7 +66,7 @@
     
     \item Jede nach unten beschränkte und monoton fallende Folge besitzt einen Grenzwert.
     
-    \item $(e^3x)' = e^{3x}$
+    \item $(e^{3x})' = e^{3x}$
     
     \item Ist $(a_n)$ konvergent, dann ist auch $(\sum_{k = 1}^{n}(a_{k + 1} - a_k))$ konvergent. (2x)
     
@@ -88,7 +88,7 @@
     
     \item Jede nach unten beschränkte und monoton steigende Folge besitzt einen Grenzwert.
     
-    \item Sei $f$ eine beliebige Funktion in $R$. Wenn $f$ auf $\mathbb{R}$ differenzierbar ist, dann ist $\frac{1}{f}$ in $\mathbb{R}$ stetig.
+    \item Sei $f$ eine beliebige Funktion in $\mathbb{R}$. Wenn $f$ auf $\mathbb{R}$ differenzierbar ist, dann ist $\frac{1}{f}$ in $\mathbb{R}$ stetig.
 \end{enumerate}
 
 \section*{Definitionen}
@@ -96,41 +96,40 @@
 Sei $f: \mathbb{R} \to \mathbb{R}$ eine Funktion und $x_0 \in \mathbb{R}$. Definieren Sie (ggf. nur mit Hilfe von Nullfolgen)
 \begin{enumerate}
     \item $f$ besitzt einen Grenzwert $M \in \mathbb{R}$ in $x_0$ (2x)
+    \item Eine Folge $(a_n)$ konvergiert gegen den Grenzwert $M \in \mathbb{R}$
     \item $f$ ist differenzierbar in $x_0$ (alt. stetig)
     \item $f$ ist differenzierbar auf $\mathbb{R}$ (alt. stetig)
 \end{enumerate}
 
-Definieren Sie: $(a_n)$ konvergiert gegen den Grenzwert $M \in \mathbb{R}$.
-
 \section*{Beweise}
 
-Seien $f$ und $g$ differenzierbare Funktionen auf $\mathbb{R}$. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - 2g(x)$ stetig auf $\mathbb{R}$ ist. (2x)
+\begin{enumerate}[label=(\arabic*)]
+    \item Seien $f$ und $g$ differenzierbare Funktionen auf $\mathbb{R}$. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - 2g(x)$ differenzierbar auf $\mathbb{R}$ ist. (2x)
 
-Seien $f$ und $g$ in $\mathbb{R}$ stetige Funktionen. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - g(x)$ stetig in $\mathbb{R}$ ist.
+    \item Seien $f$ und $g$ in $\mathbb{R}$ stetige Funktionen. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - g(x)$ stetig in $\mathbb{R}$ ist.
 
-Sei $f : \mathbb{R} \to \mathbb{R}$ eine Funktion. Zeigen oder widerlegen Sie (alt. mit Nullfolgen)
-\begin{enumerate}
-    \item Wenn $f^2$ differenzierbar auf $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
-    \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
-    \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist auch $f^2$ stetig in $\mathbb{R}$.
-    \item Wenn $f^2$ stetig in $\mathbb{R}$ ist, dann ist auch $f$ stetig in $\mathbb{R}$,
+    \item Sei $f : \mathbb{R} \to \mathbb{R}$ eine Funktion. Zeigen oder widerlegen Sie (alt. mit Nullfolgen)
+    \begin{enumerate}
+        \item Wenn $f^2$ differenzierbar auf $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
+        \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
+        \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist auch $f^2$ stetig in $\mathbb{R}$.
+        \item Wenn $f^2$ stetig in $\mathbb{R}$ ist, dann ist auch $f$ stetig in $\mathbb{R}$,
+    \end{enumerate}
 \end{enumerate}
 
 \section*{Rekurrenzen}
 
-Finden Sie eine Rekurrenz $g_n$ mit
-
 \begin{enumerate}
-    \item \begin{align*}
+    \item Finden Sie eine Rekurrenz $g_n$ mit \begin{align*}
         (1 - 2x - x^2)\left(\sum_{n=0}^{\infty}g_nx^n\right) = 1
     \end{align*} (2x)
+
+    \item Bestimmen Sie eine Formel für $f_n \in \mathbb{R}$ (eine Rekurrenz mit den entsprechenden Startwerten $f_0, f_1, f_2 \in \mathbb{Q}$) mit
+
+    \begin{align*}
+        (1 + 3x + 2x^2 + x^3)\left(\sum_{n = 0}^{\infty}f_nx^n\right) = 1
+    \end{align*}
 \end{enumerate}
-
-Bestimmen Sie eine Formel für $f_n \in \mathbb{R}$ (eine Rekurrenz mit den entsprechenden Startwerten $f_0, f_1, f_2 \in \mathbb{Q}$) mit
-
-\begin{align*}
-    (1 + 3x + 2x^2 + x^3)\left(\sum_{n = 0}^{\infty}f_nx^n\right)
-\end{align*}
 
 \section*{Grenzwerte}
 
@@ -185,7 +184,7 @@ Ermitteln Sie den Konvergenzradius.
     \end{align*}
 
     \item \begin{align*}
-        \sum_{n = 1}^{\infty}\frac{n^{10}}{(2n + 1)^10}x^n
+        \sum_{n = 1}^{\infty}\frac{n^{10}}{(2n + 1)^{10}}x^n
     \end{align*}
 
     \item \begin{align*}
