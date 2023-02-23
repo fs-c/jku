@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{listings}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Computernetzwerke --- \textbf{Übung 8}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.}
+
+\begin{enumerate}
+    \item ARP wird verwendet um zu einer IP-Adresse die zugehörige MAC-Adresse zu ermitteln. Die ermittelte Adresse wird üblicherweise in einer ARP-Tabelle gespeichert. Genauer sendet ein anfragender Computer einen ARP request mit der IP-Adresse des gesuchten Computers als broadcast an alle anderen Computer im Netzwerk. Empfängt der gesuchte Computer das Paket, antwortet er mit einem ARP reply der seine MAC- und IP-Adresse beinhaltet. Der ursprüngliche Sender kann nun die ermittelte MAC-Adresse zur späteren Verwendung speichern.
+    
+    \item ARP requests werden als broadcast gesendet, weil der sendende Computer noch nicht weiß, wer der tatsächliche Empfänger sein soll. ARP replies werden unicast gesendet, der Empfänger ist der ursprünglich Anfragestellende.
+    
+    \item ARP-Nachrichten beinhalten die Quell- und Ziel-MAC-Adressen sowie die Quell- und Ziel-IP-Adressen. Bei einem ARP request wird die Ziel-MAC-Adresse entsprechend leer gelassen.
+    
+    \item Bei IPv6 kommt das Neighbor Discovery Protocol (NDP) zum Einsatz, das unter Anderem auch für Adressauflösung zuständig ist.
+\end{enumerate}
+
+% \paragraph{Aufgabe 2.}
+
+% \begin{enumerate}
+%     \item \begin{enumerate}[label=(\alph*)]
+%         \item \emph{H2 an H5.} Das Paket hat destination 10.0.1.25 und source 10.0.3.13. H2 hat f\"ur 10.0.1.25 keinen Eintrag im MAC table, verschickt also einen broadcast ARP request mit source [B] und destination [[FF]]. Der request erreicht \"uber L1 Hub 1 den Router R1 der nun seinen ARP table um das mapping 10.0.3.13 zu [B] erg\"anzt. R1 sendet daraufhin ein ARP response mit source [G] und destination [B]. H2 erweitert nun seinen ARP table um das mapping 10.0.3.1 zu [G]. 
+%     \end{enumerate}
+% \end{enumerate}
+
+\end{document}

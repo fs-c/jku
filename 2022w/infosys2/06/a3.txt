@@ -1,0 +1,159 @@
+1   Lock succeeded.
+
+2   ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (T1 hat Lock, Art irrelevant, auf emp.)
+
+3   ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X Lock geht nur, wenn keine anderen Locks auf die Tabelle bestehen -- T1 hat aber Lock.)
+
+4   ENAME     
+    ----------
+    JONES
+    (T1 hat nur RS, SELECT FOR UPDATE ist kein Problem.)
+
+5   (Wartet "ewig" weil T2 X Lock auf die Row hat.)
+
+6   Rollback complete.
+
+7   Rollback complete.
+
+8   Lock succeeded.
+
+9   ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X Lock geht nur, wenn keine anderen Locks auf die Tabelle bestehen -- T1 hat aber Lock.)
+
+10  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (SRX Lock geht nur, wenn nur RS Locks auf die Tabelle bestehen -- T1 hat aber RX Lock.)
+
+11  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (SRX Lock geht nur, wenn nur RS oder S Locks auf die Tabelle bestehen -- T1 hat aber RX Lock.)
+
+12  1 row updated.
+    (UPDATE hat implizit RX Lock auf die Row, weil T1 nicht die selbe Row sperrt ist alles OK.)
+
+13  Rollback complete.
+
+14  ENAME     
+    ----------
+    JONES
+
+15  (Wartet "ewig" weil T1 ein X Lock auf die Row hat.)
+
+16  Rollback complete.
+    (T1 zurueckgesetzt.)
+
+17  Rollback complete.
+    (T2)
+
+18  Lock succeeded.
+
+19  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X Lock geht nur, wenn keine anderen Locks auf die Tabelle bestehen -- T1 hat aber Lock.)
+
+20  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (SRX Lock geht nur, wenn nur RS Locks auf die Tabelle bestehen -- T1 hat aber S Lock.)
+
+21  Lock succeeded.
+    (S Lock ist kompatibel mit anderen S Locks.)
+
+22  ENAME     
+    ----------
+    JONES
+
+23  (Wartet "ewig" weil T1 ein S Lock hat.)
+
+24  Rollback complete.
+
+25  1 row updated.
+
+26  Rollback complete.
+
+27  Lock succeeded.
+
+28  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X Lock geht nur, wenn keine anderen Locks auf die Tabelle bestehen -- T1 hat aber Lock.)
+
+29  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expire
+    (SRX Lock geht nur, wenn nur R Locks auf die Tabelle bestehen -- T1 hat aber SRX Lock.)
+
+30  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (S Lock geht nur, wenn nur RS oder S Locks auf die Tabelle bestehen -- T1 hat aber SRX Lock.)
+
+31  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (RX Lock geht nur, wenn nur RS oder RX Locks auf die Tabelle bestehen -- T1 hat aber SRX Lock.)
+
+32  Lock succeeded.
+    (RS Lock ist kompatibel mit allen Locks ausser X, geht also.)
+
+33  Rollback complete.
+
+34  Rollback complete.
+
+35  ENAME     
+    ----------
+    JONES
+    (Impliziter RX lock auf Tabelle und X auf Datensatz.)
+
+36  ENAME     
+    ----------
+    JAMES
+    (S. o., RX ist kompatibel mit RX und Datensaetze sind unterschiedlich.)
+
+37  (Wartet "ewig" weil T2 einen X Lock auf den Datensatz hat.)
+
+38  (Wartet "ewig" weil T1 einen X Lock auf den Datensatz hat.)
+
+39  Rollback complete.
+
+40  Rollback complete.
+
+41  Lock succeeded.
+
+42  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X ist inkompatibel mit anderen Locks.)
+
+43  Lock succeeded.
+    (?)
+
+44  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X ist inkompatibel mit anderen Locks.)
+
+45  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X ist inkompatibel mit anderen Locks.)
+
+46  ORA-00054: resource busy and acquire with NOWAIT specified or timeout expired
+    (X ist inkompatibel mit anderen Locks.)
+
+47  ENAME     
+    ----------
+    MILLER
+
+48  (Wartet "ewig" weil T1 ein X Lock hat.)
+
+49  1 row updated.
+
+50  Commit complete.
+
+51  Transaction READ succeeded.
+
+52  ENAME     
+    ----------
+    KING
+
+53  1 row updated.
+
+54  ENAME     
+    ----------
+    KING
+
+55  Commit complete.
+
+56  ENAME     
+    ----------
+    KING
+
+57  Commit complete.
+
+58  ENAME     
+    ----------
+    STARR

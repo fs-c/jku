@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{hyperref}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis --- \textbf{Übungsblatt 8}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Aufgabe 1.} Weil $\tilde{f}$ stetig in $x_0$ ist gibt es für alle $\epsilon > 0$ ein $\delta > 0$ derart, dass für alle $\tilde{x}$
+\begin{align*}
+    |\tilde{x} - x_0| < \delta\ \Rightarrow\ |\tilde{f}(\tilde{x}) - \tilde{f}(x_0)| < \epsilon.
+\end{align*}
+Gemäß der Definition von $\tilde{f}$ kann nun zu
+\begin{align*}
+    |\tilde{x} - x_0| < \delta\ &\Rightarrow\ |f(\tilde{x}) - M| < \epsilon
+\end{align*}
+umgeformt werden, das entspricht der $(\epsilon, \delta)$-Definition des Limits bzw. $\lim_{x \to x_0}f(x) = M$. Wenn die Funktion nicht stetig an $x_0$ ist gibt es solche $\epsilon$ und $\delta$ von Anfang an nicht --- dann kann die Funktion an dieser Stelle auch kein entsprechendes Limit haben. 
+
+% Dann gilt für andere aber gleichartig gewählte $\epsilon$ und $\delta$, dass
+% \begin{align*}
+%     |\tilde{x} - x_0| < \delta\ &\Rightarrow\ |f(\tilde{x}) - M| < \epsilon \\
+%     &\Rightarrow\ |f(\tilde{x}) - \tilde{f}(x_0)| < \epsilon
+% \end{align*}
+% weil $\tilde{f}(x) = f(x)$ für alle $x \neq x_0$.
+
+\paragraph{Aufgabe 2.} Seien
+\begin{align*}
+    f(x) &= \begin{cases}
+        0 & \text{wenn $x < 0$} \\
+        1 & \text{wenn $x \geq 0$}
+    \end{cases}
+    &
+    g(x) &= \begin{cases}
+        1 & \text{wenn $x < 0$} \\
+        0 & \text{wenn $x \geq 0$}
+    \end{cases}
+\end{align*}
+zwei in $x = 0$ nicht stetige Funktionen. Dann ist $g(f(x))$ stetig in $x = 0$. (Weil $g(f(x)) = 0$.)
+
+\paragraph{Aufgabe 3.} Es gilt $f(0) = 1$ und $f(x) = 0$ für alle $x \neq 0$. Die $(\epsilon, \delta)$-Definition sagt aus, dass das Limit von $f$ für $x \to p$ dann $L$ ist, wenn
+\begin{align*}
+    0 < |x - p| < \delta \quad \Longrightarrow \quad |f(x) - L| < \epsilon.
+\end{align*}
+In diesem Fall ist $p = 0$ und $L = 0$. Sei $\epsilon > 0$ beliebig und wähle $\delta = \epsilon$, dann gilt
+\begin{align*}
+    0 < |x| < \delta \quad \Longrightarrow \quad |f(x)| < \epsilon
+\end{align*}
+weil $f(x) = 0$ für alle $x \neq 0$ und $x$ in der Implikation nicht null werden kann.
+
+\paragraph{Aufgabe 4.}
+
+\paragraph{Aufgabe 5.} Dem Hinweis folgend: Sei $a > b$, dann
+\begin{align*}
+    \max\{a, b\} = a = \frac{1}{2}a + \frac{1}{2}b + \frac{1}{2}a - \frac{1}{2}b = \frac{1}{2}(a + b + a - b) = \frac{1}{2}(a + b + |a - b|)
+\end{align*}
+Analog für $b > a$, $a = b$ ist trivial. Diese Funktion ist stetig.
+
+Die Addition zweier stetiger Funktionen ist stetig. Es gilt \begin{align*}
+    f(x) + g(x) = \max(f(x), g(x)) + \min(f(x), g(x)),
+\end{align*} somit muss $\min(f, g)$ stetig sein.
+
+\paragraph{Aufgabe 6.} Die gegebene Funktion ist die Thomaesche Funktion. Sei $x \in \mathbb{R} \backslash \mathbb{Q}$. Sei $\epsilon > 0$ und wähle $n \in \mathbb{N}$ mit $1/n < \epsilon$. Es gibt endliche viele reduzierte rationale Zahlen $r = p/q$ im Intervall $(x - 1, x + 1)$ für ein $q$ mit $1 \geq q \geq n$. Sei $\delta$ die kleinste Distanz zwischen $x$ und einem solchen $r$. Dann gilt $\delta > 0$ weil $x \not\in \mathbb{Q}$.
+
+Wenn $|x - y| < \delta$ dann ist entweder $y$ irrational, und somit $f(y) = 0$. Oder $y = p/q$ mit $q > n$, und somit $f(y) = 1/q < 1/n < \epsilon$. In beiden Fällen gilt $|f(x) - f(y)| = |f(y)| < \epsilon$ wegen $f(x) = 0$, also
+\begin{align*}
+    |x - y| < \delta\ \Rightarrow\ |f(x) - f(y)| < \epsilon.
+\end{align*}
+Somit ist $f$ stetig für $x \in \mathbb{R} \backslash \mathbb{Q}$. (Vgl. \href{https://www.math.ucdavis.edu/~hunter/intro_analysis_pdf/ch7.pdf}{Introduction to Analysis, Chapter 7}.)
+
+\paragraph{Aufgabe 7.}
+
+\paragraph{Aufgabe 8.}
+
+\end{document}

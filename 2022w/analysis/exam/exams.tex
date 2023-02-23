@@ -1,0 +1,270 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{multicol}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Analysis}
+\fancyhead[R]{23a, 21a, 20b, 20a}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\newcommand{\showsolutions}{\empty}
+
+% If #1 is defined insert #2, otherwise insert #3.
+% \ifndef{somecommand}{\emph{not defined}}{\emph{defined}}
+\makeatletter
+\newcommand{\ifndef}[3]{%
+    \@ifundefined{#1}{%
+        #2
+    }{
+        #3
+    }%
+}%
+\makeatother
+
+\newcommand{\solution}[1]{\ifndef{showsolutions}{\empty}{\emph{#1}}}
+
+\begin{document}
+
+\section*{Multiple Choice}
+
+\begin{enumerate}[label=(\arabic*)]
+    \item Die reellen Zahlen können geordnet werden. (2x)
+    
+    \item Sei $f: \mathbb{R} \to \mathbb{R}$ invertierbar. Ist $f$ differenzierbar auf $\mathbb{R}$ dann ist auch $f^{-1}$ differenzierbar auf $\mathbb{R}$. (2x)
+    
+    \item Jede nach unten beschränkte und monoton fallende Folge besitzt einen Grenzwert.
+    
+    \item $(e^{3x})' = e^{3x}$
+    
+    \item Ist $(a_n)$ konvergent, dann ist auch $(\sum_{k = 1}^{n}(a_{k + 1} - a_k))$ konvergent. (2x)
+    
+    \item Der Konvergenzradius einer Potenzreihe kann grösser werden, wenn diese abgeleitet wird.
+
+    \item Die Menge der berechenbaren reellen Zahlen bilden einen Körper.
+    
+    \item Gilt $f(a) < 0 < f(b)$ für eine stetige Funktion $f$ in $\mathbb{R}$, dann besitzt diese eine Nullstelle.
+    
+    \item Jede nach oben beschränkte und monoton fallende Folge $(a_n)$ besitzt einen Grenzwert. (2x)
+    
+    \item Wenn $f$ in $\mathbb{R}$ stetig ist, dann ist $f$ in jedem endlichen Intervall von $\mathbb{R}$ integrierbar. (2x)
+        
+    \item Jede reelle Zahl kann mit einem Algorithmus berechnet werden.
+    
+    \item Jede Funktion ist berechenbar.
+    
+    \item Sei $a_n \in (0, 1)^{\infty}$. Konvergiert $(\sqrt{a_n})$ dann konvergiert auch $(a_n)$.
+    
+    \item Jede nach unten beschränkte und monoton steigende Folge besitzt einen Grenzwert.
+    
+    \item Sei $f$ eine beliebige Funktion in $\mathbb{R}$. Wenn $f$ auf $\mathbb{R}$ differenzierbar ist, dann ist $\frac{1}{f}$ in $\mathbb{R}$ stetig.
+\end{enumerate}
+
+\section*{Definitionen}
+
+Sei $f: \mathbb{R} \to \mathbb{R}$ eine Funktion und $x_0 \in \mathbb{R}$. Definieren Sie (ggf. nur mit Hilfe von Nullfolgen)
+\begin{enumerate}
+    \item $f$ besitzt einen Grenzwert $M \in \mathbb{R}$ in $x_0$ (2x)
+    \item Eine Folge $(a_n)$ konvergiert gegen den Grenzwert $M \in \mathbb{R}$
+    \item $f$ ist differenzierbar in $x_0$ (alt. stetig)
+    \item $f$ ist differenzierbar auf $\mathbb{R}$ (alt. stetig)
+\end{enumerate}
+
+\section*{Beweise}
+
+\begin{enumerate}[label=(\arabic*)]
+    \item Seien $f$ und $g$ differenzierbare Funktionen auf $\mathbb{R}$. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - 2g(x)$ differenzierbar auf $\mathbb{R}$ ist. (2x)
+
+    \item Seien $f$ und $g$ in $\mathbb{R}$ stetige Funktionen. Zeigen Sie mit Hilfe von Nullfolgen, dass $q(x) = f(x) - g(x)$ stetig in $\mathbb{R}$ ist.
+
+    \item Sei $f : \mathbb{R} \to \mathbb{R}$ eine Funktion. Zeigen oder widerlegen Sie (alt. mit Nullfolgen)
+    \begin{enumerate}
+        \item Wenn $f^2$ differenzierbar auf $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
+        \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist $f$ auch differenzierbar auf $\mathbb{R}$.
+        \item Wenn $f$ stetig in $\mathbb{R}$ ist, dann ist auch $f^2$ stetig in $\mathbb{R}$.
+        \item Wenn $f^2$ stetig in $\mathbb{R}$ ist, dann ist auch $f$ stetig in $\mathbb{R}$,
+    \end{enumerate}
+\end{enumerate}
+
+\section*{Rekurrenzen}
+
+\begin{enumerate}
+    \item Finden Sie eine Rekurrenz $g_n$ mit \begin{align*}
+        (1 - 2x - x^2)\left(\sum_{n=0}^{\infty}g_nx^n\right) = 1
+    \end{align*} (2x)
+
+    \item Bestimmen Sie eine Formel für $f_n \in \mathbb{R}$ (eine Rekurrenz mit den entsprechenden Startwerten $f_0, f_1, f_2 \in \mathbb{Q}$) mit
+
+    \begin{align*}
+        (1 + 3x + 2x^2 + x^3)\left(\sum_{n = 0}^{\infty}f_nx^n\right) = 1
+    \end{align*}
+\end{enumerate}
+
+\section*{Grenzwerte}
+
+\begin{multicols}{2}
+\begin{enumerate}
+    \item \begin{align*}
+        \lim_{n \to \infty} \frac{(2n + 4)\sqrt[5]{32 + \frac{1}{n}}}{3n + 16}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{x \to \infty} \frac{5x + 2x^3 + 5x^7}{2e^{2x} - e^x - 1}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{n \to \infty} \sqrt{\frac{8e^{2n} + 1}{e^{2n} + 4e^n + 1} + \frac{n}{n + 1}}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{x \to 0} \frac{\cos(x) - 1}{xe^x}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{n \to \infty} \sqrt{\frac{8n^{100} + 1}{2n^{100} + 50n^{50} + 1} + 5}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{x \to 0} \frac{2x + x^2 + 2x^{10}}{e^{3x} - e{x}}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{n \to \infty} \frac{e^n + e^{n^2} + 5e^{n^3}}{1 + e^{n^3}}
+    \end{align*}
+
+    \item \begin{align*}
+        \lim_{x \to 0} \frac{2x + x^2 + 2x^5}{e^{x^2} - e^{2x}}
+    \end{align*}
+\end{enumerate}
+\end{multicols}
+
+\section*{Konvergenz(radien)}
+
+Ermitteln Sie den Konvergenzradius.
+
+\begin{multicols}{3}
+\begin{enumerate}
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty}\frac{n^{12}}{(4n + 1)^{12}}x^n
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty}\frac{3^{2n}}{(2n)^{n}}x^n
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty}\frac{n^{10}}{(2n + 1)^{10}}x^n
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty}\frac{n!}{e^n}x^n
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty}\frac{4^{2n}}{n^n}x^n
+    \end{align*}
+\end{enumerate}
+\end{multicols}
+
+Entscheiden Sie, ob folgende Reihen konvergieren.
+
+\begin{multicols}{3}
+\begin{enumerate}
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{(n + 1)^{100}}{n^{100}}
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{(n!)^2}{(2n)!}
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{1}{n + \pi}
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{n^2}{5n^2 + 2^{-n} + 2}
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{10^n}{(2n)!}
+    \end{align*}
+
+    \item \begin{align*}
+        \sum_{n = 1}^{\infty} \frac{2^{4n + 1}}{n^n}
+    \end{align*}
+\end{enumerate}
+\end{multicols}
+
+\section*{Stammfunktionen}
+
+\begin{multicols}{4}
+\begin{enumerate}
+    \item \begin{align*}
+        \int x e^{4x}
+    \end{align*}
+    \item \begin{align*}
+        \int x^3e^x
+    \end{align*}
+    \item \begin{align*}
+        \int \sin(x) e^{-2\cos(x)}
+    \end{align*}
+    \item \begin{align*}
+        \int \frac{\sqrt{\frac{1}{x^3} + 5}}{x^4}
+    \end{align*}
+    \item \begin{align*}\int \sin(x)^2\end{align*}
+    \item \begin{align*}\int \sin(x)e^{\cos(x)}\end{align*}
+    \item \begin{align*}
+        \int x^2 \sin(x^3)
+    \end{align*}
+    \item \begin{align*}
+        \int x^2 e^x
+    \end{align*}
+    \item \begin{align*}
+        \int \ln(5x)
+    \end{align*}
+\end{enumerate}
+\end{multicols}
+
+\section*{Ableitungen}
+
+\begin{multicols}{2}
+\begin{enumerate}
+    \item $f(x) = (1-x)^a$ mit $a \in \mathbb{R}$
+    \item $f(x) = a^{1-x}$ mit $a \in (0, \infty)$
+    \item $f(x) = (1 - x)^{1 - x}$
+\end{enumerate}
+\end{multicols}
+
+\end{document}
