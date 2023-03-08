@@ -1,25 +1,23 @@
 package inspect;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Inspector {
+    // keeps track of current (head) and past objects, for navigation.
     // use Deque instead of Stack as per documentation recommendation
     private final Deque<Object> stack = new ArrayDeque<Object>();
 
     public Inspector(Object root) {
-        // TODO
+        if (root == null) {
+            throw new IllegalArgumentException("root must not be null");
+        }
 
         stack.push(root);
     }
 
     public void run() {
-        // TODO starts the inspection with the root object
-        // returns after the inspection is ended ("q" command)
-
         var scanner = new Scanner(System.in);
 
         while (true) {
@@ -34,25 +32,21 @@ public class Inspector {
                     case "i":
                         executeInspect(input, cur);
                         break;
-
                     case "b":
                         executeBack(stack);
                         break;
-
                     case "e":
                         executeEdit(input, cur, scanner);
                         break;
-
                     case "c":
                         executeCall(input, cur);
-
+                        break;
                     case "q":
                         return;
-
                     default:
                         System.out.println("unrecognized command: " + input[0]);
                 }
-            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException e) {
+            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 System.out.println("error: " + e.toString());
             }
         }
@@ -87,7 +81,8 @@ public class Inspector {
         for (var method : getRelevantMethods(clazz)) {
             sb.append("\tm void ").append(method.getName())
                     .append('(')
-                    .append(Arrays.stream(method.getParameterTypes()).map(Class::toString).collect(Collectors.joining(", ")))
+                    .append(Arrays.stream(method.getParameterTypes())
+                            .map(Class::toString).collect(Collectors.joining(", ")))
                     .append(')').append('\n');
         }
 
@@ -101,8 +96,21 @@ public class Inspector {
         }
 
         var field = obj.getClass().getField(input[1]);
+
+        if (field.isAnnotationPresent(InspectionBoundary.class)) {
+            System.out.println("field is an inspection boundary, cannot inspect");
+
+            return;
+        }
+
         field.setAccessible(true);
-        stack.push(field.get(obj));
+        var value = field.get(obj);
+
+        if (value == null) {
+            System.out.println("field is null, cannot inspect");
+        } else {
+            stack.push(field.get(obj));
+        }
     }
 
     private void executeBack(Deque<Object> stack) {
@@ -119,7 +127,6 @@ public class Inspector {
             return;
         }
 
-        // don't use class.getField because it only works for public fields
         var field = Arrays.stream(getRelevantFields(obj.getClass()))
                 .filter((f) -> f.getName().equals(input[1])).findFirst().orElse(null);
 
@@ -146,14 +153,10 @@ public class Inspector {
             field.setAccessible(true);
         }
 
-        if (type == String.class) {
-            field.set(obj, input[2]);
-        } else {
-            field.set(obj, Integer.parseInt(input[2]));
-        }
+        field.set(obj, type == String.class ? input[2] : Integer.parseInt(input[2]));
     }
 
-    private void executeCall(String[] input, Object cur) throws NoSuchMethodException {
+    private void executeCall(String[] input, Object cur) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         if (input.length < 2) {
             System.out.println("invalid arguments (c [method] [...params])");
             return;
@@ -167,12 +170,31 @@ public class Inspector {
             throw new NoSuchMethodException(input[1]);
         }
 
-        if ((input.length - method.getParameterCount()) != 2) {
-            System.out.println("invalid number of method call parameters, expected " + method.getParameterCount());
+        var paramCount = method.getParameterCount();
+
+        // the index of the first (raw) call parameter in the input
+        final var rawParamStart = 2;
+
+        if ((input.length - paramCount) != rawParamStart) {
+            System.out.println("invalid number of call parameters, expected " + paramCount);
+
+            return;
         }
+
+        var params = new Object[paramCount];
+        // implementation detail: all types will be primitives or Strings
+        var paramTypes = method.getParameterTypes();
+
+        for (int i = 0; i < paramCount; i++) {
+            var rawParam = input[rawParamStart + i];
+
+            params[i] = paramTypes[i] == String.class ? rawParam : Integer.parseInt(rawParam);
+        }
+
+        method.invoke(cur, params);
     }
 
-    // returns all fields relevant to the inspector: all public and private fields of the given class and its superclasses
+    // returns all fields relevant to the inspector: public and private fields of the given class and its superclasses
     private Field[] getRelevantFields(Class<?> clazz) {
         var fields = new ArrayList<Field>();
 

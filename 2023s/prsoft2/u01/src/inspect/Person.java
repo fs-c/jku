@@ -8,7 +8,7 @@ public class Person {
     private int age;
     public Person partner;
 
-    // TODO add inspection boundary via annotation
+    @InspectionBoundary
     public List<Person> children;
 
     public Person(String name, int age, Person partner) {
