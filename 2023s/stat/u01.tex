@@ -1,0 +1,100 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{multicol}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Statastik --- \textbf{Übung 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\begin{enumerate}
+    \item Datenerhebung soll objektiv, valide und reliabel sein. Primäre Datenerhebung ist aufwändig (teuer) und potentiell weniger objektiv, dafür potentiell hochwertiger (kann genau messen was gebraucht wird). Sekundäre Datenerhebung ist einfacher und weniger durch \enquote{Forschungsziel} verfälschbar, allerdings ggf. nicht alles was benötigt wird enthalten.
+    
+    \item \begin{enumerate}
+        \item Ordinale Merkmale teilen Objekte \enquote{natürlich} (objektiv) in geordnete Kategorien. Metrische Merkmale müssen erst gemessen (gezählt, \ldots) werden.
+        
+        \item Diskrete Merkmale sind in $\mathbb{N}$ (\enquote{genauere} Messung gibt gleiches Ergebnis), stetige Merkmale in $\mathbb{R}$ (genauere Messung gibt besseres Ergebnis).
+    \end{enumerate}
+
+    \item todo
+    
+    \item \begin{multicols}{2}
+        \begin{enumerate}
+        \item Wahr
+        \item Wahr
+        \item Falsch, Menge von Objekten (mit Merkmalen)
+        \item Falsch, Merkmalsausprägung sind Eigenschaft
+        \item Falsch, Rangmerkmal ist kategorisch
+        \item Wahr
+        \item Wahr (keine Beziehung zwischen Elementen der Grundgesamtheit)
+        \item Falsch, unkomprimierte Aufzeichnung aller Merkmalsausprägungen
+        \item Falsch, Aufgabe der Wahrscheinlichkeit
+        \item Falsch, Ordnungsbeziehung ist nicht natürlich, muss gemessen werden
+        \item Falsch (brauchen nur eine natürliche, kategorische Ordnung, aber bijektives mapping existiert)
+        \item Falsch (Schulnoten)
+    \end{enumerate}
+    \end{multicols}
+
+    \item \begin{multicols}{2}
+        \begin{enumerate}
+            \item quantitativ diskret
+            \item quantitativ stetig (bzw. wegen speed lock diskret)
+            \item ordinal
+            \item quantitativ stetig
+            \item quantitativ diskret
+            \item quantitativ diskret
+        \end{enumerate}
+    \end{multicols}
+
+    \item \begin{enumerate}
+        \item Grundgesamtheit sind derzeitige KfZ-Haftpflichtversicherungsnehmer.
+        \item Alter (quantitativ diskret), Geschlecht (nominal), Beruf (nominal), Wohnort (nominal), Vertragsdauer (quantitativ diskret), Schadensfälle (quantitativ diskret), Schadenshöhe (quantitativ diskret).
+        \item 21, männlich, Student, Linz, 4 Jahre, 1, 1000€
+    \end{enumerate}
+
+    \item \begin{enumerate}
+        \item Grundgesamtheit
+        \item Merkmal, quantitativ diskret
+        \item Merkmal, nominal
+        \item Merkmal, nominal
+    \end{enumerate}
+
+    \item \begin{enumerate}
+        \item 
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}
