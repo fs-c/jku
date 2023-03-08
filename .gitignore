@@ -1,9 +1,11 @@
 *.zip
 
 .idea/
+.metadata
+.vscode
 *.iml
 
-# For se1/generateCover
+# For headstart/se1/generateCover
 *.log
 node_modules
 output.pdf
