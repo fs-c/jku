@@ -43,8 +43,14 @@
 
 \begin{document}
 
-\section*{Can Quantum Platforms do Something that Conventional Computers Cannot?}
+\section*{Quantum Advantage}
 
-\paragraph{Galton Board} Balls are dropped into a triangular \enquote{maze}, filled with obstacles set up in a way such that the balls bounce left or right with the same probabilty. At the \enquote{bottom} they fall into bins.
+\paragraph{Galton Board} Balls are dropped into a maze where obstacles are arranged in a triangular pattern (hexagonal lattice). At each obstacle, they either bounce left or right with equal probability, falling into one of $n + 1$ bins at the bottom. Notably, when a sufficient number of balls is dropped into the maze, the fill level of the bins approximates a normal distribution. (Regression to the mean.) Naturally, it is easy to compute the probability that a ball ends up in any given bin (binomial distribution). It's also easy to sample from this distrubution, we can just simulate ball trajectories with trivial overhead.
+
+\paragraph{Boson Sampling} The \enquote{quantum equivalent} to this is shooting photons into a maze of beam-splitters (splits a beam of light, photons can either left, right or \enquote{both ways} --- \emph{superposition}) and observing where they leave the maze. At the moment, we can't efficiently compute probabilities for where a photon ends up. In the same vein, we can't simulate the maze in order to sample the distribution on a classical computer. But we can just build the maze and try it out. This discrepancy is called \emph{quantum advantage}, it challenges the thesis that every natural process can be simulated by a turing machine in polytime.
+
+Elaborating on the difficulty of computing the sampling: We can characterize the maze by a matrix $A$. Outcome probabilities for $n$ photons and $n$ exits are proportional to $A$s matrix permanent, the computation of which is $\sharp \text{P}$-hard. Toda's theorem states that $\text{PH} \subseteq \sharp \text{P}$, meaning that any PH problem can be reduced into the probabilities of boson sampling. This would imply that the ability to efficiently compute boson sampling distributions leads to P = NP.
+
+We can conclude that simulating quantum platforms on classical computers is probably very hard. But we can build and run a boson sampler. This has been done in the recent past (and work continues), but we don't know where the really hard instances are and it's hard to get right (errors are inevitable and don't allow for clean arguments).
 
 \end{document}
