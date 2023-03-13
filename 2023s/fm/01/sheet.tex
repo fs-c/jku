@@ -1,0 +1,119 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{multicol}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+\usetikzlibrary{automata, arrows.meta, positioning}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Formal Models --- \textbf{Exercise 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+% Adjust tikz automata styling
+\tikzset{
+    ->,
+    initial text=
+}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+
+\begin{document}
+
+\paragraph{Exercise 1}
+
+\begin{align*}
+    S &= \{ s_0, s_1, s_2, s_3, s_4, s_5, s_6 \} \\
+    I &= \{ s_0 \} \\
+    \Sigma &= \{ a, b \} \\
+    T &= \begin{aligned}\{ &(s_0, a, s_1), (s_0, b, s_2), (s_1, b, s_2), (s_1, a, s_3), \\&(s_2, a, s_1), (s_2, b, s_4), (s_3, a, s_5), (s_3, b, s_2), (s_4, a, s_1), \\&(s_4, b, s6), (s_5, a, s_5), (s_5, b, s_2), (s_6, b, s_6), (s_6, a, s_1) \}
+    \end{aligned} \\
+    F &= \{ s_0, s_1, s_2, s_3, s_4 \}
+\end{align*}
+
+\begin{center}
+    \begin{tikzpicture}
+        \node (s0) [state, accepting, initial] {$s_0$};
+        \node (s1) [state, accepting, above right = of s0] {$s_1$};
+        \node (s2) [state, accepting, below right = of s0] {$s_2$};
+        \node (s3) [state, accepting, right = of s1] {$s_3$};
+        \node (s4) [state, accepting, right = of s2] {$s_4$};
+        \node (s5) [state, right = of s3] {$s_5$};
+        \node (s6) [state, right = of s4] {$s_6$};
+
+        \draw
+            (s0) edge[above] node{a} (s1)
+            (s0) edge[below] node{b} (s2)
+            (s1) edge[bend right=10, left] node{b} (s2)
+            (s1) edge[above] node{a} (s3)
+            (s2) edge[bend right=10, right] node{a} (s1)
+            (s2) edge[below] node{b} (s4)
+            (s3) edge[above] node{a} (s5)
+            (s3) edge[right] node{b} (s2)
+            (s4) edge[below] node{b} (s6)
+            (s4) edge[left] node{a} (s1)
+            (s5) edge[loop below] node{a} (s5)
+            (s5) edge[left] node{b} (s2)
+            (s6) edge[loop above] node{b} (s6)
+            (s6) edge[right] node{a} (s1)
+            ;
+    \end{tikzpicture}
+\end{center}
+
+The automaton has one initial state and every state has exactly one successor state for every possible input. It is thus complete (at least one initial state and at least one successor) and deterministic (at most one initial state, at most one successor).
+
+\paragraph{Exercise 2}
+
+% \begin{align*}
+%     S_p &= \{ \emptyset, \{A\}, \{B\}, \{C\}, \{D\}, \{A, B\}, \{A, C\}, \{A, D\}, \{B, C\}, \{B, D\}, \{C, D\}, \{A, B, C, D\} \} \\
+%     I_p &= \{\{ A, C \}\} \\
+%     F_p &= \{ \{B\}, \{D\}, \{A, B\}, \{A, D\}, \{B, D\}, \{B, C\} , \{C, D\}, \{A, B, C, D\} \}
+%     T_p &= \{  \}
+% \end{align*}
+
+\begin{center}
+    \begin{tikzpicture}
+        \node (ac) [state, initial] {AC};
+        \node (ad) [state, above right = of ac] {AD};
+        \node (adb) [state, below right = of ac] {ADB};
+        \node (b) [state, right = of adb] {ADB};
+        \node (db) [state, below right = of adb] {DB};
+
+        \draw
+            (ac) edge node{0} (ad)
+            (ac) edge node{1} (adb)
+            (adb) edge node{0} (db)
+            (adb) edge node{1} (b)
+            ;
+    \end{tikzpicture}
+\end{center}
+
+\end{document}
