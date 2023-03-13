@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Units
+\usepackage{siunitx}
+\sisetup{locale=DE,round-mode=figures,round-precision=4,round-pad=false}
+
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Elektronik --- \textbf{Blatt 1}}
+\fancyhead[R]{Laurenz Weixlbaumer (11804751)}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\begin{document}
+
+\paragraph{Aufgabe 3}
+
+\begin{enumerate}
+    \item \begin{align*}
+        R &= \frac{\rho_s \cdot l}{A} \\
+        l &= \frac{A \cdot R}{\rho_s} = \frac{\qty{4000}{\mm\squared} \cdot \qty{250}{\ohm}}{\qty{10}{\ohm\mm\squared\per\metre}} = \qty{100000}{\metre}
+    \end{align*}
+    Somit ist der Kurzschluss \qty{50000}{\metre} von der Messstelle entfernt.
+
+    \item Die Querschnittsfläche des Drahtes ist $\pi \cdot r^2 = \qty{0.19634954084936207}{\mm\squared}$. Der maximal zulässige Strom ist also $\qty{1.5}{\ampere\per\mm\squared} \cdot \qty{0.19634954084936207}{\mm\squared} = \qty{0.2945243112740431}{\ampere}$
+\end{enumerate}
+
+\paragraph{Aufgabe 4}
+
+\begin{enumerate}
+    \item Der spezifische Widerstand von Eisen ist $\rho_e \approx \qty{.13}{\ohm\mm\squared\per\m}$. Der Draht ist \qty{75}{\m} lang und hat eine Querschnittsfläche von \qty{0.12566370614359174}{\mm\squared}. Somit
+    \begin{align*}
+        R = \frac{\rho_e \cdot l}{A} = \frac{\qty{.13}{\ohm\mm\squared\per\m} \cdot \qty{75}{\m}}{\qty{0.12566370614359174}{\mm\squared}} = \qty{77.58803475729897}{\ohm}
+    \end{align*}
+
+    \item
+    \begin{align*}
+        V_1 &= \pi \left(\frac{d_1}{2}\right)^2 l_1 & V_2 &= \pi \left(\frac{d_2}{2}\right)^2 l_2 \\
+        A_1 &= \pi \left(\frac{d_1}{2}\right)^2 & A_2 &= \pi \left(\frac{d_2}{2}\right)^2
+    \end{align*}
+    Wir sind interessiert an $l_2$ und wissen, dass das Volumen konstant bleibt. Somit
+    \begin{align*}
+        \pi \left(\frac{d_1}{2}\right)^2 l_1 &= \pi \left(\frac{d_2}{2}\right)^2 l_2 \\
+        \pi \left(\frac{4}{2}\right)^2 l_1 &= \pi \left(\frac{1}{2}\right)^2 l_2 \\
+        4l_1 &= \frac{1}{4}l_2 \\
+        16l_1 &= l_2.
+    \end{align*}
+    Es sei $R'_D$ der Widerstand des auseinandergezogenen Drahtes.
+    \begin{align*}
+        \frac{R_D'}{R_D} = 
+        \frac{\rho \frac{l_2}{A_2}}{\rho \frac{l_1}{A_1}} = 
+        \frac{16l_1 \pi \left(\frac{d_1}{2}\right)^2}{l_1\pi \left(\frac{d_2}{2}\right)^2} =
+        \frac{16 \cdot \left(\frac{4}{2}\right)^2}{\left(\frac{1}{2}\right)^2} =
+        \frac{64}{\frac{1}{4}} =
+        256
+    \end{align*}
+    Es gilt also $R_D' = 256R_D$.
+\end{enumerate}
+
+\end{document}
