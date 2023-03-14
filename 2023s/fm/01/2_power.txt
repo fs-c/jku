@@ -1,0 +1,18 @@
+digraph finite_state_machine {
+	rankdir=LR;
+	node [shape = doublecircle]; DA, ADB, DB, B, D;
+	node [shape = circle];
+	AC -> DA [label=0];
+	AC -> ADB [label=1];
+	DA -> DB [label=0];
+	DA -> B [label=1];
+	ADB -> DB [label=0];
+	ADB -> B [label=1];
+	B -> D [label=0];
+	B ->B [label=1];
+	DB -> D [label=0];
+	DB -> B [label=1];
+	D -> D [label=0];
+	D -> e [label=1];
+	e -> e [label="0,1"];
+}

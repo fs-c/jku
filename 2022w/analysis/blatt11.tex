@@ -44,11 +44,6 @@
 
 \paragraph{Aufgabe 1}
 
-% Note that
-% \begin{align*}
-%     x &= \frac{1}{1/x} & f(x) &= \frac{1}{1/f(x)} & g(x) &= \frac{1}{1/g(x)}
-% \end{align*}
-
 Sei $t = \frac{1}{x}$, nun ist $x \to \infty$ äquivalent zu $t \to 0^+$. Dann gilt
 \begin{align*}
     \lim_{x \to \infty} \frac{f(x)}{g(x)} = \lim_{t \to 0^+}\frac{f(1/t)}{g(1/t)} = \lim_{t \to 0^+}\frac{f'(1/t)}{g'(1/t)} = \lim_{t \to 0^+}\frac{-f'(1/t)/t^2}{-g'(1/t)/t^2} = \lim_{t \to 0^+} \frac{f'(1/t)}{g'(1/t)} = \lim_{x \to \infty} \frac{f'(x)}{g'(x)}.
@@ -57,7 +52,7 @@ Sei $t = \frac{1}{x}$, nun ist $x \to \infty$ äquivalent zu $t \to 0^+$. Dann g
 \paragraph{Aufgabe 2}
 
 \begin{align*}
-    \lim_{x \to \infty}\frac{x^2}{e^x} = \lim_{x \to \infty}\frac{2x}{e^x} = 0
+    \lim_{x \to \infty}\frac{x^2}{e^x} = \lim_{x \to \infty}\frac{2x}{e^x} = \lim_{x \to \infty}\frac{2}{e^x} = \lim_{x \to \infty}\frac{0}{e^x} = 0
 \end{align*}
 
 Das Ergebnis ist unabhängig von der Potenz von $x$, $e^x$ wächst schneller als jedes Polynom.
