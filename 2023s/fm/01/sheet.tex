@@ -29,7 +29,7 @@
 % Adjust header and footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\fancyhead[L]{Formal Models --- \textbf{Exercise 1}}
+\fancyhead[L]{Formal Models --- \textbf{Assignment 1}}
 \fancyhead[R]{Laurenz Weixlbaumer (11804751)}
 \fancyfoot[C]{}
 \fancyfoot[R]{\thepage}
@@ -54,7 +54,7 @@
     S &= \{ s_0, s_1, s_2, s_3, s_4, s_5, s_6 \} \\
     I &= \{ s_0 \} \\
     \Sigma &= \{ a, b \} \\
-    T &= \begin{aligned}\{ &(s_0, a, s_1), (s_0, b, s_2), (s_1, b, s_2), (s_1, a, s_3), \\&(s_2, a, s_1), (s_2, b, s_4), (s_3, a, s_5), (s_3, b, s_2), (s_4, a, s_1), \\&(s_4, b, s6), (s_5, a, s_5), (s_5, b, s_2), (s_6, b, s_6), (s_6, a, s_1) \}
+    T &= \begin{aligned}\{ &(s_0, a, s_1), (s_0, b, s_2), (s_1, b, s_2), (s_1, a, s_3), \\&(s_2, a, s_1), (s_2, b, s_4), (s_3, a, s_5), (s_3, b, s_2), (s_4, a, s_1), \\&(s_4, b, s6), (s_5, a, s_5), (s_5, b, s_5), (s_6, b, s_6), (s_6, a, s_6) \}
     \end{aligned} \\
     F &= \{ s_0, s_1, s_2, s_3, s_4 \}
 \end{align*}
@@ -80,10 +80,8 @@
             (s3) edge[right] node{b} (s2)
             (s4) edge[below] node{b} (s6)
             (s4) edge[left] node{a} (s1)
-            (s5) edge[loop below] node{a} (s5)
-            (s5) edge[left] node{b} (s2)
-            (s6) edge[loop above] node{b} (s6)
-            (s6) edge[right] node{a} (s1)
+            (s5) edge[loop below] node{a, b} (s5)
+            (s6) edge[loop above] node{a, b} (s6)
             ;
     \end{tikzpicture}
 \end{center}
@@ -92,28 +90,46 @@ The automaton has one initial state and every state has exactly one successor st
 
 \paragraph{Exercise 2}
 
-% \begin{align*}
-%     S_p &= \{ \emptyset, \{A\}, \{B\}, \{C\}, \{D\}, \{A, B\}, \{A, C\}, \{A, D\}, \{B, C\}, \{B, D\}, \{C, D\}, \{A, B, C, D\} \} \\
-%     I_p &= \{\{ A, C \}\} \\
-%     F_p &= \{ \{B\}, \{D\}, \{A, B\}, \{A, D\}, \{B, D\}, \{B, C\} , \{C, D\}, \{A, B, C, D\} \}
-%     T_p &= \{  \}
-% \end{align*}
+\begin{center}
+    \includegraphics[width=.8\textwidth]{2_power.png}
+\end{center}
+
+\paragraph{Exercise 3}
+
+The automaton $A$
 
 \begin{center}
-    \begin{tikzpicture}
-        \node (ac) [state, initial] {AC};
-        \node (ad) [state, above right = of ac] {AD};
-        \node (adb) [state, below right = of ac] {ADB};
-        \node (b) [state, right = of adb] {ADB};
-        \node (db) [state, below right = of adb] {DB};
-
-        \draw
-            (ac) edge node{0} (ad)
-            (ac) edge node{1} (adb)
-            (adb) edge node{0} (db)
-            (adb) edge node{1} (b)
-            ;
-    \end{tikzpicture}
+    \includegraphics[width=.35\textwidth]{3_initial.png}
 \end{center}
+
+is neither deterministic nor complete. To determine the complement language, we use the power automaton
+
+\begin{center}
+    \includegraphics[width=.75\textwidth]{3_power.png}
+\end{center}
+
+with complement automaton.
+
+\begin{center}
+    \includegraphics[width=.75\textwidth]{3_complement.png}
+\end{center}
+
+This automaton describes the complement language $\overline{L(A)}$.
+\begin{align*}
+    L(A) &= a(aa(a*)(b*))* \\
+    K(A) = \overline{L(A)} &= \{ w \in \{a,b\}* : w \not\in L(A) \}
+\end{align*}
+
+\paragraph{Exercise 4}
+
+\begin{center}
+    \includegraphics[width=.2\textwidth]{4_example.png}
+\end{center}
+
+The given automaton $A_3$ is neither complete nor deterministic. Because it has no initial state, we have $L(A_3) = L(C(A_3)) = \emptyset$ but $\overline{L(A_3)} = \{a,b\}^*$.
+
+It can be made complete (but not deterministic) by adding an initial state. In this case $L(A_2) = \{a,b\}^* = L(C(A_2))$ but $\overline{L(A_2)} = \emptyset$. 
+
+It can be made deterministic (but not complete) by removing the state B and the transition to it. In this case the argument for $A_3$ still holds.
 
 \end{document}
