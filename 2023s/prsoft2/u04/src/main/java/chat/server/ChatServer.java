@@ -65,52 +65,52 @@ public class ChatServer {
     }
 
     private class SelectorRunnable implements Runnable {
-        public void handleReceivedMessage(SocketChannel channel, String message) throws IOException {
-            if (message.startsWith(MsgKind.LOGIN.name())) {
-                var name = message.split(":")[1];
+        public void handleReceivedMessage(SocketChannel channel, String serializedMessage) throws IOException {
+            var message = Message.deserialize(serializedMessage);
 
-                if (name.length() == 0) {
-                    write(channel, buffer, MsgKind.FAILED_LOGIN + MSG_SEP + "invalid format");
-                } else if (clients.containsKey(name)) {
-                    write(channel, buffer, MsgKind.FAILED_LOGIN + MSG_SEP + "duplicate name");
-                } else {
-                    clients.put(name, channel);
+            if (message == null) {
+                Out.println("INTERNAL ERROR: %s couldn't be deserialized".formatted(serializedMessage));
 
-                    write(channel, buffer, MsgKind.OK_LOGIN.name());
+                return;
+            }
+
+            switch (message.kind) {
+                case LOGIN -> {
+                    if (clients.containsKey(message.sender)) {
+                        write(channel, buffer, Message.serialize(MsgKind.FAILED_LOGIN, "duplicate name"));
+                    } else {
+                        clients.put(message.sender, channel);
+
+                        write(channel, buffer, Message.serialize(MsgKind.OK_LOGIN, message.sender));
+                    }
                 }
-            } else if (message.startsWith(MsgKind.SEND.name())) {
-                var chunks = message.split(";");
 
-                if (chunks.length == 0) {
-                    write(channel, buffer, Message.serialize());
-                    return;
+                case LOGOUT -> {
+                    write(channel, buffer, Message.serialize(MsgKind.OK_LOGOUT, message.sender));
+
+                    clients.remove(message.sender);
+                    channel.close();
                 }
 
-                var sender = chunks[0].split(":")[1];
-                var recipient = chunks[1];
-                var recipientChannel = clients.get(chunks[1]);
-                var id = chunks[2];
-                var content = chunks[3];
+                case SEND -> {
+                    var recipientChannel = clients.get(message.recipient);
 
-                if (sender.length() == 0 || content.length() == 0 || recipient.length() == 0) {
-                    write(channel, buffer, MsgKind.FAILED_SEND + MSG_SEP + "invalid format");
-                } else if (recipientChannel == null) {
-                    write(channel, buffer, MsgKind.FAILED_SEND + MSG_SEP + "recipient not logged in");
-                } else {
-                    write(recipientChannel, buffer, MsgKind.SEND + ":" + sender + MSG_SEP + recipient + MSG_SEP + id + MSG_SEP + content);
+                    if (recipientChannel == null) {
+                        write(channel, buffer, Message.serialize(MsgKind.FAILED_SEND, "recipient not logged in"));
+                    } else {
+                        write(channel, buffer, Message.serialize(MsgKind.SEND, message.sender, message.recipient,
+                                String.valueOf(message.id), message.content));
+                    }
                 }
-            } else if (message.startsWith(MsgKind.LOGOUT.name())) {
-                var name = message.split(":")[1];
 
-                channel.close();
-                clients.remove(name);
+                case ACKN -> {
+                    var recipientChannel = clients.get(message.recipient);
 
-                write(channel, buffer, MsgKind.OK_LOGOUT.name());
-            } else if (message.startsWith(MsgKind.ACKN.name())) {
-                var name = message.split(";")[0].split(":")[1];
-                var recipientChannel = clients.get(name);
-
-                write(recipientChannel, buffer, message);
+                    if (recipientChannel != null) {
+                        write(channel, buffer, Message.serialize(MsgKind.ACKN, message.sender, message.recipient,
+                                String.valueOf(message.id)));
+                    }
+                }
             }
         }
 
@@ -128,7 +128,7 @@ public class ChatServer {
                             channel.configureBlocking(false);
                             channel.register(selector, SelectionKey.OP_READ);
 
-                            write(channel, buffer, MsgKind.CONNECTED.name());
+                            write(channel, buffer, Message.serialize(MsgKind.CONNECTED));
                         } else if (key.isReadable()) {
                             try {
                                 var channel = (SocketChannel) key.channel();

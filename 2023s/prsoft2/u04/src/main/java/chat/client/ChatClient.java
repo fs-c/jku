@@ -52,25 +52,29 @@ public class ChatClient {
             receiverThread = new Thread(() -> {
                 while (!terminate) {
                     try {
-                        String incoming = read(channel, recvBuffer);
+                        var message = Message.deserialize(read(channel, recvBuffer));
 
-                        if (incoming.startsWith(MsgKind.CONNECTED.name())) {
-                            write(channel, sendBuffer, MsgKind.LOGIN + ":" + name);
-                        } else if (incoming.startsWith(MsgKind.SEND.name())) {
-                            var chunks = incoming.split(";");
+                        if (message == null) {
+                            Out.println("INTERNAL ERROR: couldn't deserialize incoming message");
 
-                            var sender = chunks[0].split(":")[1];
-                            var recipient = chunks[1];
-                            var messageId = chunks[2];
-                            var content = chunks[3];
+                            return;
+                        }
 
-                            if (!recipient.equals(name)) {
-                                Out.println("BUG: this message was intended for a different recipient");
+                        switch (message.kind) {
+                            case CONNECTED -> {
+                                write(channel, sendBuffer, Message.serialize(MsgKind.LOGIN, name));
                             }
 
-                            Out.println(String.format("Received from %s: %s", sender, content));
+                            case SEND -> {
+                                if (!message.recipient.equals(name)) {
+                                    Out.println("INTERNAL ERROR: this message was intended for a different recipient");
+                                }
 
-                            write(channel, sendBuffer, MsgKind.ACKN.name() + ":" + sender + MSG_SEP + name + MSG_SEP + messageId);
+                                Out.println(String.format("Received from %s: %s", message.sender, message.content));
+
+                                write(channel, sendBuffer, Message.serialize(MsgKind.ACKN, message.sender, name,
+                                        String.valueOf(message.id)));
+                            }
                         }
                     } catch (Exception e) {
                         Out.println("Receiver interrupted");
@@ -84,14 +88,15 @@ public class ChatClient {
                 String[] recMsgPair = console.readMessage();
                 String receiver = recMsgPair[0];
                 String content = recMsgPair[1];
+
                 if (receiver.startsWith(".")) {
-                    write(channel, sendBuffer, MsgKind.LOGOUT.name() + ":" + name);
+                    write(channel, sendBuffer, Message.serialize(MsgKind.LOGOUT, name));
 
                     terminate();
                 } else {
                     int messageId = sentMessages++;
 
-                    write(channel, sendBuffer, MsgKind.SEND + ":" + name + MSG_SEP + receiver + MSG_SEP + messageId + MSG_SEP + content);
+                    write(channel, sendBuffer, Message.serialize(MsgKind.SEND, name, receiver, String.valueOf(messageId), content));
                 }
             }
         }

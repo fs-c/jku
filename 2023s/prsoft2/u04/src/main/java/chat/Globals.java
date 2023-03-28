@@ -3,7 +3,6 @@ package chat;
 import inout.Out;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
@@ -43,7 +42,13 @@ public class Globals {
     }
 
     public static class Message {
-        public static String serialize(MsgKind kind, String ...content) {
+        public MsgKind kind;
+        public String sender;
+        public String recipient;
+        public String content;
+        public int id;
+
+        public static String serialize(MsgKind kind, String... content) {
             var serialized = new StringBuilder();
 
             serialized.append(kind);
@@ -64,36 +69,40 @@ public class Globals {
             switch (deserialized.kind) {
                 case CONNECTED -> {
                     if (chunks.length != 1) {
-                        throw new RuntimeException("invalid format");
+                        return null;
                     }
                 }
+
                 case LOGIN, OK_LOGIN, LOGOUT, OK_LOGOUT -> {
                     if (chunks.length != 2) {
-                        throw new RuntimeException("invalid format");
+                        return null;
                     }
 
                     deserialized.sender = chunks[1];
                 }
+
                 case FAILED_LOGIN, FAILED_SEND -> {
                     if (chunks.length != 2) {
-                        throw new RuntimeException("invalid format");
+                        return null;
                     }
 
                     deserialized.content = chunks[1];
                 }
+
                 case SEND -> {
                     if (chunks.length != 5) {
-                        throw new RuntimeException("invalid format");
+                        return null;
                     }
 
                     deserialized.sender = chunks[1];
                     deserialized.recipient = chunks[2];
-                    deserialized.content = chunks[3];
-                    deserialized.id = Integer.parseInt(chunks[4]);
+                    deserialized.id = Integer.parseInt(chunks[3]);
+                    deserialized.content = chunks[4];
                 }
+
                 case ACKN -> {
                     if (chunks.length != 4) {
-                        throw new RuntimeException("invalid format");
+                        return null;
                     }
 
                     deserialized.sender = chunks[1];
@@ -104,51 +113,5 @@ public class Globals {
 
             return deserialized;
         }
-
-        public MsgKind kind;
-        public String sender;
-        public String recipient;
-        public String content;
-        public int id;
-    }
-
-    public static String serializeConnected() {
-        return MsgKind.CONNECTED.name();
-    }
-
-    public static String serialializeLogin(String name) {
-        return MsgKind.LOGIN.name() + NAME_SEP + name;
-    }
-
-    public static String serializeOkLogin(String name) {
-        return MsgKind.OK_LOGIN.name() + NAME_SEP + name;
-    }
-
-    public static String serializeFailedLogin(String reason) {
-        return MsgKind.FAILED_LOGIN.name() + MSG_SEP + reason;
-    }
-
-    public static String serializeLogout(String name) {
-        return MsgKind.LOGOUT.name() + NAME_SEP + name;
-    }
-
-    public static String serializeOkLogout() {
-        return MsgKind.OK_LOGOUT.name();
-    }
-
-    public static String serializeSend(String sender, String recipient, String content, int id) {
-        return "";
-    }
-
-    public static String serializeAckn(String sender, String recipient, int id) {
-        return "";
-    }
-
-    public static String serializeFailedSend(String reason) {
-        return "";
-    }
-
-    public static String serializeTimeout(String sender, String recipient, int id) {
-        return "";
     }
 }
