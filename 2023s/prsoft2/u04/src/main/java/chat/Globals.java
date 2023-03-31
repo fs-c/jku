@@ -15,6 +15,8 @@ public class Globals {
     public static final String NAME_SEP = ":";
     public static Charset CSET = Charset.forName("UTF-8");
 
+    public static final int TIMEOUT_MS = 3 * 1000;
+
     public static String read(SocketChannel channel, ByteBuffer buffer) throws IOException {
         buffer.clear();
         int n = channel.read(buffer);
@@ -100,13 +102,13 @@ public class Globals {
                     deserialized.content = chunks[4];
                 }
 
-                case ACKN -> {
+                case ACKN, TIMEOUT -> {
                     if (chunks.length != 4) {
                         return null;
                     }
 
-                    deserialized.sender = chunks[1];
-                    deserialized.recipient = chunks[2];
+                    deserialized.sender = chunks[2];
+                    deserialized.recipient = chunks[1];
                     deserialized.id = Integer.parseInt(chunks[3]);
                 }
             }

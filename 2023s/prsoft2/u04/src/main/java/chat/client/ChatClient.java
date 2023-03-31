@@ -75,6 +75,10 @@ public class ChatClient {
                                 write(channel, sendBuffer, Message.serialize(MsgKind.ACKN, message.sender, name,
                                         String.valueOf(message.id)));
                             }
+
+                            case TIMEOUT -> {
+                                Out.println(String.format("Timeout: Message %d %s", message.id, message.sender));
+                            }
                         }
                     } catch (Exception e) {
                         Out.println("Receiver interrupted");

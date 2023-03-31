@@ -1,15 +1,21 @@
 package chat.server;
 
-import chat.Globals;
 import inout.In;
 import inout.Out;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static chat.Globals.*;
 
@@ -18,9 +24,10 @@ public class ChatServer {
     private final ByteBuffer buffer;
     private final Selector selector;
     private final Thread selectorThread;
+    private final Map<String, SocketChannel> clients = new HashMap<>();
+    private final ScheduledExecutorService timeoutScheduler = Executors.newScheduledThreadPool(1);
+    private final Map<String, Future<?>> pendingTimeouts = new HashMap<>();
     private volatile boolean terminate = false;
-
-    private Map<String, SocketChannel> clients = new HashMap<>();
 
     ChatServer() throws IOException {
         server = ServerSocketChannel.open();
@@ -98,8 +105,19 @@ public class ChatServer {
                     if (recipientChannel == null) {
                         write(channel, buffer, Message.serialize(MsgKind.FAILED_SEND, "recipient not logged in"));
                     } else {
-                        write(channel, buffer, Message.serialize(MsgKind.SEND, message.sender, message.recipient,
+                        write(recipientChannel, buffer, Message.serialize(MsgKind.SEND, message.sender, message.recipient,
                                 String.valueOf(message.id), message.content));
+
+                        // todo: some kind of proper composite key mechanism would be good
+                        var timeoutKey = message.recipient + NAME_SEP + message.id;
+                        pendingTimeouts.put(timeoutKey, timeoutScheduler.schedule(() -> {
+                            try {
+                                write(channel, buffer, Message.serialize(MsgKind.TIMEOUT, message.sender, message.recipient,
+                                        String.valueOf(message.id)));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }, TIMEOUT_MS, TimeUnit.MILLISECONDS));
                     }
                 }
 
@@ -107,8 +125,15 @@ public class ChatServer {
                     var recipientChannel = clients.get(message.recipient);
 
                     if (recipientChannel != null) {
-                        write(channel, buffer, Message.serialize(MsgKind.ACKN, message.sender, message.recipient,
+                        write(recipientChannel, buffer, Message.serialize(MsgKind.ACKN, message.recipient, message.sender,
                                 String.valueOf(message.id)));
+                    }
+
+                    var timeoutKey = message.sender + NAME_SEP + message.id;
+                    var pendingTimeout = pendingTimeouts.get(timeoutKey);
+
+                    if (pendingTimeout != null) {
+                        pendingTimeout.cancel(true);
                     }
                 }
             }
