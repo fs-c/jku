@@ -45,7 +45,7 @@ a)
     Die durchschnittlich zurueckgelegte Tagesstrecke ist `r mean(distances)` km lang.
 
 b)
-    Der Modus (haeufigste Merkmalsauspraegung) ist 27.
+    Der Modus (haeufigste Merkmalsauspraegung) ist 37.
 
 c)
     ```{r}
@@ -154,7 +154,7 @@ a)
     Wenn die beiden Gruppen gleich groß sind.
 
 b)
-    `r (2 * 1650 + 1750) / 3` Euro
+    `r (1650 + (2 * 1750)) / 3` Euro
 
 ## 30
 
