@@ -1,3 +1,9 @@
+```{r}
+varp <- function(x) {var(x)*(length(x)-1)/length(x)}
+sdp <- function(x) {sqrt(var(x)*(length(x)-1)/length(x))}
+covp <- function(x,y) {cov(x,y)*(length(x)-1)/length(x)} 
+```
+
 ## 33
 
 a)
@@ -20,5 +26,174 @@ a <- c(0, 10, 26, 28, 25, 11, 0)
 
 cumsum(a)
 
-x_0 <- 
+x_25 <- 11 + (5 / 26) * (25 - 10)
+x_50 <- 16 + (5 / 28) * (50 - 36)
+x_75 <- 21 + (5 / 25) * (75 - 64)
+
+x_25
+x_50
+x_75
+
+bxp(list(stats = matrix(c(6, x_25, x_50, x_75, 31), 5, 1), n = 1))
+```
+
+## 35
+
+```{r}
+species_a <- c(96, 110, 109, 93, 97)
+species_b <- c(92, 102, 101, 97, 116)
+
+cor(species_a, species_b)
+cor(species_a, species_b, method = "spearman")
+```
+
+## 36
+
+```{r}
+midpoints <- c(100, 175, 225, 275)
+frequency <- c(20, 40, 50, 30)
+```
+
+a)
+    ```{r}
+    varp(rep(frequency, midpoints))
+    ```
+
+b)
+    ```{r}
+    cumsum(frequency)
+
+    200 + (50 / 50) * (70 - 60)
+    ```
+
+c)
+    ```{r}
+    200 + (50 / 50) * (84 - 60)
+    ```
+
+## 37
+
+```{r}
+judge_a <- c(8, 9, 8, 10, 6)
+judge_b <- c(7, 8, 7, 10, 7)
+
+cor(judge_a, judge_b, method = "spearman")
+```
+
+## 38
+
+```{r}
+speed_limit <- c(130, 100, 110, 120, 130)
+deaths <- c(4.1, 4.7, 4.3, 5.1, 6.1)
+```
+
+a)
+    ```{r}
+    cor(speed_limit, deaths)
+    ```
+
+    Schwache positive Korrelation.
+
+b)
+    ```{r}
+    cor(speed_limit * 0.621371, deaths)
+    ```
+
+    Kein Unterschied.
+
+## 39
+
+```{r}
+blood_pressure <- c(151, 142, 149, 141, 132, 168)
+cholesterol <- c(189, 202, 210, 189, 175, 202)
+```
+
+a)
+    Korrelationskoeffizient
+
+    ```{r}
+    cor(blood_pressure, cholesterol)
+    ```
+
+b)
+    ```{r}
+    model <- lm(cholesterol ~ blood_pressure)
+    summary(model)
+
+    predict(model, data.frame(blood_pressure = c(150)))
+    ```
+
+    Bestimmtheitsmaß 0.3486, kein gutes Modell.
+
+## 40
+
+```{r}
+rain <- c(0, 7, 16, 21, 25, 27, 36, 2, 1)
+revenue <- c(180, 157, 140, 136, 80, 82, 61, 170, 175)
+```
+
+a)
+    ```{r}
+    plot(rain, revenue)
+    ```
+
+b)
+    ```{r}
+    covp(rain, revenue)
+    ```
+
+c)
+    ```{r}
+    cor(rain, revenue)
+    ```
+
+## 41
+
+```{r}
+b <- 820 / 927
+a <- 1234 - b * 1029
+
+a + b * 1400
+```
+
+## 42
+
+```{r}
+age <- c(7, 6, 8, 9, 14, 12, 17, 16, 18)
+time <- c(182, 300, 190, 178, 85, 117, 52, 46, 50)
+```
+
+a)
+    Bravais-Pearson
+
+    ```{r}
+    cor(age, time)
+    ```
+
+b)
+    ```{r}
+    model <- lm(time ~ age)
+    predict(model, data.frame(age = c(56)))
+    ```
+
+    Kein linearer Zusammenhang ueber ~16 (?) -- spline regression?
+
+c)
+    ```{r}
+    summary(model)
+    ```
+
+    Bestimmtheitsmaß 0.8857
+
+## 43
+
+r_xy = cov(x, y) / (sd(x) * sd(y)) also cov(x, y) = r_xy * sd(x) * sd(y)
+
+```{r}
+c <- -0.96 * 4.5 * 6.1
+
+b <- c / 4.5^2
+a <- 9.85 - b * 6.5
+
+a + b * 6
 ```
