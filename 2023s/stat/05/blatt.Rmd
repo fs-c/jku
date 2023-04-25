@@ -1,0 +1,135 @@
+```{r}
+varp <- function(x) {var(x)*(length(x)-1)/length(x)}
+sdp <- function(x) {sqrt(var(x)*(length(x)-1)/length(x))}
+covp <- function(x,y) {cov(x,y)*(length(x)-1)/length(x)} 
+```
+
+## 44
+
+```{r}
+person_a <- c(3, 1, 5, 1, 2, 3, 4)
+person_b <- c(2, 1, 4, 2, 3, 4, 5)
+
+cor(person_a, person_b, method = "spearman")
+```
+
+Starke positive Korrelation.
+
+## 45
+
+```{r}
+points <- c(98, 72, 65, 71, 51, 99, 72, 74)
+salary <- c(3410, 2500, 2210, 2600, 2100, 3440, 2700, 2600)
+```
+
+a)
+    ```{r}
+    cor(points, salary)
+    ```
+
+    Starke positive Korrelation.
+
+b)
+    ```{r}
+    model <- lm(salary ~ points)
+    summary(model)
+
+    predict(model, data.frame(points = 100))
+    ```
+
+## 46
+
+11! = `r factorial(11) `
+
+## 47
+
+6! / (2! * 3!) = `r factorial(6) / (factorial(2) * factorial(3))`
+
+## 48
+
+a)
+    `r (3 / 20) * (17 / 20)^3`
+
+b)
+    `r (17 / 20)^4`
+
+c)
+    `r (3 / 20) * (17 / 20)^3 + (3 / 20)^2 * (17 / 20)^2 + (3 / 20)^3 * (17 / 20)`
+
+## 49
+
+a)
+    `r factorial(10) * factorial(6) * 2`
+
+b)
+    `r factorial(10) * 6`
+
+## 50
+
+## 51
+
+12 Flaggen.
+
+`r sum(sapply(seq(1:12), function(x) choose(12, x)))`
+
+## 52
+
+```{r}
+5 * 9 * 10
+```
+
+## 53
+
+`r factorial(10)`
+
+## 54
+
+a)
+    `r 1 / 10^3`
+
+b)
+    `r 1 / (10^2 * 3)`
+
+c)
+    `r 1 / (9^2)`
+
+## 55
+
+a)
+    Variation mit Wiederholung, `r 2^8`
+
+b)
+    Kombination mit Wiederholung, `r choose(10 + 2 - 1, 2)`
+
+## 56
+
+a)
+    Kombination, `r choose(10, 5) * choose(8, 3)`
+
+b)
+    Kombination, `r choose(8, 5) * choose(7, 2)`
+
+## 57
+
+-
+    Variation mit Wiederholung, `r 2^3` (Reihenfolge wichtig)
+
+-
+    Kombination mit Wiederholung, `r choose(3 + 2 - 1, 2)` (Reihenfolge unwichtig)
+
+-
+    Variation, `r factorial(3) / factorial(3 - 2)` (Reihenfolge wichtig)
+
+-
+    Kombination, `r choose(3, 2)` (Reihenfolge unwichtig)
+
+## 58
+
+a)
+    Summe der Kombinationen, `r sum(sapply(seq(6:10), function(x) choose(10, x)))`
+
+b)
+    5
+
+c)
+    `r choose(5, 4) + choose(6, 2)`
