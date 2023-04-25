@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{multicol}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Drawings
+\usepackage{tikz}
+
+% Units
+\usepackage{siunitx}
+\sisetup{locale=DE,round-mode=figures,round-precision=4,round-pad=false}
+
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% Stop fancyhdr complaints
+\setlength{\headheight}{12.5pt}
+
+\begin{document}
+
+% Determine whether a given automaton $A$ is deterministic or complete. Determine its 5-tuple and the language $L(A)$ it decides.
+
+% What is a complement, power, (optimized) oracle, product or I/O automaton, when are they complete or deterministic and what are their accepted languages. How can they be constructed.
+
+\section*{Finite Automata}
+
+A finite \emph{automaton} $A = (S, I, \Sigma, T, F)$ consists of
+\begin{itemize}
+    \item a set of states $S$
+    \item a set of initial states $I \subseteq S$
+    \item an input alphabet $\Sigma$
+    \item a transition relation $T \subseteq S \times \Sigma \times S$
+    \item a set of final states $F \subseteq S$
+\end{itemize}
+
+The \emph{language} $L(A)$ of $A$ is the set of words accepted by $A$.
+
+An automaton is called \emph{complete} iff
+\begin{itemize}
+    \item it has at least one initial state
+    \item every state has at least one outgoing transition for every $e \in \Sigma$.
+\end{itemize}
+
+An automaton is called \emph{deterministic} iff
+\begin{itemize}
+    \item it has at most one initial state
+    \item every state has at most one outgoing transition for every $e \in \Sigma$.
+\end{itemize}
+
+\paragraph{Power Automaton} $\mathbb{P}(A) = (\mathbb{P}(S), I_p, \ldots)$ is deterministic and complete with $L(A) = L(\mathbb{P}(A))$.
+
+\paragraph{Complement Automaton} $C(A) = (\ldots, S \backslash F)$ is the result of flipping the final states of $A$. $L(C(A)) = \overline{L(A)}$ iff $A$ is complete and deterministic.
+
+\paragraph{Oracle Automaton} $\text{Oracle}(A) = (S, I, \Sigma \times S, T_O, F)$ where transitions are now pairs $(e \in \Sigma, s \in S)$ with $e$ being the previous alphabet value and $s$ being the destination state. It is deterministic iff $|I| \leq 1$ and usually not complete.
+
+\paragraph{Optimized Oracle Automaton} is a modification of $\text{Oracle}(A)$ which is deterministic \emph{and} complete iff $|I| \leq 1$. This is done by replacing destination states in the transition pairs with numbers and adding transitions where necessary.
+
+\paragraph{Product Automaton} $A_1 \times A_2$ of $A_1$ and $A_2$ accepts $L(A) = L(A_1) \cap L(A_2)$
+
+\end{document}
