@@ -1,0 +1,20 @@
+a)
+	t_pd =  t_pd-not + t_pd-and + t_pd-not + t_pd-or = 25ps + 45ps + 25ps + 30ps = 125ps
+
+b)
+	t_cd = t_cd-and + t_cd-or = 35ps + 25ps = 60ps
+
+c)
+	T_c >= t_pcq + t_pd + t_setup
+	T_c >= 45ps + 125ps + 30ps
+	T_c >= 200ps
+
+	minimale taktperiode 200ps, maximale taktfrequenz 1 / (200ps * 10^-12) = 5_000_000_000Hz = 5GHz
+
+d)
+	t_hold < t_ccq + t_cd
+	80ps < 20s + 60ps
+
+	kann nicht eingehalten werden
+
+	ein buffer entlang des kuerzesten pfades -> t_cd = 60ps + t_cd-buf = 70ps, dann 80ps < 90ps

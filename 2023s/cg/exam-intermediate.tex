@@ -127,6 +127,8 @@ To avoid problems with negative values, there is a heuristic approximation for c
 
 \paragraph{BRDF Theory} Describes material properties, how light is reflected at one surface point. Input and output directions are dual (Helmholtz reciprocity). Does not describe subsurface scattering (BSSRDF) or transmission of light (BTDF).
 
+Given a BRDF and an incoming radiance distribution, the reflectance distribution function determines the outgoing radiance for a given viewing direction. It is a double integral over one angle of incoming, and one angle of outgoing light.
+
 \section{Texture Mapping (Basics and Advanced)}
 
 Mapping a 2D texture to a 2D parameterizable surface (e.g. sphere) is easy. To map onto a tessellated surface, determine texture coordinate for each vertex through biliniar interpolation via barycentric coordinates: Texture mapping is part of rasterization stage.
