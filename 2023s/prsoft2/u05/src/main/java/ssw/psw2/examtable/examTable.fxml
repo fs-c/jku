@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="ssw.psw2.examtable.Controller"
+        prefHeight="400.0" prefWidth="600.0">
+    <TableView BorderPane.alignment="TOP_CENTER">
+        <columns>
+            <TableColumn fx:id="idColumn" text="id"/>
+            <TableColumn fx:id="nameColumn" text="name"/>
+            <TableColumn fx:id="firstColumn" text="first"/>
+            <TableColumn fx:id="pointsColumn" text="points"/>
+            <TableColumn fx:id="gradeColumn" text="grade"/>
+        </columns>
+    </TableView>
+
+    <Pane BorderPane.alignment="BOTTOM_LEFT">
+        <Button text="Add"/>
+        <Button text="Remove"/>
+    </Pane>
+</BorderPane>

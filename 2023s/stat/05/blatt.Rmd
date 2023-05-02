@@ -54,15 +54,13 @@ Anzahl der Permutationen mit Wiederholung
 ## 48
 
 a)
-    Kombination mit Wiederholung (n ueber k)
+    `r (3 / 20) * (17 / 19) * (14 / 17)`
 
-    `r choose(18, 4) / choose(20, 4)`
-    
 b)
-    `r choose(17, 4) / choose(20, 4)`
+    `r (17 / 20) * (16 / 19) * (15 / 18)`
 
 c)
-    `r choose(18, 4) / choose(20, 4) * choose(19, 4) / choose(20, 4) * choose(20, 4) / choose(20, 4)`
+    `r ((3 / 20) * (17 / 19) * (14 / 17)) + ((3 / 20) * (2 / 19) * (17 / 18)) + (3 / 20 * 2 / 19 * 1 / 18)`
 
 ## 49
 
