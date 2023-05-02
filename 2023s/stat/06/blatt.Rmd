@@ -1,0 +1,85 @@
+```{r}
+varp <- function(x) {var(x)*(length(x)-1)/length(x)}
+sdp <- function(x) {sqrt(var(x)*(length(x)-1)/length(x))}
+covp <- function(x,y) {cov(x,y)*(length(x)-1)/length(x)} 
+```
+
+## 60
+
+00
+01
+10
+11
+
+a)
+    ```{r}
+    3 / 4
+    ```
+
+b)
+    ```{r}
+    0.5 * 0.5
+    ```
+
+## 61
+
+## 62
+
+## 63
+
+## 64
+
+a)
+    ```{r}
+    (6 / 21) * (6 / 21) * (6 / 21)
+    ```
+
+b)
+    ```{r}
+    (10 / 21) * (10 / 21) * (6 / 21)
+    ```
+
+## 65
+
+```{r}
+1 - ((4 / 6) * (3 / 5) * (2 / 4))
+```
+
+## 66
+
+```{r}
+6 * 5 * 4 * 3
+```
+
+## 67
+
+Kombination
+
+```{r}
+choose(10, 3) + choose(5, 3)
+```
+
+## 68
+
+```
+p_a = 4 * p_b
+p_b = 5 * p_c
+
+p_a + p_b + p_c = 1
+(4 * 5 * p_c) + 5 * p_c + p_c = 1
+p_c = 1 / 26
+p_b = 5 / 26
+p_a = 20 / 26
+```
+
+## 69
+
+```
+P(puenktlich | strassenbahn) = 0.85
+p(strassenbahn) = 0.75
+P(puenktlich) = 0.7
+
+P(strassenbahn | puenktlich)
+    = P(strassenbahn und puenktlich) / P(puenktlich)
+    = 
+```
