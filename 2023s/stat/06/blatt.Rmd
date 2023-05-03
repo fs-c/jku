@@ -4,6 +4,18 @@ sdp <- function(x) {sqrt(var(x)*(length(x)-1)/length(x))}
 covp <- function(x,y) {cov(x,y)*(length(x)-1)/length(x)} 
 ```
 
+## 59
+
+a)
+    ```{r}
+    choose(13, 1) * choose(4, 2) * choose(12, 3) * choose(4, 1)^3
+    ```
+
+b)
+    ```{r}
+    choose(13, 2) * choose(4, 2)^2 * choose(11, 1) * choose(4, 1)
+    ```
+
 ## 60
 
 00
@@ -18,10 +30,20 @@ a)
 
 b)
     ```{r}
-    0.5 * 0.5
+    2 / 4
     ```
 
 ## 61
+
+a)
+    ```{r}
+    choose(6, 3)
+    ```
+
+b)
+    ```{r}
+    6 * 5 * 3
+    ```
 
 ## 62
 
@@ -75,11 +97,31 @@ p_a = 20 / 26
 ## 69
 
 ```
-P(puenktlich | strassenbahn) = 0.85
-p(strassenbahn) = 0.75
-P(puenktlich) = 0.7
+P(p | s) = 0.85
+p(s) = 0.75
+P(p) = 0.7
 
-P(strassenbahn | puenktlich)
-    = P(strassenbahn und puenktlich) / P(puenktlich)
-    = 
+P(s und p) = P(s) * P(p | s) = 0.75 * 0.85 = 0.6375
+
+P(s | p) = P(s und p) / P(p) = 0.9107142857142857
+```
+## 70
+
+```
+P(korrekt | konsum) = 0.99
+P(korrekt | kein-konsum) = 0.985
+P(konsum) = 0.021
+```
+
+## 71
+
+```
+P(alt) = 0.6
+P(jung) = 0.4
+
+P(positiv | alt) = 0.3
+P(positiv | jung) = 0.7
+
+a)
+    P(positiv)
 ```
