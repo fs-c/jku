@@ -1,27 +1,17 @@
 package ssw.psw2.examtable.model;
 
+import javafx.beans.property.SimpleStringProperty;
+
 public class Student {
 
-	private final String id;
-	private final String firstName;
-	private final String name;
+	public final SimpleStringProperty id;
+	public final SimpleStringProperty firstName;
+	public final SimpleStringProperty name;
 
 	public Student(String id, String firstName, String name) {
 		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.name = name;
-	}
-
-	public String getID() {
-		return id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getName() {
-		return name;
+		this.id = new SimpleStringProperty(id);
+		this.firstName = new SimpleStringProperty(firstName);
+		this.name = new SimpleStringProperty(name);
 	}
 }

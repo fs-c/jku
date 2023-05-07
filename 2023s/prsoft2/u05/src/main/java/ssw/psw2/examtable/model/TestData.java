@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestData {
-
 	public static List<Result> createData() {
 		List<Result> data = new ArrayList<>();
 		

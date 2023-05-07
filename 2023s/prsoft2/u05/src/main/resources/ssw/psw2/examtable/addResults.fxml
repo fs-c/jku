@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Button?>
-<GridPane xmlns:fx="http://javafx.com/fxml"
-          xmlns="http://javafx.com/javafx"
-          fx:controller="ssw.psw2.examtable.AddController"
-          hgap="5"
-          vgap="5">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-    
+<?import javafx.geometry.Insets?>
+<GridPane hgap="5" vgap="5" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ssw.psw2.examtable.AddController">
+    <padding>
+        <Insets top="5" bottom="5" right="5" left="5" />
+    </padding>
+
+    <Label text="Student ID:" GridPane.rowIndex="0"  GridPane.columnIndex="0" />
+    <TextField fx:id="fieldId" promptText="ID" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+    <Label text="Student Last Name:" GridPane.rowIndex="1"  GridPane.columnIndex="0" />
+    <TextField fx:id="fieldLastName" promptText="Last Name" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+    <Label text="Student First Name:" GridPane.rowIndex="2"  GridPane.columnIndex="0" />
+    <TextField fx:id="fieldFirstName" promptText="First Name" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+    <Label fx:id="statusText" style="-fx-text-fill: red;" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+    <Button fx:id="addButton" text="Add" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
 </GridPane>

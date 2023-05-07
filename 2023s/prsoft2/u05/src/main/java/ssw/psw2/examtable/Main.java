@@ -7,6 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import ssw.psw2.examtable.model.ExamTableModel;
+import ssw.psw2.examtable.model.TestData;
 
 public class Main extends Application {
 	@Override
