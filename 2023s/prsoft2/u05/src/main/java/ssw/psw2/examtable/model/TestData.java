@@ -18,8 +18,9 @@ public class TestData {
 		Result r3 = new Result(new Student("k01612345", "Fred", "Faul"));
 		r3.setPoints(4);
 		data.add(r3);
-		
-		Result r4 = new Result(new Student("k01612345", "Ulrike", "Unfertig"));
+
+		// changed the id of this student because it was a duplicate (you had one job)
+		Result r4 = new Result(new Student("k01612346", "Ulrike", "Unfertig"));
 		data.add(r4);
 		
 		return data;
