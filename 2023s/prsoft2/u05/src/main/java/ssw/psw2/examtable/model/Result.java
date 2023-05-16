@@ -2,6 +2,7 @@ package ssw.psw2.examtable.model;
 
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.StringConverter;
@@ -11,7 +12,7 @@ public class Result {
 	public static final int MAX_POINTS = 90;
 	public static final int UNDEFINED = -1;
 	
-	private final Student student; 
+	private final Student student;
 	private SimpleIntegerProperty points;
 	private SimpleStringProperty grade;
 	
@@ -40,6 +41,10 @@ public class Result {
 	
 	public int getPoints() {
 		return points.get();
+	}
+
+	public IntegerProperty getPointsProperty() {
+		return points;
 	}
 	
 	public void setPoints(int points) {

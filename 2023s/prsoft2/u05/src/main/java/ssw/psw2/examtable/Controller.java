@@ -10,16 +10,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import ssw.psw2.examtable.model.ExamTableModel;
 import ssw.psw2.examtable.model.Result;
 
 import java.io.IOException;
-import java.lang.invoke.StringConcatException;
 
 public class Controller {
 	public Button addResultButton;
