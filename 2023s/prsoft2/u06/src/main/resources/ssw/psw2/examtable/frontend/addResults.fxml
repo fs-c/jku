@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<GridPane xmlns:fx="http://javafx.com/fxml"
+          xmlns="http://javafx.com/javafx"
+          fx:controller="ssw.psw2.examtable.frontend.AddController"
+          hgap="5"
+          vgap="5">
+
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" halignment="LEFT"/>
+        <ColumnConstraints hgrow="ALWAYS" halignment="RIGHT"/>
+    </columnConstraints>
+    
+    <Label text="Student ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" prefWidth="150" />
+    <Label text="Student Name" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="150" />
+    <Label text="Student First Name" GridPane.columnIndex="0" GridPane.rowIndex="2" prefWidth="150" />
+    
+    <TextField fx:id="studentIDField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <TextField fx:id="studentNameField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <TextField fx:id="studentFirstNameField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    
+	<Button fx:id="addButton" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+	<Label fx:id="validInputLabel" text="" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+</GridPane>

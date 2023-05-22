@@ -1,0 +1,78 @@
+## 107
+
+```{r}
+m <- 7
+v <- 0.25
+
+z <- (7.4 - m) / sqrt(v)
+z
+```
+
+Tabelle:
+
+```
+P(x < 7.4) = 0.7881
+P(x > 7.4) = 0.2119
+```
+
+P(x = 7.4) = 0 weil
+
+- per unserer Definition P(x < a) = P(x <= a) = P(x < a) + P(x = a) und somit P(x = a) = 0
+- integral von 7.4 bis 7.4 = 0
+
+## 108
+
+```{r}
+m <- 498
+s <- 6 # standardabweichung = sqrt varianz
+
+z1 <- (505 - m) / s
+z2 <- (495 - m) / s
+
+z1
+z2
+```
+
+P(495 < x < 505) = P(x < 505) - P(x < 495) = 0.8770 - 0.3085 = `r 0.8770 - 0.3085`
+
+## 109
+
+4 Möglichkeiten, dass Mehrheit irrt:
+
+ABC irren sich, AB irrt sich, AC irrt sich, BC irrt sich.
+
+```{r}
+a <- 0.05
+b <- 0.1
+c <- 0.15
+
+p <- a * b * c + a * c + b * c
+p
+```
+
+```
+A B C
+0 0 0 !
+0 0 1 !
+0 1 0 !
+0 1 1
+1 0 0 !
+1 0 1
+1 1 0
+1 1 1
+```
+
+## 110
+
+TODO
+
+a)
+    11% - 2% = 9%
+
+b)
+    TODO
+
+# 111
+
+# 112
+
