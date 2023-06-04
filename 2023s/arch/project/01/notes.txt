@@ -25,6 +25,17 @@ erweiterten result mux geleitet (ResultSrc = 11)
 
 ## blt
 
+ALU erweiterung: neben dem zero flag wird auch ein 'negative' flag gesetzt; 
+1 falls das ergebnis der letzten operation negativ war, sonst 0.
+
+mit ALUOp = 10 (subtraktion) gilt nun also a < b <=> negative = 1.
+
+die branching logic in der control unit wird um einen multiplexer erweitert, der 
+fuer beq (funct3 msb = 0) wie gehabt das zero flag durchlaesst, fuer blt (funct3 
+msb = 1) aber das negative flag.
+
+---
+
 slt ist bereits implementiert. die control unit wird um ein entsprechendes 'less-than' 
 input erweitert (nur fuer ALUControl = slt gueltig). beq ist ebenfalls bereits 
 implementiert; die branching logic in der control unit wird um einen multiplexer 
