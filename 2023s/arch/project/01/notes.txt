@@ -1,0 +1,47 @@
+# implementationsnotizen
+
+die datenpfad-erweiterungen wurden der einfachheit halber alle unabhaengig 
+voneinander durchgefuehrt. eine zusammenfuehrung sollte allerdings keine konflikte 
+mit sich ziehen.
+
+## slli
+
+die ALU wird um eine entsprechende logical left shift funktion erweitert 
+(ALUControl = 110). der ALU decoder wird ebenfalls entsprechend angepasst 
+(R-Type, ALUOp = 10, funct3 = 001).
+
+(der datenpfad bleibt unveraendert.)
+
+## auipc
+
+die ImmSrc encoding tabelle wird erweitert um U-type instruktionen zu 
+unterstuetzen
+
+ImmSrc  ImmExt
+100     {Instr[31:12], 12'b0}
+
+das ergebnis der addition aus ImmExt und PC wird dann zusaetzlich zum entsprechend 
+erweiterten result mux geleitet (ResultSrc = 11)
+
+## blt
+
+slt ist bereits implementiert. die control unit wird um ein entsprechendes 'less-than' 
+input erweitert (nur fuer ALUControl = slt gueltig). beq ist ebenfalls bereits 
+implementiert; die branching logic in der control unit wird um einen multiplexer 
+erweitert, der fuer beq wie gehabt das zero flag durchlaesst, fuer blt aber das 
+neue flag (mux entscheidung: funct3 msb = 1 -> blt, sonst beq).
+
+(sauberer waere wohl, die ALU um mehr flags zu erweitern, und nicht das ALUResult 
+fuer slt abzuzweigen.)
+
+## jalr
+
+aus der risc-v spec v2.2, p. 16
+
+    The target address is obtained by adding the 12-bit signed I-immediate to the 
+    register rs1, then setting the least-significant bit of the result to zero. 
+    The address of the instruction following the jump (pc+4) is written to register rd.
+
+es genuegt also die control unit um ein 'PCTargetSource' output zu erweitern, das 
+einen mux hinter dem PCTarget adder ansteuert; fuer jal wird wie gehabt das adder 
+result verwendet, fuer jalr nun anstelle dessen das ALUResult = rs1 + ImmExt (I-type).

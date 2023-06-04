@@ -1,0 +1,37 @@
+v 4
+file "/home/hazott/Shared/Lectures/Rechnerarchitektur/2023Sommer/folien/code/06.1-riscv-sim/" "riscvsingle.vhdl" "37c9bd471842dc7a44ae5aaab2213328594b67bd" "20230503140720.588":
+  package checkresultpkg at 93( 3086) + 0 on 46;
+  entity riscvsingle at 106( 3506) + 0 on 47;
+  architecture struct of riscvsingle at 118( 3962) + 0 on 48;
+  entity controller at 159( 5919) + 0 on 49;
+  architecture struct of controller at 175( 6541) + 0 on 50;
+  entity maindec at 205( 7629) + 0 on 51;
+  architecture behave of maindec at 218( 8079) + 0 on 52;
+  entity aludec at 237( 8792) + 0 on 53;
+  architecture behave of aludec at 248( 9115) + 0 on 54;
+  entity datapath at 271( 10179) + 0 on 55;
+  architecture struct of datapath at 290( 11000) + 0 on 56;
+  entity regfile at 359( 13987) + 0 on 57;
+  architecture behave of regfile at 372( 14374) + 0 on 58;
+  entity adder at 414( 15669) + 0 on 59;
+  architecture behave of adder at 423( 15869) + 0 on 60;
+  entity extend at 428( 15961) + 0 on 61;
+  architecture behave of extend at 437( 16203) + 0 on 62;
+  entity flopr at 459( 16938) + 0 on 63;
+  architecture asynchronous of flopr at 471( 17355) + 0 on 64;
+  entity flopenr at 480( 17549) + 0 on 65;
+  architecture asynchronous of flopenr at 491( 17889) + 0 on 66;
+  entity mux2 at 500( 18116) + 0 on 67;
+  architecture behave of mux2 at 510( 18381) + 0 on 68;
+  entity mux3 at 515( 18454) + 0 on 69;
+  architecture behave of mux3 at 525( 18752) + 0 on 70;
+  entity testbench at 535( 18958) + 0 on 71;
+  architecture test of testbench at 543( 19103) + 0 on 72;
+  entity top at 587( 20449) + 0 on 73;
+  architecture test of top at 597( 20730) + 0 on 74;
+  entity imem at 632( 22021) + 0 on 75;
+  architecture behave of imem at 643( 22280) + 0 on 76;
+  entity dmem at 672( 23172) + 0 on 77;
+  architecture behave of dmem at 684( 23464) + 0 on 78;
+  entity alu at 721( 24521) + 0 on 79;
+  architecture behave of alu at 732( 24824) + 0 on 80;

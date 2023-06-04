@@ -1,0 +1,6 @@
+op          instr   RegWrite    ImmSrc  ALUSrc  MemWrite    ResultSrc   Branch  ALUOp   Jump    PCTargetSrc
+
+001 0011    slli    1           000     1       0           00          0       10      0       x
+001 0111    auipc   1           100     x       0           11          0       xx      0       x
+110 0011    blt     0           010     0       0           xx          1       01      0       x
+110 0111    jalr    1           000     1       0           10          0       xx      1       1
