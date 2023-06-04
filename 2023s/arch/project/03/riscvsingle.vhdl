@@ -222,6 +222,7 @@ begin
       when "1100011" => controls <= "01000001010"; -- beq
       when "0010011" => controls <= "10010000100"; -- I-type ALU
       when "1101111" => controls <= "11100100001"; -- jal
+      when "0001011" => controls <= "1---0000110"; -- popcount
       when others    => controls <= "-----------"; -- not valid
     end case;
   end process;
@@ -249,6 +250,7 @@ begin
     case ALUOp is
       when "00" =>                     ALUControl <= "000"; -- addition
       when "01" =>                     ALUControl <= "001"; -- subtraction
+      when "11" =>                     ALUControl <= "111"; -- popcount
       when others => case funct3 is           -- R-type or I-type ALU
                        when "000" => if RtypeSub = '1' then
                                        ALUControl <= "001"; -- sub
@@ -698,18 +700,33 @@ begin
   condinvb <= not b when Alucontrol(0)='1' else b;
   ALUControl_0_tmp <= (0 => ALUControl(0), others => '0');
   sum <= std_logic_vector(unsigned(a) + unsigned(condinvb) + unsigned(ALUControl_0_tmp));
-  process(a,b,ALUControl,sum) begin
+  process(a,b,ALUControl,sum) 
+    variable count, low, high: integer;
+  begin
     case Alucontrol is
       when "000" =>  ALUResult_s <= sum;
       when "001" =>  ALUResult_s <= sum;
       when "010" =>  ALUResult_s <= a and b;
       when "011" =>  ALUResult_s <= a or b;         
       when "101" =>  ALUResult_s <= (0 => sum(31), others => '0');
+      when "111" =>  
+        for byte in 3 downto 0 loop
+          count := 0;
+
+          high := (byte + 1) * 8 - 1;
+          low := byte * 8;
+
+          for i in high downto low loop
+            if a(i) = '1' then
+              count := count + 1;
+            end if;
+          end loop;
+
+          ALUResult_s(high downto low) <= std_ulogic_vector(to_signed(count, 8));
+        end loop;
       when others => ALUResult_s <= (others => 'X');
     end case;
   end process;
   Zero <= '1' when ALUResult_s = X"00000000" else '0';
   ALUResult <= ALUResult_s;
 end;
-
-
