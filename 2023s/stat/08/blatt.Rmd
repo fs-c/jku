@@ -1,0 +1,235 @@
+## 91
+
+a)
+    ```
+    s s s
+    s s u
+    s u s
+    u s s
+    ```
+
+    p = `r 0.75^3 + (0.7^2 * 0.05) * 3`
+
+b)
+    ```
+    s n u
+    s u n
+    u s n
+    u n s
+    n u s
+    n s u
+    ```
+
+    p = `r 0.75 * 0.2 * 0.05 * 6`
+
+## 92
+
+| x | f(x) | F(x) |
+| - | - | - |
+|-1 | `r (5/6)^3` | `r (5/6)^3` |
+| 0 | `r (5/6)^2 * (1/6) * 3` | `r (5/6)^3 + (5/6)^2 * (1/6) * 3` |
+| 1 | `r (5/6) * (1/6)^2 * 3` | `r (5/6)^3 + (5/6)^2 * (1/6) * 3 + (5/6) * (1/6)^2 * 3` |
+| 2 | `r (1/6)^3` | `r (5/6)^3 + (5/6)^2 * (1/6) * 3 + (5/6) * (1/6)^2 * 3 + (1/6)^3` |
+
+## 93
+
+a)
+    ```{r}
+    outcomes <- c(3:15)
+    number_possibilities <- c(
+        1, # 3, (1, 1, 1)
+        3, # 4, (1, 1, 2) * 3(2, 5, 1) * 3!
+        6, # 5, (1, 1, 3) * 3, (1, 2, 2) * 3
+        10, # 6, (1, 1, 4) * 3, (2, 2, 2), (3, 1 ,2) * 3!
+        15, # 7, (1, 1, 5) * 3, (2, 2, 3) * 3, (3, 3, 1) * 3, (1, 2, 4) * 3!
+        18, # 8, (2, 2, 4) * 3, (3, 3, 2) * 3, (1, 2, 5) * 3!, (1, 3, 4) * 3!
+        19, # 9, (2, 2, 5) * 3, (3, 3, 3), (4, 4, 1) * 3, (1, 3, 5) * 3!, (2, 3, 4) * 3!
+        18, # 10, (3, 3, 4) * 3, (4, 4, 2) * 3, (1, 4, 5) * 3!, (2, 3, 5) * 3!
+        15,
+        10,
+        6,
+        3,
+        1
+    )
+
+    probabilities <- number_possibilities * (1 / (5^3))
+
+    data.frame(x = outcomes, possibilities = number_possibilities, f_x = probabilities, F_x = cumsum(probabilities))
+    ```
+
+b)
+    ```{r}
+    barplot(probabilities, names.arg = outcomes)
+
+    plot(ecdf(probabilities))
+    ```
+
+## 94
+
+f(x_i) = p_i
+
+f(0) = 0.85
+f(1) = 0.09
+f(2) = 0.03
+f(3) = 0.02
+f(4) = 0.01
+
+Erwartungswert ist Summe der (mit f(x_i)) gewichteten Realisierungen (x_i; 0, 1, 2, ...).
+
+E(X) = `r sum(c(0.85, 0.09, 0.03, 0.02, 0.01) * c(0, 1, 2, 3, 4))`
+
+## 95
+
+a)
+    ```{r}
+    f_0 <- (8 / 10) * (7 / 9) * (6 / 8) * (5 / 7)
+    f_1 <- (2 / 10) * (8 / 9) * (7 / 8) * (6 / 7) * 4
+    f_2 <- (2 / 10) * (1 / 9) * (8 / 8) * (7 / 7) * 6
+
+    f <- c(f_0, f_1, f_2)
+
+    f
+    cumsum(f)
+    ```
+
+b)
+    E(X) = `r sum(f * c(0, 1, 2))`
+
+    Var(X) = summe von i = 1 bis k ((x_i - E(X))^2 * f(x_i))
+    Var(X) = `r sum(f * (c(0, 1, 2) - sum(f * c(0, 1, 2)))^2)`
+
+## 96
+
+Binomialverteilung mit Gegenwahrscheinlichkeit
+
+```{r}
+1 - dbinom(300, size = 300, p = 297 / 300)
+```
+
+Approximation mit Poisson-Verteilung
+
+```{r}
+1 - ppois(0, lambda = 3)
+```
+
+## 97
+
+a)
+    Binomialverteilung
+
+    ```{r}
+    dbinom(32, size = 32, p = 0.95)
+    ```
+
+b)
+    ```{r}
+    dbinom(30, size = 32, p = 0.95)
+    ```
+
+c)
+    Wahrscheinlichkeit, dass <= 30 Personen erscheinen. Gegenwahrscheinlichkeit sind > 30 Personen.
+
+    ```{r}
+    1 - (dbinom(31, size = 32, p = 0.95) + dbinom(32, size = 32, p = 0.95))
+    ```
+
+## 98
+
+Annahme: Firma erfüllt exakt den Vertrag, also 190 einwandreie und 10 fehlerhafte Stücke.
+
+Die Wahrscheinlichkeit, dass von 20 zufällig ausgewählten Stücken alle einwandfrei sind, ist
+
+(hyper, N = 200, M = 190, n = 20, x = 1)
+
+```{r}
+dhyper(20, 190, 10, 20)
+```
+
+Die Gegenwahrscheinlichkeit (mindestens ein Stück ist fehlerhaft) ist
+
+```{r}
+1 - dhyper(20, 190, 10, 20)
+```
+
+Das ist die Wahrscheinlichkeit einer ungerechtfertigten Reklamation.
+
+## 99
+
+```{r}
+ppois(0, lambda = 3) + ppois(1, lambda = 3)
+```
+
+## 100
+
+a)
+    ```{r}
+    f <- c(
+        dhyper(4, 4, 7, 4), # f (4)
+        dhyper(4, 4, 7, 5), # f (5)
+        dhyper(4, 4, 7, 6), # ...
+        dhyper(4, 4, 7, 7),
+        dhyper(4, 4, 7, 8),
+        dhyper(4, 4, 7, 9),
+        dhyper(4, 4, 7, 10),
+        dhyper(4, 4, 7, 11)
+    )
+
+    f[1] <- f[1]
+    f[2] <- f[2] - f[1]
+    f[3] <- f[3] - f[2] - f[1]
+    f[4] <- f[4] - f[3] - f[2] - f[1]
+    f[5] <- f[5] - f[4] - f[3] - f[2] - f[1]
+    f[6] <- f[6] - f[5] - f[4] - f[3] - f[2] - f[1]
+    f[7] <- f[7] - f[6] - f[5] - f[4] - f[3] - f[2] - f[1]
+    f[8] <- f[8] - f[7] - f[6] - f[5] - f[4] - f[3] - f[2] - f[1]
+
+    f
+    cumsum(f)
+    ```
+
+b)
+    ```{r}
+    e_x <- sum(f * c(4:11))
+    var_x <- sum((c(4:11) - e_x)^2 * f)
+
+    e_x
+    var_x
+    ```
+
+## 101
+
+Poisson Verteilung
+
+```{r}
+1 - ppois(39, lambda = 48)
+```
+
+## 102
+
+Jeweils 0.5? TODO
+
+## 103
+
+a)
+    ```{r}
+    p <- 1 / 3 * 0.9 + 1 / 3 * 0.9 + 1 / 3 * 0.7
+
+    p
+    ```
+
+b)
+    ```{r}
+    sapply(1:10, function(i) {
+        p^i
+    })
+    ```
+
+    3
+
+## 104
+
+Alle 5 Minuten durchscnittlich 2.5 Kunden.
+
+```{r}
+dpois(3, lambda = 2.5)
+```

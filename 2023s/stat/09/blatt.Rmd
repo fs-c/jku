@@ -1,0 +1,233 @@
+## 107
+
+```{r}
+m <- 7
+v <- 0.25
+
+z <- (7.4 - m) / sqrt(v)
+z
+```
+
+Tabelle:
+
+```
+P(x < 7.4) = 0.7881
+P(x > 7.4) = 0.2119
+```
+
+P(x = 7.4) = 0 weil
+
+- per unserer Definition P(x < a) = P(x <= a) = P(x < a) + P(x = a) und somit P(x = a) = 0
+- integral von 7.4 bis 7.4 = 0
+
+## 108
+
+```{r}
+m <- 498
+s <- 6 # standardabweichung = sqrt varianz
+
+z1 <- (505 - m) / s
+z2 <- (495 - m) / s
+
+z1
+z2
+```
+
+P(495 < x < 505) = P(x < 505) - P(x < 495) = 0.8770 - 0.3085 = `r 0.8770 - 0.3085`
+
+## 109
+
+4 Möglichkeiten, dass Mehrheit irrt:
+
+ABC irren sich, AB irrt sich, AC irrt sich, BC irrt sich.
+
+```{r}
+a <- 0.05
+b <- 0.1
+c <- 0.15
+
+p <- a * b * c + a * b + a * c + b * c
+p
+```
+
+```
+A B C
+0 0 0 !
+0 0 1 !
+0 1 0 !
+0 1 1
+1 0 0 !
+1 0 1
+1 1 0
+1 1 1
+```
+
+## 110
+
+a)
+    11% - 2% = 9%
+    P(wahl | !umfrage) = 0.09
+
+b)
+    P(umfrage) = 0.02
+    P(wahl) = 0.11
+
+    P(!umfrage | wahl) = (P(wahl | !umfrage) * P(!umfrage)) / P(wahl) = `r (0.09 * 0.98) / 0.11`
+
+## 111
+
+Die Summe zweier unabhängiger normalverteilten Zufallsvariablen ist normalverteilt mit
+
+```{r}
+mu <- 0
+sigma <- 0.040 + 0.020
+
+mu
+sigma
+```
+
+a)
+    ```{r}
+    z <- (0.05 - mu) / sigma
+    z
+    ```
+
+    Somit ist P(x > 0.05) = 0.2033.
+
+b)
+    TODO
+
+## 112
+
+Die Antwortmöglichkeiten (aufgeschlüsselt nach Begnadigtem) des Wärters sind:
+
+```
+Begnadigter     Aussage des Wärters
+A               50% "B stirbt" (1/6), 50% "C stirbt" (1/6)
+B               "C stirbt" (1/3)
+C               "B stirbt" (1/3)
+```
+
+C hat nach "B stirbt" also eine doppelt so hohe Wahrscheinlichkeit der Begnadigte zu sein. Somit bleibt die Überlebenswahrscheinlichkeit von A 1/3, die von C ist nun 2/3.
+
+## 113
+
+Satz von Bayes
+
+P(route1 | erfolg) = (P(erfolg | route1) * P(route1)) / P(erfolg) = `r (0.7 * 0.7) / ((0.7 * 0.7) + (0.48 * 0.2) + (0.25 * 0.1))`
+
+Satz der totalen Wahrscheinlichkeit
+
+P(erfolg) = (P(erfolg | route1) * P(route1)) + (P(erfolg | route2) * P(route2)) + (P(erfolg | route3) * P(route3)) = `r (0.7 * 0.7) + (0.48 * 0.2) + (0.25 * 0.1)`
+
+## 114
+
+Die Summe unabhängiger normalverteilten Zufallsvariablen ist normalverteilt.
+
+a)
+    ```{r}
+    mu <- 2.5 + 0.5 + 10
+    sigma <- 0.2 + 0.1 + 0.5
+
+    mu
+    sigma
+    ```
+
+b)
+    ```{r}
+    mu <- 50 * mu
+    sigma <- 50 * sigma
+
+    mu
+    sigma
+
+    z <- (600 - mu) / sigma
+    z
+    ```
+
+    P(x > 600) = 0.8944
+
+## 115
+
+a)
+    ```{r}
+    mu <- 96 * 150
+    sigma2 <- 100 * 150
+
+    mu
+    sigma2
+    ```
+
+b)
+    ```{r}
+    sigma <- sqrt(sigma2)
+    sigma
+
+    z <- (14200 - mu) / sigma
+    z
+    ```
+
+    Somit P(x > 14200kg) = 0.9484
+
+## 116
+
+P(|X - 10| <= 9) = P(1 < X < 19)
+
+```{r}
+mu <- 10
+sigma <- 4
+
+z1 <- (7.4 - mu) / sigma
+
+z21 <- (19 - mu) / sigma
+z22 <- (1 - mu) / sigma
+
+z1
+z21
+z22
+```
+
+P(X > 7.4) = 0.7422
+
+P(1 < X < 19) = P(X < 19) - P(x < 1) = 0.9878 - 0.0122 = `r 0.9878 - 0.0122`
+
+## 117
+
+a)
+    P(beide defekt) = 3/8 * 2/6 = `r 3/8 * 2/6`
+
+    P(beide nicht defekt) = 5/8 * 4/6 = `r 5/8 * 4/6`
+
+b)
+    P(genau eines defekt) = 3/8 * 4/6 + 5/8 * 2/6 = `r 3/8 * 4/6 + 5/8 * 2/6`
+
+c)
+    TODO
+
+## 118
+
+a)
+    Symmetrische Verteilung, Median = Erwartungswert.
+
+    Erwartungswert = 4.8m
+
+b)
+    P(4.8 - d < X < 4.8 + d) = 0.8
+
+    d = u_((y + 1) / 2) * sigma = u_(0.9) * sigma = 0.1841 * sigma = `r 0.1841 * 2.4`
+
+    P(`r 4.8 - 0.44184` < X < `r 4.8 + 0.44184`) = 0.8
+
+## 119
+
+a)
+    Sigma-Regel, der (2 * sigma) Bereich enthält 95.4% aller Daten. Also etwa `r 2 * 2.3`.
+
+b)
+    P(X < d) = 0.05
+
+    (d - 4.7) / 2.3 = u_(0.05) = -1.645
+    d = `r -1.645 * 2.3 + 4.7`
+
+## 120
+

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+	xmlns="http://javafx.com/javafx"
+	fx:controller="ssw.psw2.examtable.frontend.Controller">
+	<center>
+		<TableView fx:id="tableView">
+			<columns>
+				<TableColumn fx:id="studentIDColumn" text="ID" prefWidth="80" />
+				<TableColumn fx:id="studentNameColumn" text="Name" prefWidth="120" />
+				<TableColumn fx:id="studentFirstColumn" text="First" prefWidth="100" />
+				
+				<TableColumn fx:id="pointsColumn" text="Points" prefWidth="80" />
+				<TableColumn fx:id="gradeColumn" text="Grade" prefWidth="120" />
+			</columns>
+		</TableView>
+	</center>
+
+	<bottom>
+		<HBox spacing="5.0">
+			<Button fx:id="addButton">
+				Add Result
+			</Button>
+			<Button fx:id="removeButton">
+				Remove Result
+			</Button>
+			<padding>
+				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+			</padding>
+		</HBox>
+	</bottom>
+
+</BorderPane>
