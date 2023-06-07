@@ -1,0 +1,15 @@
+## multicycle
+
+maximalverzoegerung = 416 ps
+max. takt = 1/maximalverzoegerung = 2.40385 GHz
+
+## singlecycle
+
+maximalverzoegerung = t_pcq + 2 * t_mem-read + t_RF-read + t_ALU + t_mux + t_RF-setup = 914 ps
+max. takt = 1.09409 GHz
+
+## fazit
+
+multicycle hat die hoehere taktfrequenz und ist somit schneller.
+
+

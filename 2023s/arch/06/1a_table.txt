@@ -1,0 +1,1 @@
+11	{{12{instr[31]}}, instr[19:12], instr[20], instr[30:21], 1’b0} 	J-Type
