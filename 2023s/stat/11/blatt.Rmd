@@ -1,0 +1,218 @@
+## 136
+
+Konfidenzintervall für einen Anteil (Bernoulli-Kette)
+
+a)
+    ```{r}
+    n <- 4708
+    p <- 1385 / n
+    ```
+
+    Wegen  np(1 - p) = `r n * p * (1 - p)` >= 9 ist die Vorraussetzung für asymptotisches Konfidenzintervall (Näherung durch Normalverteilung) ist erfüllt.
+
+    z = 1.96 (z(D) in Tabelle bei 95%)
+
+    ```{r}
+    temp <- 1.96 * sqrt((p * (1 - p)) / n)
+
+    p - temp
+    p + temp
+    ```
+
+b)
+    ```{r}
+    n <- 294
+    p <- 185 / n
+
+    precondition <- n * p * (1 - p)
+    precondition # is larger or eq to 9
+
+    temp <- 1.96  * sqrt((p * (1 - p)) / n)
+
+    p - temp
+    p + temp
+    ```
+
+## 137
+
+a)
+    ```{r}
+    n <- 1000
+    p <- 0.6
+
+    precondition <- n * p * (1 - p)
+    precondition
+
+    temp <- 1.96  * sqrt((p * (1 - p)) / n)
+
+    p - temp
+    p + temp
+
+    n <- 500
+
+    precondition <- n * p * (1 - p)
+    precondition
+
+    temp <- 1.96  * sqrt((p * (1 - p)) / n)
+
+    p - temp
+    p + temp
+
+    n <- 5
+
+    precondition <- n * p * (1 - p)
+    precondition
+
+    temp <- 1.96  * sqrt((p * (1 - p)) / n)
+
+    p - temp
+    p + temp
+    ```
+
+b)
+    ```{r}
+    n <- 1000
+    p <- 0.476
+
+    precondition <- n * p * (1 - p)
+    precondition
+
+    temp <- 1.96  * sqrt((p * (1 - p)) / n)
+
+    p - temp
+    p + temp
+    ```
+
+## 138
+
+```{r}
+n <- 500
+p <- 0.3
+
+temp <- 1.96  * sqrt((p * (1 - p)) / n)
+temp
+
+p - temp
+p + temp
+```
+
+TODO
+
+## 139
+
+P(x > 150) = 0.01
+
+phi((150 - mu) / sigma) = 0.01
+
+(150 - mu) / 16 = -2.326
+
+mu = `r -2.326 * 16 - 150 * -1`
+
+## 140
+
+```{r}
+data <- c(23.1, 23.1, 22.1, 25.1, 24.1, 23.4)
+
+x_ <- mean(data)
+x_
+```
+
+a)
+    ```{r}
+    sigma <- 0.932
+
+    u <- 1.96 # u_0.975
+
+    x_ - u * sigma / sqrt(length(data))
+    x_ + u * sigma / sqrt(length(data))
+    ```
+
+b)
+    ```{r}
+    s <- sqrt((1 / (length(data) - 1)) * sum((data - x_)^2))
+    s
+    ```
+
+    t_(n - 1, 1 - a/2) = t_(5, 0.975) = 2.57
+
+    ```{r}
+    x_ - 2.57 * s / sqrt(length(data))
+    x_ + 2.57 * s / sqrt(length(data))
+    ```
+
+## 141
+
+```{r}
+data <- c(47, 46, 49, 47, 48, 51, 49, 51, 54, 49)
+x_ <- mean(data)
+x_
+
+s <- sqrt((1 / (length(data) - 1)) * sum((data - x_)^2))
+s
+```
+
+t_(n - 1, 1 - a/2) = t_(9, 0.95) = 1.83
+
+```{r}
+x_ - 1.83 * s / sqrt(length(data))
+x_ + 1.83 * s / sqrt(length(data))
+```
+
+## 142
+
+```{r}
+mu <- 220
+sigma <- sqrt(400)
+```
+
+P(mu - d < x < mu + d)
+
+d = u_(1 - a/2) * sigma = u_(0.975) * sigma = 1.881 * sigma = `r 1.881 * sigma`
+
+```{r}
+220 - 1.881 * sigma
+220 + 1.881 * sigma
+```
+
+## 143
+
+```{r}
+x_ <- 220
+sigma <- 20
+```
+
+u_(1 - a/2) = u_(0.975) = 0.8340
+
+```{r}
+x_ - 0.8340 * sigma / sqrt(10)
+x_ + 0.8340 * sigma / sqrt(10)
+```
+
+## 144
+
+```{r}
+mu <- 1000
+sigma <- 68
+```
+
+a)
+    P(978 < x < 1060) = P(x < 1060) - P(x < 978) = `r 0.8106 - 0.3745`
+
+    P(x < 1060) = phi(`r (1060 - mu) / sigma`) = 0.8106
+    P(x < 978) = phi(`r (978 - mu) / sigma`) = 0.3745
+
+b)
+    P(x < d) = 0.7
+
+    (d - mu) / sigma = 0.524
+    d = `r 0.524 * sigma + mu`
+
+c)
+    P(mu - d < x < mu + d) = 0.9
+
+    d = u_(1 - a/2) * sigma = u_(0.95) * sigma = 1.645 * sigma = `r 1.645 * sigma`
+
+    ```{r}
+    mu - 1.645 * sigma
+    mu + 1.645 * sigma
+    ```
