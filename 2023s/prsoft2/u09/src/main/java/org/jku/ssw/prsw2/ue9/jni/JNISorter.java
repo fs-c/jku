@@ -3,7 +3,7 @@ package org.jku.ssw.prsw2.ue9.jni;
 public class JNISorter {
 
 	static void loadLib() {
-		System.loadLibrary("native-sort");
+		System.load("/home/fsoc/Projects/jku/2023s/prsoft2/u09/src/main/java/org/jku/ssw/prsw2/ue9/jni/native-sort.so");
 	}
 
 	static {
