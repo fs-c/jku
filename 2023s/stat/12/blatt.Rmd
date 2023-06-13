@@ -1,0 +1,75 @@
+## 149
+
+```{r}
+data <- c(18, 13, 11, 18, 14, 14, 19, 15)
+```
+
+a)
+    punktschätzer
+
+    ```{r}
+    mu_gesund <- 18
+
+    x <- sum(data) / length(data) # x strich
+    s <- sqrt(sum((data - x)^2) / (length(data) - 1))
+
+    x
+    s
+    ```
+
+b)
+    H_0 : mu_gesund == mu_krank
+
+    H_1 : mu_gesund != mu_krank
+
+    mit p <= 0.1
+
+c)
+    Einstichproben-t-Test
+
+    ```{r}
+    # T(X) = ..., Teststatistik
+    T <- ((x - mu_gesund) / s) * sqrt(length(data))
+    T
+
+    # t_(7, 0.95) = ...
+    t <- 1.9
+    ```
+
+    Weil |T(X)| > t_(7, 0.95) wird H_0 abgelehnt. Somit gilt H_1; es besteht ein statistisch signifikanter Unterschied.
+
+d)
+    u_0.95 = 1.980
+
+    ```{r}
+    delta <- 1.980 * s / sqrt(length(data))
+
+    x - delta
+    x + delta
+    ```
+
+## 150
+
+```{r}
+n <- 100
+mu <- 10
+sigma <- sqrt(0.0025)
+sigma
+```
+
+a)
+    SEM = `r sigma / sqrt(n)`
+
+    P(X > 10.007) = 1 - P(X < 10.007) = 0.9192
+
+    P(X < 10.007) = phi((10.007 - 10) / SEM) = phi(`r ((10.007 - 10) / 0.005)`) = 0.0808
+
+b)
+    H0: mu == 10ml
+
+    H1: mu != 10ml
+
+    testalgorithmus T(x) = `r (10 - 10)`
+
+c)
+    todo
