@@ -1,0 +1,80 @@
+    main:                       write   read
+i1      li t0, 0x303FFB80       t0
+i2      addi t1, zero, 0        t1
+i3      addi t2, zero, 6        t2
+    for:
+i4      bge t1, t2, end                 t1, t2
+i5      srai t0, t0, 1          t0      t0
+i6      addi t1, t1, 1          t1      t1
+i7      jal zero, for
+    end:
+i8      addi a0, t0, 0          a0      t0
+i9      or s0, s0, s1           s0      s0, s1
+
+a)
+    t0      i1 - i5 (RAW, WAW)
+            i1 - i8 (RAW)
+            i5 - i8 (RAW)
+    
+    t1      i2 - i4 (RAW)
+            i2 - i6 (RAW, WAW)
+            i4 - i6 (WAR)
+    
+    t2      i3 - i4 (RAW)
+
+b)
+    T   fetch   decode  execute memory  writeback
+    1   li
+    2   addi    li
+    3   addi    addi    li
+    4   bge     addi    addi    li
+    5   srai    bge     addi    addi    li
+    6   addi    srai    bge     addi    addi
+    7   jal     addi    srai    bge     addi
+    8   addi    jal     addi    srai    bge
+    9   or      addi    jal     addi    srai
+    10          or      addi    jal     addi
+    11                  or      addi    jal
+    12                          or      addi
+    13                                  or
+
+    Data Hazards
+        i5 - i8:    t0 wird in i8 (addi) gelesen (T = 9), der writeback von i5 (srai) 
+                    ist aber noch nicht fertig (erst ab T = 10)
+        
+        i2 - i4:    t1 wird in i4 (bge) gelesen (T = 5), der writeback von i2 (addi) 
+                    ist aber noch nicht fertig (erst ab T = 7)
+        
+        i3 - i4:    t2 wird in i4 (bge) gelesen (T = 5), der writeback von i3 (addi) 
+                    ist aber noch nicht fertig (erst ab T = 8)
+
+    Control Hazards
+        sprungbedingung von i4 (bge) wird zu T = 6 ausgewertet, die ausfuehrung von 
+        addi und srai (i5, i6) wird fehlerhafterweise begonnen falls t1 >= t2
+
+        i7 (jal) springt immer, die ausfuehrung von addi und or (i8, i9) wird 
+        fehlerhafterweise begonnen
+
+c)
+        main:
+    i1      li t0, 0x303FFB80
+    i2      addi t1, zero, 0
+    i3      addi t2, zero, 6
+            nop                     |   data hazard i2 - i4, i3 - i4
+            nop                     |
+            nop                     |
+        for:
+    i4      bge t1, t2, end
+            nop                     |   control hazard i4
+            nop                     |
+    i5      srai t0, t0, 1
+    i6      addi t1, t1, 1
+    i7      jal zero, for
+            nop                     |   control hazard i7
+        end:
+            nop                     |   data hazard i5 - i8 und control hazard i7
+    i8      addi a0, t0, 0
+    i9      or s0, s0, s1
+
+d)
+    i3 vor i1, i2 -> -1 nop
