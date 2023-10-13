@@ -1,0 +1,11 @@
+a)
+    fetch (rot): mem-read + mem-setup = 210ps
+
+b)
+    decode (braun): mux + pcq + setup = 115ps
+
+c)
+    execute (blau): mux + alu = 215ps
+
+d)
+    
