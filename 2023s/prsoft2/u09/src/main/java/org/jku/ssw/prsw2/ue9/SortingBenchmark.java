@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import org.jku.ssw.prsw2.ue9.common.NoAdvancedSolutionException;
+import org.jku.ssw.prsw2.ue9.jni.AdvancedJNISorter;
 import org.jku.ssw.prsw2.ue9.jni.JNISorter;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -184,7 +185,7 @@ public class SortingBenchmark {
 	public void advancedSort(SortingWorkload workload) {
 		// TODO optional task 9b - for mandatory parts, you can leave the code here as
 		// it is
-		throw new NoAdvancedSolutionException();
+		AdvancedJNISorter.sort(workload.content);
 	}
 
 	/**
