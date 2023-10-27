@@ -48,6 +48,8 @@ public class Scanner {
      */
     public final Errors errors;
 
+    private boolean shouldIncreaseLineNum = false;
+
     public Scanner(Reader r) {
         // store reader
         in = new PushbackReader(r, 1);
@@ -198,6 +200,11 @@ public class Scanner {
             return;
         }
 
+        if (shouldIncreaseLineNum) {
+            this.line++;
+            this.shouldIncreaseLineNum = false;
+        }
+
         try {
             final var next = (char)this.in.read();
 
@@ -207,9 +214,9 @@ public class Scanner {
             }
 
             if (next == LF) {
-                this.line++;
+                this.shouldIncreaseLineNum = true;
                 this.col = 0;
-                nextCh();
+                this.ch = ' ';
                 return;
             }
 
@@ -235,6 +242,10 @@ public class Scanner {
         }
     }
 
+    private boolean charIsNewline(char c) {
+        return c == CR || c == LF;
+    }
+
     /**
      * Reads a string from the input stream until the condition is not satisfied anymore.
      */
@@ -244,6 +255,7 @@ public class Scanner {
         // we assume that the first char has already been read and satisfies the condition
         do {
             builder.append(this.ch);
+
             this.nextCh();
         } while (condition.apply(this.ch));
 
@@ -255,7 +267,7 @@ public class Scanner {
         final var string = this.readString((ch) -> this.isLetter(ch) || this.isDigit(ch) || ch == '_');
 
         if (keywords.containsKey(string)) {
-            return new Token(keywords.get(string), this.line, startingCol);
+            return new Token(keywords.get(string), line, startingCol);
         } else {
             final var token = new Token(ident, this.line, startingCol);
             token.val = string;
@@ -385,11 +397,11 @@ public class Scanner {
     }
 
     private boolean isLetter(char c) {
-        return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z';
+        return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
     }
 
     private boolean isDigit(char c) {
-        return '0' <= c && c <= '9';
+        return ('0' <= c) && (c <= '9');
     }
 
     // ================================================

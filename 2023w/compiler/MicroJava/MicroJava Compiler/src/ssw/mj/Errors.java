@@ -35,7 +35,6 @@ public class Errors {
     REL_OP("relational operator (==, !=, >, >=, <, <=) expected"),
     TOKEN_EXPECTED("{0} expected"),
 
-
     // ----- semantic error messages for Parser
     ARRAY_INDEX("array index must be an integer"),
     ARRAY_SIZE("array size must be an integer"),

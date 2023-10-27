@@ -822,6 +822,16 @@ public class ScannerTest extends CompilerTestCaseSupport {
   }
 
   @Test
+  public void newlineBetweenIdentifierAndToken() {
+    initScanner("anIdentifier" + LF + "class");
+
+    expectToken(ident, 1, 1, "anIdentifier");
+    expectToken(class_, 2, 1);
+
+    scanAndVerify();
+  }
+
+  @Test
   public void oneStar() {
     initScanner("*" + LF);
     expectToken(times, 1, 1);
