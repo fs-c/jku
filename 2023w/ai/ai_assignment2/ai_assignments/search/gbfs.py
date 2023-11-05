@@ -19,6 +19,24 @@ class GBFS(object):
     # - to get items out of the PriorityQueue, use 'pq.get()'
     # - use a 'set()' to store nodes that were already visited
     def solve(self, problem: Problem):
+        visited = set()
+        fringe = PriorityQueue()
+
+        initial = problem.get_start_node()
+        visited.add(initial)
+        fringe.put(self.heuristic(initial, problem.get_end_node()), initial)
+
+        while fringe.has_elements():
+            current = fringe.get()
+
+            if problem.is_end(current):
+                return current
+
+            for node in problem.successors(current):
+                if node not in visited:
+                    fringe.put(self.heuristic(node, problem.get_end_node()), node)
+                    visited.add(node)
+
         return None
 
 
@@ -45,4 +63,8 @@ class GBFS_Chebyshev(GBFS):
         # - get x- and y-coordinates for current and goal node (see Manhattan distance)
         # - compute Chebyshev distances based on formula in slides: max_i(|a_i - b_i|)
         # return Chebyshev distance
-        return None
+
+        cy, cx = current.state
+        gy, gx = goal.state
+
+        return max(math.fabs((cy - gy)), math.fabs(cx - gx))
