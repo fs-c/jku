@@ -1,10 +1,10 @@
 package ssw.mj.impl;
 
-import ssw.mj.Errors;
 import ssw.mj.Errors.Message;
 import ssw.mj.scanner.Token;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -28,6 +28,8 @@ public final class Parser {
      */
     private static final int MAX_LOCALS = 127;
 
+    private static final int ERROR_DISTANCE_HEURISTIC = 3;
+
     /**
      * Last recognized token;
      */
@@ -42,6 +44,12 @@ public final class Parser {
      * Shortcut to kind attribute of lookahead token (la).
      */
     private Token.Kind sym;
+
+    /**
+     * Number of error-free scans, starts out at just above the minimum threshold for outputting errors.
+     * (Can't set to 0 because we might lose initial errors, can't set to MAX_VALUE because we might overflow.)
+     */
+    private int errorDistance = ERROR_DISTANCE_HEURISTIC + 1;
 
     /**
      * According scanner
@@ -64,23 +72,18 @@ public final class Parser {
     private static final Token.Kind[] firstMethodDecl = { void_, ident }; // Type
     private static final Token.Kind[] firstFormPars = { ident }; // Type
     private static final Token.Kind[] firstType = { ident };
-
     private static final Token.Kind[] firstBlock = { lbrace };
     private static final Token.Kind[] firstStatement = { ident, if_, while_, break_, return_, read, print, lbrace, semicolon }; // Designator, Block
     private static final Token.Kind[] firstAssignop = { assign, plusas, minusas, timesas, slashas, remas };
     private static final Token.Kind[] firstActPars = { lpar };
-
-    //    private static final Token.Kind[] firstCondition = {}; // CondTerm
-    //    private static final Token.Kind[] firstCondTerm = { ident, number, charConst, new_, lpar }; // CondFact
-    //    private static final Token.Kind[] firstCondFact = { minus, ident, number, charConst, new_, lpar }; // Expr
-    //    private static final Token.Kind[] firstRelop = { eql, neq, gtr, geq, lss, leq };
-
     private static final Token.Kind[] firstExpr = { minus, ident, number, charConst, new_, lpar }; // Term
-    //    private static final Token.Kind[] firstTerm = { ident, number, charConst, new_, lpar }; // Factor
-    //    private static final Token.Kind[] firstFactor = { ident, number, charConst, new_, lpar }; // Designator
     private static final Token.Kind[] firstDesignator = { ident };
     private static final Token.Kind[] firstAddop = { plus, minus };
     private static final Token.Kind[] firstMulop = { times, slash, rem };
+
+    private static final EnumSet<Token.Kind> recoverDeclSet = EnumSet.of(eof, lbrace, final_, ident, class_);
+    private static final EnumSet<Token.Kind> recoverMethodDeclSet = EnumSet.of(eof, void_, ident);
+    private static final EnumSet<Token.Kind> recoverStatementSet = EnumSet.of(eof, ident, if_, while_, break_, return_, read, print, lbrace, semicolon);
 
     public Parser(Scanner scanner) {
         this.scanner = scanner;
@@ -97,6 +100,7 @@ public final class Parser {
         t = la;
         la = scanner.next();
         sym = la.kind;
+        errorDistance++;
     }
 
     /**
@@ -116,11 +120,12 @@ public final class Parser {
      * Adds error message to the list of errors.
      */
     public void error(Message msg, Object... msgParams) {
-        // TODO Exercise 3: Replace panic mode with error recovery (i.e., keep track of error distance)
-        // TODO Exercise 3: Hint: Replacing panic mode also affects scan() method
-        scanner.errors.error(la.line, la.col, msg, msgParams);
-        System.out.format("%s (%d:%d)\n", msg, la.line, la.col);
-        throw new Errors.PanicMode();
+        if (errorDistance >= ERROR_DISTANCE_HEURISTIC) {
+            scanner.errors.error(la.line, la.col, msg, msgParams);
+            System.out.format("%s (%d:%d)\n", msg, la.line, la.col);
+        }
+
+        errorDistance = 0;
     }
 
     private void error(Message msg, Token.Kind[] expected) {
@@ -146,19 +151,55 @@ public final class Parser {
         check(Token.Kind.program);
         check(Token.Kind.ident);
 
-        // { ConstDecl | VarDecl | ClassDecl }
-        runUntilFalse(() -> requireNone(Map.of(
-            () -> includes(firstConstDecl, sym), this::constDecl,
-            () -> includes(firstVarDecl, sym), this::varDecl,
-            () -> includes(firstClassDecl, sym), this::classDecl
-        )));
+        while (true) {
+            // { ConstDecl | VarDecl | ClassDecl }
+            runUntilFalse(() -> requireNone(Map.of(
+                () -> includes(firstConstDecl, sym), this::constDecl,
+                () -> includes(firstVarDecl, sym), this::varDecl,
+                () -> includes(firstClassDecl, sym), this::classDecl
+            )));
+
+            if (sym == lbrace || sym == eof) {
+                break;
+            }
+
+            recoverDecl();
+        }
 
         // "{" { MethodDecl } "}"
         check(lbrace);
-        runUntilFalse(() -> requireNone(Map.of(
-            () -> includes(firstMethodDecl, sym), this::methodDecl
-        )));
+        while (true) {
+            runUntilFalse(() -> requireNone(Map.of(
+                    () -> includes(firstMethodDecl, sym), this::methodDecl
+            )));
+
+            if (sym == rbrace || sym == eof) {
+                break;
+            }
+
+            recoverMethodDecl();
+        }
         check(rbrace);
+    }
+
+    private void recoverDecl() {
+        error(INVALID_DECL);
+
+        do {
+            scan();
+        } while (!recoverDeclSet.contains(sym));
+
+        errorDistance = 0;
+    }
+
+    private void recoverMethodDecl() {
+        error(INVALID_METH_DECL);
+
+        do {
+            scan();
+        } while (!recoverMethodDeclSet.contains(sym));
+
+        errorDistance = 0;
     }
 
     // "final" Type ident "=" ( number | charConst ) ";".
@@ -248,8 +289,26 @@ public final class Parser {
     private void block() {
         // "{" { Statement } "}"
         check(lbrace);
-        runUntilFalse(() -> requireNone(Map.of(() -> includes(firstStatement, sym), this::statement)));
+        while (true) {
+            runUntilFalse(() -> requireNone(Map.of(() -> includes(firstStatement, sym), this::statement)));
+
+            if (sym == rbrace || sym == eof) {
+                break;
+            }
+
+            recoverStatement();
+        }
         check(rbrace);
+    }
+
+    private void recoverStatement() {
+        error(INVALID_STAT);
+
+        do {
+            scan();
+        } while (!recoverStatementSet.contains(sym));
+
+        errorDistance = 0;
     }
 
     // Designator ( Assignop Expr | ActPars | "++" | "--" ) ";"
