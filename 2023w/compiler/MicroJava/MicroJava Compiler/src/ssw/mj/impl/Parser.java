@@ -2,6 +2,8 @@ package ssw.mj.impl;
 
 import ssw.mj.Errors.Message;
 import ssw.mj.scanner.Token;
+import ssw.mj.symtab.Obj;
+import ssw.mj.symtab.Struct;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -29,6 +31,8 @@ public final class Parser {
     private static final int MAX_LOCALS = 127;
 
     private static final int ERROR_DISTANCE_HEURISTIC = 3;
+
+    private static final String MAIN_METHOD_NAME = "main";
 
     /**
      * Last recognized token;
@@ -150,6 +154,9 @@ public final class Parser {
         // "program" ident
         check(Token.Kind.program);
         check(Token.Kind.ident);
+        final var programObject = tab.insert(Obj.Kind.Prog, t.val, Tab.noType);
+
+        tab.openScope();
 
         while (true) {
             // { ConstDecl | VarDecl | ClassDecl }
@@ -166,6 +173,10 @@ public final class Parser {
             recoverDecl();
         }
 
+        if (tab.curScope.nVars() > MAX_GLOBALS) {
+            error(TOO_MANY_GLOBALS);
+        }
+
         // "{" { MethodDecl } "}"
         check(lbrace);
         while (true) {
@@ -180,6 +191,9 @@ public final class Parser {
             recoverMethodDecl();
         }
         check(rbrace);
+
+        programObject.locals = tab.curScope.locals();
+        tab.closeScope();
     }
 
     private void recoverDecl() {
@@ -204,18 +218,41 @@ public final class Parser {
 
     // "final" Type ident "=" ( number | charConst ) ";".
     private void constDecl() {
+        var type = Tab.noType;
+
         // "final" Type
         check(final_);
-        requireOne(Map.of(() -> includes(firstType, sym), this::type), () -> error(TOKEN_EXPECTED, firstType));
+        if (includes(firstType, sym)) {
+            type = type();
+        } else {
+            error(TOKEN_EXPECTED, firstType);
+        }
 
         // ident "="
         check(ident);
+        final var typeObject = tab.insert(Obj.Kind.Con, t.val, type);
         check(assign);
+
+        final var typeKind = type.kind;
 
         // ( number | charConst ) ";"
         requireOne(Map.of(
-            () -> sym == number, () -> check(number),
-            () -> sym == charConst, () -> check(charConst)
+            () -> sym == number, () -> {
+                    if (typeKind == Struct.Kind.Int) {
+                        check(number);
+                        typeObject.val = Integer.parseInt(t.val);
+                    } else {
+                        error(CONST_TYPE);
+                    }
+                },
+            () -> sym == charConst, () -> {
+                    if (typeKind == Struct.Kind.Char) {
+                        check(charConst);
+                        typeObject.val = t.numVal;
+                    } else {
+                        error(CONST_TYPE);
+                    }
+                }
         ), () -> error(CONST_DECL));
         check(semicolon);
     }
@@ -223,11 +260,20 @@ public final class Parser {
     // Type ident { "," ident } ";".
     private void varDecl() {
         // Type
-        requireOne(Map.of(() -> includes(firstType, sym), this::type), () -> error(TOKEN_EXPECTED, firstType));
+        final var type = type();
 
-        // ident { "," ident } ";"
+        // ident
         check(ident);
-        runUntilFalse(() -> optionalCombination(comma, ident));
+        tab.insert(Obj.Kind.Var, t.val, type);
+
+        // { "," ident }
+        while (sym == comma) {
+            check(comma);
+            check(ident);
+            tab.insert(Obj.Kind.Var, t.val, type);
+        }
+
+        // ";"
         check(semicolon);
     }
 
@@ -237,52 +283,125 @@ public final class Parser {
         check(class_);
         check(ident);
 
-        // "{" { VarDecl } "}"
+        final var classObject = tab.insert(Obj.Kind.Type, t.val, new Struct(Struct.Kind.Class));
+
+        // "{"
         check(lbrace);
+        tab.openScope();
+
+        // { VarDecl }
         runUntilFalse(() -> requireNone(Map.of(
             () -> includes(firstVarDecl, sym), this::varDecl
         )));
+
+        if (tab.curScope.nVars() > MAX_FIELDS) {
+            error(TOO_MANY_FIELDS);
+        }
+
+        classObject.type.fields = tab.curScope.locals();
+
+        // "}"
         check(rbrace);
+        tab.closeScope();
     }
 
     // ( Type | "void" ) ident "(" [ FormPars ] ")" { VarDecl } Block.
-    private void methodDecl() {
-        // ( Type | "void" )
-        requireOne(Map.of(
-            () -> includes(firstType, sym), this::type,
-            () -> sym == void_, () -> check(void_)
-        ), () -> error(INVALID_METH_DECL, sym));
+    private Obj methodDecl() {
+        Struct type = Tab.noType;
 
-        // ident "(" [ FormPars ] ")"
+        // ( Type | "void" )
+        if (sym == ident) {
+            type = type();
+        } else if (sym == void_) {
+            check(void_);
+        } else {
+            error(INVALID_METH_DECL, sym);
+        }
+
+        // ident
         check(ident);
+        final var methodObject = tab.insert(Obj.Kind.Meth, t.val, type);
+        methodObject.adr = code.pc;
+
+        // "(" [ FormPars ] ")"
         check(lpar);
+        tab.openScope();
         requireNone(Map.of(() -> includes(firstFormPars, sym), this::formPars));
         check(rpar);
+
+        methodObject.nPars = tab.curScope.nVars();
+
+        if (methodObject.name.equals(MAIN_METHOD_NAME)) {
+            if (tab.curScope.nVars() > 0) {
+                error(MAIN_WITH_PARAMS);
+            }
+
+            if (type != Tab.noType) {
+                error(MAIN_NOT_VOID);
+            }
+        }
 
         // { VarDecl }
         runUntilFalse(() -> requireNone(Map.of(() -> includes(firstVarDecl, sym), this::varDecl)));
 
+        if (tab.curScope.nVars() > MAX_LOCALS) {
+            error(TOO_MANY_LOCALS);
+        }
+
         // Block
         requireOne(Map.of(() -> includes(firstBlock, sym), this::block), () -> error(TOKEN_EXPECTED, firstBlock));
+
+        methodObject.locals = tab.curScope.locals();
+        tab.closeScope();
+
+        return methodObject;
     }
 
-    private void type() {
+    private Struct type() {
         check(ident);
+
+        Obj typeObject = tab.find(t.val);
+        if (typeObject.kind != Obj.Kind.Type) {
+            error(NO_TYPE);
+        }
+
+        final var type = typeObject.type;
 
         if (sym == lbrack) {
             check(lbrack);
             check(rbrack);
+
+            // this is terrible, should be Struct.createArrayOf(type) or something
+            return new Struct(type);
         }
+
+        return type;
     }
 
     // Type ident { "," Type ident }.
     private void formPars() {
         // Type ident
-        requireOne(Map.of(() -> includes(firstType, sym), this::type), () -> error(TOKEN_EXPECTED, firstType));
-        check(ident);
+        if (includes(firstType, sym)) {
+            final var type = type();
+            check(ident);
+            tab.insert(Obj.Kind.Var, t.val, type);
+        } else {
+            error(TOKEN_EXPECTED, firstType);
+        }
 
         // { "," Type ident }
-        runUntilFalse(() -> optionalCombination(() -> sym == comma, () -> check(comma), this::type, () -> check(ident)));
+        while (sym == comma) {
+            check(comma);
+
+            // Type ident
+            if (includes(firstType, sym)) {
+                final var type = type();
+                check(ident);
+                tab.insert(Obj.Kind.Var, t.val, type);
+            } else {
+                error(TOKEN_EXPECTED, firstType);
+            }
+        }
     }
 
     // "{" { Statement } "}".
