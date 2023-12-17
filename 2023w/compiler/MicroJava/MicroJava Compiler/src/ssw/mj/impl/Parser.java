@@ -1,6 +1,7 @@
 package ssw.mj.impl;
 
 import ssw.mj.Errors.Message;
+import ssw.mj.codegen.Operand;
 import ssw.mj.scanner.Token;
 import ssw.mj.symtab.Obj;
 import ssw.mj.symtab.Struct;
@@ -78,8 +79,6 @@ public final class Parser {
     private static final Token.Kind[] firstType = { ident };
     private static final Token.Kind[] firstBlock = { lbrace };
     private static final Token.Kind[] firstStatement = { ident, if_, while_, break_, return_, read, print, lbrace, semicolon }; // Designator, Block
-    private static final Token.Kind[] firstAssignop = { assign, plusas, minusas, timesas, slashas, remas };
-    private static final Token.Kind[] firstActPars = { lpar };
     private static final Token.Kind[] firstExpr = { minus, ident, number, charConst, new_, lpar }; // Term
     private static final Token.Kind[] firstDesignator = { ident };
     private static final Token.Kind[] firstAddop = { plus, minus };
@@ -173,24 +172,33 @@ public final class Parser {
             recoverDecl();
         }
 
+        code.dataSize = tab.curScope.nVars();
+
         if (tab.curScope.nVars() > MAX_GLOBALS) {
             error(TOO_MANY_GLOBALS);
         }
 
+        var mainMethodAdded = false;
+
         // "{" { MethodDecl } "}"
         check(lbrace);
         while (true) {
-            runUntilFalse(() -> requireNone(Map.of(
-                    () -> includes(firstMethodDecl, sym), this::methodDecl
-            )));
-
-            if (sym == rbrace || sym == eof) {
+            if (includes(firstMethodDecl, sym)) {
+                final var method = methodDecl();
+                if (method.name.equals(MAIN_METHOD_NAME)) {
+                    mainMethodAdded = true;
+                }
+            } else if (sym == rbrace || sym == eof) {
                 break;
+            } else {
+                recoverMethodDecl();
             }
-
-            recoverMethodDecl();
         }
         check(rbrace);
+
+        if (!mainMethodAdded) {
+            error(METH_NOT_FOUND, MAIN_METHOD_NAME);
+        }
 
         programObject.locals = tab.curScope.locals();
         tab.closeScope();
@@ -307,11 +315,15 @@ public final class Parser {
 
     // ( Type | "void" ) ident "(" [ FormPars ] ")" { VarDecl } Block.
     private Obj methodDecl() {
-        Struct type = Tab.noType;
+        var type = Tab.noType;
 
         // ( Type | "void" )
         if (sym == ident) {
             type = type();
+
+            if (type.isRefType()) {
+                error(INVALID_METH_RETURN_TYPE);
+            }
         } else if (sym == void_) {
             check(void_);
         } else {
@@ -326,12 +338,23 @@ public final class Parser {
         // "(" [ FormPars ] ")"
         check(lpar);
         tab.openScope();
-        requireNone(Map.of(() -> includes(firstFormPars, sym), this::formPars));
+        if (includes(firstFormPars, sym)) {
+            methodObject.nPars = formPars();
+        }
         check(rpar);
 
-        methodObject.nPars = tab.curScope.nVars();
-
         if (methodObject.name.equals(MAIN_METHOD_NAME)) {
+            // why is this not mainPc :(
+            code.mainpc = code.pc;
+
+            if (type != Tab.noType) {
+                error(MAIN_NOT_VOID);
+            }
+
+            if (methodObject.nPars != 0) {
+                error(MAIN_WITH_PARAMS);
+            }
+
             if (tab.curScope.nVars() > 0) {
                 error(MAIN_WITH_PARAMS);
             }
@@ -341,17 +364,30 @@ public final class Parser {
             }
         }
 
+        methodObject.nPars = tab.curScope.nVars();
+
         // { VarDecl }
         runUntilFalse(() -> requireNone(Map.of(() -> includes(firstVarDecl, sym), this::varDecl)));
+
+        methodObject.locals = tab.curScope.locals();
+        methodObject.adr = code.pc;
 
         if (tab.curScope.nVars() > MAX_LOCALS) {
             error(TOO_MANY_LOCALS);
         }
 
+        code.methodEnter(methodObject.nPars, tab.curScope.nVars());
+
         // Block
         requireOne(Map.of(() -> includes(firstBlock, sym), this::block), () -> error(TOKEN_EXPECTED, firstBlock));
 
-        methodObject.locals = tab.curScope.locals();
+        code.methodExit();
+
+        if (methodObject.type != Tab.noType) {
+            code.put(Code.OpCode.trap);
+            code.put(1);
+        }
+
         tab.closeScope();
 
         return methodObject;
@@ -379,7 +415,9 @@ public final class Parser {
     }
 
     // Type ident { "," Type ident }.
-    private void formPars() {
+    private int formPars() {
+        int numPars = 1;
+
         // Type ident
         if (includes(firstType, sym)) {
             final var type = type();
@@ -401,7 +439,11 @@ public final class Parser {
             } else {
                 error(TOKEN_EXPECTED, firstType);
             }
+
+            numPars++;
         }
+
+        return numPars;
     }
 
     // "{" { Statement } "}".
@@ -441,16 +483,59 @@ public final class Parser {
     //  | ";".
     private void statement() {
         // Designator ( Assignop Expr | ActPars | "++" | "--" ) ";"
-        final Runnable assignStatement = () -> combination(
-            this::designator,
-            () -> requireOne(Map.of(
-                () -> includes(firstAssignop, sym), () -> combination(this::assignop, this::expr),
-                () -> includes(firstActPars, sym), this::actPars,
-                () -> sym == pplus, () -> check(pplus),
-                () -> sym == mminus, () -> check(mminus)
-            ), () -> error(DESIGN_FOLLOW)),
-            () -> check(semicolon)
-        );
+        final Runnable assignStatement = () -> {
+            final var x = designator();
+
+            switch (sym) {
+                case assign, plusas, minusas, timesas, slashas, remas -> {
+                    if (x.obj != null && x.obj.kind != Obj.Kind.Var) {
+                        error(CANNOT_ASSIGN_TO, x.obj.kind);
+                    }
+
+                    if (x.kind == Operand.Kind.Con) {
+                        error(CANNOT_ASSIGN_TO, x.kind);
+                    }
+
+                    final var compoundOperation = assignop();
+                    if (compoundOperation != Code.OpCode.nop) {
+                        code.compoundAssignmentPrepare(x);
+                    }
+
+                    final var y = expr();
+
+                    if (compoundOperation != Code.OpCode.nop && (x.type != Tab.intType || y.type != Tab.intType)) {
+                        error(NO_INT_OPERAND);
+                    }
+
+                    if (y == null || !y.type.assignableTo(x.type)) {
+                        error(INCOMP_TYPES);
+                    }
+
+                    if (compoundOperation == Code.OpCode.nop) {
+                        code.assign(x, y);
+                    } else {
+                        code.load(y);
+                        code.put(compoundOperation);
+                        code.assign(x, null);
+                    }
+
+                }
+                case lpar -> actPars();
+                case pplus, mminus -> {
+                    if (x.type != Tab.intType) {
+                        error(NO_INT_OPERAND);
+                    }
+
+                    code.compoundAssignmentPrepare(x);
+                    code.inc(x, sym == pplus ? 1 : -1);
+
+                    scan();
+                }
+                default -> error(DESIGN_FOLLOW);
+            }
+
+            check(semicolon);
+        };
 
         // "if" "(" Condition ")" Statement [ "else" Statement ]
         final Runnable ifStatement = () -> optionalCombination(
@@ -469,23 +554,60 @@ public final class Parser {
         final Runnable breakStatement = () -> optionalCombination(() -> check(break_), () -> check(semicolon));
 
         // "return" [ Expr ] ";"
-        final Runnable returnStatement = () -> optionalCombination(
-            () -> check(return_),
-            () -> requireNone(Map.of(() -> includes(firstExpr, sym), this::expr)),
-            () -> check(semicolon)
-        );
+        final Runnable returnStatement = () -> {
+            check(return_);
+
+            if (sym != semicolon) {
+                final var x = expr();
+
+                code.load(x);
+            }
+
+            check(semicolon);
+        };
 
         // "read" "(" Designator ")" ";"
-        final Runnable readStatement = () -> optionalCombination(
-            () -> check(read), () -> check(lpar), this::designator, () -> check(rpar), () -> check(semicolon)
-        );
+        final Runnable readStatement = () -> {
+            check(read);
+            check(lpar);
+
+            final var x = designator();
+            if (x.type != Tab.intType && x.type != Tab.charType) {
+                error(READ_VALUE);
+            }
+
+            code.put(x.type == Tab.intType ? Code.OpCode.read : Code.OpCode.bread);
+            code.assign(x, null);
+
+            check(rpar);
+            check(semicolon);
+        };
 
         // "print" "(" Expr [ "," number ] ")" ";"
-        final Runnable printStatement = () -> optionalCombination(
-            () -> check(print), () -> check(lpar), this::expr,
-            () -> requireNone(Map.of(() -> sym == comma, () -> optionalCombination(() -> check(comma), () -> check(number)))),
-            () -> check(rpar), () -> check(semicolon)
-        );
+        final Runnable printStatement = () -> {
+            check(print);
+            check(lpar);
+
+            final var x = expr();
+            if (x.type != Tab.intType && x.type != Tab.charType) {
+                error(PRINT_VALUE);
+            }
+
+            code.load(x);
+
+            if (sym == comma) {
+                check(comma);
+                check(number);
+                code.load(new Operand(t.numVal));
+            } else {
+                code.loadConst(0);
+            }
+
+            code.put(x.type == Tab.intType ? Code.OpCode.print : Code.OpCode.bprint);
+
+            check(rpar);
+            check(semicolon);
+        };
 
         requireOne(Map.of(
             () -> includes(firstDesignator, sym), assignStatement,
@@ -501,15 +623,37 @@ public final class Parser {
     }
 
     // "=" | "+=" | "-=" | "*=" | "/=" | "%=".
-    private void assignop() {
-        requireOne(Map.of(
-            () -> sym == assign, () -> check(assign),
-            () -> sym == plusas, () -> check(plusas),
-            () -> sym == minusas, () -> check(minusas),
-            () -> sym == timesas, () -> check(timesas),
-            () -> sym == slashas, () -> check(slashas),
-            () -> sym == remas, () -> check(remas)
-        ), () -> error(ASSIGN_OP));
+    private Code.OpCode assignop() {
+        switch (sym) {
+            case assign -> {
+                check(assign);
+                return Code.OpCode.nop;
+            }
+            case plusas -> {
+                check(plusas);
+                return Code.OpCode.add;
+            }
+            case minusas -> {
+                check(minusas);
+                return Code.OpCode.sub;
+            }
+            case timesas -> {
+                check(timesas);
+                return Code.OpCode.mul;
+            }
+            case slashas -> {
+                check(slashas);
+                return Code.OpCode.div;
+            }
+            case remas -> {
+                check(remas);
+                return Code.OpCode.rem;
+            }
+            default -> {
+                error(ASSIGN_OP);
+                return Code.OpCode.nop;
+            }
+        }
     }
 
     // CondTerm { "||" CondTerm }.
@@ -548,70 +692,258 @@ public final class Parser {
     }
 
     // ident { "." ident | "[" Expr "]" }.
-    private void designator() {
+    private Operand designator() {
         check(ident);
-        runUntilFalse(() ->
-            optionalCombination(() -> sym == period, () -> check(period), () -> check(ident)) ||
-            optionalCombination(() -> sym == lbrack, () -> check(lbrack), this::expr, () -> check(rbrack))
-        );
+
+        final var object = tab.find(t.val);
+        var x = new Operand(object, this);
+
+        while (sym == period || sym == lbrack) {
+            if (sym == period) {
+                if (x.type.kind != Struct.Kind.Class) {
+                    error(NO_CLASS);
+                }
+
+                check(period);
+                check(ident);
+
+                code.load(x);
+
+                final var field = tab.findField(t.val, x.type);
+                if (field == null) {
+                    break;
+                }
+
+                x.kind = Operand.Kind.Fld;
+                x.type = field.type;
+                x.adr = field.adr;
+            } else {
+                check(lbrack);
+
+                code.load(x);
+
+                Operand y = expr();
+                if (y.type.kind != Struct.Kind.Int) {
+                    error(ARRAY_INDEX);
+                }
+
+                if (x.type.kind != Struct.Kind.Arr) {
+                    error(NO_ARRAY);
+                }
+
+                code.load(y);
+
+                x.kind = Operand.Kind.Elem;
+                x.type = x.type.elemType;
+
+                check(rbrack);
+            }
+        }
+
+        return x;
     }
 
     // [ "–" ] Term { Addop Term }.
-    private void expr() {
+    private Operand expr() {
         // [ "–" ]
-        requireNone(Map.of(() -> sym == minus, () -> check(minus)));
+        var shouldNegate = false;
+        if (sym == minus) {
+            check(minus);
+            shouldNegate = true;
+        }
 
-        // Term { Addop Term }
-        term();
-        runUntilFalse(() -> optionalCombination(() -> includes(firstAddop, sym), this::addop, this::term));
+        // Term
+        final var x = term();
+
+        if (shouldNegate) {
+            if (x.type != Tab.intType) {
+                error(NO_INT_OPERAND);
+            }
+
+            if (x.kind == Operand.Kind.Con) {
+                x.val = -x.val;
+            } else {
+                code.load(x);
+                code.put(Code.OpCode.neg);
+            }
+        }
+
+        // { Addop Term }
+        while (includes(firstAddop, sym)) {
+            code.load(x);
+
+            final var operation = addop();
+            final var y = term();
+            if (y == null) {
+                // todo-null-checks
+                break;
+            }
+
+            if (x.type != Tab.intType || y.type != Tab.intType) {
+                error(NO_INT_OPERAND);
+            }
+
+            code.load(y);
+            code.put(operation);
+        }
+
+        return x;
     }
 
     // "+" | "–".
-    private void addop() {
-        requireOne(Map.of(
-            () -> sym == plus, () -> check(plus),
-            () -> sym == minus, () -> check(minus)
-        ), () -> error(ADD_OP, sym));
+    private Code.OpCode addop() {
+        if (sym == plus) {
+            check(plus);
+            return Code.OpCode.add;
+        } else if (sym == minus) {
+            check(minus);
+            return Code.OpCode.sub;
+        } else {
+            error(ADD_OP);
+            return Code.OpCode.add;
+        }
     }
 
     // Factor { Mulop Factor | "**" number }.
-    private void term() {
-        factor();
-        runUntilFalse(() ->
-            optionalCombination(() -> includes(firstMulop, sym), this::mulop, this::factor) ||
-            optionalCombination(() -> sym == exp, () -> check(exp), () -> check(number))
-        );
+    private Operand term() {
+        final var x = factor();
+
+        while (includes(firstMulop, sym) || sym == exp) {
+            code.load(x);
+
+            if (sym == exp) {
+                check(exp);
+                check(number);
+
+                for (var i = 0; i < t.numVal - 1; i++) {
+                    code.put(Code.OpCode.dup);
+                }
+
+                for (var i = 0; i < t.numVal - 1; i++) {
+                    code.put(Code.OpCode.mul);
+                }
+
+                if (t.numVal == 0) {
+                    code.put(Code.OpCode.pop);
+                    code.loadConst(1);
+                }
+            } else {
+                final var operation = mulop();
+                final var y = factor();
+
+                if (y.type != Tab.intType) {
+                    error(NO_INT_OPERAND);
+                }
+
+                code.load(y);
+                code.put(operation);
+            }
+
+            if (x.type != Tab.intType) {
+                error(NO_INT_OPERAND);
+            }
+        }
+
+        return x;
     }
 
     // "*" | "/" | "%".
-    private void mulop() {
-        requireOne(Map.of(
-            () -> sym == times, () -> check(times),
-            () -> sym == slash, () -> check(slash),
-            () -> sym == rem, () -> check(rem)
-        ), () -> error(MUL_OP, sym));
+    private Code.OpCode mulop() {
+        if (sym == times) {
+            check(times);
+            return Code.OpCode.mul;
+        } else if (sym == slash) {
+            check(slash);
+            return Code.OpCode.div;
+        } else if (sym == rem) {
+            check(rem);
+            return Code.OpCode.rem;
+        } else {
+            error(MUL_OP);
+            return Code.OpCode.mul;
+        }
     }
 
     // Designator [ ActPars ] | number | charConst | "new" ident [ "[" Expr "]" ] | "(" Expr ")".
-    private void factor() {
-        requireOne(Map.of(
-            // Designator [ ActPars ]
-            () -> includes(firstDesignator, sym), () -> combination(
-                this::designator, () -> requireNone(Map.of(() -> includes(firstActPars, sym), this::actPars))
-            ),
-            // number
-            () -> sym == number, () -> check(number),
-            // charConst
-            () -> sym == charConst, () -> check(charConst),
-            // "new" ident [ "[" Expr "]" ]
-            () -> sym == new_, () -> optionalCombination(
-                () -> check(new_), () -> check(ident), () -> requireNone(Map.of(
-                    () -> sym == lbrack, () -> optionalCombination(() -> check(lbrack), this::expr, () -> check(rbrack))
-                ))
-            ),
-            // "(" Expr ")"
-            () -> sym == lpar, () -> optionalCombination(() -> check(lpar), this::expr, () -> check(rpar))
-        ), () -> error(INVALID_FACT));
+    private Operand factor() {
+        Operand x = null;
+
+        switch (sym) {
+            case ident -> {
+                x = designator();
+
+                if (sym == lpar) {
+                    if (x.kind == Operand.Kind.Meth && x.type == Tab.noType) {
+                        error(INVALID_CALL);
+                    }
+
+                    actPars();
+                }
+            }
+            case number -> {
+                check(number);
+
+                x = new Operand(t.numVal);
+            }
+            case charConst -> {
+                check(charConst);
+
+                x = new Operand(t.numVal);
+                x.type = Tab.charType;
+            }
+            case new_ -> {
+                check(new_);
+                check(ident);
+
+                final var object = tab.find(t.val);
+                if (object.kind != Obj.Kind.Type) {
+                    error(NO_TYPE);
+                    break;
+                }
+
+                var type = object.type;
+
+                if (sym == lbrack) {
+                    check(lbrack);
+
+                    final var y = expr();
+                    if (y.type.kind != Struct.Kind.Int) {
+                        error(ARRAY_SIZE);
+                    }
+
+                    code.load(y);
+
+                    code.put(Code.OpCode.newarray);
+                    if (object.type.kind == Struct.Kind.Char) {
+                        code.put(0);
+                    } else {
+                        code.put(1);
+                    }
+
+                    // this constructor signature is still absolutely moronic
+                    type = new Struct(type);
+
+                    check(rbrack);
+                } else {
+                    if (object.type.kind != Struct.Kind.Class) {
+                        error(NO_CLASS_TYPE);
+                    }
+
+                    code.put(Code.OpCode.new_);
+                    code.put2(object.type.nrFields());
+                }
+
+                x = new Operand(type);
+            }
+            case lpar -> {
+                check(lpar);
+                x = expr();
+                check(rpar);
+            }
+            default -> error(INVALID_FACT);
+        }
+
+        return x;
     }
 
     // "(" [ Expr { "," Expr } ] ")".
@@ -627,18 +959,6 @@ public final class Parser {
      */
     private void runUntilFalse(Supplier<Boolean> fn) {
         while (fn.get()) {}
-    }
-
-    /**
-     * equivalent to [ A B ... ]
-     */
-    private boolean optionalCombination(Token.Kind... tokens) {
-        final var match = sym == tokens[0];
-        if (match) {
-            Arrays.stream(tokens).forEach(this::check);
-        }
-
-        return match;
     }
 
     /**

@@ -192,8 +192,6 @@ public class Scanner {
      * in sync with reading position.
      */
     private void nextCh() {
-        // todo: pos?
-
         // this is a bit of a hack, but it makes sure that col numbers are correct if we happen
         // to try reading beyond eof (which shouldn't happen but eh)
         if (this.ch == EOF) {
@@ -240,10 +238,6 @@ public class Scanner {
             // proper error handling with correct state
             return '\0';
         }
-    }
-
-    private boolean charIsNewline(char c) {
-        return c == CR || c == LF;
     }
 
     /**

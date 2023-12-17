@@ -70,10 +70,6 @@ public final class Tab {
         closeScope();
     }
 
-    // ===============================================
-    // TODO Exercise 4: implementation of symbol table
-    // ===============================================
-
     public void openScope() {
         curScope = new Scope(curScope);
         curLevel++;
