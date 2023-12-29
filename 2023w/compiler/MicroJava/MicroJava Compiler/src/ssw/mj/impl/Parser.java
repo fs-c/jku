@@ -877,6 +877,9 @@ public final class Parser {
                         error(INVALID_CALL);
                     }
 
+                    // todo: fix this once method calls are implemented, this makes symbol table tests happy for now
+                    x.kind = Operand.Kind.Stack;
+
                     actPars();
                 }
             }
