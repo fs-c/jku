@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import static ssw.mj.Errors.Message.CANNOT_ASSIGN_TO;
-import static ssw.mj.Errors.Message.NO_VAL;
+import static ssw.mj.Errors.Message.*;
 
 public final class Code {
 
@@ -165,10 +164,13 @@ public final class Code {
      */
     private final Parser parser;
 
+    private final Tab tab;
+
     // ----- initialization
 
-    public Code(Parser p) {
+    public Code(Parser p, Tab t) {
         parser = p;
+        tab = t;
         buf = new byte[100];
         pc = 0;
         mainpc = -1;
@@ -231,12 +233,6 @@ public final class Code {
         os.close();
     }
 
-    // ======================================================
-    // TODO Exercise 5-6: implementation of code generation
-    // ======================================================
-
-    // TODO Exercise 5: Various code generation methods such as load or assign
-
     /**
      * Load the operand x onto the expression stack.
      */
@@ -274,6 +270,12 @@ public final class Code {
         }
 
         x.kind = Operand.Kind.Stack;
+    }
+
+    public void loadAndIgnoreNull(Operand x) {
+        if (x != null) {
+            load(x);
+        }
     }
 
     /**
@@ -338,17 +340,6 @@ public final class Code {
         }
     }
 
-    public void methodEnter(int numParams, int numLocals) {
-        put(OpCode.enter);
-        put(numParams);
-        put(numLocals);
-    }
-
-    public void methodExit() {
-        put(OpCode.exit);
-        put(OpCode.return_);
-    }
-
     /**
      * Load an integer constant onto the expression stack.
      */
@@ -371,31 +362,76 @@ public final class Code {
             return;
         }
 
-        Operand.Kind kindBeforeLoad = x.kind;
-
         switch (x.kind) {
             case Fld -> put(OpCode.dup);
             case Elem -> put(OpCode.dup2);
         }
 
+        loadWithoutSwitchingKind(x);
+    }
+
+    public void loadWithoutSwitchingKind(Operand x) {
+        final var kindBeforeLoad = x.kind;
+
         load(x);
 
-        // Do not switch kind to Stack after loading x.
-        // We still need its type later on during the assign().
         x.kind = kindBeforeLoad;
     }
 
     // --------------------
 
+    public void exponentiation(int exponent) {
+        if (exponent == 0) {
+            put(Code.OpCode.pop);
+            loadConst(1);
+        } else if (exponent != 1) {
+            final var endLabel = new Label(this);
+            final var baseIsTwoLabel = new Label(this);
+
+            // check base == 2
+            put(OpCode.dup);
+            loadConst(2);
+            tJump(CompOp.eq, baseIsTwoLabel);
+
+            // code block for base != 2
+            for (var i = 0; i < exponent - 1; i++) {
+                put(Code.OpCode.dup);
+            }
+
+            for (var i = 0; i < exponent - 1; i++) {
+                put(Code.OpCode.mul);
+            }
+
+            jump(endLabel);
+
+            // code block for base == 2
+            baseIsTwoLabel.here();
+            loadConst(exponent - 1);
+            put(OpCode.shl);
+
+            endLabel.here();
+        }
+    }
+
     public void methodCall(Operand x) {
-        // TODO Exercise 6
+        if (x.obj == tab.ordObj || x.obj == tab.chrObj) {
+            // just type conversions, no need to do anything
+        } else if (x.obj == tab.lenObj) {
+            put(OpCode.arraylength);
+        } else {
+            final var relativeTarget = x.adr - pc;
+
+            put(OpCode.call);
+            put2(relativeTarget);
+        }
     }
 
     /**
      * Unconditional jump.
      */
     public void jump(Label lab) {
-        // TODO Exercise 6
+        put(OpCode.jmp);
+        lab.put();
     }
 
     /**
@@ -403,7 +439,8 @@ public final class Code {
      * jump chain.
      */
     public void tJump(CompOp op, Label to) {
-        // TODO Exercise 6
+        put(CompOp.toOpCode(op));
+        to.put();
     }
 
     /**
@@ -411,9 +448,7 @@ public final class Code {
      * jump chain.
      */
     public void fJump(CompOp op, Label to) {
-        // TODO Exercise 6
+        put(CompOp.toOpCode(CompOp.invert(op)));
+        to.put();
     }
-
-    // =================================================
-    // =================================================
 }

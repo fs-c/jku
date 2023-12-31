@@ -1,14 +1,13 @@
 package ssw.mj.impl;
 
 import ssw.mj.Errors.Message;
+import ssw.mj.codegen.Label;
 import ssw.mj.codegen.Operand;
 import ssw.mj.scanner.Token;
 import ssw.mj.symtab.Obj;
 import ssw.mj.symtab.Struct;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static ssw.mj.Errors.Message.*;
@@ -88,10 +87,12 @@ public final class Parser {
     private static final EnumSet<Token.Kind> recoverMethodDeclSet = EnumSet.of(eof, void_, ident);
     private static final EnumSet<Token.Kind> recoverStatementSet = EnumSet.of(eof, ident, if_, while_, break_, return_, read, print, lbrace, semicolon);
 
+    private String currentMethodName = null;
+
     public Parser(Scanner scanner) {
         this.scanner = scanner;
         tab = new Tab(this);
-        code = new Code(this);
+        code = new Code(this, tab);
         // Pseudo token to avoid crash when 1st symbol has scanner error.
         la = new Token(none, 1, 1);
     }
@@ -335,6 +336,8 @@ public final class Parser {
         final var methodObject = tab.insert(Obj.Kind.Meth, t.val, type);
         methodObject.adr = code.pc;
 
+        currentMethodName = t.val;
+
         // "(" [ FormPars ] ")"
         check(lpar);
         tab.openScope();
@@ -367,7 +370,9 @@ public final class Parser {
         methodObject.nPars = tab.curScope.nVars();
 
         // { VarDecl }
-        runUntilFalse(() -> requireNone(Map.of(() -> includes(firstVarDecl, sym), this::varDecl)));
+        while (includes(firstVarDecl, sym)) {
+            varDecl();
+        }
 
         methodObject.locals = tab.curScope.locals();
         methodObject.adr = code.pc;
@@ -376,19 +381,26 @@ public final class Parser {
             error(TOO_MANY_LOCALS);
         }
 
-        code.methodEnter(methodObject.nPars, tab.curScope.nVars());
+        code.put(Code.OpCode.enter);
+        code.put(methodObject.nPars);
+        code.put(tab.curScope.nVars());
 
         // Block
-        requireOne(Map.of(() -> includes(firstBlock, sym), this::block), () -> error(TOKEN_EXPECTED, firstBlock));
+        requireOne(Map.of(() -> includes(firstBlock, sym), () -> block(null)), () -> error(TOKEN_EXPECTED, firstBlock));
 
-        code.methodExit();
-
-        if (methodObject.type != Tab.noType) {
+        if (methodObject.type == Tab.noType) {
+            // voids don't need to contain a return statement, fake one at the end
+            code.put(Code.OpCode.exit);
+            code.put(Code.OpCode.return_);
+        } else {
+            // non-voids need to return something, runtime error (trap) if they don't
             code.put(Code.OpCode.trap);
             code.put(1);
         }
 
         tab.closeScope();
+
+        currentMethodName = null;
 
         return methodObject;
     }
@@ -416,30 +428,27 @@ public final class Parser {
 
     // Type ident { "," Type ident }.
     private int formPars() {
-        int numPars = 1;
-
         // Type ident
-        if (includes(firstType, sym)) {
-            final var type = type();
-            check(ident);
-            tab.insert(Obj.Kind.Var, t.val, type);
-        } else {
-            error(TOKEN_EXPECTED, firstType);
-        }
-
-        // { "," Type ident }
-        while (sym == comma) {
-            check(comma);
-
-            // Type ident
+        final Runnable parameter = () -> {
             if (includes(firstType, sym)) {
                 final var type = type();
+
                 check(ident);
+
                 tab.insert(Obj.Kind.Var, t.val, type);
             } else {
                 error(TOKEN_EXPECTED, firstType);
             }
+        };
 
+        int numPars = 1;
+
+        parameter.run();
+
+        // { "," Type ident }
+        while (sym == comma) {
+            check(comma);
+            parameter.run();
             numPars++;
         }
 
@@ -447,11 +456,13 @@ public final class Parser {
     }
 
     // "{" { Statement } "}".
-    private void block() {
+    private void block(Label endOfBlock) {
         // "{" { Statement } "}"
         check(lbrace);
         while (true) {
-            runUntilFalse(() -> requireNone(Map.of(() -> includes(firstStatement, sym), this::statement)));
+            while (includes(firstStatement, sym)) {
+                statement(endOfBlock);
+            }
 
             if (sym == rbrace || sym == eof) {
                 break;
@@ -481,9 +492,9 @@ public final class Parser {
     //  | "print" "(" Expr [ "," number ] ")" ";"
     //  | Block
     //  | ";".
-    private void statement() {
+    private void statement(Label breakLabel) {
         // Designator ( Assignop Expr | ActPars | "++" | "--" ) ";"
-        final Runnable assignStatement = () -> {
+        final Runnable designatorStatement = () -> {
             final var x = designator();
 
             switch (sym) {
@@ -499,6 +510,10 @@ public final class Parser {
                     final var compoundOperation = assignop();
                     if (compoundOperation != Code.OpCode.nop) {
                         code.compoundAssignmentPrepare(x);
+
+                        if (x.kind != Operand.Kind.Fld && x.kind != Operand.Kind.Elem) {
+                            code.loadWithoutSwitchingKind(x); // todo: this is stupid
+                        }
                     }
 
                     final var y = expr();
@@ -520,7 +535,16 @@ public final class Parser {
                     }
 
                 }
-                case lpar -> actPars();
+                case lpar -> {
+                    actPars(x.obj);
+
+                    code.methodCall(x);
+
+                    // pop unused return value, only necessary for non-void methods
+                    if (x.type != Tab.noType) {
+                        code.put(Code.OpCode.pop);
+                    }
+                }
                 case pplus, mminus -> {
                     if (x.type != Tab.intType) {
                         error(NO_INT_OPERAND);
@@ -538,30 +562,94 @@ public final class Parser {
         };
 
         // "if" "(" Condition ")" Statement [ "else" Statement ]
-        final Runnable ifStatement = () -> optionalCombination(
-            // "if" "(" Condition ")" Statement
-            () -> check(if_), () -> check(lpar), this::condition, () -> check(rpar), this::statement,
-            // [ "else" Statement ]
-            () -> requireNone(Map.of(() -> sym == else_, () -> optionalCombination(() -> check(else_), this::statement)))
-        );
+        final Runnable ifStatement = () -> {
+            check(if_);
+            check(lpar);
+
+            final var x = condition();
+            code.fJump(x.op, x.fLabel);
+            x.tLabel.here();
+
+            check(rpar);
+
+            statement(breakLabel);
+
+            final var beyondLastStatement = new Label(code);
+
+            if (sym == else_) {
+                code.jump(beyondLastStatement);
+                x.fLabel.here();
+
+                check(else_);
+
+                statement(breakLabel);
+            } else {
+                x.fLabel.here();
+            }
+
+            beyondLastStatement.here();
+        };
 
         // "while" "(" Condition ")" Statement
-        final Runnable whileStatement = () -> optionalCombination(
-            () -> check(while_), () -> check(lpar), this::condition, () -> check(rpar), this::statement
-        );
+        final Runnable whileStatement = () -> {
+            check(while_);
+            check(lpar);
+
+            final var topLabel = new Label(code);
+            topLabel.here();
+
+            final var x = condition();
+            code.fJump(x.op, x.fLabel);
+            x.tLabel.here();
+
+            check(rpar);
+
+            statement(x.fLabel);
+
+            code.jump(topLabel);
+            x.fLabel.here();
+        };
 
         // "break" ";"
-        final Runnable breakStatement = () -> optionalCombination(() -> check(break_), () -> check(semicolon));
+        final Runnable breakStatement = () -> {
+            check(break_);
+
+            if (breakLabel == null) {
+                error(NO_LOOP);
+            } else {
+                code.jump(breakLabel);
+            }
+
+            check(semicolon);
+        };
 
         // "return" [ Expr ] ";"
         final Runnable returnStatement = () -> {
             check(return_);
 
-            if (sym != semicolon) {
+            final var currentMethod = tab.find(currentMethodName);
+
+            if (sym == semicolon) {
+                if (currentMethod.type != Tab.noType) {
+                    error(RETURN_NO_VAL);
+                }
+            } else {
+                final var isVoidMethod = currentMethod.type == Tab.noType;
+                if (isVoidMethod) {
+                    error(RETURN_VOID);
+                }
+
                 final var x = expr();
+
+                if (!isVoidMethod && !x.type.compatibleWith(currentMethod.type)) {
+                    error(NON_MATCHING_RETURN_TYPE);
+                }
 
                 code.load(x);
             }
+
+            code.put(Code.OpCode.exit);
+            code.put(Code.OpCode.return_);
 
             check(semicolon);
         };
@@ -610,14 +698,14 @@ public final class Parser {
         };
 
         requireOne(Map.of(
-            () -> includes(firstDesignator, sym), assignStatement,
+            () -> includes(firstDesignator, sym), designatorStatement,
             () -> sym == if_, ifStatement,
             () -> sym == while_, whileStatement,
             () -> sym == break_, breakStatement,
             () -> sym == return_, returnStatement,
             () -> sym == read, readStatement,
             () -> sym == print, printStatement,
-            () -> sym == lbrace, this::block,
+            () -> sym == lbrace, () -> block(breakLabel),
             () -> sym == semicolon, () -> check(semicolon)
         ), () -> error(INVALID_STAT));
     }
@@ -657,38 +745,98 @@ public final class Parser {
     }
 
     // CondTerm { "||" CondTerm }.
-    private void condition() {
+    private Operand condition() {
         // CondTerm
-        condTerm();
+        final var x = condTerm();
 
         // { "||" CondTerm }
-        runUntilFalse(() -> optionalCombination(() -> sym == or, () -> check(or), this::condTerm));
+        while (sym == or) {
+            code.tJump(x.op, x.tLabel);
+
+            check(or);
+
+            x.fLabel.here();
+
+            final var y = condTerm();
+            x.fLabel = y.fLabel;
+            x.op = y.op;
+        }
+
+        return x;
     }
 
     // CondFact { "&&" CondFact }.
-    private void condTerm() {
+    private Operand condTerm() {
         // CondFact
-        condFact();
+        final var x = condFact();
 
         // { "&&" CondFact }
-        runUntilFalse(() -> optionalCombination(() -> sym == and, () -> check(and), this::condFact));
+        while (sym == and) {
+            code.fJump(x.op, x.fLabel);
+
+            check(and);
+
+            final var y = condFact();
+            x.op = y.op;
+        }
+
+        return x;
     }
 
     // Expr Relop Expr.
-    private void condFact() {
-        combination(this::expr, this::relop, this::expr);
+    private Operand condFact() {
+        final var x = expr();
+        final var condOp = relop();
+        final var y = expr();
+
+        code.loadAndIgnoreNull(x);
+        code.loadAndIgnoreNull(y);
+
+        if (x != null && y != null) {
+            if (!x.type.compatibleWith(y.type)) {
+                error(INCOMP_TYPES);
+            }
+
+            if (x.type.isRefType() && y.type.isRefType() && condOp != Code.CompOp.eq && condOp != Code.CompOp.ne) {
+                error(EQ_CHECK);
+            }
+        }
+
+        return new Operand(condOp, code);
     }
 
     // "==" | "!=" | ">" | ">=" | "<" | "<=".
-    private void relop() {
-        requireOne(Map.of(
-            () -> sym == eql, () -> check(eql),
-            () -> sym == neq, () -> check(neq),
-            () -> sym == gtr, () -> check(gtr),
-            () -> sym == geq, () -> check(geq),
-            () -> sym == lss, () -> check(lss),
-            () -> sym == leq, () -> check(leq)
-        ), () -> error(REL_OP));
+    private Code.CompOp relop() {
+        switch (sym) {
+            case eql -> {
+                check(eql);
+                return Code.CompOp.eq;
+            }
+            case neq -> {
+                check(neq);
+                return Code.CompOp.ne;
+            }
+            case gtr -> {
+                check(gtr);
+                return Code.CompOp.gt;
+            }
+            case geq -> {
+                check(geq);
+                return Code.CompOp.ge;
+            }
+            case lss -> {
+                check(lss);
+                return Code.CompOp.lt;
+            }
+            case leq -> {
+                check(leq);
+                return Code.CompOp.le;
+            }
+            default -> {
+                error(REL_OP);
+                return Code.CompOp.eq;
+            }
+        }
     }
 
     // ident { "." ident | "[" Expr "]" }.
@@ -815,18 +963,7 @@ public final class Parser {
                 check(exp);
                 check(number);
 
-                for (var i = 0; i < t.numVal - 1; i++) {
-                    code.put(Code.OpCode.dup);
-                }
-
-                for (var i = 0; i < t.numVal - 1; i++) {
-                    code.put(Code.OpCode.mul);
-                }
-
-                if (t.numVal == 0) {
-                    code.put(Code.OpCode.pop);
-                    code.loadConst(1);
-                }
+                code.exponentiation(t.numVal);
             } else {
                 final var operation = mulop();
                 final var y = factor();
@@ -877,10 +1014,12 @@ public final class Parser {
                         error(INVALID_CALL);
                     }
 
-                    // todo: fix this once method calls are implemented, this makes symbol table tests happy for now
+                    // todo: i mean this kind of makes sense but what's the point of kind method then
                     x.kind = Operand.Kind.Stack;
 
-                    actPars();
+                    actPars(x.obj);
+
+                    code.methodCall(x);
                 }
             }
             case number -> {
@@ -950,10 +1089,33 @@ public final class Parser {
     }
 
     // "(" [ Expr { "," Expr } ] ")".
-    private void actPars() {
+    private void actPars(Obj method) {
         check(lpar);
-        requireNone(Map.of(() -> includes(firstExpr, sym), this::expr));
-        runUntilFalse(() -> optionalCombination(() -> sym == comma, () -> check(comma), this::expr));
+
+        if (method == null) {
+            error(NO_METH);
+        }
+
+        final var actualParams = new ArrayList<Operand>();
+
+        if (includes(firstExpr, sym)) {
+            final var x = expr();
+            code.loadAndIgnoreNull(x);
+            actualParams.add(x);
+
+            while (sym == comma) {
+                check(comma);
+
+                final var y = expr();
+                code.loadAndIgnoreNull(y);
+                actualParams.add(y);
+            }
+        }
+
+        if (method != null) {
+            validateMethodCall(method, actualParams);
+        }
+
         check(rpar);
     }
 
@@ -962,18 +1124,6 @@ public final class Parser {
      */
     private void runUntilFalse(Supplier<Boolean> fn) {
         while (fn.get()) {}
-    }
-
-    /**
-     * equivalent to [ A B ... ]
-     */
-    private boolean optionalCombination(Supplier<Boolean> initial, Runnable... actions) {
-        final var match = initial.get();
-        if (match) {
-            combination(actions);
-        }
-
-        return match;
     }
 
     /**
@@ -1013,21 +1163,31 @@ public final class Parser {
         return false;
     }
 
-    // ===============================================
-    // TODO Exercise 3: Error recovery methods
-    // TODO Exercise 4: Symbol table handling
-    // TODO Exercise 5-6: Code generation
-    // ===============================================
+    private void validateMethodCall(Obj method, List<Operand> actualParams) {
+        if (actualParams.size() > method.nPars) {
+            error(MORE_ACTUAL_PARAMS);
+        } else if (actualParams.size() < method.nPars) {
+            error(LESS_ACTUAL_PARAMS);
+        } else {
+            final var methodPars = getMethodParameters(method);
+            for (var i = 0; i < actualParams.size(); i++) {
+                final var o1 = actualParams.get(i);
+                final var o2 = methodPars.get(i);
 
-    // TODO Exercise 3: Error distance
+                if (o1 == null || o2 == null) {
+                    continue;
+                }
 
-    // TODO Exercise 2 + Exercise 3: Sets to handle certain first, follow, and recover sets
+                if (!o1.type.assignableTo(o2.type)) {
+                    error(PARAM_TYPE);
+                }
+            }
+        }
+    }
 
-    // ---------------------------------
-    // ------------------------------------
-
-    // TODO Exercise 3: Error recovery methods: recoverDecl, recoverMethodDecl and recoverStat
-
-    // ====================================
-    // ====================================
+    private List<Obj> getMethodParameters(Obj method) {
+        // the first `nPars` locals are parameters (this is terrible)
+        // also, `values` does not guarantee insertion order, so this only works by accident :)
+        return method.locals.values().stream().limit(method.nPars).toList();
+    }
 }
