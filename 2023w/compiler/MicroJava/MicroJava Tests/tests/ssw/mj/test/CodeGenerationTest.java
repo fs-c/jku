@@ -9,7 +9,7 @@ import static ssw.mj.Errors.Message.*;
  * Test cases for the examples from the lab sessions 8 and 9.
  */
 @Timeout(value = Configuration.TIMEOUT)
-public class CodeGenerationTest extends CompilerTestCaseSupport {
+public class CodeGenerationTest extends BaseCompilerTestCase {
 
   /**
    * Symbol table for all examples of this test class.
@@ -780,14 +780,14 @@ public class CodeGenerationTest extends CompilerTestCaseSupport {
 
   @Test
   public void methodCallBase() {
-    init("program Test {" + LF + //
-            " int calc() { return 2; }" + LF + // 3
-            " void main() int i; {" + LF + //
-            " i = calc() ** 4;" + LF + //
-            " print(i);" + LF + //
-            " }" + LF + //
-            "}");
-    addExpectedRun("16");
-    parseAndVerify();
+     init("program Test {" + LF + //
+       " int calc() { return 2; }" + LF + // 3
+       " void main() int i; {" + LF + //
+       " i = calc() ** 4;" + LF + //
+       " print(i);" + LF + //
+       " }" + LF + //
+       "}");
+     addExpectedRun("16");
+     parseAndVerify();
   }
 }

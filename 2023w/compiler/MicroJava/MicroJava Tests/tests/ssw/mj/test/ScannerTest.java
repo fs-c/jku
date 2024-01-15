@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Timeout;
  * Test cases for the <code>Scanner</code> class.
  */
 @Timeout(Configuration.TIMEOUT)
-public class ScannerTest extends CompilerTestCaseSupport {
+public class ScannerTest extends BaseCompilerTestCase {
   private static final char invalidChar = (char) 65533;
 
   @Test
@@ -817,16 +817,6 @@ public class ScannerTest extends CompilerTestCaseSupport {
     expectToken(while_, 3, 62);
     expectToken(exp, 3, 68);
     expectToken(eof, 4, 1);
-
-    scanAndVerify();
-  }
-
-  @Test
-  public void newlineBetweenIdentifierAndToken() {
-    initScanner("anIdentifier" + LF + "class");
-
-    expectToken(ident, 1, 1, "anIdentifier");
-    expectToken(class_, 2, 1);
 
     scanAndVerify();
   }

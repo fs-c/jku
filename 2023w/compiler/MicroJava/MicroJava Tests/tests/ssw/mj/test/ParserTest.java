@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Timeout;
 import ssw.mj.scanner.Token;
 
 @Timeout(Configuration.TIMEOUT)
-public class ParserTest extends CompilerTestCaseSupport {
+public class ParserTest extends BaseCompilerTestCase {
 
   // ---- Working test cases
 

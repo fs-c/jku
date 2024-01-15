@@ -13,7 +13,7 @@ import static ssw.mj.Errors.Message.*;
  * Test cases for the examples from the lab sessions 8 and 9.
  */
 @Timeout(Configuration.TIMEOUT)
-public class SimpleCodeGenerationTest extends CompilerTestCaseSupport {
+public class SimpleCodeGenerationTest extends BaseCompilerTestCase {
 
   /**
    * Symbol table for all examples of this test class.

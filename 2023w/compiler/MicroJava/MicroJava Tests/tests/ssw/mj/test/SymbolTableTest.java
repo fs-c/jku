@@ -11,7 +11,7 @@ import ssw.mj.Errors.Message;
  * Test cases for the <code>Parser</code> class.
  */
 @Timeout(Configuration.TIMEOUT)
-public class SymbolTableTest extends CompilerTestCaseSupport {
+public class SymbolTableTest extends BaseCompilerTestCase {
 
   @Test
   public void shortestProgram() {

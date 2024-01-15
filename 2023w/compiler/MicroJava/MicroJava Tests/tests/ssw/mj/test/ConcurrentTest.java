@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConcurrentTest extends CompilerTestCaseSupport {
+public class ConcurrentTest extends BaseCompilerTestCase {
   private static final int NUM_THREADS = 10;
   private static final int NUM_REPEATS = 50;
 

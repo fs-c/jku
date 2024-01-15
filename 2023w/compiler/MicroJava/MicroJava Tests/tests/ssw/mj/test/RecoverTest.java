@@ -10,7 +10,7 @@ import static ssw.mj.Errors.Message.*;
  * Test cases for the <code>Parser</code> class.
  */
 @Timeout(Configuration.TIMEOUT)
-public class RecoverTest extends CompilerTestCaseSupport {
+public class RecoverTest extends BaseCompilerTestCase {
 
   @Test
   public void wrongGlobalDecl() {
