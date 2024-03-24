@@ -10,6 +10,7 @@
 \usepackage{mathpazo}
 \usepackage{csquotes}
 \usepackage{siunitx}
+\usepackage{tikz}
 \graphicspath{{./fig/}}
 
 \setlength{\hoffset}{-1in} \setlength{\textwidth}{18cm}
@@ -149,16 +150,30 @@
 \end{exercise}
 
 \begin{exercise}{Fourier Transform}
-    TODO: more rigorous
-
-    TODO: diagram!!!
-
-    \begin{alignat*}{2}
-        x(t) = \hat{X} \cos(2 \pi f_0 t)
+    Using Eulers formula to reformulate the cosine in terms of complex exponentials, we get
+    \begin{align*}
+        x(t) &= \hat{X} \cos(2 \pi f_0 t)
             = \hat{X} \frac{e^{j 2 \pi f_0 t} + e^{-j 2 \pi f_0 t}}{2}
-            &= \frac{\hat{X}}{2} e^{j 2 \pi f_0 t} &&+ \frac{\hat{X}}{2} e^{-j 2 \pi f_0 t} \\
-        X(f) &= \frac{\hat{X}}{2} \delta(f - f_0) &&+ \frac{\hat{X}}{2} \delta(f + f_0)
-    \end{alignat*}
+            = \underbrace{\frac{\hat{X}}{2} e^{j 2 \pi f_0 t}}_\text{$x_1(t)$} + \overbrace{\frac{\hat{X}}{2} e^{j 2 \pi (-f_0) t}}^\text{$x_2(t)$}
+    \end{align*}
+    Finally, using the given Fourier transform of a complex exponential (p. 38) and the linearity of FT
+    \begin{align*}
+        X(f) \stackrel{\text{linearity}}{=} X_1(f) + X_2(f) \stackrel{\text{p. 38}}{=} \frac{\hat{X}}{2} \delta(f - f_0) + \frac{\hat{X}}{2} \delta(f + f_0)
+    \end{align*}
+    which is what was to be shown. Figure \ref{fig:ex2} is a diagram of $X(f)$.
+
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \draw[->, very thick] (-3, 0) -- (3, 0) node[below]{$f$};
+            \draw[->, very thick] (0, -.5) -- (0, 2) node[above]{$X(f)$};
+
+            \draw[->] (-1.5, 0) node[below]{$-f_0$} -- (-1.5, 1) node[above]{$\frac{\hat{X}}{2}$};
+            \draw[->] (1.5, 0) node[below]{$f_0$} -- (1.5, 1) node[above]{$\frac{\hat{X}}{2}$};
+        \end{tikzpicture}
+        \caption{Spectrum of $x(t) = \hat{X} \cos(2 \pi f_0 t)$}
+        \label{fig:ex2}
+    \end{figure}
 \end{exercise}
 
 \begin{exercise}{Time Shift and Phase}
@@ -170,12 +185,6 @@
             \phi_i &= -2 \pi f_i \tau
         \end{align*}
         And thus for $\tau = 0.1s$ we have $\phi_1 = -0.2 \pi$ and $\phi_2 = -\frac{1}{15}\pi$.
-
-        % We verify that this corresponds to the \enquote{shift theorem} by first obtaining the spectrum of the sine when phase shifted, as specified in p. 37.
-        % \begin{align*}
-        %     Y'_1(f) = -\frac{j}{2}e^{-j 0.2\pi}\delta(f - f_1) + \frac{j}{2}e^{j 0.2\pi}\delta(f + f_1) \\
-        %     Y'_2(f) = -\frac{j}{2}e^{-j 0.2\pi}\delta(f - f_2) + \frac{j}{2}e^{j 0.2\pi}\delta(f + f_2)
-        % \end{align*}
 
         We verify that this corresponds to the \enquote{shift theorem} by applying it to $Y_i$ and ensuring that the results are as expected.
         \begin{align*}
@@ -222,7 +231,33 @@
 \end{exercise}
 
 \begin{exercise}{Linearity and Time Invariance}
-    TODO
+    \begin{itemize}
+        \item For arbitrary input signals $x_1(t)$ and $x_2(t)$ with corresponding output signals $y_1(t)$ and $y_2(t)$ let $x(t) = \alpha x_1(t) + \beta x_2(t)$ ($\alpha, \beta$ arbitrary). Then we have
+        \begin{align*}
+            y(t) &= (x(t))^2 = (\alpha x_1(t) + \beta x_2(t))^2 = \alpha^2x_1(t)^2 + 2 \alpha \beta x_1(t) x_2(t) + \beta^2 x_2(t)^2 \\
+            &\neq \alpha y_1(t) + \beta y_2(t) = \alpha (x_1(t))^2 + \beta (x_2(t))^2
+        \end{align*}
+        i.e. the system is not linear. 
+        
+        %Sanity check: let $x_1(0) = 1$ and $x_2(0) = 2$, then $y_1(0) = 1$ and $y_2(0) = 4$. But with $x(0) = x_1(0) + x_2(0) = 3$ we have $y(0) = 9 \neq y_1(0) + y_2(0) = 5$.
+
+        Let $x(t)$ be an arbitrary input signal with associated output signal $y(t)$. Let $x'(t)$ be a version of $x(t)$ that is shifted by arbitrary $T$, $x'(t) = x(t - T)$, with output signal $y'(t)$. Then we have
+        \begin{align*}
+            y'(t) = (x'(t))^2 = (x(t - T))^2 = y(t - T)
+        \end{align*}
+        which demonstrates time-invariance.
+
+        \item For signals and variables as above, we have
+        \begin{align*}
+            y(t) &= x(t) \sin(\Omega_0 t) = (x_1(t) + y_1(t)) \sin(\Omega_0 t) = x_1(t)\sin(\Omega_0 t) + y_1(t)\sin(\Omega_0 t) \\
+            &= y_1(t) + y_2(t)
+        \end{align*}
+        which establishes linearity. Further, we have
+        \begin{align*}
+            y'(t) = x'(t) \sin(\Omega_0 t) = x(t - T)\sin(\Omega_0 t) \neq y(t - T) = x(t - T) \sin(\Omega_0 (t - T))
+        \end{align*}
+        i.e. the system is not time-invariant.
+    \end{itemize}
 \end{exercise}
 
 \end{document}
