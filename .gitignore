@@ -1,6 +1,7 @@
 *.zip
 *.so
 *.obj
+*.asv
 
 .idea/
 .metadata
