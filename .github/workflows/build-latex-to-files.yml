@@ -20,7 +20,7 @@ jobs:
         id: directories-to-globs
         run: |
           globs=$(cat directories.txt | bash ./.github/scripts/convert-directories-to-globs.sh)
-          echo "GLOBS=$(printf -v var "%s;" "${globs[@]}")" >> $GIHUB_OUTPUT
+          echo "GLOBS=$(printf -v var "%s;" "${globs[@]}")" >> "$GIHUB_OUTPUT"
 
       - name: Build LaTeX files
         if: ${{ steps.directories-to-globs.outputs.GLOBS }} != ''
