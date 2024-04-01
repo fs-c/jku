@@ -24,6 +24,7 @@ jobs:
           echo "GLOBS=${globs}" >> $GITHUB_OUTPUT
 
       - name: Build LaTeX files
+        if: ${{ steps.directories-to-globs.outputs.GLOBS }} != ''
         uses: xu-cheng/latex-action@v3
         with:
           root_file: ${{ steps.directories-to-globs.outputs.GLOBS }}
