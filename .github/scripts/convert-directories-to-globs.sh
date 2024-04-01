@@ -1,4 +1,6 @@
-directories=$1
+declare -a directories
+read -a directories
+
 globs=()
 
 for directory in $directories; do
