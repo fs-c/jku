@@ -13,13 +13,13 @@ jobs:
 
       - name: Get directories to build
         run: |
-          ./.github/scripts/get-directories-to-build.sh > directories.txt
+          bash ./.github/scripts/get-directories-to-build.sh > directories.txt
           cat directories.txt
 
       - name: Convert directories to globs
         id: directories-to-globs
         run: |
-          globs=$(cat directories.txt | ./.github/scripts/convert-directories-to-globs.sh)
+          globs=$(cat directories.txt | bash ./.github/scripts/convert-directories-to-globs.sh)
           echo "GLOBS=$(printf -v var "%s;" "${globs[@]}"" >> $GIHUB_OUTPUT
 
       - name: Build LaTeX files
