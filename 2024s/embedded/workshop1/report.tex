@@ -87,19 +87,20 @@ time, acc x, acc y, acc z, gyr x, gyr y, gyr z, mag x, mag y, mag z
 if abs(acc_x) > 0.5 or abs(acc_y) > 0.5 or abs(acc_z) > 1.5:
     show = not show
         \end{verbatim}
-  \pagebreak
-       \item
-       \begin{verbatim}
-        if abs(acc_x)<0.9 :
-           if acc_y>0 and acc_z>0 or acc_y<0 and acc_z<0 :
-             sense.set_rotation(90)
-           if acc_y>0 and acc_z<0 or acc_y<0 and acc_z>0 :
-             sense.set_rotation(270)
-        else:
-           if acc_x>0:
-             sense.set_rotation(180)
-           else:
-             sense.set_rotation(0)
+
+        \pagebreak
+        \item
+        \begin{verbatim}
+if abs(acc_x)<0.9 :
+    if acc_y>0 and acc_z>0 or acc_y<0 and acc_z<0 :
+        sense.set_rotation(90)
+    if acc_y>0 and acc_z<0 or acc_y<0 and acc_z>0 :
+        sense.set_rotation(270)
+else:
+    if acc_x>0:
+        sense.set_rotation(180)
+    else:
+        sense.set_rotation(0)
         \end{verbatim}
 
     \end{enumerate}
@@ -114,9 +115,9 @@ if abs(acc_x) > 0.5 or abs(acc_y) > 0.5 or abs(acc_z) > 1.5:
 \end{enumerate}
 
     \begin{figure}
-            \centering
-            \includegraphics[width=0.7\textwidth]{scripts/environment1.png}
-            \caption{Environment sensing}
-            \label{fig:environment1}
-        \end{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{scripts/environment1.png}
+        \caption{Environment sensing}
+        \label{fig:environment1}
+    \end{figure}
 \end{document}
