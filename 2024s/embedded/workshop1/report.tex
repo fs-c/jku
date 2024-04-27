@@ -67,7 +67,7 @@ time, acc x, acc y, acc z, gyr x, gyr y, gyr z, mag x, mag y, mag z
             \item taking new values as points of evidence, not fact, and slowly adjusting current values if the points of evidence agree (\enquote{Bayesian-like} smoothing, perhaps with some interpolation between points of evidence)
         \end{itemize}
     \end{enumerate}
-
+  
     \item \textbf{Applications of Motion Sensing}
     \begin{enumerate}
         \item If the z value of the accelerometer is below some threshold (to be determined experimentally) then we consider the sensor to be falling.
@@ -75,7 +75,7 @@ time, acc x, acc y, acc z, gyr x, gyr y, gyr z, mag x, mag y, mag z
         Such a check would have to be added to the main loop.
 
         \item The shake is clearly identifiable in Figure \ref{fig:shake1}.
-        \begin{figure}
+     \begin{figure}
             \centering
             \includegraphics[width=0.7\textwidth]{scripts/shake1.png}
             \caption{Shake detection}
@@ -87,20 +87,36 @@ time, acc x, acc y, acc z, gyr x, gyr y, gyr z, mag x, mag y, mag z
 if abs(acc_x) > 0.5 or abs(acc_y) > 0.5 or abs(acc_z) > 1.5:
     show = not show
         \end{verbatim}
+  \pagebreak
+       \item
+       \begin{verbatim}
+        if abs(acc_x)<0.9 :
+           if acc_y>0 and acc_z>0 or acc_y<0 and acc_z<0 :
+             sense.set_rotation(90)
+           if acc_y>0 and acc_z<0 or acc_y<0 and acc_z>0 :
+             sense.set_rotation(270)
+        else:
+           if acc_x>0:
+             sense.set_rotation(180)
+           else:
+             sense.set_rotation(0)
+        \end{verbatim}
+
     \end{enumerate}
 
     \item \textbf{Environment Sensing}
     \begin{enumerate}
         \item See Figure \ref{fig:environment1}. We attempted to affect the readings by covering the sensors with cloth (no noticeable effect) and blowing on them (temporarily spiking humidity and pressure readings, no noticeable temperature change).
-        \begin{figure}
+    
+ 
+        \item The temperature readings are not accurate, measurements were taken at room temperature. We assume that this is due to the heat that is emitted by the raspi itself, which felt warm to the touch.
+    \end{enumerate}
+\end{enumerate}
+
+    \begin{figure}
             \centering
             \includegraphics[width=0.7\textwidth]{scripts/environment1.png}
             \caption{Environment sensing}
             \label{fig:environment1}
         \end{figure}
-
-        \item The temperature readings are not accurate, measurements were taken at room temperature. We assume that this is due to the heat that is emitted by the raspi itself, which felt warm to the touch.
-    \end{enumerate}
-\end{enumerate}
-
 \end{document}
