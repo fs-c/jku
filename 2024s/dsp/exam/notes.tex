@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{multicol}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label={\alph*)}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+% Change page/text dimensions, the package defaults work fine
+\usepackage{geometry}
+
+\usepackage{parskip}
+
+% Adjust header and footer
+\usepackage{fancyhdr}
+
+\newcommand{\Deltaop}{\, \Delta\, }
+\newcommand{\xor}{\, \oplus\, }
+\newcommand{\id}{\text{id}}
+\newcommand{\proj}{\text{proj}}
+
+\begin{document}
+
+\begin{multicols}{2}
+
+    \section*{Sampling}
+
+    \paragraph{Sampling Theorem} $f_s > 2f_{max}$. A signal is unambiguously represented by its samples if the sampling frequency is larger than twice the maximum frequency of the signal.
+
+    The spectra repeat at multiples of the sampling frequency. If the sampling frequency is too low, the spectra overlap and aliasing occurs.
+
+    \paragraph{Anti-Aliasing Filter} is useful if signal is not sufficiently band-limited (would violate sampling theorem). It is a low-pass filter that removes high-frequency components from the signal.
+
+    A sharp cut-off filter is not ideal, as it would introduce ringing artifacts.
+
+    \paragraph{Reconstruction Filter} Analogous to anti-aliasing filter, but used when converting sampled signal back to analog signal.
+
+    \paragraph{Normalized Angular Frequency} $\Omega = 2\pi \frac{f_0}{f_s}$, in this case the signal is $2\pi$-periodic, the baseband $-\frac{f_s}{2} < f < \frac{f_s}{2}$ corresponds to $-\pi < \Omega < \pi$.
+
+    \section*{Signal Properties}
+
+    \paragraph{Even/Odd} $x(t)$ is even if $x(t) = x(-t)$ (symmetric around vertical), odd if $x(t) = -x(-t)$ (symmetric around origin).
+
+    \paragraph{Periodic} $x(t)$ is periodic with period $T$ if $x(t) = x(t + T)$ for all $t$. (The smallest such $T$ is the fundamental period $T_0$.)
+
+    \paragraph{Energy} $W = \int_{-\infty}^{\infty} |x(t)|^2 dt$. If $W$ is finite the signal is called analog-time energy signal.
+
+    \paragraph{Power} $P = \lim_{T \to \infty} \frac{1}{T} \int_{-T/2}^{T/2} |x(t)|^2 dt$. If $P$ is finite the signal is called analog-time power signal. \textbf{Parseval's Theorem} states that the power of a periodic signal equals the sum of the powers of its harmonic components (in the Fourier Series).
+
+    \section*{Fourier Series}
+
+    \begin{align*}
+        x(t) = \frac{a_0}{2} \sum_{k = 1}^{\infty} \left[ a_k \cos(2\pi k f_0 t) + b_k \sin(2\pi k f_0 t) \right]
+    \end{align*}
+
+    \section*{Discrete LTI Systems}
+
+    \paragraph{Linearity} $\alpha T(x_1[n]) = T(\alpha x_1[n])$ and $T(x_1[n] + x_2[n]) = T(x_1[n]) + T(x_2[n])$
+
+    \paragraph{Time-Invariance} $T(x[n - n_0]) = y[n - n_0]$
+
+    \paragraph{Input-Output Behavior} A unit inpulse $\delta[n]$ causes the impulse response $h[n]$ at the output. In general we have
+    \begin{align*}
+        y[n] = x[n] \star h[n] = \sum_{i = -\infty}^{\infty} x[i] h[n - i]
+    \end{align*}
+    which is a discrete convolution, and
+    \begin{align*}
+        Y(f) = X(f) \star H(f) = \int_{-\infty}^{\infty} X(\tau) H(f - \tau) d\tau
+    \end{align*}
+    which is a continuous convolution.
+
+    In particular $x[n] \star \delta[n - n_0] = x[n - n_0]$.
+
+    \paragraph{Causality} A system is causal if $h[n] = 0$ for $n < 0$. (In other words, output only depends on past and present input.)
+
+    \paragraph{Stability} A system is stable if $h[n]$ is bounded.
+
+    \paragraph{FIR/IIR} FIR systems have an impulse response of finite length, IIR systems do not.
+
+    \paragraph{Frequency Response} See DTFT, with $x = h$.
+
+    \section*{DTFT}
+
+    Results in the spectrum of a discrete-time signal, it is $2\pi$-periodic and continuous.
+    \begin{align*}
+        X(e^{j\Omega}) = \sum_{n = -\infty}^{\infty} x[n] e^{-j\Omega n}
+    \end{align*}
+
+    \paragraph{Resolution} is the distance between frequency points, $\Delta f = \frac{f_s}{N}$. Can be improved by zero-padding.
+
+    \paragraph{z-Transform} $X(z) = \sum_{n = -\infty}^{\infty} x[n] z^{-n}$
+
+    \paragraph{Leakage} the signal length is finite, this can be viewed as a convolution with a rectangular window. As a result, parts of the spectral energy are distributed over a wide frequency range. Reduced by windowing, eg with Hamming, Hanning, Blackman window.
+
+    \section*{Digital Filters}
+
+    \paragraph{Convolution} is the mathematical basis (since they are just LTI systems).
+
+    \paragraph{Symmetric FIR Filters} have a (mirror or point) symmetric impulse response. Benefits: linear phase response, constant group delay. Disadvantages: high order, high computational complexity compared to IIR. Example: linear-phase low-pass filter.
+
+    \paragraph{Window Method} Set the desired frequencies of an ideal rectangular filter and get the corresponding filter impulse response (infinitely long, not realizable). Window the impulse response and delay it (causality) to get a realizable filter.
+\end{multicols}
+
+\end{document}

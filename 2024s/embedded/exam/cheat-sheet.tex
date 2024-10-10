@@ -1,0 +1,106 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Convenience improvements
+\usepackage{csquotes}
+\usepackage[inline]{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tabularx}
+
+\usepackage{multicol}
+
+% Proper tables and centering for overfull ones
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
+\usepackage[top=1cm, bottom=1cm, left=1cm, right=1cm, ]{geometry}
+
+\usepackage{parskip}
+
+% Drawings  
+\usepackage{tikz}
+
+% Units
+\usepackage{siunitx}
+\sisetup{locale=DE,round-mode=figures,round-precision=4,round-pad=false}
+
+\begin{document}
+\begin{multicols}{2}
+
+    \section{Identification}
+
+    \paragraph{Barcodes} usually object class (EAN, UPC) or object instance (EPC, basis RFID, successor).
+
+    \paragraph{RFID} application to RFID reader to(data, clock, energy) RFID tag (transponder). transmission reader/tag contactless (inductor, microwave-antenna). EEPROM (common, high-energy writes)/SRAM (fast, needs constant energy). state machine vs microprocessor. operating freq (LF-30-300kHz, HF-3-30MHz, UHF) defines range.
+
+    \paragraph{NFC} passive (initiator provides carrier field, target answers by modulating), active (initiator and target commite by alternately generating fields, full duplex), 13.56MHz, 4cm, 424kbit/s.
+
+    \section{Authentication}
+
+    Verify the identity: posession (key, card), knowledge (secret: password, non-secret: user id), biometric (physiological: fingerprint, iris, face, retina, dna, veins, behavioral: walking, patterns).
+
+    Authorization: access control, permission, rights, privileges.
+
+    Authentication: validating [and figuring out] the claimed identity. (1:1, actual is compared against claimed identity, 1:n, identity is found out)
+
+    \paragraph{Biometric} Identification criteria: universality, uniqueness, permanence, collectability, performance, acceptability, circumvention.
+
+    FRR (False Rejection Rate, user who should be granted access is not), FAR (False Acceptance Rate, inverse), EER (Equal Error Rate)
+
+    Fingerprints: minutia based (maps points where ridges start/stop/branch), image/pattern based (aligns and overlays images)
+
+    Facial: geometry of the face, or relative distances between features, can use standard video camera, no physical contact, affected by lightning/glasses/expression/age
+
+    Ears: very effective, geometry of the ear
+
+    Iris: texture of colored part of the eye, very stable, affected by diseases, not retinal scanning (measures blood vessel patterns at back of eye, considered intrusive, takes 10-15s)
+
+    Hand geometry: US nuclear power, DoD, timekeeping, easy, fast
+
+    \section{Sensors}
+
+    Seonsors collect data from environment, actuators control machines (may influence environment).
+
+    Physical sensors measure physical quantities (size, weight, accel, field strength, temp, brightness) through induction, hall effect (gen of voltage through mag field), light-electric effects, piezoelectric effect (charge accumulated by mechanical stress)
+
+    Position/Location/Orientation sensors (GPS, optical, magnetic, ultraonic)
+
+    \paragraph{Light} photoresistors (resistance change i.r.t. light, affected by temp), photodiodes, phototransistors (potentially certain wavelength band)
+
+    \paragraph{Temperature} contact methods (slow, but can predict from r.o.c., thermistors), non-contact methods (infrared optical, fast). NTC thermistors (material res dec with temp, metal-oxide), PTC thermistors (inverse, basically all metals), both nonlinear.
+
+    \paragraph{Acoustic} pressure sensors (mic). resistive mic (not in use), condenser mic (parralel-plate capacitor, distance between plates changes with pressure, is converted to V), piezoelectric mic (piezoel. crystals, very high freq, ultrasonic), dynamic mic (sound moves diaphragm, loudspeaker in reverse)
+
+    \paragraph{Acceleration} resisitive, capacitive, fiber optic, servo/force balance, vibrating quartz, piezoelectric (acceleration = force on some mass in the sensor, piezoelectric material converts this force to voltage)
+
+    measured accel is combiation of gravity + actual movement, not easy to filter out gravity (one way is to use bandpass filter)
+
+    \paragraph{Angle} gyroscope, fast spinning wheel inside two gimbals, keeps axis stable due to inertia. when combined with accelerometer: inertial measurement unit (IMO, 6 degree of freedom, XYZ, roll pitch yaw)
+
+    \paragraph{Magnetometer} compass, measures magnetic field, can be used to determine orientation, can be affected by other magnetic fields (e.g. from motors). scalar m (strength), vector m (direction)
+
+    \paragraph{Localization} two methods: tracking (sensor network tracks all positions) and positioning (moving object determines its own position)
+
+    \paragraph{Radiolocation} usually for indoor positioning. received signal strength (no additional infra, most receivers can already estimate incoming signal strength), time of flight ($t_d = ((t_3 - t_0) - (t_2 = t_1)) / 2$, $d = ct_d$), time of arrival is only one packet with send time, receiver can calculate distance (synchronized clocks!)
+
+    With ToA: Lateration is calc of current position of A with at least 2 other points B and C (2 equations). Adding third point (3 equations) allows elimination of unknown $t_a$.
+
+    TDoA: constructs hyperbola with foci at receivers, intersection of hyperbolas gives position.
+
+    BoundingBox method is similar to trilateration, using squares instead of circles. Less precision, reduced processing power (no floatingp math).
+
+    Angle of Arrival, two techs: directional antenna is sweeping (rotating), receiver-array (no moving parts, more error, time diff in receiving signal at each single receiver)
+
+    WiFi Fingerprinting: fingerprint is set of all APs in range with respective signal strength, generate fp for all locations of interest (grid?), compare current fp with stored fps
+
+    Bluetooth 5.1: Angle of Arrival, low cost high precision.
+
+    \section{Actuators}
+
+    Enable a microproc to affect phys environment.
+
+\end{multicols}
+\end{document}
