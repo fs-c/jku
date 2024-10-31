@@ -39,3 +39,5 @@ testFSTree
 
 out
 .project
+
+__pycache__
