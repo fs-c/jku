@@ -1,0 +1,4 @@
+f(0) -> h1 ErrorY g2 g3 g4 g6 f1 f4
+f(7) -> h1 h2 g1 g6 f1 f4
+f(16) -> h1 ErrorX g5 g6 ErrorX f2 f4
+f(-12) -> h1 ErrorZ g6 f3 f4 
