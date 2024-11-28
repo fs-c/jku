@@ -1,0 +1,3 @@
+This is a UTF-8 encoded file.
+It includes emojis 😊 and non-Latin characters like 你好 and Добрый день.
+These characters are not compatible with CP1252.

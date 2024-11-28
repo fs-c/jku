@@ -1,0 +1,3 @@
+This is a CP1252 encoded file.
+It includes some special characters: é, ç, ñ, ü, ß.
+These are all readable in CP1252.
