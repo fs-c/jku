@@ -8,3 +8,6 @@ def permute(s: str) -> set[str]:
         for permutation_without_c in permute(string_without_c):
             result.add(c + permutation_without_c)
     return result
+
+if __name__=='__main__':
+    print(permute('abc'))
