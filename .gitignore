@@ -41,3 +41,6 @@ out
 .project
 
 __pycache__
+
+.zig-cache
+zig-out
