@@ -1,131 +1,175 @@
 const std = @import("std");
+const Formula = @import("model.zig").Formula;
+const Clause = @import("model.zig").Clause;
 
-fn Clause(comptime N: usize) type {
-    return struct {
-        const Self = @This();
-
-        literals: [N]i32,
-
-
-    };
-}
-
-std.EnumMap;
-
-pub fn recursiveSolve(allocator: std.mem.Allocator, clauses: *std.ArrayList(std.ArrayList(i32)), assignment: *std.ArrayList(i32)) bool {
-    while (getFirstUnitClause(clauses)) |literal| {
-        // todo: other solutions also modify assignment here?
-        propagateBinaryConstraint(clauses, literal);
+pub fn recursiveSolve(allocator: std.mem.Allocator, formula: *Formula, assignment: *std.ArrayList(i32)) bool {
+    while (getFirstUnitClauseLiteral(formula)) |literal| {
+        propagateBinaryConstraint(formula, literal);
+        if (literal > 0) {
+            assignment.append(literal) catch unreachable;
+        }
     }
 
-    if (clauses.items.len == 0) {
+    if (formula.isEmpty()) {
         return true;
     }
 
-    for (clauses.items) |clause| {
-        std.debug.print("{any} ", .{clause.items});
-        if (clause.items.len == 0) {
+    for (formula.clauses.items) |clause| {
+        if (clause.isEmpty()) {
             return false;
         }
     }
 
-    // shouldn't be possible to not have a literal here, given the above checks
-    const literal = getFirstLiteral(clauses) orelse {
-        std.debug.print("{any} {d}\n", .{ clauses.items, clauses.items.len });
-        unreachable;
-    };
+    const literal = getFirstLiteral(formula).?;
 
-    var positiveClause = std.ArrayList(i32).init(allocator);
-    errdefer positiveClause.deinit();
-    positiveClause.append(literal) catch unreachable;
+    var clause = Clause(Formula.LiteralType).initFromLiterals(allocator, &[_]Formula.LiteralType{});
+    errdefer clause.deinit();
 
-    clauses.append(positiveClause) catch unreachable;
-    assignment.append(literal) catch unreachable;
-    if (recursiveSolve(allocator, clauses, assignment)) {
-        return true;
+    {
+        clause.add(literal);
+        formula.clauses.append(clause) catch unreachable;
+
+        if (recursiveSolve(allocator, formula, assignment)) {
+            return true;
+        } else {
+            _ = clause.remove(literal);
+            _ = formula.clauses.pop();
+        }
     }
 
-    var negativeClause = std.ArrayList(i32).init(allocator);
-    errdefer negativeClause.deinit();
-    negativeClause.append(-literal) catch unreachable;
+    {
+        clause.add(-literal);
+        formula.clauses.append(clause) catch unreachable;
 
-    _ = clauses.pop();
-    _ = assignment.pop();
-
-    clauses.append(negativeClause) catch unreachable;
-    assignment.append(-literal) catch unreachable;
-    if (recursiveSolve(allocator, clauses, assignment)) {
-        return true;
+        if (recursiveSolve(allocator, formula, assignment)) {
+            return true;
+        } else {
+            _ = clause.remove(-literal);
+            _ = formula.clauses.pop();
+        }
     }
-
-    _ = clauses.pop();
-    _ = assignment.pop();
 
     return false;
 }
 
-fn getFirstUnitClause(clauses: *std.ArrayList(std.ArrayList(i32))) ?i32 {
-    for (clauses.items) |clause| {
-        if (clause.items.len == 1) {
-            return clause.items[0];
+test recursiveSolve {
+    {
+        var assignment = std.ArrayList(i32).init(std.testing.allocator);
+        defer assignment.deinit();
+
+        var formula = Formula.initFromClauseSlices(std.testing.allocator, &[_][]const Formula.LiteralType{
+            &[_]Formula.LiteralType{ 1, 2, 3, 4, 5 },
+            &[_]Formula.LiteralType{-1},
+            &[_]Formula.LiteralType{-2},
+            &[_]Formula.LiteralType{3},
+        });
+        defer formula.deinit();
+
+        try std.testing.expect(recursiveSolve(std.testing.allocator, &formula, &assignment));
+        try std.testing.expectEqualSlices(i32, &[_]i32{3}, assignment.items);
+    }
+
+    {
+        var assignment = std.ArrayList(i32).init(std.testing.allocator);
+        defer assignment.deinit();
+
+        var formula = Formula.initFromClauseSlices(std.testing.allocator, &[_][]const Formula.LiteralType{
+            &[_]Formula.LiteralType{ -1, -2 },
+            &[_]Formula.LiteralType{ -1, 2 },
+            &[_]Formula.LiteralType{ 1, -2 },
+            &[_]Formula.LiteralType{ 1, 2 },
+        });
+        defer formula.deinit();
+
+        try std.testing.expect(!recursiveSolve(std.testing.allocator, &formula, &assignment));
+    }
+}
+/// returns the literal which makes up the first unit clause in the formula
+fn getFirstUnitClauseLiteral(formula: *Formula) ?Formula.LiteralType {
+    for (formula.clauses.items) |clause| {
+        if (clause.literals.count() == 1) {
+            var it = clause.literals.keyIterator();
+            return it.next().?.*;
         }
     }
     return null;
 }
 
-fn getFirstLiteral(clauses: *std.ArrayList(std.ArrayList(i32))) ?i32 {
-    for (clauses.items) |clause| {
-        for (clause.items) |lit| {
-            return lit;
+test getFirstUnitClauseLiteral {
+    var formula_with_unit_clause = Formula.initFromClauseSlices(std.testing.allocator, &[_][]const Formula.LiteralType{
+        &[_]Formula.LiteralType{ 1, -2, 3, 4 },
+        &[_]Formula.LiteralType{2},
+        &[_]Formula.LiteralType{ -1, -2, -3 },
+    });
+    defer formula_with_unit_clause.deinit();
+
+    const literal = getFirstUnitClauseLiteral(&formula_with_unit_clause);
+    try std.testing.expectEqual(2, literal);
+
+    var formula_without_unit_clause = Formula.initFromClauseSlices(std.testing.allocator, &[_][]const Formula.LiteralType{
+        &[_]Formula.LiteralType{ 1, -2, 3, 4 },
+        &[_]Formula.LiteralType{ -1, -2, -3 },
+    });
+    defer formula_without_unit_clause.deinit();
+
+    try std.testing.expect(getFirstUnitClauseLiteral(&formula_without_unit_clause) == null);
+}
+
+fn getFirstLiteral(formula: *Formula) ?Formula.LiteralType {
+    for (formula.clauses.items) |clause| {
+        if (!clause.isEmpty()) {
+            var it = clause.literals.keyIterator();
+            return it.next().?.*;
         }
     }
     return null;
+}
+
+test getFirstLiteral {
+    var formula = Formula.initFromClauseSlices(std.testing.allocator, &[_][]const Formula.LiteralType{
+        &[_]Formula.LiteralType{ 1, -2, 3, 4 },
+        &[_]Formula.LiteralType{2},
+        &[_]Formula.LiteralType{ -1, -2, -3 },
+    });
+    defer formula.deinit();
+
+    try std.testing.expect(getFirstLiteral(&formula) != null);
+
+    var empty_formula = Formula.initFromClauseSlices(std.testing.allocator, &[_][]const Formula.LiteralType{});
+    defer empty_formula.deinit();
+
+    try std.testing.expect(getFirstLiteral(&empty_formula) == null);
 }
 
 /// remove all clauses that contain the literal and remove all occurences of !literal
-fn propagateBinaryConstraint(clauses: *std.ArrayList(std.ArrayList(i32)), literal: i32) void {
+fn propagateBinaryConstraint(formula: *Formula, literal: Formula.LiteralType) void {
     // iterate backwards to avoid issues with index shifting, because we remove during iteration
-    var i: usize = clauses.items.len;
+    var i: usize = formula.clauses.items.len;
     while (i > 0) {
         i -= 1;
-        var clause = &clauses.items[i];
+        var clause = &formula.clauses.items[i];
 
-        std.debug.print("considering clause: {any} ({d})\n", .{ clause.items, literal });
-
-        if (std.mem.indexOfScalar(i32, clause.items, literal) != null) {
-            _ = clauses.swapRemove(i);
-            std.debug.print("removed clause\n", .{});
-        } else if (std.mem.indexOfScalar(i32, clause.items, -literal)) |indexOfNegation| {
-            _ = clause.swapRemove(indexOfNegation);
-            std.debug.print("removed negation: {any}\n", .{clause.items});
+        if (clause.contains(literal)) {
+            _ = formula.swapRemove(i);
+        } else {
+            _ = clause.remove(-literal);
         }
     }
 }
 
-test "propagateBinaryConstraint" {
-    const allocator = std.testing.allocator;
+test propagateBinaryConstraint {
+    var formula = Formula.initFromClauseSlices(std.testing.allocator, &[_][]const Formula.LiteralType{
+        &[_]Formula.LiteralType{ 1, 2, 3 },
+        &[_]Formula.LiteralType{ -1, 2, 3, 4 },
+        &[_]Formula.LiteralType{ 4, -5, -6 },
+        &[_]Formula.LiteralType{1},
+    });
+    defer formula.deinit();
 
-    var clauses = std.ArrayList(std.ArrayList(i32)).init(allocator);
-    defer clauses.deinit();
+    propagateBinaryConstraint(&formula, 1);
 
-    var clause1 = std.ArrayList(i32).init(allocator);
-    defer clause1.deinit();
-    try clause1.appendSlice(&[_]i32{ 1, 2, 3 });
-    try clauses.append(clause1);
-
-    var clause2 = std.ArrayList(i32).init(allocator);
-    defer clause2.deinit();
-    try clause2.appendSlice(&[_]i32{ -1, 2, 3 });
-    try clauses.append(clause2);
-
-    var clause3 = std.ArrayList(i32).init(allocator);
-    defer clause3.deinit();
-    try clause3.appendSlice(&[_]i32{ 4, -5, -6 });
-    try clauses.append(clause3);
-
-    propagateBinaryConstraint(&clauses, 1);
-
-    try std.testing.expectEqual(clauses.items.len, 2);
-    try std.testing.expectEqualSlices(i32, &[_]i32{ 3, 2 }, clauses.items[1].items);
-    try std.testing.expectEqualSlices(i32, &[_]i32{ 4, -5, -6 }, clauses.items[0].items);
+    try std.testing.expect(formula.eqToSlice(&[_][]const Formula.LiteralType{
+        &[_]Formula.LiteralType{ 2, 3, 4 },
+        &[_]Formula.LiteralType{ 4, -5, -6 },
+    }));
 }
