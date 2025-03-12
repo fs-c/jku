@@ -1,0 +1,3 @@
+Daniel Hofer SS 2023:
+sf_chmod: Works only for files, not for dirs
+sf_chown: Same as above
