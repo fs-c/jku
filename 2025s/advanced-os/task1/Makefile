@@ -3,7 +3,7 @@ TARGET_MODULE := macro
 
 #$(TARGET_MODULE)-objs := source_1.o source_2.o … source_n.o
 obj-m += $(TARGET_MODULE).o
-macro-objs := macro_main.o macro_procfs.o macro_sysfs.o
+macro-objs := macro_main.o
 
 MODULE_DIR = "/lib/modules/`uname -r`/build"
 
