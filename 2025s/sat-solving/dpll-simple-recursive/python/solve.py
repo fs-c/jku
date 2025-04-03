@@ -24,7 +24,7 @@ def solve_recursive(formula: list[list[(int, bool)]]) -> bool:
 
     first_variable = formula[0][0][0]
 
-    # this is awful but it is what it is
+    # this is awful but it is what it is (we need to deep copy because we modify the clauses in place in unit_propagation)
     formula_copy = copy.deepcopy(formula)
 
     return solve_recursive(formula_copy + [[(first_variable, True)]]) or solve_recursive(formula_copy + [[(first_variable, False)]])
