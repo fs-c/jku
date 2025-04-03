@@ -1,0 +1,194 @@
+\documentclass[a4paper, 12pt, notitlepage]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[naustrian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{eurosym} % fancy euro symbol
+
+\usepackage[a4paper]{geometry}
+
+\usepackage{longtable}
+\usepackage{booktabs} % to make it look pretty
+
+\usepackage{graphicx}
+
+\usepackage{fancyhdr}
+\fancyhf{} % reset header/footer
+\pagestyle{fancy}
+
+\lhead[\textsc{Seite \thepage}]{\textsc{\nouppercase{\rightmark}}}
+\rhead[\textsc{\nouppercase{\leftmark}}]{\textsc{Seite \thepage}}
+\lfoot[\tiny{\LaTeX-\"Ubung 1, Laurenz Weixlbaumer (k11804751), erstellt: \today}]{}
+\rfoot[]{\tiny{\LaTeX-\"Ubung 1, Laurenz Weixlbaumer (k11804751), erstellt: \today}}
+
+\setlength{\headheight}{15.1pt}
+
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+
+% make the header/footer also "cover" the margin
+\addtolength{\headwidth}{\marginparsep}
+\addtolength{\headwidth}{\marginparwidth}
+
+\begin{document}
+    \title{Erstes \LaTeX-Dokument\thanks{Laurenz Weixlbaumer, k11804751}}
+    \date{\today}
+
+    \maketitle
+
+    \begin{abstract}
+        Cras porttitor cursus urna, eget porttitor metus tristique at. Nunc eget augue semper odio congue pretium a id leo. Fusce volutpat arcu et lacus vehicula mattis. Pellentesque pellentesque maximus erat, ut faucibus risus porttitor eu. Proin elementum at orci ac aliquam. Donec aliquet, tellus nec sodales consectetur, risus purus mollis mauris, vitae fringilla elit nisl sit amet libero. Quisque pretium scelerisque turpis, nec placerat ex pellentesque eget. Quisque consequat nisi mattis accumsan consequat. Nam tempor arcu non ex condimentum malesuada. Quisque quis consequat erat.
+    \end{abstract}
+
+    \chapter{Lorem ipsum dolor sit amet, \euro}
+    \thispagestyle{fancy}
+
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In libero neque, elementum blandit pulvinar ut, scelerisque non tortor. Vivamus fermentum metus non felis luctus, nec consectetur metus gravida. Cras mauris purus, iaculis nec magna et, congue euismod tortor. Nunc vitae est massa. 
+    
+    \begin{itemize}
+        \item Fusce ac viverra ipsum, non mattis diam. Aliquam ut lacus non urna luctus gravida.
+        \item Morbi ornare nibh nec felis pharetra commodo. Aenean sit amet pretium velit, vitae feugiat libero.
+        \item Aliquam gravida sapien sem, et porttitor mi tristique a.
+        \item Integer purus neque, scelerisque a tempor vel, consequat scelerisque velit.
+    \end{itemize}
+    
+    Nulla eu diam id enim pharetra vehicula sit amet eget eros. Nunc leo sapien, aliquet quis justo sit amet, elementum tristique tortor. Nulla molestie bibendum magna. Nam diam nunc, placerat sed elementum eget, lacinia ut neque.
+
+    Sed eros purus, venenatis sit amet velit eu, fringilla sollicitudin diam. Nunc euismod quam eget sem congue tincidunt. Nam metus nisi, volutpat ac hendrerit in, fringilla vitae elit. Sed placerat suscipit dui at pretium. Morbi eros nunc, feugiat eu sollicitudin commodo, gravida ut est. In consequat dictum mattis. Maecenas dapibus eros ac justo scelerisque, tincidunt ornare tellus mollis. Cras eget magna nec ligula fermentum tempus. 
+    
+    \begin{enumerate}
+        \item Fusce ac viverra ipsum, non mattis diam. Aliquam ut lacus non urna luctus gravida.
+        \item Morbi ornare nibh nec felis pharetra commodo. Aenean sit amet pretium velit, vitae feugiat libero.
+        \item Aliquam gravida sapien sem, et porttitor mi tristique a.
+        \item Integer purus neque, scelerisque a tempor vel, consequat scelerisque velit.
+    \end{enumerate}
+
+    Nam malesuada ex sit amet eros imperdiet, in egestas diam pellentesque. Vivamus id sodales mauris, ut gravida nisi. Praesent ac nisl nec risus iaculis varius. Pellentesque at ante nisl. Phasellus vulputate dapibus eros at commodo. Donec cursus gravida diam, quis egestas diam sodales sit amet. 
+
+    \section{Sed eros purus}
+
+    Vestibulum id rhoncus nunc. Integer vitae mauris id erat semper rutrum. Mauris euismod, libero et scelerisque hendrerit, ligula leo facilisis tellus, id blandit metus turpis consequat sapien. Suspendisse eu consequat mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum a velit ac rhoncus. Duis et pellentesque dolor, sit amet egestas lorem. Cras dignissim mi scelerisque leo volutpat sagittis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut feugiat tincidunt mauris. Etiam pharetra enim quam, in pellentesque metus euismod sit amet. Curabitur elementum sollicitudin justo, sit amet ornare urna dictum eget. Donec condimentum sem ac ante volutpat commodo a nec diam.
+
+    Aliquam posuere augue et libero suscipit placerat. Duis finibus finibus velit, eget sagittis lacus auctor quis. Suspendisse porttitor at tellus sed auctor. Sed porttitor leo venenatis laoreet euismod. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Praesent euismod risus lacus, id iaculis nibh fermentum sit amet. Suspendisse potenti. Aenean porttitor convallis erat non tincidunt. Nulla consequat elit a ante fringilla blandit. Phasellus sit amet purus vel urna volutpat aliquet vitae non dolor. In hac habitasse platea dictumst. Nullam et volutpat ante.
+    
+    Aenean et est et urna laoreet tincidunt. Sed pellentesque non mauris eget facilisis. Aenean dignissim porttitor mi, eget malesuada ex eleifend sed. Etiam odio diam, elementum at lorem id, auctor iaculis arcu. In dapibus hendrerit metus ut condimentum. Etiam cursus justo ligula, sed pretium nulla pulvinar sit amet. Pellentesque feugiat augue non cursus elementum. Nullam eget est id dui luctus sollicitudin. Maecenas convallis suscipit tortor eget tempor. In nisi enim, posuere eget dapibus ac, condimentum at odio. Proin sit amet odio mollis, posuere nibh non, finibus nisi. In dictum ullamcorper neque, eget ultrices turpis gravida sed. 
+
+    \section{Vestibulum id rhoncus nunc}
+
+    Nam quis ligula eu arcu eleifend pretium. Nunc felis nunc, facilisis pharetra venenatis ut, ullamcorper non dolor. Praesent ac tellus ornare, pharetra erat a, dapibus nunc. Phasellus pulvinar nec risus vel volutpat. Nam nulla nulla, sodales sit amet neque sit amet, accumsan placerat mauris. Mauris et ex vel sapien laoreet dignissim. Praesent nec purus convallis, ultrices sem fringilla, elementum lacus. Curabitur eu sem mollis, congue ligula non, pulvinar ante. Praesent lacinia bibendum leo, at vehicula lorem efficitur id. Duis consectetur dolor a cursus condimentum. Phasellus pharetra lacus in nisl hendrerit, non commodo odio euismod. Integer nunc ligula, bibendum eu porta at, viverra vitae purus. Nullam nec enim ut orci consectetur consequat. 
+
+    \chapter{Aliquam posuere augue}
+    \thispagestyle{fancy}
+
+    In leo enim, ultrices blandit erat eget, sagittis euismod leo. Pellentesque dictum id felis at faucibus. Etiam egestas eget tortor nec viverra. Phasellus mi risus, aliquet sed venenatis vitae, vulputate eget orci. Duis odio massa, pretium non consequat vel, facilisis eget ipsum. Pellentesque ac lectus sagittis, maximus sapien a, aliquam neque. Morbi egestas at nibh vel porta. Mauris hendrerit tortor eget purus pellentesque dapibus. Praesent sollicitudin purus ante, eu tempus nisl molestie id. Nulla congue, quam a aliquet vestibulum, lectus sem viverra sem, quis faucibus libero risus sed eros.
+
+    Donec a facilisis lorem, eu varius elit. Vivamus congue eros velit, nec posuere turpis pharetra ac. Sed scelerisque gravida ipsum ultrices pellentesque. Aliquam finibus bibendum ligula et faucibus. Aliquam sit amet tincidunt risus, sit amet consectetur ipsum. Vivamus non fringilla nisl. Nullam vitae mauris eu metus laoreet ultrices interdum vitae est. Mauris mi ipsum, blandit in porttitor non, fermentum nec nibh. Integer eu lacus eu urna pellentesque ultrices quis nec nibh. Curabitur lobortis vestibulum libero et malesuada.
+    
+    Pellentesque at neque faucibus dolor luctus malesuada. Pellentesque facilisis nunc id libero ultricies, eu viverra quam molestie. Pellentesque gravida leo augue, non consequat risus cursus at. Proin blandit viverra pharetra. Nam semper lacinia nisl eu pharetra. Nunc sit amet ornare ligula. Cras tempus risus sit amet porta feugiat. Sed commodo sem et enim tempus faucibus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi ut ipsum nec odio molestie finibus. Vivamus feugiat, est sit amet pharetra rhoncus, felis dui bibendum sem, vitae euismod metus diam vel felis. Phasellus tempus lacus diam, nec varius sapien malesuada et.
+    
+    Pellentesque at diam felis. Donec id tempor augue. Duis facilisis faucibus erat id molestie. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque iaculis eleifend cursus. Nulla sit amet egestas massa, quis suscipit augue. Nullam tempus pretium turpis vel volutpat. Aliquam eget pretium eros. Praesent eleifend urna eu urna bibendum, sed suscipit nunc vulputate. Nulla non ipsum vulputate, hendrerit nisl placerat, aliquam ligula. Aliquam aliquet sapien id euismod ornare. Etiam sed suscipit massa.
+    
+    Vivamus ultrices neque magna, sed commodo quam vehicula placerat. Ut imperdiet risus justo, vel consequat ex vehicula a. Vestibulum finibus purus a auctor tincidunt. Sed efficitur molestie lobortis. Sed eget tempus dui. Maecenas ultrices eros quis consequat varius. Integer suscipit libero est, nec auctor lorem rutrum ac. Quisque eu lacus convallis, rutrum diam id, laoreet nunc. Donec vel dolor finibus sapien pretium efficitur. Praesent luctus justo eget leo lobortis feugiat. Vestibulum rhoncus nisl eget fringilla molestie. Mauris porttitor tellus sapien, a vehicula felis mattis vel. Etiam egestas aliquet tincidunt. Vestibulum ac placerat augue. Sed felis augue, viverra non sem id, euismod consectetur sem. 
+
+    Mauris in nibh non libero dignissim tincidunt non eget risus. Cras venenatis, velit vitae blandit dapibus, risus dolor pulvinar justo, nec dignissim dui enim sit amet nisi. Donec pulvinar tempor libero. In tempor dapibus aliquam. Sed mollis lacus nec fermentum elementum. Fusce malesuada orci vel justo efficitur, vitae convallis nunc finibus. Praesent iaculis orci condimentum elementum tempus.
+
+    \chapter{Mehrseitige Tabelle}
+
+    \begin{longtable}{l c l l l}\toprule
+        Anonymized Name & Age & Gender & Date & City \\\midrule\endhead % repeat header at the top
+        \bottomrule\endfoot % repeat footer (just the line) at the bottom
+        0g3zj3e82awt & 99 & Female & 9.11.1981 & Miami \\
+        894okiqgbvs & 68 & Male & 31.5.2023 & New York \\
+        95iu7u1a4ha & 78 & Male & 4.5.1989 & Phoenix \\
+        qebyzzbkj1 & 46 &  & 27.3.1993 & Los Angeles \\
+        dj6ja0kwoq6 & 57 & Male & 26.7.1967 & Los Angeles \\
+        zfo02dz7leo & 34 & Male & 16.3.1965 & Seattle \\
+        vhcz3c9w37 & 45 & Male & 8.5.2000 & San Francisco \\
+        fvi60iuqrrg & 71 & Male & 30.9.2018 & Philadelphia \\
+        c3gxihu54ui & 10 & Female & 13.12.1960 & New York \\
+        n18sv8yimym & 35 & Female & 15.9.2021 & Los Angeles \\
+        3fc91pm4qwb & 93 & Male & 26.11.2013 & San Antonio \\
+        4f2b6d1ufxb & 33 & Female & 9.4.1976 & Los Angeles \\
+        0jxwmhtqgcmp & 53 & Male & 4.2.1963 & Philadelphia \\
+        28a1inj7o29 & 81 &  & 12.5.1968 & San Diego \\
+        nbx7dhig94 & 94 & Male & 22.4.1980 & Los Angeles \\
+        ne8824xeh4 & 10 & Male & 11.11.2003 & San Diego \\
+        9xwitt04ktk & 95 & Female & 17.12.1964 & New York \\
+        dhzp8kn91fe & 11 &  & 1.6.2003 & Washington \\
+        1sfe8w12yo3 & 80 & Female & 28.2.1986 & Miami \\
+        dpjd392b63c & 84 & Male & 14.10.2004 & New York \\
+        90onzs31iii & 35 & Male & 8.1.1997 & Washington \\
+        4ungjt0prp & 98 & Female & 27.6.2023 & New York \\
+        o9ea4dgpfe & 5 & Female & 21.1.1995 & Chicago \\
+        d5ybkkc65y4 & 81 & Female & 7.8.2013 & Seattle \\
+        cmgwkuh4n8f & 42 & Male & 29.1.2004 & San Antonio \\
+        2v4xdyfzyom & 6 &  & 15.11.1964 & Houston \\
+        8yczvttw1 & 30 & Female & 11.11.2024 & New York \\
+        qpkrts476fp & 8 & Male & 27.11.2011 & Houston \\
+        e0vp6ikp7zf & 45 & Male & 23.8.1982 & Houston \\
+        hls2auo8g9f & 82 & Female & 1.8.2014 & Seattle \\
+        uhuh4z2x62s & 83 & Male & 26.4.1976 & Houston \\
+        jnbe0audos & 23 & Female & 22.8.1999 & Miami \\
+        37fo42e1shh & 36 & Male & 1.9.1983 & San Francisco \\
+        54alc2xkiyu & 64 & Male & 4.2.1984 & San Diego \\
+        ybxx0wstld & 70 & Male & 19.4.1983 & Philadelphia \\
+        vx093je3boi & 99 & Female & 2.4.2019 & Philadelphia \\
+        9dpr0rzwtww & 3 & Female & 16.6.1978 & Phoenix \\
+        7xxm5bvue9c & 0 & Female & 22.12.1983 & Philadelphia \\
+        pdw56i0t1aa & 66 & Female & 12.2.2022 & Chicago \\
+        b1u71eqtb6m & 90 & Male & 22.1.1982 & Houston \\
+        ivneyviob5k & 13 & Male & 29.6.2007 & San Antonio \\
+        yzdygfg2lp & 58 & Female & 12.3.2023 & New York \\
+        2vwqo59wyhj & 62 & Female & 12.7.2010 & Houston \\
+        v8fm37v8kwl & 6 & Male & 7.1.1979 & Seattle \\
+        wnnml1iz2gi & 79 & Male & 20.7.1992 & Phoenix \\
+        2o2itua714h & 23 & Male & 3.10.1983 & San Antonio \\
+        os36vx2qprj & 7 &  & 19.2.2017 & Seattle \\
+        fmr32ie8wto & 95 & Male & 17.11.2008 & San Diego \\
+        1uonkkg6zdx & 20 & Female & 14.3.2002 & San Antonio \\
+        5tuve2587ac & 4 & Female & 20.12.2008 & Chicago \\
+        w36szh5fjwq & 10 & Female & 1.9.1982 & Phoenix \\
+        r1x3mmgupbg & 28 & Male & 2.8.1973 & San Antonio \\
+        ggme0t3q7d & 4 & Male & 6.4.1980 & San Diego \\
+        03eaxz7bamld & 95 &  & 8.9.1996 & Seattle \\
+        zil99hymlfm & 10 & Male & 1.3.2000 & Phoenix \\
+        vlmpwbifx9a & 46 & Male & 20.7.1991 & Los Angeles \\
+        5acsjn4l5sd & 57 &  & 19.12.2023 & Houston \\
+        9dgno2qh43i & 81 &  & 16.10.1984 & San Francisco \\
+        4hdyupfq8ee & 99 &  & 13.7.2005 & Philadelphia \\
+        gaq0koekcfl & 10 & Male & 23.5.2002 & Philadelphia \\
+        ei9a523u2qh & 23 & Male & 29.12.1987 & Los Angeles \\
+        l8xupjosgv8 & 35 & Male & 27.1.1987 & Philadelphia \\
+        2in8axca4x8 & 38 & Female & 23.3.1979 & Miami \\
+        m4afb4ekrg & 82 & Female & 11.11.1983 & San Francisco \\
+        je4n1hq6dxe & 63 & Female & 1.12.1961 & San Antonio \\
+        8jn10gqknj & 74 & Female & 8.12.1991 & San Francisco \\
+        w7e6se3eb2 & 31 & Female & 17.4.2016 & San Antonio \\
+        b6wvsgezuu6 & 74 & Male & 5.1.1973 & Chicago \\
+        tdabtqf1d3m & 45 & Female & 5.11.1993 & San Diego \\
+        g79fn5ukgcv & 9 &  & 7.7.1966 & Washington \\
+        7agseljnrg5 & 25 & Female & 28.8.2022 & Los Angeles \\
+        725nh807lz3 & 86 &  & 28.5.2000 & Chicago \\
+        75myb80q3x3 & 29 &  & 7.8.1987 & Houston \\
+        qy0esl84kmp & 68 & Female & 15.8.1966 & San Diego \\
+        cfxwriwz1p6 & 34 &  & 13.6.1983 & New York \\
+    \end{longtable}
+
+    \chapter{Bilder}
+
+    Siehe Abbildungen \ref{fig:bg-dark} und \ref{fig:bg-light}.
+
+    \begin{figure}[tp!]
+        \centering
+        \includegraphics[width=0.5\textwidth]{fig/12-Dark.jpg}
+        \caption{Background Dark}
+        \label{fig:bg-dark}
+    \end{figure}
+
+    \begin{figure}[tp!]
+        \centering
+        \includegraphics[width=0.5\textwidth]{fig/12-Light.jpg}
+        \caption{Background Light}
+        \label{fig:bg-light}
+    \end{figure}
+\end{document}

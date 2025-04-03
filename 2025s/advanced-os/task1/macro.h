@@ -14,6 +14,18 @@ struct macro {
     char replacement[20];
 };
 
+enum timer_work_state {
+    TIMER_WORK_KEYDOWN,
+    TIMER_WORK_KEYUP,
+};
+
+struct timer_work_unit {
+    enum timer_work_state state;
+    int index;
+    struct macro* macro;
+    struct input_handle* handle;
+};
+
 #define ON "On"
 #define OFF "Off"
 

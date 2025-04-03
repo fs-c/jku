@@ -1,0 +1,89 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[naustrian]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage[a4paper, margin=2cm, includeheadfoot]{geometry}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{parskip}
+
+\usepackage{fancyhdr}
+\fancyhf{} % reset header/footer
+\pagestyle{fancy}
+
+\lhead{\leftmark}
+\rhead{Seite \thepage}
+\lfoot{\footnotesize{\LaTeX-\"Ubung 2, erstellt am \today}}
+\rfoot{\footnotesize{Laurenz Weixlbaumer (k11804751)}}
+
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\footrulewidth}{1.5pt}
+
+\begin{document}
+
+\section{Matrixmultiplikation}
+
+\subsection{Berechnung Matrixmultiplikation}
+
+\begin{equation*}
+    \begin{bmatrix}
+        1 & 8 & 5 & -3 \\
+        2 & -1 & 2 & 9 \\
+        4 & -2 & 7 & 2 \\
+        1 & -2 & 7 & -9
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        20 \\
+        6 \\
+        27 \\
+        5
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        188 \\
+        133 \\
+        267 \\
+        152
+    \end{bmatrix}
+\end{equation*}
+
+\subsection{Berechnung der transponierten Matrix}
+
+\begin{equation*}
+    \begin{bmatrix}
+        188 \\ 133 \\ 267 \\ 152
+    \end{bmatrix}^T
+    =
+    \begin{bmatrix}
+        188 & 133 & 267 & 152
+    \end{bmatrix}
+\end{equation*}
+
+\section{Fourierreihen}
+
+Sei $(b_k)_{k \in \mathbb{Z}}$ ein Orthonormalsystem in $V$, sei $f \in V$, und seien $c_k = \langle f, b_k \rangle$, $k \in \mathbb{Z}$, die Fourierkoeffizienten von $f$ bezüglich des Orthogonalsystems $(b_k)_{k \in \mathbb{Z}}$. Dann gilt
+
+\begin{equation}
+    \sum_{k = -\infty}^{\infty} |c_k|^2 \leq \|f\|^2_2 \qquad \text{(Besselsche Ungleichung).}
+\end{equation}
+
+Genau dann konvergiert die Fourierreihe von $f$ im quadratischen Mittel gegen $f$, d. h. es gilt
+
+\begin{equation*}
+    \lim_{n \to \infty} \left\| f - \sum_{k = -n}^{n} c_k b_k \right\| = 0,
+\end{equation*}
+
+wenn
+
+\begin{equation}\label{eq:parseval}
+    \sum_{k = -\infty}^{\infty} |c_k|^2 = \|f\|^2_2 \qquad \text{(Parsevalsche Vollst\"andigkeitsrelation)}
+\end{equation}
+
+gilt. Das Orthonormalsystem $(b_k)_{k \in \mathbb{Z}}$ heißt vollst\"andig, wenn \eqref{eq:parseval} f\"ur jedes $f \in V$ gilt.
+
+\end{document}
