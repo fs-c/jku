@@ -1,6 +1,12 @@
 from typing import List, Set, Dict, Optional, Tuple
 from collections import deque
 
+"""
+https://lara.epfl.ch/w/_media/projects:minisat-anextensiblesatsolver.pdf
+"""
+
+Assignment = Dict[int, Optional[bool]]
+
 class Literal:
     def __init__(self, var: int, value: bool):
         self.var = var
@@ -22,6 +28,9 @@ class Clause:
     def __init__(self, literals: List[Literal]):
         self.literals = literals
 
+    def is_satisfied(self, assignment: Assignment) -> bool:
+        return any(assignment[lit.var] == lit.value for lit in self.literals)
+
     def __repr__(self) -> str:
         return f"{' & '.join([str(lit) for lit in self.literals])}"
 
@@ -30,118 +39,97 @@ class Solver:
         self.num_vars = num_vars
         self.clauses = clauses
 
-        self.assignment: Dict[int, Optional[bool]] = {i: None for i in range(1, num_vars + 1)}
+        # write access to this is only allowed through _assign_literal
+        self.assignment: Assignment = {i: None for i in range(1, num_vars + 1)}
 
+        # keeps track of assignments for backtracking
         self.decision_level = 0
-        self.decision_stack: List[Tuple[Literal, int]] = []
+        self.trail: List[Tuple[Literal, int]] = []
 
-        self.propagation_queue: deque[Literal] = deque()
+        self.unit_literal_queue: deque[Literal] = deque()
 
-        # Initialize watch lists
-        self.watch_lists: Dict[Literal, Set[Clause]] = {lit: set() for lit in self._get_all_literals()}
+        self.all_literals: Set[Literal] = set()
+        for i in range(1, num_vars + 1):
+            self.all_literals.add(Literal(i, True))
+            self.all_literals.add(Literal(i, False))
+
+        # initialize watch lists
+        self.watch_lists: Dict[Literal, Set[Clause]] = {lit: set() for lit in self.all_literals}
         for clause in clauses:
             if len(clause.literals) >= 1:
                 self.watch_lists[clause.literals[0]].add(clause)
             if len(clause.literals) >= 2:
                 self.watch_lists[clause.literals[1]].add(clause)
 
-    def _get_all_literals(self) -> Set[Literal]:
-        literals: Set[Literal] = set()
-        for i in range(1, self.num_vars + 1):
-            literals.add(Literal(i, True))
-            literals.add(Literal(i, False))
-        return literals
+    def _assign_literal(self, lit: Literal) -> bool:
+        # first, perform the assignment
+        self.assignment[lit.var] = lit.value
+        self.trail.append((lit, self.decision_level))
 
-    def _get_unit_literal(self, clause: Clause) -> Optional[Literal]:
-        unassigned = [lit for lit in clause.literals if self.assignment[lit.var] is None]
-        if len(unassigned) == 1:
-            return unassigned[0]
-        return None
+        # then handle the clauses the negation of the literal we just assigned is watching
+        # (the negation because the ones watching the literal itself are now trivially satisfied)
+        # create a copy of the watch list because we might mutate the original while iterating
+        watch_list = list(self.watch_lists[-lit])
+        for clause in watch_list:
+            # if the clause is satisfied (under the new assignment) there's nothing to do
+            if clause.is_satisfied(self.assignment):
+                continue
 
-    def _is_clause_satisfied(self, clause: Clause) -> bool:
-        return any(self.assignment[lit.var] == lit.value for lit in clause.literals)
+            unassigned = [lit for lit in clause.literals if self.assignment[lit.var] is None]
+            if len(unassigned) == 0:
+                # there are no more unassigned literals and the clause is not satisfied; conflict
+                return False
+            elif len(unassigned) == 1:
+                # there is exactly one unassigned literal left; unit clause
+                self.unit_literal_queue.append(unassigned[0])
+            else:
+                # we have more than one unassigned literal left; update the watch list
+                for potential_lit in unassigned:
+                    if not clause in self.watch_lists[potential_lit]:
+                        self.watch_lists[potential_lit].add(clause)
+                        self.watch_lists[-lit].remove(clause)
+                        break
 
-    def _is_clause_conflicting(self, clause: Clause) -> bool:
-        return all(self.assignment[lit.var] == (not lit.value) for lit in clause.literals)
+                raise Exception("invalid state: no unassigned literal is unwatched")
 
-    def _update_watched_literals(self, clause: Clause, old_lit: Literal) -> bool:
-        # Try to find a new watched literal
-        for potential_lit in clause.literals:
-            if potential_lit != old_lit and self.assignment[potential_lit.var] is None:
-                # Update watch lists
-                self.watch_lists[old_lit].remove(clause)
-                self.watch_lists[potential_lit].add(clause)
+        return True
+
+    def _propagate(self) -> bool:
+        while self.unit_literal_queue:
+            # get the next unit clause literal to assign (unless it's already assigned, in which case we skip)
+            unit_lit = self.unit_literal_queue.popleft()
+            if self.assignment[unit_lit.var] == unit_lit.value:
+                continue
+
+            if not self._assign_literal(unit_lit):
                 return True
+
         return False
 
-    def _propagate(self) -> Optional[Clause]:
-        while self.propagation_queue:
-            lit = self.propagation_queue.popleft()
-            # get a copy of the watch list for this literal because we may modify it during iteration
-            watch_list = list(self.watch_lists[lit])
-
-            for clause in watch_list:
-                if self._is_clause_satisfied(clause):
-                    continue
-
-                if self._is_clause_conflicting(clause):
-                    return clause
-
-                unit_lit = self._get_unit_literal(clause)
-                if unit_lit:
-                    self.assignment[unit_lit.var] = unit_lit.value
-                    self.propagation_queue.append(unit_lit)
-                else:
-                    # Try to find a new watched literal
-                    if not self._update_watched_literals(clause, lit):
-                        # If we can't find a new watched literal and the clause is not satisfied,
-                        # it means all other literals are false
-                        return clause
-        return None
-
-    def _make_decision(self) -> Optional[Literal]:
-        for var in range(1, self.num_vars + 1):
-            if self.assignment[var] is None:
-                # Try both true and false assignments
-                # todo: this looks wrong, why make this dependent on the decision level?
-                if self.decision_level % 2 == 0:
-                    return Literal(var, True)
-                else:
-                    return Literal(var, False)
-        return None
-
     def _backtrack(self) -> bool:
-        if not self.decision_stack:
-            return False
-        
-        while self.decision_stack:
-            lit, level = self.decision_stack.pop()
+        self.decision_level -= 1
+        while self.trail:
+            lit, level = self.trail.pop()
             self.assignment[lit.var] = None
             if level < self.decision_level:
                 self.decision_level = level
-                self.decision_stack.append((lit, level))
+                self.trail.append((lit, level))
                 return True
         return False
 
-    def solve(self) -> Optional[Dict[int, bool]]:
+    def solve(self) -> Optional[Assignment]:
         while True:
-            # Propagate unit clauses
             conflict = self._propagate()
             if conflict:
                 if not self._backtrack():
                     return None
-                continue
+            else:
+                unassigned = [lit for lit in self.all_literals if self.assignment[lit.var] is None]
+                if not unassigned:
+                    return {var: val for var, val in self.assignment.items() if val is not None}
 
-            # Make a decision
-            # todo: this always returns a true literal, should this not also explore false literals?
-            decision = self._make_decision()
-            if not decision:
-                return {var: val for var, val in self.assignment.items() if val is not None}
-
-            self.decision_level += 1
-            self.assignment[decision.var] = True
-            self.decision_stack.append((decision, self.decision_level))
-            self.propagation_queue.append(decision)
+                self.decision_level += 1
+                self.unit_literal_queue.append(unassigned[0])
 
 def parse_dimacs(dimacs: str) -> Tuple[int, List[Clause]]:
     lines = dimacs.strip().split('\n')
@@ -163,16 +151,16 @@ def parse_dimacs(dimacs: str) -> Tuple[int, List[Clause]]:
             # but in principle it really means that the input formula is trivially unsatisfiable
             if len(literals) > 0:
                 clauses.append(Clause(literals))
-    
+
     return num_vars, clauses
 
-def solve_dimacs(dimacs: str) -> Optional[Dict[int, bool]]:
+def solve_dimacs(dimacs: str) -> Optional[Assignment]:
     num_vars, clauses = parse_dimacs(dimacs)
     solver = Solver(num_vars, clauses)
     return solver.solve()
 
 if __name__ == "__main__":
-    with open("../test-formulas/sat0.in", "r") as f:
+    with open("../test-formulas/unit5.in", "r") as f:
         dimacs = f.read()
 
     print(f"{solve_dimacs(dimacs)}")
