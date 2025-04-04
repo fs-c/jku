@@ -2,7 +2,7 @@ import sys
 from pysat.solvers import Cadical195
 import time
 
-from solve import parse_dimacs, solve_recursive
+from solve import parse_dimacs, solve
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
@@ -25,7 +25,7 @@ if __name__ == "__main__":
                 skipped += 1
                 continue
 
-            solution = solve_recursive(formula)
+            solution = solve(formula)
 
             if solution != actual_solution:
                 print(f"simple recursive: {solution}, actual: {actual_solution}! ({path})")
