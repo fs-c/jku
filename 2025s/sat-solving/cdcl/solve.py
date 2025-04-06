@@ -31,10 +31,10 @@ class Clause:
 
     def is_satisfied(self, assignment: Assignment) -> bool:
         return any(assignment[lit.var] == lit.value for lit in self.literals)
-    
+
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Clause) and self.literals == other.literals
-    
+
     def __hash__(self) -> int:
         return hash(tuple(self.literals))
 
@@ -51,12 +51,14 @@ class Solver:
 
         # keep track of assignments for backtracking
         self.decision_level: int = 0
-        # stack to remember order in which variables were assigned
-        self.trail: List[Literal] = []
+        # stack to remember order in which variables were assigned, and the reason (= clause) for the assignment
+        # (None if the assignment was due to a decision and not because it was implied during propagation)
+        self.trail: List[Tuple[Literal, Clause | None]] = []
         # for each decision level, remember the trail height (invariant: len(control) == decision_level)
         self.control: List[int] = []
 
-        self.propagation_queue: deque[Literal] = deque()
+        # queue of literals to assign during propagation with the reason for assignment (see trail)
+        self.propagation_queue: deque[Tuple[Literal, Clause | None]] = deque()
 
         self.all_literals: Set[Literal] = set()
         for i in range(1, num_vars + 1):
@@ -71,10 +73,13 @@ class Solver:
             if len(clause.literals) >= 2:
                 self.watch_lists[clause.literals[1]].add(clause)
 
-    def _assign_literal(self, lit: Literal) -> bool:
+    """
+    attempt to assign a literal and propagate through watch lists
+    """
+    def _assign_and_propagate(self, lit: Literal, initial_reason: Clause | None) -> bool:
         # first, perform the assignment
         self.assignment[lit.var] = lit.value
-        self.trail.append(lit)
+        self.trail.append((lit, initial_reason))
 
         # then handle all clauses watching the variable we just assigned
         # (only need to consider the clauses that are watching the negation, the others are trivially satisfied)
@@ -92,7 +97,7 @@ class Solver:
                 return False
             elif len(unassigned) == 1:
                 # there is exactly one unassigned literal left; unit clause
-                self.propagation_queue.append(unassigned[0])
+                self.propagation_queue.append((unassigned[0], clause))
             else:
                 # we have more than one unassigned literal left; update the watch list
                 for potential_lit in unassigned:
@@ -108,11 +113,11 @@ class Solver:
     def _propagate(self) -> bool:
         while self.propagation_queue:
             # get the next unit clause literal to assign (unless it's already assigned, in which case we skip)
-            unit_lit = self.propagation_queue.popleft()
+            unit_lit, reason = self.propagation_queue.popleft()
             if self.assignment[unit_lit.var] == unit_lit.value:
                 continue
 
-            if not self._assign_literal(unit_lit):
+            if not self._assign_and_propagate(unit_lit, reason):
                 self.propagation_queue.clear()
                 return True
 
@@ -129,10 +134,34 @@ class Solver:
 
         lit = None
         while len(self.trail) > target_height:
-            lit = self.trail.pop()
+            lit, _ = self.trail.pop()
             self.assignment[lit.var] = None
 
         return lit
+    
+    """
+    assuming that a conflict has occured on the trail at the current decision level, generates a new clause
+    ("learned clause") to prevent it in the future
+    """
+    def _analyze_conflict_trail(self, conflict_reason: Clause) -> None:
+        # this is based largely on https://efforeffort.wordpress.com/2009/03/09/linear-time-first-uip-calculation/,
+        # an explanation of the conflict clause generation of minisat
+
+        seen: Set[int] = set()
+        counter: int = 0
+
+        # don't want to pop from the trail (still need it for backtracking) so we'll just iterate backwards
+        trail_index: int = len(self.trail) - 1
+
+        while True:
+            for lit in conflict_reason.literals:
+                if lit.var in seen:
+                    continue
+                seen.add(lit.var)
+
+
+            if counter <= 1:
+                break
 
     def solve(self) -> Optional[Assignment]:
         # handle special cases where formula is trivially satisfiable or unsatisfiable
@@ -141,18 +170,8 @@ class Solver:
             return {}
         if not self.all_literals:
             return None
-        
-        iteration_count = 0
-        max_iterations = 100000
 
         while True:
-            iteration_count += 1
-            if iteration_count > max_iterations:
-                print(f"exceeded maximum iterations ({max_iterations})")
-                return None
-            
-            print(self.trail)
-
             conflict = self._propagate()
             if conflict:
                 if len(self.control) == 0:
@@ -162,7 +181,7 @@ class Solver:
                 last_lit = self._backtrack(target_height)
 
                 if last_lit is not None:
-                    self.propagation_queue.append(-last_lit)
+                    self.propagation_queue.append((-last_lit, None))
             else:
                 # select a new decision variable
                 unassigned = [lit for lit in self.all_literals if self.assignment[lit.var] is None]
@@ -172,7 +191,7 @@ class Solver:
                 lit = unassigned[0]
 
                 self.control.append(len(self.trail))
-                self.propagation_queue.append(lit)
+                self.propagation_queue.append((lit, None))
 
 def parse_dimacs(dimacs: str) -> Tuple[int, List[Clause]]:
     lines = dimacs.strip().split('\n')
@@ -186,7 +205,7 @@ def parse_dimacs(dimacs: str) -> Tuple[int, List[Clause]]:
             num_vars = int(num_vars)
         elif not line.startswith('c') and line:
             literals: List[Literal] = []
-            for lit in line.split()[:-1]:  # Skip the trailing 0
+            for lit in line.split()[:-1]: # skip the trailing 0
                 lit = int(lit)
                 literals.append(Literal(abs(lit), lit > 0))
             clauses.append(Clause(literals))

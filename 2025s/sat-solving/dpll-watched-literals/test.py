@@ -1,9 +1,6 @@
 import sys
-from pysat.solvers import Cadical195
-import time
 from typing import List
 import json as json
-
 from solve import Solver, parse_dimacs
 
 if __name__ == "__main__":
@@ -16,45 +13,35 @@ if __name__ == "__main__":
     failed: List[str] = []
     
     for path in sys.argv[1:]:
-        print(f"testing {path}...")
-
         if not path.endswith(".in"):
             continue
 
-        with open(path, "r") as f:
+        with open(path, "r") as f, open(f"{path}.models.json", "r") as correct_models_stream:
             dimacs = f.read()
+            correct_models = json.load(correct_models_stream)
 
         num_vars, clauses = parse_dimacs(dimacs)
 
-        with Cadical195(bootstrap_with=[[lit.var if lit.value else -lit.var for lit in clause.literals] for clause in clauses]) as correct_solver:            
-            time_before = time.time()
-            correct_solver.solve()
-            time_after = time.time()
+        print(f"[debug] solving {path}...")
 
-            if time_after - time_before > 0.00001:
-                skipped.append(path)
-                print(f"[debug] [skip] {path} (took {time_after - time_before} seconds)")
-                continue
+        try:
+            actual_model = Solver(num_vars, clauses).solve()
+        except Exception as e:
+            print(f"[debug] [fail] solver crashed ({path})")
+            print(e)
+            failed.append(path)
+            continue
 
-            try:
-                actual_model = Solver(num_vars, clauses).solve()
-            except Exception as e:
-                print(f"[debug] [fail] solver crashed ({path})")
-                print(e)
-                failed.append(path)
-                continue
+        normalized_actual_model = [var if val else -var for var, val in actual_model.items()] if actual_model is not None else None
 
-            correct_models = json.load(open(f"{path}.models.json"))
-
-            if (actual_model is None and correct_models != []) or (actual_model is not None and not [var if val else -var for var, val in actual_model.items()] in correct_models):
-                print(f"[debug] [fail] actual: {actual_model}, correct: {correct_models} ({path})")
-                failed.append(path)
-            else:
-                print(f"[debug] [pass] actual: {actual_model}, correct: {correct_models} ({path})")
-                passed.append(path)
-
-    print(f"{len(passed)} passed, {len(skipped)} skipped, {len(failed)} failed")
+        if normalized_actual_model in correct_models or (normalized_actual_model is None and correct_models == []):
+            print(f"[debug] [pass] {normalized_actual_model} in {correct_models}")
+            passed.append(path)
+        else:
+            print(f"[debug] [fail] {normalized_actual_model} not in {correct_models}")
+            failed.append(path)
+            
+    print(f"{len(passed)} passed, {len(failed)} failed")
 
     print(f"passed: {passed}")
-    print(f"skipped: {skipped}")
     print(f"failed: {failed}")
