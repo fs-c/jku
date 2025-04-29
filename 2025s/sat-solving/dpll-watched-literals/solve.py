@@ -50,10 +50,9 @@ class Solver:
         self.assignment: Assignment = {i: None for i in range(1, num_vars + 1)}
 
         # keep track of assignments for backtracking
-        self.decision_level: int = 0
         # stack to remember order in which variables were assigned
         self.trail: List[Literal] = []
-        # for each decision level, remember the trail height (invariant: len(control) == decision_level)
+        # for each decision level, remember the trail height (invariant: len(control) == decision level)
         self.control: List[int] = []
 
         self.propagation_queue: deque[Literal] = deque()

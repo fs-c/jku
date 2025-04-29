@@ -1,12 +1,17 @@
-from typing import List, Set, Dict, Optional, Tuple
+from typing import List, Set, Dict, Optional, Tuple, NamedTuple
 from collections import deque
 import sys
+from enum import Enum, auto
 
 """
 http://minisat.se/downloads/MiniSat.pdf
 """
 
 Assignment = Dict[int, Optional[bool]]
+
+class PropagationResult(Enum):
+    NO_CONFLICT = auto()
+    CONFLICT = auto()
 
 class Literal:
     def __init__(self, var: int, value: bool):
@@ -41,6 +46,10 @@ class Clause:
     def __repr__(self) -> str:
         return f"{' & '.join([str(lit) for lit in self.literals])}"
 
+class TrailEntry(NamedTuple):
+    literal: Literal
+    reason: Optional[Clause]
+
 class Solver:
     def __init__(self, num_vars: int, clauses: List[Clause]):
         self.num_vars = num_vars
@@ -48,13 +57,14 @@ class Solver:
 
         # write access to this is only allowed through _assign_literal
         self.assignment: Assignment = {i: None for i in range(1, num_vars + 1)}
+        # for each variable, remember the decision level at which it was assigned
+        # todo: i am sure there is a smarter way to do this that doesn't require another dict
+        self.var_to_level: Dict[int, Optional[int]] = {}
 
-        # keep track of assignments for backtracking
-        self.decision_level: int = 0
         # stack to remember order in which variables were assigned, and the reason (= clause) for the assignment
         # (None if the assignment was due to a decision and not because it was implied during propagation)
-        self.trail: List[Tuple[Literal, Clause | None]] = []
-        # for each decision level, remember the trail height (invariant: len(control) == decision_level)
+        self.trail: List[TrailEntry] = []
+        # for each decision level, remember the trail height (invariant: len(control) == current decision level)
         self.control: List[int] = []
 
         # queue of literals to assign during propagation with the reason for assignment (see trail)
@@ -76,18 +86,19 @@ class Solver:
     """
     attempt to assign a literal and propagate through watch lists
     """
-    def _assign_and_propagate(self, lit: Literal, initial_reason: Clause | None) -> bool:
+    def _assign_and_propagate(self, lit: Literal, reason: Clause | None) -> bool:
         # first, perform the assignment
         self.assignment[lit.var] = lit.value
-        self.trail.append((lit, initial_reason))
+        self.var_to_level[lit.var] = len(self.trail)
+        self.trail.append(TrailEntry(lit, reason))
 
-        # then handle all clauses watching the variable we just assigned
-        # (only need to consider the clauses that are watching the negation, the others are trivially satisfied)
-        # create a copy of the watch list because we might mutate the original while iterating
+        # then, handle all clauses watching the variable we just assigned (only need to consider the 
+        # clauses that are watching the negation, the others are trivially satisfied)
+        # create a copy of the watch list so we can mutate the original while iterating
         watch_list = list(self.watch_lists[-lit])
 
         for clause in watch_list:
-            # if the clause is (was) already satisfied there's nothing to do
+            # if the clause was already satisfied there's nothing to do
             if clause.is_satisfied(self.assignment):
                 continue
 
@@ -110,18 +121,19 @@ class Solver:
 
         return True
 
-    def _propagate(self) -> bool:
+    def _process_propagation_queue(self) -> PropagationResult:
         while self.propagation_queue:
-            # get the next unit clause literal to assign (unless it's already assigned, in which case we skip)
-            unit_lit, reason = self.propagation_queue.popleft()
-            if self.assignment[unit_lit.var] == unit_lit.value:
+            # get the next literal to assign (unless it's already assigned, in which case we skip)
+            lit, reason = self.propagation_queue.popleft()
+            if self.assignment[lit.var] == lit.value:
                 continue
 
-            if not self._assign_and_propagate(unit_lit, reason):
+            # assign the literal and perform unit propagation
+            if not self._assign_and_propagate(lit, reason):
                 self.propagation_queue.clear()
-                return True
+                return PropagationResult.CONFLICT
 
-        return False
+        return PropagationResult.NO_CONFLICT
 
     """
     walks back the trail until the target height is reached, unassigning variables as it goes
@@ -136,16 +148,20 @@ class Solver:
         while len(self.trail) > target_height:
             lit, _ = self.trail.pop()
             self.assignment[lit.var] = None
+            self.var_to_level[lit.var] = None
 
         return lit
-    
+
     """
-    assuming that a conflict has occured on the trail at the current decision level, generates a new clause
-    ("learned clause") to prevent it in the future
+    assuming that a conflict has occured on the trail at the current decision level, returns
+     - a new clause ("learned clause") to prevent it in the future
+     - the decision level to backtrack to
     """
-    def _analyze_conflict_trail(self, conflict_reason: Clause) -> None:
+    def _analyze_conflict_trail(self, initial_reason: Clause) -> Tuple[Clause, int]:
         # this is based largely on https://efforeffort.wordpress.com/2009/03/09/linear-time-first-uip-calculation/,
-        # an explanation of the conflict clause generation of minisat
+        # a detailed explanation of the conflict clause generation of minisat (http://minisat.se/downloads/MiniSat.pdf)
+
+        learned_clause: Clause = Clause([])
 
         seen: Set[int] = set()
         counter: int = 0
@@ -153,15 +169,47 @@ class Solver:
         # don't want to pop from the trail (still need it for backtracking) so we'll just iterate backwards
         trail_index: int = len(self.trail) - 1
 
+        cur_literal = None
+        cur_reason = initial_reason
+
         while True:
-            for lit in conflict_reason.literals:
+            # process 
+            for lit in cur_reason.literals:
                 if lit.var in seen:
                     continue
                 seen.add(lit.var)
 
+                lit_level = self.var_to_level[lit.var]
+                if lit_level is None:
+                    assert False, f"literal {lit} is part of a conflict but does not have a decision level"
+                elif lit_level == len(self.trail):
+                    counter += 1
+                elif lit_level < len(self.trail):
+                    learned_clause.literals.append(lit)
 
+            # select the next literal to follow
+            lit = None
+            while True:
+                cur_literal, reason = self.trail[trail_index]
+                if reason is None:
+                    reason = Clause([])
+                trail_index -= 1
+
+                if cur_literal.var in seen:
+                    break
+
+            counter -= 1
             if counter <= 1:
                 break
+
+        # cur_literal is now the first uip node
+        learned_clause.literals.append(-cur_literal)
+
+        # todo-optimization: minimize the learned clause
+
+        highest_level = max(level for level in (self.var_to_level[lit.var] for lit in learned_clause.literals) if level is not None)
+
+        return learned_clause, highest_level
 
     def solve(self) -> Optional[Assignment]:
         # handle special cases where formula is trivially satisfiable or unsatisfiable
@@ -172,12 +220,32 @@ class Solver:
             return None
 
         while True:
-            conflict = self._propagate()
-            if conflict:
+            result = self._process_propagation_queue()
+            if result == PropagationResult.CONFLICT:
                 if len(self.control) == 0:
                     return None
 
-                target_height = self.control.pop()
+                # get the conflict clause from the last assignment
+                conflict_clause = self.trail[-1].reason
+                if conflict_clause is None:
+                    # if there's no reason clause, create a unit clause with the last literal
+                    # todo: i am not sure if this should ever be possible
+                    conflict_clause = Clause([self.trail[-1].literal])
+                
+                learned_clause, highest_level = self._analyze_conflict_trail(conflict_clause)
+
+                # add the learned clause to our clause database
+                # todo: maybe factor out the watch list stuff (it's already in the constructor)
+                self.clauses.append(learned_clause)
+                if len(learned_clause.literals) >= 1:
+                    self.watch_lists[learned_clause.literals[0]].add(learned_clause)
+                if len(learned_clause.literals) >= 2:
+                    self.watch_lists[learned_clause.literals[1]].add(learned_clause)
+
+                # find the control index for the highest level
+                # todo: this is completely absurd
+                target_height = next((height for height in reversed(self.control) if height <= highest_level), 0)
+                self.control = [h for h in self.control if h <= highest_level]
                 last_lit = self._backtrack(target_height)
 
                 if last_lit is not None:
