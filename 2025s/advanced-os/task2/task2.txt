@@ -1,0 +1,25 @@
+Adapt the keyboard logger from '../soft/kbd/kbd-Simple only.c' so that the data obtained is no longer just logged, but written into a buffer
+that can be read from userspace. 
+
+This requires
+• A buffer in kernel memory
+• Synchronization: the interrupt puts data in, the user-space access removes it
+• Some user-space access: procfs-filesystem
+• Synchronization: multiple user-space programs might access the procfs data simultaneously.
+• A small user-space example program that reads from the procfs and prints the data to the
+console. This program will read at most 4 bytes from the buffer in each access, but does this in a
+loop until there is no more data to read. After reading & printing it will always wait for 2
+seconds unless less than 4 bytes were read. Example: 9 bytes are in the buffer → program called
+→ read 4 bytes & print them → wait 2 s → read 4 bytes & print them → wait 2 s → read 1 byte
+& print it → terminate
+
+The data is provided in binary, i.e. a key press produces a keycode and that byte is stored in the buffer
+and later read from it. The user-space program prints it in decimal with a space between them and a
+linebreak at the end (after each block of four – or you do not see any output!).
+
+The kernel buffer has a fixed capacity of 20 bytes (use a constant; in reality it would be larger!). If the
+buffer is full, the oldest data is overwritten and lost (whether you move data, produce a ring buffer,
+have a sentinel element etc is up to you!).
+
+Note: directly reading from the procfs via “cat” is not very helpful: You get the keycode back as an
+ASCII character – probably unprintable and definitely not the character!
