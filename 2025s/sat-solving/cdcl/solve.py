@@ -44,7 +44,7 @@ class Clause:
         return hash(tuple(self.literals))
 
     def __repr__(self) -> str:
-        return f"{' & '.join([str(lit) for lit in self.literals])}"
+        return f"{' | '.join([str(lit) for lit in self.literals])}"
 
 class TrailEntry(NamedTuple):
     literal: Literal
@@ -86,7 +86,7 @@ class Solver:
     """
     attempt to assign a literal and propagate through watch lists
     """
-    def _assign_and_propagate(self, lit: Literal, reason: Clause | None) -> bool:
+    def _assign_and_propagate(self, lit: Literal, reason: Optional[Clause]) -> PropagationResult:
         # first, perform the assignment
         self.assignment[lit.var] = lit.value
         self.var_to_level[lit.var] = len(self.trail)
@@ -105,7 +105,7 @@ class Solver:
             unassigned = [lit for lit in clause.literals if self.assignment[lit.var] is None]
             if len(unassigned) == 0:
                 # there are no more unassigned literals and the clause is not satisfied; conflict
-                return False
+                return PropagationResult.CONFLICT
             elif len(unassigned) == 1:
                 # there is exactly one unassigned literal left; unit clause
                 self.propagation_queue.append((unassigned[0], clause))
@@ -119,8 +119,11 @@ class Solver:
                 assert clause not in self.watch_lists[-lit], \
                     f"clause {clause} is still watching {lit} but it should have been removed"
 
-        return True
+        return PropagationResult.NO_CONFLICT
 
+    """
+    process the propagation queue until it's empty or a conflict is found
+    """
     def _process_propagation_queue(self) -> PropagationResult:
         while self.propagation_queue:
             # get the next literal to assign (unless it's already assigned, in which case we skip)
@@ -128,8 +131,8 @@ class Solver:
             if self.assignment[lit.var] == lit.value:
                 continue
 
-            # assign the literal and perform unit propagation
-            if not self._assign_and_propagate(lit, reason):
+            # assign the literal and perform unit propagation, this may push to the propagation queue
+            if self._assign_and_propagate(lit, reason) == PropagationResult.CONFLICT:
                 self.propagation_queue.clear()
                 return PropagationResult.CONFLICT
 
@@ -167,13 +170,15 @@ class Solver:
         counter: int = 0
 
         # don't want to pop from the trail (still need it for backtracking) so we'll just iterate backwards
-        trail_index: int = len(self.trail) - 1
+        # since this will already be called with trail - 1 as the initial reason, we start at -2
+        # todo: verify that this is correct and ideally refactor to avoid
+        trail_index: int = len(self.trail) - 2
 
         cur_literal = None
         cur_reason = initial_reason
 
         while True:
-            # process 
+            # process current reason
             for lit in cur_reason.literals:
                 if lit.var in seen:
                     continue
@@ -188,18 +193,18 @@ class Solver:
                     learned_clause.literals.append(lit)
 
             # select the next literal to follow
-            lit = None
             while True:
-                cur_literal, reason = self.trail[trail_index]
-                if reason is None:
-                    reason = Clause([])
+                cur_literal, cur_reason = self.trail[trail_index]
+                if cur_reason is None:
+                    cur_reason = Clause([])
                 trail_index -= 1
 
+                # todo: does this ever complete?
                 if cur_literal.var in seen:
                     break
 
             counter -= 1
-            if counter <= 1:
+            if counter <= 0:
                 break
 
         # cur_literal is now the first uip node
@@ -228,10 +233,9 @@ class Solver:
                 # get the conflict clause from the last assignment
                 conflict_clause = self.trail[-1].reason
                 if conflict_clause is None:
-                    # if there's no reason clause, create a unit clause with the last literal
-                    # todo: i am not sure if this should ever be possible
-                    conflict_clause = Clause([self.trail[-1].literal])
-                
+                    assert False, "no reason clause for conflict, unexpected state"
+                    return None
+
                 learned_clause, highest_level = self._analyze_conflict_trail(conflict_clause)
 
                 # add the learned clause to our clause database
@@ -250,7 +254,7 @@ class Solver:
 
                 if last_lit is not None:
                     self.propagation_queue.append((-last_lit, None))
-            else:
+            elif result == PropagationResult.NO_CONFLICT:
                 # select a new decision variable
                 unassigned = [lit for lit in self.all_literals if self.assignment[lit.var] is None]
                 if not unassigned:
@@ -260,6 +264,8 @@ class Solver:
 
                 self.control.append(len(self.trail))
                 self.propagation_queue.append((lit, None))
+            else:
+                assert False, f"unknown propagation result: {result}"
 
 def parse_dimacs(dimacs: str) -> Tuple[int, List[Clause]]:
     lines = dimacs.strip().split('\n')
@@ -286,9 +292,14 @@ def solve_dimacs(dimacs: str) -> Optional[Assignment]:
     return solver.solve()
 
 if __name__ == "__main__":
-    path = sys.argv[1] if len(sys.argv) > 1 else "test-formulas/add8.in"
+    path = sys.argv[1] if len(sys.argv) > 1 else "test-formulas/mus2.in"
 
     with open(path, "r") as f:
         dimacs = f.read()
 
-    print(f"{solve_dimacs(dimacs)}")
+    solution = solve_dimacs(dimacs)
+    if solution is None:
+        print("UNSAT")
+    else:
+        print("SAT")
+        print(solution)
