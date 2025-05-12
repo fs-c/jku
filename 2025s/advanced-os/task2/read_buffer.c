@@ -16,8 +16,9 @@ int main()
 		return 1;
 	}
 
-	while (true) {
+	while (1) {
 		const ssize_t bytes_read = read(fd, buffer, MAX_READ);
+		printf("read %zd bytes\n", bytes_read);
 		if (bytes_read <= 0) {
 			break;
 		}

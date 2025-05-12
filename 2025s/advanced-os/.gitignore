@@ -5,3 +5,5 @@
 *.order
 *.symvers
 *.unsigned
+*.o
+*.o.d
