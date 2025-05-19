@@ -51,6 +51,10 @@ class TrailEntry(NamedTuple):
     reason: Optional[Clause]
 
 class Solver:
+    @staticmethod
+    def _find_unassigned_literals(literals: List[Literal], assignment: Assignment) -> List[Literal]:
+        return [lit for lit in literals if assignment[lit.var] is None]
+
     def __init__(self, num_vars: int, clauses: List[Clause]):
         self.num_vars = num_vars
         self.clauses = clauses
@@ -70,10 +74,11 @@ class Solver:
         # queue of literals to assign during propagation with the reason for assignment (see trail)
         self.propagation_queue: deque[Tuple[Literal, Clause | None]] = deque()
 
+        # initialize list of literals to consider for assignment
         self.all_literals: Set[Literal] = set()
-        for i in range(1, num_vars + 1):
-            self.all_literals.add(Literal(i, True))
-            self.all_literals.add(Literal(i, False))
+        for clause in clauses:
+            for lit in clause.literals:
+                self.all_literals.add(lit)
 
         # initialize watch lists
         self.watch_lists: Dict[Literal, Set[Clause]] = {lit: set() for lit in self.all_literals}
@@ -95,22 +100,22 @@ class Solver:
         # then, handle all clauses watching the variable we just assigned (only need to consider the 
         # clauses that are watching the negation, the others are trivially satisfied)
         # create a copy of the watch list so we can mutate the original while iterating
-        watch_list = list(self.watch_lists[-lit])
+        watch_list = list(self.watch_lists.get(-lit, []))
 
         for clause in watch_list:
             # if the clause was already satisfied there's nothing to do
             if clause.is_satisfied(self.assignment):
                 continue
 
-            unassigned = [lit for lit in clause.literals if self.assignment[lit.var] is None]
+            unassigned = Solver._find_unassigned_literals(clause.literals, self.assignment)
             if len(unassigned) == 0:
-                # there are no more unassigned literals and the clause is not satisfied; conflict
+                # there are no more unassigned literals and the clause is not satisfied (as per previous check) -> conflict
                 return PropagationResult.CONFLICT
             elif len(unassigned) == 1:
-                # there is exactly one unassigned literal left; unit clause
+                # there is exactly one unassigned literal left -> unit clause, propagate the literal
                 self.propagation_queue.append((unassigned[0], clause))
             else:
-                # we have more than one unassigned literal left; update the watch list
+                # we have more than one unassigned literal left -> update the watch list
                 for potential_lit in unassigned:
                     if not clause in self.watch_lists[potential_lit]:
                         self.watch_lists[potential_lit].add(clause)
@@ -139,21 +144,23 @@ class Solver:
         return PropagationResult.NO_CONFLICT
 
     """
-    walks back the trail until the target height is reached, unassigning variables as it goes
-    returns the last literal that was removed from the trail (or None if the trail was below target height)
+    walks back the trail until the target decision level is reached, unassigning variables as it goes
+    (all assignments at and below the target level are kept)
+    returns the last literal that was removed from the trail (or None if nothing was removed)
     """
-    def _backtrack(self, target_height: int) -> Optional[Literal]:
-        assert len(self.trail) >= target_height, \
-            f"current trail height ({len(self.trail)}) >= target height ({target_height}), " \
-            f"this is fine in principle but it's probably a mistake"
+    def _backtrack(self, target_level: int) -> Optional[Literal]:
+        if target_level >= len(self.control):
+            return None
 
-        lit = None
-        while len(self.trail) > target_height:
-            lit, _ = self.trail.pop()
-            self.assignment[lit.var] = None
-            self.var_to_level[lit.var] = None
+        last_lit = None
+        while len(self.control) > target_level:
+            target_height = self.control.pop()
+            while len(self.trail) > target_height:
+                last_lit, _ = self.trail.pop()
+                self.assignment[last_lit.var] = None
+                self.var_to_level[last_lit.var] = None
 
-        return lit
+        return last_lit
 
     """
     assuming that a conflict has occured on the trail at the current decision level, returns
@@ -177,6 +184,8 @@ class Solver:
         cur_literal = None
         cur_reason = initial_reason
 
+        lowest_level = len(self.trail)
+
         while True:
             # process current reason
             for lit in cur_reason.literals:
@@ -191,15 +200,17 @@ class Solver:
                     counter += 1
                 elif lit_level < len(self.trail):
                     learned_clause.literals.append(lit)
+                    if lit_level < lowest_level:
+                        lowest_level = lit_level
 
             # select the next literal to follow
             while True:
                 cur_literal, cur_reason = self.trail[trail_index]
                 if cur_reason is None:
                     cur_reason = Clause([])
+
                 trail_index -= 1
 
-                # todo: does this ever complete?
                 if cur_literal.var in seen:
                     break
 
@@ -207,14 +218,13 @@ class Solver:
             if counter <= 0:
                 break
 
-        # cur_literal is now the first uip node
-        learned_clause.literals.append(-cur_literal)
+        # cur_literal is now the first uip node (todo: negate)
+        if -cur_literal not in learned_clause.literals:
+            learned_clause.literals.append(-cur_literal)
 
-        # todo-optimization: minimize the learned clause
+        # todo-optimization: can/should we minimize the learned clause some more?
 
-        highest_level = max(level for level in (self.var_to_level[lit.var] for lit in learned_clause.literals) if level is not None)
-
-        return learned_clause, highest_level
+        return learned_clause, lowest_level
 
     def solve(self) -> Optional[Assignment]:
         # handle special cases where formula is trivially satisfiable or unsatisfiable
@@ -232,11 +242,9 @@ class Solver:
 
                 # get the conflict clause from the last assignment
                 conflict_clause = self.trail[-1].reason
-                if conflict_clause is None:
-                    assert False, "no reason clause for conflict, unexpected state"
-                    return None
+                assert conflict_clause is not None, "no reason clause for conflict, unexpected state"
 
-                learned_clause, highest_level = self._analyze_conflict_trail(conflict_clause)
+                learned_clause, backtrack_level = self._analyze_conflict_trail(conflict_clause)
 
                 # add the learned clause to our clause database
                 # todo: maybe factor out the watch list stuff (it's already in the constructor)
@@ -246,17 +254,13 @@ class Solver:
                 if len(learned_clause.literals) >= 2:
                     self.watch_lists[learned_clause.literals[1]].add(learned_clause)
 
-                # find the control index for the highest level
-                # todo: this is completely absurd
-                target_height = next((height for height in reversed(self.control) if height <= highest_level), 0)
-                self.control = [h for h in self.control if h <= highest_level]
-                last_lit = self._backtrack(target_height)
+                last_lit = self._backtrack(backtrack_level)
 
                 if last_lit is not None:
                     self.propagation_queue.append((-last_lit, None))
             elif result == PropagationResult.NO_CONFLICT:
                 # select a new decision variable
-                unassigned = [lit for lit in self.all_literals if self.assignment[lit.var] is None]
+                unassigned = Solver._find_unassigned_literals(self.all_literals, self.assignment)
                 if not unassigned:
                     return {var: val for var, val in self.assignment.items() if val is not None}
 
@@ -292,7 +296,7 @@ def solve_dimacs(dimacs: str) -> Optional[Assignment]:
     return solver.solve()
 
 if __name__ == "__main__":
-    path = sys.argv[1] if len(sys.argv) > 1 else "test-formulas/mus2.in"
+    path = sys.argv[1] if len(sys.argv) > 1 else "../test-formulas/unit0.in"
 
     with open(path, "r") as f:
         dimacs = f.read()
