@@ -2,6 +2,11 @@ from typing import List, Set, Dict, Optional, Tuple, NamedTuple
 from collections import deque
 import sys
 from enum import Enum, auto
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# enable interactive mode for non-blocking plots
+plt.ion()
 
 """
 http://minisat.se/downloads/MiniSat.pdf
@@ -28,7 +33,7 @@ class Literal:
         return hash((self.var, self.value))
 
     def __repr__(self) -> str:
-        return f"{'' if self.value else '!'}x{self.var}"
+        return f"{'' if self.value else '¬'}x{self.var}"
 
 class Clause:
     def __init__(self, literals: List[Literal]):
@@ -46,6 +51,68 @@ class Clause:
     def __repr__(self) -> str:
         return f"{' | '.join([str(lit) for lit in self.literals])}"
 
+# todo: it is possible to just generate the implication graph from the trail/control stacks, 
+#  but i didn't want to think about that for now
+class ImplicationGraph:
+    class NodeType(Enum):
+        DECISION = auto()
+        IMPLIED = auto()
+        CONFLICT = auto()
+
+    def __init__(self):
+        self.graph = nx.DiGraph()
+        self.lit_to_label: Dict[Literal, str] = {}
+
+        self.type_to_color: Dict[ImplicationGraph.NodeType, str] = {
+            ImplicationGraph.NodeType.DECISION: '#d4fb78',
+            ImplicationGraph.NodeType.IMPLIED: 'white',
+            ImplicationGraph.NodeType.CONFLICT: '#ff7d78'
+        }
+
+    def _get_participating_lits(self, assignment: 'Assignment', reason: 'Clause') -> List[Literal]:
+        # todo: this is demonic, i am 99% sure there is a much easier/faster way to do this
+        #  for now it will remain here like since it's just required for drawing the graph and not for the solver logic
+        return [lit for lit in [Literal(var, val) for var, val in assignment.items()] if lit.value is not None and lit.var in [lit.var for lit in reason.literals]]
+
+    def add_implied(self, to_lit: 'Literal', assignment: 'Assignment', reason: 'Clause', decision_level: int, is_conflict: bool = False):
+        """add an edge to the implication graph representing that from_lit implies to_lit due to reason"""
+        self.add_node(to_lit, decision_level, self.NodeType.IMPLIED if not is_conflict else self.NodeType.CONFLICT)
+
+        for from_lit in self._get_participating_lits(assignment, reason):
+            from_label = self.lit_to_label.get(from_lit)
+            if from_label:
+                self.graph.add_edge(from_label, self.lit_to_label[to_lit], reason=str(reason))
+
+    def add_node(self, lit: 'Literal', decision_level: int, type: 'NodeType'):
+        """add a node to the implication graph"""
+        label = f"{str(lit)}@{decision_level}"
+        self.lit_to_label[lit] = label
+        self.graph.add_node(label, type=type)
+
+    def add_conflict(self, reason: 'Clause', assignment: 'Assignment', decision_level: int):
+        """add a conflict node to the implication graph, determines the participating literals from the assignment"""
+        label = f"κ@{decision_level}"
+        self.graph.add_node(label, type=self.NodeType.CONFLICT)
+
+        for from_lit in self._get_participating_lits(assignment, reason):
+            self.graph.add_edge(self.lit_to_label[from_lit], label, reason=str(reason))
+
+    def show(self, title: str = "Implication Graph"):
+        """display the implication graph using matplotlib"""
+        plt.figure(figsize=(12, 8))
+        pos = nx.spring_layout(self.graph, seed=1337)
+
+        node_color = [self.type_to_color[self.graph.nodes[node]['type']] for node in self.graph.nodes()]
+        nx.draw(self.graph, pos, with_labels=True, cmap=plt.cm.viridis, node_size=2000, font_size=10, node_color=node_color, edgecolors='black')
+
+        edge_labels = nx.get_edge_attributes(self.graph, 'reason')
+        nx.draw_networkx_edge_labels(self.graph, pos, edge_labels=edge_labels)
+        
+        plt.title(title)
+        plt.draw()
+        # this is a hack to give the plot some time to update
+        plt.pause(0.001)
+
 class TrailEntry(NamedTuple):
     literal: Literal
     reason: Optional[Clause]
@@ -58,6 +125,8 @@ class Solver:
     def __init__(self, num_vars: int, clauses: List[Clause]):
         self.num_vars = num_vars
         self.clauses = clauses
+
+        self.implication_graph = ImplicationGraph()
 
         # write access to this is only allowed through _assign_literal
         self.assignment: Assignment = {i: None for i in range(1, num_vars + 1)}
@@ -75,7 +144,7 @@ class Solver:
         self.propagation_queue: deque[Tuple[Literal, Clause | None]] = deque()
 
         # initialize list of literals to consider for assignment
-        self.all_literals: Set[Literal] = set()
+        self.all_literals: Set[Literal] = set() 
         for clause in clauses:
             for lit in clause.literals:
                 self.all_literals.add(lit)
@@ -88,13 +157,15 @@ class Solver:
             if len(clause.literals) >= 2:
                 self.watch_lists[clause.literals[1]].add(clause)
 
-    """
-    attempt to assign a literal and propagate through watch lists
-    """
+    def _decision_level(self) -> int:
+        return len(self.control)
+
     def _assign_and_propagate(self, lit: Literal, reason: Optional[Clause]) -> PropagationResult:
+        """attempt to assign a literal and propagate through watch lists"""
+
         # first, perform the assignment
         self.assignment[lit.var] = lit.value
-        self.var_to_level[lit.var] = len(self.trail)
+        self.var_to_level[lit.var] = self._decision_level()
         self.trail.append(TrailEntry(lit, reason))
 
         # then, handle all clauses watching the variable we just assigned (only need to consider the 
@@ -110,10 +181,12 @@ class Solver:
             unassigned = Solver._find_unassigned_literals(clause.literals, self.assignment)
             if len(unassigned) == 0:
                 # there are no more unassigned literals and the clause is not satisfied (as per previous check) -> conflict
+                self.implication_graph.add_conflict(clause, self.assignment, self._decision_level())
                 return PropagationResult.CONFLICT
             elif len(unassigned) == 1:
                 # there is exactly one unassigned literal left -> unit clause, propagate the literal
                 self.propagation_queue.append((unassigned[0], clause))
+                self.implication_graph.add_implied(unassigned[0], self.assignment, clause, self._decision_level())
             else:
                 # we have more than one unassigned literal left -> update the watch list
                 for potential_lit in unassigned:
@@ -126,10 +199,9 @@ class Solver:
 
         return PropagationResult.NO_CONFLICT
 
-    """
-    process the propagation queue until it's empty or a conflict is found
-    """
     def _process_propagation_queue(self) -> PropagationResult:
+        """process the propagation queue until it's empty or a conflict is found"""
+
         while self.propagation_queue:
             # get the next literal to assign (unless it's already assigned, in which case we skip)
             lit, reason = self.propagation_queue.popleft()
@@ -143,17 +215,18 @@ class Solver:
 
         return PropagationResult.NO_CONFLICT
 
-    """
-    walks back the trail until the target decision level is reached, unassigning variables as it goes
-    (all assignments at and below the target level are kept)
-    returns the last literal that was removed from the trail (or None if nothing was removed)
-    """
     def _backtrack(self, target_level: int) -> Optional[Literal]:
-        if target_level >= len(self.control):
+        """
+        walks back the trail until the target decision level is reached, unassigning variables as it goes
+        (all assignments at and below the target level are kept)
+        returns the last literal that was removed from the trail (or None if nothing was removed)
+        """
+
+        if target_level >= self._decision_level():
             return None
 
         last_lit = None
-        while len(self.control) > target_level:
+        while self._decision_level() > target_level:
             target_height = self.control.pop()
             while len(self.trail) > target_height:
                 last_lit, _ = self.trail.pop()
@@ -162,14 +235,15 @@ class Solver:
 
         return last_lit
 
-    """
-    assuming that a conflict has occured on the trail at the current decision level, returns
-     - a new clause ("learned clause") to prevent it in the future
-     - the decision level to backtrack to
-    """
     def _analyze_conflict_trail(self, initial_reason: Clause) -> Tuple[Clause, int]:
-        # this is based largely on https://efforeffort.wordpress.com/2009/03/09/linear-time-first-uip-calculation/,
-        # a detailed explanation of the conflict clause generation of minisat (http://minisat.se/downloads/MiniSat.pdf)
+        """
+        assuming that a conflict has occured on the trail at the current decision level, returns
+        - a new clause ("learned clause") to prevent it in the future
+        - the decision level to backtrack to
+
+        this is based largely on https://efforeffort.wordpress.com/2009/03/09/linear-time-first-uip-calculation/,
+        a detailed explanation of the conflict clause generation of minisat (http://minisat.se/downloads/MiniSat.pdf)
+        """
 
         learned_clause: Clause = Clause([])
 
@@ -184,8 +258,6 @@ class Solver:
         cur_literal = None
         cur_reason = initial_reason
 
-        lowest_level = len(self.trail)
-
         while True:
             # process current reason
             for lit in cur_reason.literals:
@@ -194,14 +266,12 @@ class Solver:
                 seen.add(lit.var)
 
                 lit_level = self.var_to_level[lit.var]
-                if lit_level is None:
-                    assert False, f"literal {lit} is part of a conflict but does not have a decision level"
-                elif lit_level == len(self.trail):
+                if lit_level is None or lit_level < 0:
+                    assert False, f"literal {lit} is part of a conflict but does not have a valid decision level ({lit_level})"
+                elif lit_level >= self._decision_level():
                     counter += 1
-                elif lit_level < len(self.trail):
+                else:
                     learned_clause.literals.append(lit)
-                    if lit_level < lowest_level:
-                        lowest_level = lit_level
 
             # select the next literal to follow
             while True:
@@ -224,7 +294,13 @@ class Solver:
 
         # todo-optimization: can/should we minimize the learned clause some more?
 
-        return learned_clause, lowest_level
+        assert len(learned_clause.literals) > 0, "learned clause is empty, unexpected state"
+
+        # determine the backtrack level (according to https://courses.cs.washington.edu/courses/cse507/17wi/lectures/L02.pdf slide 14
+        # it is the second highest level in the conflict clause or 0 if it's a unit clause)
+        backtrack_level = sorted(self.var_to_level[lit.var] for lit in learned_clause.literals)[-2] or 0
+
+        return learned_clause, backtrack_level
 
     def solve(self) -> Optional[Assignment]:
         # handle special cases where formula is trivially satisfiable or unsatisfiable
@@ -237,12 +313,15 @@ class Solver:
         while True:
             result = self._process_propagation_queue()
             if result == PropagationResult.CONFLICT:
-                if len(self.control) == 0:
+                if self._decision_level() == 0:
                     return None
 
+                self.implication_graph.show()
+
                 # get the conflict clause from the last assignment
-                conflict_clause = self.trail[-1].reason
-                assert conflict_clause is not None, "no reason clause for conflict, unexpected state"
+                # todo: the trail reason is None when a conflict happens as an immediate consequence from the first 
+                # assignment, the or case is almost certainly wrong
+                conflict_clause = self.trail[-1].reason or Clause([self.trail[-1].literal])
 
                 learned_clause, backtrack_level = self._analyze_conflict_trail(conflict_clause)
 
@@ -266,8 +345,9 @@ class Solver:
 
                 lit = unassigned[0]
 
-                self.control.append(len(self.trail))
+                self.control.append(self._decision_level())
                 self.propagation_queue.append((lit, None))
+                self.implication_graph.add_node(lit, self._decision_level(), ImplicationGraph.NodeType.DECISION)
             else:
                 assert False, f"unknown propagation result: {result}"
 
@@ -296,7 +376,7 @@ def solve_dimacs(dimacs: str) -> Optional[Assignment]:
     return solver.solve()
 
 if __name__ == "__main__":
-    path = sys.argv[1] if len(sys.argv) > 1 else "../test-formulas/unit0.in"
+    path = sys.argv[1] if len(sys.argv) > 1 else "../test-formulas/unit5.in"
 
     with open(path, "r") as f:
         dimacs = f.read()
