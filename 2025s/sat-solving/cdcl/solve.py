@@ -130,6 +130,22 @@ class Solver:
     @staticmethod
     def _find_unassigned_literals(literals: Set[Literal], assignment: Assignment) -> List[Literal]:
         return [lit for lit in literals if assignment[lit.var] is None]
+    
+    @staticmethod
+    def _resolve(*args: Literal) -> Clause:
+        """
+        resolve a list of clauses, returning a new clause that is the result of resolving all of them
+        """
+        unique_literals: set[Literal] = set(args)
+        resolved: set[Literal] = set()
+
+        for lit in unique_literals:
+            if -lit in unique_literals:
+                continue
+
+            resolved.add(lit)
+
+        return Clause(resolved)
 
     def __init__(self, num_vars: int, clauses: List[Clause]):
         self.num_vars = num_vars
@@ -140,8 +156,11 @@ class Solver:
         # write access to this is only allowed through _assign_literal
         self.assignment: Assignment = {i: None for i in range(1, num_vars + 1)}
         # for each variable, remember the decision level at which it was assigned
-        # todo: i am sure there is a smarter way to do this that doesn't require another dict
+        # todo: i am sure there is a smarter way to do this that doesn't require more dicts
         self.var_to_level: Dict[int, Optional[int]] = {}
+        # for each variable, remember the reason it was assigned (None if it was assigned due to a decision)
+        # (todo: yes, this is duplicate information to the trail, but it's useful for the conflict analysis)
+        self.var_to_reason: Dict[int, Optional[Clause]] = {}
 
         # stack to remember order in which variables were assigned, and the reason (= clause) for the assignment
         # (None if the assignment was due to a decision and not because it was implied during propagation)
@@ -176,6 +195,7 @@ class Solver:
         # first, perform the assignment
         self.assignment[lit.var] = lit.value
         self.var_to_level[lit.var] = self._decision_level()
+        self.var_to_reason[lit.var] = reason
         self.trail.append(TrailEntry(lit, reason))
 
         # then, handle all clauses watching the variable we just assigned (only need to consider the 
@@ -243,6 +263,7 @@ class Solver:
                 last_lit, _ = self.trail.pop()
                 self.assignment[last_lit.var] = None
                 self.var_to_level[last_lit.var] = None
+                self.var_to_reason[last_lit.var] = None
 
         return last_lit
 
@@ -254,30 +275,21 @@ class Solver:
         which seems suspicously simpler than others (e.g. the one in minisat)
         """
 
+        def current_level_literals(clause: Clause) -> List[Literal]:
+            return [lit for lit in clause.literals if self.var_to_level[lit.var] == self._decision_level()]
+        
+        learned_clause = conflict.copy()
+
         # only consider the trail content from the current decision level
         relevant_trail = self.trail[self.control[-1]:]
 
-        learned_clause = conflict.copy()
-
-        def find_current_level_vars(clause: Clause) -> List[Literal]:
-            return [lit for lit in clause.literals if self.var_to_level[lit.var] == self._decision_level()]
-
+        # iterate through the trail in reverse order (most recent assignments first)
         for lit, reason in reversed(relevant_trail):
-            # if we have only one literal from the current decision level, we found the first uip
-            if len(find_current_level_vars(learned_clause)) <= 1:
+            learned_clause = Solver._resolve(*learned_clause.literals, lit, *(reason or Clause(set())).literals)
+            if len(current_level_literals(learned_clause)) <= 1:
                 break
 
-            if -lit in learned_clause.literals and reason is not None:
-                # remove the literal from the clause
-                learned_clause.literals.remove(lit)
-
-                # add literals from the antecedent clause, except the one being resolved
-                for antecedent_lit in reason.literals:
-                    if antecedent_lit != lit:
-                        learned_clause.literals.add(antecedent_lit)
-
-        level = 0 if len(learned_clause.literals) == 1 else sorted(self.var_to_level[lit.var] or -1 for lit in learned_clause.literals)[-2]
-        assert level >= 0, "none of the literals in the learned clause had a decision level, this should never happen"
+        level = 0 if len(learned_clause.literals) <= 1 else sorted(self.var_to_level[lit.var] or 0 for lit in learned_clause.literals)[-2]
 
         return learned_clause, level
 
