@@ -61,6 +61,7 @@ class TrailEntry(NamedTuple):
     reason: Optional[Clause]
 
 class Solver:
+    # todo: unused?
     @staticmethod
     def _resolve(*args: Literal) -> Clause:
         """
@@ -86,6 +87,10 @@ class Solver:
         # for each variable, remember the decision level at which it was assigned
         # todo: this is duplicate information to the trail but it was more convenient like this, should be refactored
         self.var_to_level: Dict[int, Optional[int]] = {}
+
+        # for each variable, remember the reason for assignment (None if the assignment was due to a decision)
+        # todo: this is duplicate information to the trail but it was more convenient like this, should be refactored
+        self.var_to_reason: Dict[int, Optional[Clause]] = {}
 
         # stack to remember order in which variables were assigned, and the reason (= clause) for the assignment
         # (None if the assignment was due to a decision and not because it was implied during propagation)
@@ -113,44 +118,58 @@ class Solver:
 
     def _decision_level(self) -> int:
         return len(self.control)
+    
+    def _log(self, message: str):
+        # print(f"[{self._decision_level()}] ", end=" ")
+        # print(message)
+        pass
 
     def _find_unassigned_literals(self, literals: Set[Literal]) -> List[Literal]:
         return [lit for lit in literals if self.assignment[lit.var] is None]
+    
+    def _find_new_watch(self, clause: Clause, old_watch: Literal) -> Optional[Literal]:
+        for lit in clause.literals:
+            if lit == old_watch:
+                continue
+
+            if self.assignment[lit.var] is not None or self.assignment[lit.var] == lit.value:
+                return lit
+
+        return None        
 
     def _assign_and_propagate(self, lit: Literal, reason: Optional[Clause]) -> Tuple[PropagationResult, Optional[Clause]]:
         """attempt to assign a literal and propagate through watch lists"""
 
-        # first, perform the assignment
+        self._log(f"assigning {lit} with reason {reason} and propagating")
+
+        # perform the assignment
         self.assignment[lit.var] = lit.value
         self.var_to_level[lit.var] = self._decision_level()
+        self.var_to_reason[lit.var] = reason
         self.trail.append(TrailEntry(lit, reason))
 
-        # then, handle all clauses watching the variable we just assigned (only need to consider the 
-        # clauses that are watching the negation, the others are trivially satisfied)
+        # then, handle all clauses potentially affected by this assignment (not really all potentially affected clauses, 
+        # but all where we would care about the effect -> i.e. where it could make the clause unsatisfied)
+        # only need to consider the clauses that are watching the negation of the literal, the others are trivially satisfied
         # create a copy of the watch list so we can mutate the original while iterating
         watch_list = self.watch_lists.get(-lit, []).copy()
-
         for clause in watch_list:
-            # if the clause was already satisfied there's nothing to do
             if clause.is_satisfied(self.assignment):
                 continue
 
-            unassigned = self._find_unassigned_literals(clause.literals)
-            if len(unassigned) == 0:
-                # there are no more unassigned literals and the clause is not satisfied (as per previous check) -> conflict
-                return PropagationResult.CONFLICT, clause
-            elif len(unassigned) == 1:
-                # there is exactly one unassigned literal left -> unit clause, propagate the literal
-                self.propagation_queue.append((unassigned[0], clause))
+            # find a new literal to watch
+            new_watch = self._find_new_watch(clause, lit)
+
+            if new_watch is not None:
+                self.watch_lists[-lit].remove(clause)
+                self.watch_lists[new_watch].append(clause)
             else:
-                # we have more than one unassigned literal left -> update the watch list
-                for potential_lit in unassigned:
-                    if not clause in self.watch_lists[potential_lit]:
-                        self.watch_lists[potential_lit].append(clause)
-                        self.watch_lists[-lit].remove(clause)
-                        break
-                assert clause not in self.watch_lists[-lit], \
-                    f"clause {clause} is still watching {lit} but it should have been removed"
+                # if we couldn't get a new watch the clause might be unit or conflicting
+                unassigned = self._find_unassigned_literals(clause.literals)
+                if len(unassigned) == 1:
+                    self.propagation_queue.append((unassigned[0], clause))
+                else:
+                    return PropagationResult.CONFLICT, clause
 
         return PropagationResult.NO_CONFLICT, None
 
@@ -188,35 +207,112 @@ class Solver:
                 last_lit, _ = self.trail.pop()
                 self.assignment[last_lit.var] = None
                 self.var_to_level[last_lit.var] = None
+                self.var_to_reason[last_lit.var] = None
 
         return last_lit
 
-    def _analyze_conflict_trail(self, conflict: Clause) -> Tuple[Clause, int]:
+    def _has_one_literal_set_at_current_level(self, clause: Clause) -> Tuple[bool, Optional[Literal]]:
         """
-        assuming that we just found the given conflict clause, this function will return an appropriate
-        conflict clause and backtrack level based on the current trail
-        largely based on the description in https://courses.cs.washington.edu/courses/cse507/17wi/lectures/L02.pdf,
-        which seems suspicously simpler than others (e.g. the one in minisat)
+        (1) checks if the clause has exactly one literal set at the given level
+        (2) returns the most recently assigned literal (irrespective of (1))
         """
 
-        def current_level_literals(clause: Clause) -> List[Literal]:
-            return [lit for lit in clause.literals if self.var_to_level[lit.var] == self._decision_level()]
-        
-        learned_clause = conflict.copy()
+        # todo: this is retarded, should be able to just use the trail
 
-        # only consider the trail content from the current decision level
-        relevant_trail = self.trail[self.control[-1]:]
+        most_recent_lit = None
+        lits_at_current_level = []
 
-        # iterate through the trail in reverse order (most recent assignments first)
-        for lit, reason in reversed(relevant_trail):
-            if len(current_level_literals(learned_clause)) <= 1:
+        for i in range(len(self.trail) - 1, self.control[-1] - 1, -1):
+            entry = self.trail[i]
+            if not (entry.literal in clause.literals or -entry.literal in clause.literals):
+                continue
+
+            if most_recent_lit is None:
+                most_recent_lit = entry.literal
+
+            if self.var_to_level[entry.literal.var] == self._decision_level():
+                lits_at_current_level.append(entry.literal)
+
+        return len(lits_at_current_level) == 1, most_recent_lit
+            
+
+    def _resolve_clauses(self, clause1: Clause, clause2: Clause, lit: Literal) -> Clause:
+        """
+        todo: this is idiotic, refactor
+        """
+
+        merged = clause1.literals | clause2.literals
+        if lit in merged:
+            merged.remove(lit)
+        if -lit in merged:
+            merged.remove(-lit)
+
+        return Clause(merged)
+
+    def _get_backtrack_level(self, conflict_clause: Clause, conflict_level: int) -> int:
+        """
+        returns the backtrack level for the given conflict clause
+        """
+        maximum_level_before_conflict_level = -1
+
+        for lit in conflict_clause.literals:
+            level = self.var_to_level[lit.var]
+            if level is not None and level < conflict_level:
+                maximum_level_before_conflict_level = max(maximum_level_before_conflict_level, level)
+
+        return maximum_level_before_conflict_level
+
+    def _analyze_conflict_trail(self, conflict: Clause) -> Tuple[Tuple[Optional[Literal], Optional[Clause]], int]:
+        """
+        assuming that we just found the given conflict clause, this function will return a literal (and reason) to set 
+        and a backtrack level based on the current trail
+        """
+
+        conflict_clause = Clause(set(conflict.literals))
+
+        # todo: we need to exit early at decision level 0 or the loop will probably not work but this is not very elegant
+        if self._decision_level() == 0:
+            return (None, None), -1
+
+        while True:
+            # check if the current clause has exactly one literal set at the current decision level
+            has_one_lit, latest_lit = self._has_one_literal_set_at_current_level(conflict_clause)
+
+            # if there is exactly one literal set at the current decision level, we have found the first UIP
+            # todo: really? why?
+            if has_one_lit:
                 break
 
-            learned_clause = Solver._resolve(*learned_clause.literals, lit, *(reason or Clause(set())).literals)
+            assert latest_lit is not None, "no literal set at the current decision level, unexpected state"
 
-        level = 0 if len(learned_clause.literals) <= 1 else sorted(self.var_to_level[lit.var] or 0 for lit in learned_clause.literals)[-2]
+            latest_lit_reason = self.var_to_reason[latest_lit.var] or Clause(set())
 
-        return learned_clause, level
+            self._log(f"resolving {conflict_clause} and {latest_lit_reason} with {latest_lit}")
+            conflict_clause = self._resolve_clauses(conflict_clause, latest_lit_reason, latest_lit)
+
+        self._log(f"found conflict clause: {conflict_clause}")
+
+        conflict_literals = list(conflict_clause.literals)
+        assert len(conflict_literals) >= 1, "conflict clause has no literals, unexpected state"
+
+        if len(conflict_literals) == 1:
+            return (conflict_literals[0], None), 0
+        else:
+            # add the learned clause to our clause database
+            # todo: factor out the watch list stuff (it's already in the constructor)
+            self.clauses.append(conflict_clause)
+
+            if len(conflict_literals) >= 1:
+                self.watch_lists[conflict_literals[0]].append(conflict_clause)
+            if len(conflict_literals) >= 2:
+                self.watch_lists[conflict_literals[1]].append(conflict_clause)
+
+            # todo/hacky: the latest_lit must match the sign of the lit as it appears in the conflict clause,
+            # but this may not be the case
+            if latest_lit is not None and not latest_lit in conflict_clause.literals:
+                latest_lit = -latest_lit
+
+            return (latest_lit, conflict_clause), self._get_backtrack_level(conflict_clause, self._decision_level())
 
     def solve(self) -> Optional[Assignment]:
         # handle special cases where formula is trivially satisfiable or unsatisfiable
@@ -234,30 +330,28 @@ class Solver:
 
                 assert conflict_clause is not None, "conflict without conflict clause, unexpected state"
 
-                learned_clause, backtrack_level = self._analyze_conflict_trail(conflict_clause)
-                if not learned_clause.literals:
+                (implication, implication_reason), backtrack_level = self._analyze_conflict_trail(conflict_clause)
+                self._log(f"analyze conflict trail: implication: {implication} (reason: {implication_reason}), backtrack level: {backtrack_level}")
+                if not implication or backtrack_level == -1:
                     return None
 
-                # add the learned clause to our clause database
-                # todo: factor out the watch list stuff (it's already in the constructor)
-                self.clauses.append(learned_clause)
-                literals = list(learned_clause.literals)
-                if len(literals) >= 1:
-                    self.watch_lists[literals[0]].append(learned_clause)
-                if len(literals) >= 2:
-                    self.watch_lists[literals[1]].append(learned_clause)
-
                 _ = self._backtrack(backtrack_level)
+
+                self._log(f"deciding on {implication} after conflict")
+
+                self.propagation_queue.append((implication, implication_reason))
             elif result == PropagationResult.NO_CONFLICT:
                 # select a new decision variable
                 unassigned = self._find_unassigned_literals(self.all_literals)
                 if not unassigned:
                     return {var: val for var, val in self.assignment.items() if val is not None}
 
-                # todo: for now we just pick a random unassigned literal, but something like VSIDS should be implemented
-                lit = random.choice(unassigned)
+                # todo: for now we just pick the first unassigned literal, this could be much faster with something like VSIDS
+                lit = unassigned[0]
 
-                self.control.append(self._decision_level())
+                self._log(f"deciding on {lit}")
+
+                self.control.append(len(self.trail))
                 self.propagation_queue.append((lit, None))
             else:
                 assert False, f"unknown propagation result: {result}"
@@ -289,7 +383,7 @@ def solve_dimacs(dimacs: str) -> Optional[Assignment]:
     return solver.solve()
 
 if __name__ == "__main__":
-    path = sys.argv[1] if len(sys.argv) > 1 else "../test-formulas/unit4.in"
+    path = sys.argv[1] if len(sys.argv) > 1 else "../test-formulas/add8.in"
 
     with open(path, "r") as f:
         dimacs = f.read()
