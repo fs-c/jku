@@ -1,0 +1,72 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{csquotes}
+
+\usepackage[style=lncs]{biblatex}
+\addbibresource{references.bib}
+
+% https://tex.stackexchange.com/questions/384972/empty-table-of-content-list-of-figures-list-of-tables
+\setcounter{tocdepth}{1}
+
+\begin{document}
+
+\title{Gamification: Evaluation of Platforms}
+\author{Laurenz Weixlbaumer}
+\institute{JKU Linz, Austria\\\email{k11804751@students.jku.at}}
+\maketitle
+
+\begin{abstract}
+The abstract should briefly summarize the contents of the paper in
+150--250 words.
+\keywords{Gamification platforms \and Gamification frameworks \and Gamification evaluation}
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+\appendix
+
+\section{Literature Comments}
+
+Literature reviews on gamification itself, i.e.\ not platforms/frameworks in particular:
+
+\begin{itemize}
+    \item\cite{Herz14} examines 37 studies to identify gamification requirements, but notes that much work has been done since then. In addition, the review was not the focus of the thesis. (Given)
+    \item\cite{HaKS14} examine 24 (empirical, peer-reviewed) studies, creating a framework to examine the effectiveness of gamification.
+\end{itemize}
+
+Literature reviews on (theoretical) frameworks for gamification:
+
+\begin{itemize}
+    \item\cite{MRGA15} identify 10 \enquote{framework features} and judge 18 papers describing gamification frameworks or generic gamification process descriptions accordingly. Their individual reasoning is not always given, but the feature groups appear promising for adoption. (Given)
+    \item\cite{MRGA17}, from the same authors as above, follows a similar methodology, but considers more papers and has a stronger focus on education as opposed to industry applications.
+\end{itemize}
+
+Framework descriptions:
+
+\begin{itemize}
+    \item Octalysis \cite{Chou15}
+    \item 5W2H+M \cite{CoGS19}, although I couldn't really follow their description, and it doesn't appear to have gained any traction
+    \item ...incomplete list, literature reviews contain many more
+\end{itemize}
+
+Actual implementations (conducted a GitHub search for "gamification"):
+
+\begin{itemize}
+    \item gamification-engine\footnote{https://github.com/ActiDoo/gamification-engine} (Given)
+    \item Kinben\footnote{https://github.com/InteractiveSystemsGroup/GamificationEngine-Kinben, see also \cite{KiKZ18}} (Given)
+    \item UserInfuser\footnote{https://github.com/nlake44/UserInfuser} (Given)
+    \item laravel-gamify\footnote{https://github.com/qcod/laravel-gamify}
+    \item level-up\footnote{https://github.com/cjmellor/level-up}
+    \item django-gamification\footnote{https://github.com/mattjegan/django-gamification}
+    \item yay\footnote{https://github.com/sveneisenschmidt/yay}
+    \item hpi/gamification\footnote{https://github.com/hpi-schul-cloud/gamification}
+\end{itemize}
+
+\printbibliography[]
+
+\end{document}

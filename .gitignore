@@ -30,6 +30,11 @@ git_ignore_*
 *.synctex.gz
 *.pdf
 *.lof
+*.bbl
+*.bbl-SAVE-ERROR
+*.bcf
+*.blg
+*.run.xml
 
 # Mathematica stuff
 *.m
