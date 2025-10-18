@@ -1,3 +1,8 @@
+#let appendix(body) = {
+  set heading(numbering: "A", supplement: [Appendix])
+  body
+}
+
 #set heading(numbering: "1")
 #set list(indent: 0.5em)
 
@@ -17,37 +22,39 @@
 
 #outline()
 
-= Introduction
+// = Introduction
 
-Provide background on gamification: Introductory definition, use cases, etc.
+// Provide background on gamification: Introductory definition, use cases, etc.
 
-State the surveys goal/contribution and outline the structure of the thesis.
+// State the surveys goal/contribution and outline the structure of the thesis.
 
-= Related Work
+// = Related Work
 
-Others have done similar analyses before -- describe a selection of relevant prior art and outline commonalities/differences. (e.g. @MRGA15)
+// Others have done similar analyses before -- describe a selection of relevant prior art and outline commonalities/differences. (e.g. @MRGA15)
 
-= Evaluation Criteria
+// = Evaluation Criteria
 
-Formally establish the process of the evaluation: Introduce a catalogue of criteria, ideally grouped into sub-categories ($->$ figure).
+// Formally establish the process of the evaluation: Introduce a catalogue of criteria, ideally grouped into sub-categories ($->$ figure).
 
-Justify the choice of criteria.
+// Justify the choice of criteria.
 
-= Evaluation of Platforms
+// = Evaluation of Platforms
 
-*(Main survey & analysis section.)*
+// *(Main survey & analysis section.)*
 
-Give rationale for selection of platforms/frameworks.
+// Give rationale for selection of platforms/frameworks.
 
-Describe the analysis. Likely more readable to not dedicate a paragraph to each framework but to instead go through the criteria one by one, synthesizing the respective results ($->$ table for per-framework results).
+// Describe the analysis. Likely more readable to not dedicate a paragraph to each framework but to instead go through the criteria one by one, synthesizing the respective results ($->$ table for per-framework results).
 
-= Conclusion
+// = Conclusion
 
-Briefly restate introductory parts, summarize the findings.
+// Briefly restate introductory parts, summarize the findings.
 
-Elaborate on unique features or lacks of particular systems.
+// Elaborate on unique features or lacks of particular systems.
 
-= (Notes, relevant for 1st deliverable)
+#show: appendix
+
+= Literature Comments
 
 Literature reviews on gamification itself, i.e. not platforms/frameworks in particular:
 
