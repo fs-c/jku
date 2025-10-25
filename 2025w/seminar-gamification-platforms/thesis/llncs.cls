@@ -1,6 +1,8 @@
 % LLNCS DOCUMENT CLASS -- version 2.24 (29-Jan-2024)
 % Springer Verlag LaTeX2e support for Lecture Notes in Computer Science
 %
+% NOTE: this was modified to make \tableofcontents work as it would in a default class
+%
 %%
 %% \CharacterTable
 %%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -524,22 +526,6 @@ to0pt{\kern0.55\wd0\vrule height0.45\ht0\hss}\box0}}}}
 \setlength\arraycolsep{1.4\p@}
 \setlength\tabcolsep{1.4\p@}
 
-\def\tableofcontents{\chapter*{\contentsname\@mkboth{{\contentsname}}%
-                                                    {{\contentsname}}}
- \def\authcount##1{\setcounter{auco}{##1}\setcounter{@auth}{1}}
- \def\lastand{\ifnum\value{auco}=2\relax
-                 \unskip{} \andname\
-              \else
-                 \unskip \lastandname\
-              \fi}%
- \def\and{\stepcounter{@auth}\relax
-          \ifnum\value{@auth}=\value{auco}%
-             \lastand
-          \else
-             \unskip,
-          \fi}%
- \@starttoc{toc}\if@restonecol\twocolumn\fi}
-
 \def\l@part#1#2{\addpenalty{\@secpenalty}%
    \addvspace{2em plus\p@}%  % space above part line
    \begingroup
@@ -621,7 +607,6 @@ to0pt{\kern0.55\wd0\vrule height0.45\ht0\hss}\box0}}}}
  \textit{#1}\par
  \penalty\@highpenalty \endgroup}
 
-\setcounter{tocdepth}{0}
 \newdimen\tocchpnum
 \newdimen\tocsecnum
 \newdimen\tocsectotal
@@ -950,8 +935,7 @@ to0pt{\kern0.55\wd0\vrule height0.45\ht0\hss}\box0}}}}
     \def\thanks##1{\unskip{}}\def\fnmsep{\unskip}%
     \instindent=\hsize
     \advance\instindent by-\headlineindent
-    \if!\the\toctitle!\addcontentsline{toc}{title}{\@title}\else
-       \addcontentsline{toc}{title}{\the\toctitle}\fi
+
     \if@runhead
        \if!\the\titlerunning!\else
          \edef\@title{\the\titlerunning}%
@@ -977,8 +961,6 @@ to0pt{\kern0.55\wd0\vrule height0.45\ht0\hss}\box0}}}}
       \protected@xdef\scratch{\the\tocauthor}%
       \protected@xdef\toc@uthor{\scratch}%
     \fi
-    \addtocontents{toc}{\noexpand\protect\noexpand\authcount{\the\c@auco}}%
-    \addcontentsline{toc}{author}{\toc@uthor}%
     \if@runhead
        \if!\the\authorrunning!
          \value{@inst}=\value{@auth}%

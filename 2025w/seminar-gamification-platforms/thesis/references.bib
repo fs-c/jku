@@ -4,8 +4,9 @@
   title={Does Gamification Work? -- A Literature Review of Empirical Studies on Gamification}, 
   year={2014},
   pages={3025-3034},
-  keywords={Context;Psychology;Databases;Educational institutions;Games;Libraries;gamification;motivational affordance;persuasive technology;motivation;HCI},
-  doi={10.1109/HICSS.2014.377}}
+  doi={10.1109/HICSS.2014.377},
+  note = {Examines 24 (empirical, peer-reviewed) studies, establishing a framework to examine the effectiveness of gamification. As such it focuses on somewhat different aspects than e.g. \cite{Herz14}, but it is particularly valuable for its overview of the field.}
+}
 
 @INPROCEEDINGS{MRGA15,
   author={Mora, Alberto and Riera, Daniel and Gonzalez, Carina and Arnedo-Moreno, Joan},
@@ -13,15 +14,16 @@
   title={A Literature Review of Gamification Design Frameworks}, 
   year={2015},
   pages={1-8},
-  keywords={Games;Context;Bibliographies;Proposals;Ethics;Design methodology},
-  doi={10.1109/VS-GAMES.2015.7295760}}
+  doi={10.1109/VS-GAMES.2015.7295760},
+  note = {Identifies 10 \enquote{framework features} and judges 18 papers describing gamification frameworks or generic gamification process descriptions accordingly. Their individual reasoning is not always given, but in any case the feature groups are what is most interesting for the purpose of this thesis.}  
+}
 
 @incollection{KiKZ18,
   author = {Kizina, Anna and Kunkel, Johannes and Ziegler, Jürgen},
   booktitle = {Mensch und Computer 2018: Workshopband},
   title = {Ein kollaboratives Task-Management-System mit spielerischen Elementen},
   year = {2018},
-  publisher = {Gesellschaft für Informatik e.V.},
+  publisher = {Gesell\-schaft für Informatik e.V.},
   address = {Bonn},
   issn = {2510-2672},
   doi = {10.18420/muc2018-ws03-0477}
@@ -46,22 +48,209 @@
 	year = { 2017 },
 	pages = { 516--548 },
 	issn = { 1042-1726 },
-  doi={10.1007/s12528-017-9150-4}
+  doi={10.1007/s12528-017-9150-4},
+  note = {Follows a similar methodology to \cite{MRGA15} (same authors) but considers more papers and has a stronger focus on education as opposed to more general business applications. Given their narrow scope, the actual frameworks under review here are likely not very interesting for future reference, but the feature classification remains valuable.}
 }
 
 @book{Herz14,
-  author = {Herz, Andreas},
+  author = {Herzig, Phillip},
   title = {Gamification as a Service - Conceptualization of a Generic Enterprise Gamification Platform},
   publisher = {Technische Universität Dresden},
   address = {Dresden},
   year = {2014},
-  url = {https://nbn-resolving.org/urn:nbn:de:bsz:14-qucosa-148108}
+  doi = {10.1109/WICSA-ECSA.212.33},
+  note = {Examines 37 studies to identify gamification requirements, but notes that much work has been done since then and refers to \cite{HaKS14} for a more recent review.}
 }
 
 @book{Chou15,
   author = {Chou, Yu-Kai},
   title = {Actionable Gamification: Beyond Points, Badges, and Leaderboards},
   publisher = {Createspace Independent Publishing Platform},
-  address = {USA},
-  year = {2015}
+  year = {2015},
+  note = {Provides a detailed description of the Octalysis framework, which appears to be one of the more popular frameworks for gamification. This is the most complete reference for Octalysis, but a more accessible summary is given e.g. in \cite{MohaB23}.}
+}
+
+@article{MohaB23,
+  author = {Mohanty, Sattwik and Bagavan, Prabu},
+  year = {2023},
+  month = {11},
+  title = {A bibliometric analysis of the use of the Gamification Octalysis Framework in training: evidence from Web of Science},
+  volume = {10},
+  journal = {Humanities and Social Sciences Communications},
+  doi = {10.1057/s41599-023-02243-3}
+}
+
+@Inbook{HeAWS15,
+  author="Herzig, Philipp
+  and Ameling, Michael
+  and Wolf, Bernhard
+  and Schill, Alexander",
+  editor="Reiners, Torsten
+  and Wood, Lincoln C.",
+  title="Implementing Gamification: Requirements and Gamification Platforms",
+  bookTitle="Gamification in Education and Business",
+  year="2015",
+  publisher="Springer International Publishing",
+  address="Cham",
+  pages="431--450",
+  isbn="978-3-319-10208-5",
+  doi="10.1007/978-3-319-10208-5_22",
+  note="Describes gamification as a software development process and lays out requirements for a successful introduction of gamification. Existing gamification solutions are analyzed with regards to these requirements. Hits on many of the same notes as other work from the main author, e.g. \cite{Herz14} but focuses on requirements relevant in the implementation/provisioning phase."
+}
+
+@article{SANCN24,
+  author = {Shafi, Faiza and Agha, Attia and Naz, Anum and Chandio, Fida and Naqvi, Syeda},
+  year = {2024},
+  month = {01},
+  pages = {148--160},
+  title = {Evaluation of the MMCT App Based on the Octalysis Gamification Framework},
+  volume = {3},
+  journal = {The Asian Bulletin of Big Data Management},
+  doi = {10.62019/abbdm.v3i2.90},
+  note = {Evaluates a \enquote{gamified} app based on features of the Octalysis framework \cite{Chou15}. Since a singular instance of a tailor-made gamification implementation is evaluated, it is not exactly applicable to the evaluation of gamification platforms in general. But it nevertheless serves as an example of how a concrete feature-based evaluation can look like. (As such, similar to \cite{EDPKM15, ChrWa21}.)}
+}
+
+@inproceedings{EDPKM15,
+  author = {Economou, Daphne and Doumanis, Ioannis and Pedersen, Frands and Kathrani, Paresh and Mentzelopoulos, Markos and Bouki, Vassiliki},
+  year = {2015},
+  month = {07},
+  title = {Evaluation of a dynamic role-playing platform for simulations based on Octalysis gamification framework},
+  pages = {388--395},
+  doi = {10.3233/978-1-61499-530-2-388},
+  booktitle = {Workshop Proceedings of the 11th International Conference on Intelligent Environments},
+  volume = {19},
+  editor = {Davy Preuveneers}
+}
+
+@article{ChrWa21,
+  author = {Christopher, Leon and Waworuntu, Alexander},
+  year = {2021},
+  month = {06},
+  pages = {65-69},
+  title = {Java Programming Language Learning Application Based on Octalysis Gamification Framework},
+  volume = {8},
+  journal = {IJNMT (International Journal of New Media Technology)},
+  doi = {10.31937/ijnmt.v8i1.2049}
+}
+
+@article{CoGS19a,
+  author = {Conejo, Gabriel and Gasparini, Isabela and Hounsell, Marcelo},
+  year = {2019},
+  month = {12},
+  pages = {112-121},
+  title = {5W2H+M: A Broad Gamification Design Process But Focused on Motivation},
+  volume = {17},
+  journal = {RENOTE},
+  doi = {10.22456/1679-1916.99432}
+}
+
+@inproceedings{BozHS24,
+  author = {Božić, Ana Vrcelj and Hoić-Božić, Nataša and Stančin, Kristian},
+  year = {2024},
+  pages = {538-541},
+  title = {Technological Aspects of Gamification: Criteria for the Selection of Digital Tools and Platforms},
+  booktitle = {Proceedings of the 23rd European Conference on e-Learning},
+  volume = {23},
+  doi = {10.34190/ecel.23.1.2568},
+  note = {Proposes \enquote{criteria to consider when selecting [...] platforms for gamification} which it bases on the MDA framework~\cite{HunLZ04}, originally developed for game design. The primary output of this paper is their categorisation of gamification criteria, which is of great interest for the purpose of this thesis.}
+}
+
+@article{VrcHH23,
+  author = {Ana Vrcelj and  Nataša Hoić-Božić and  Martina Holenko Dlab},
+  title = {Use of Gamification in Primary and Secondary Education: A Systematic Literature Review},
+  journal = {International Journal of Educational Methodology},
+  volume = {9},
+  number = {1},
+  pages = {13-27},
+  year  = {2023},
+  doi = {10.12973/ijem.9.1.13},
+}      
+
+@article{HunLZ04,
+  author = {Hunicke, Robin and Leblanc, Marc and Zubek, Robert},
+  year = {2004},
+  month = {01},
+  pages = {},
+  title = {MDA: A Formal Approach to Game Design and Game Research},
+  volume = {1},
+  journal = {AAAI Workshop - Technical Report}
+}
+
+@inproceedings{GearB13,
+  title = {Gamiﬁcation in business: Designing motivating solutions to problem situations},
+  author = { Gears, Deborah and Braun, Karen },
+  year = {2013},
+  publisher = {Association for Computing Machinery},
+  booktitle = {CHI '13: Proceedings of the SIGCHI Conference on Human Factors in Computing Systems},
+  note = {An example of a more abstract framework for gamification, in particular one which explicitly considers economic factors.}
+}
+
+@InProceedings{XiZIA18,
+  author="Xin, Ooi Wei
+  and Zuo, Long
+  and Iida, Hiroyuki
+  and Aziz, Norshakirah",
+  editor="Alfred, Rayner
+  and Iida, Hiroyuki
+  and Ag. Ibrahim, Ag. Asri
+  and Lim, Yuto",
+  title="Gamification Effect of Loyalty Program and Its Assessment Using Game Refinement Measure: Case Study on Starbucks",
+  booktitle="Computational Science and Technology",
+  year="2018",
+  publisher="Springer Singapore",
+  address="Singapore",
+  pages="161--171",
+  isbn="978-981-10-8276-4",
+  doi={10.1007/978-981-10-8276-4_16}
+}
+
+@inproceedings{Yongw15,
+  title = {Effective Gamification Design: A Literature Review},
+  author = {Yongwen, Xu},
+  booktitle = {The SIJ Transactions on Computer Science Engineering \& its Applications (CSEA)},
+  year = {2015},
+  month = {04},
+  volume = {3},
+  number = {4},
+  publisher = {The Standard International Journals},
+  pages = {47--54}
+}
+
+@inproceedings{DeDKN11,
+  author = {Deterding, Sebastian and Dixon, Dan and Khaled, Rilla and Nacke, Lennart},
+  title = {From game design elements to gamefulness: defining "gamification"},
+  year = {2011},
+  isbn = {9781450308168},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/2181037.2181040},
+  doi = {10.1145/2181037.2181040},
+  booktitle = {Proceedings of the 15th International Academic MindTrek Conference: Envisioning Future Media Environments},
+  pages = {9–15},
+  numpages = {7},
+  location = {Tampere, Finland},
+  series = {MindTrek '11}
+}
+
+@article{SaHMM17,
+  title = {How gamification motivates: An experimental study of the effects of specific game design elements on psychological need satisfaction},
+  journal = {Computers in Human Behavior},
+  volume = {69},
+  pages = {371-380},
+  year = {2017},
+  issn = {0747-5632},
+  doi = {10.1016/j.chb.2016.12.033},
+  author = {Michael Sailer and Jan Ulrich Hense and Sarah Katharina Mayr and Heinz Mandl}
+}
+
+@article{APLLAC24,
+  title = {Gamification in the Transport and Mobility Sector: A Systematic Review},
+  journal = {Transportation Research Part F: Traffic Psychology and Behaviour},
+  volume = {104},
+  pages = {286-302},
+  year = {2024},
+  issn = {1369-8478},
+  doi = {10.1016/j.trf.2024.06.004},
+  author = {Eugénie Avril and Angèle Picco and Colin Lescarret and Céline Lemercier and Amaël Arguel and Loïc Caroux},
+  note = {While the primary output of this paper (a review of gamification in the field of mobility and transport) doesn't immediately seem relevant, its introductory section goes into comparatively great detail and is very well researched---it has served well as a means to find more relevant high-quality literature. Also notably one goal was the evaluation of the effectiveness of gamification where \enquote{the results were rather mixed between positive and neutral results, with even some negative results}.}
 }

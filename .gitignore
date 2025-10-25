@@ -35,6 +35,8 @@ git_ignore_*
 *.bcf
 *.blg
 *.run.xml
+*.toc
+*.lot
 
 # Mathematica stuff
 *.m

@@ -1,71 +1,193 @@
 \documentclass[runningheads]{llncs}
 
+\usepackage{lmodern}
+
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
-\usepackage{hyperref}
 \usepackage{csquotes}
+\usepackage{microtype}
+\usepackage[inline]{enumitem}
 
-\usepackage[style=lncs]{biblatex}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{bookmark}
+
+\usepackage[style=lncs, bibstyle=mylncs, backref=true, sortcites]{biblatex}
 \addbibresource{references.bib}
-
-% https://tex.stackexchange.com/questions/384972/empty-table-of-content-list-of-figures-list-of-tables
-\setcounter{tocdepth}{1}
 
 \begin{document}
 
+% this makes sure references are included regardless of whether they are cited or not
+\nocite{*}
+
 \title{Gamification: Evaluation of Platforms}
 \author{Laurenz Weixlbaumer}
+\authorrunning{L. Weixlbaumer}
 \institute{JKU Linz, Austria\\\email{k11804751@students.jku.at}}
 \maketitle
-
+ 
 \begin{abstract}
 The abstract should briefly summarize the contents of the paper in
 150--250 words.
 \keywords{Gamification platforms \and Gamification frameworks \and Gamification evaluation}
 \end{abstract}
+\clearpage
 
 \tableofcontents
+\listoffigures
+\listoftables
+\clearpage
 
 \section{Introduction}
 
+\paragraph{Goal} Provide a comparison/evaluation of gamification platforms, focusing on open-source but also considering proprietary solutions.
+
+\paragraph{Methodology}
+\begin{enumerate}
+    \item Assemble catalogue of evaluation criteria
+    \begin{enumerate}
+        \item top-down, by considering existing, similar evaluations in the literature
+        \item bottom-up, by collecting the features of existing systems
+    \end{enumerate}
+    \item Assemble list of gamification platforms/frameworks/engines
+    \begin{enumerate}
+        \item open-source (GitHub)
+        \item proprietary (Google searches, literature)
+    \end{enumerate}
+    \item Evaluate the platforms according to the catalogue of evaluation criteria 
+\end{enumerate}
+
+\section{Evaluation Criteria}
+
+\subsection{Gamification Features}
+
+Many evaluations of concrete gamification implementations use the Octalysis framework~\cite{Chou15} as a basis for their evaluation~\cite{SANCN24, EDPKM15, ChrWa21, MohaB23}. At its core, Octalysis identifies eight \enquote{core drives} of human engagement that it considers to be essential for gamification. Because Octalysis does not attempt to provide a comprehensive taxonomy of gamification features, but rather considers overarching categories, we will augment the respective drives with more specific features, inspired by the literature but also by existing solutions.
+
+In particular, while the original grouping is arranged around factors concerned with human motivation, we will instead group features by their fundamental nature and conceptual similarity. It should be noted that other evaluations of more abstract frameworks for gamification consider e.g.~such things as economic viability~\cite{GearB13} or consideration for stakeholders~\cite{HeAWS15} as \enquote{features} of gamification frameworks, while this work focuses only on feature which a concrete implementation of a gamification framework could provide or directly enable.
+
+\subsubsection{Epic Meaning \& Calling}\cite{Chou15} This encompasses the drive to feel like being a part of something larger than oneself, having a meaningful impact on some greater goal. Providing such a \enquote{narrative} around the gamified elements lies upon the implementor, but the framework may still provide supporting tools in this regard. Stretching the original definition, we will also more broadly include other long-term incentives in this category.
+
+\paragraph{Onboarding \& Tutorials} serve as an early guide for new users, helping them to understand the gamified elements and the overall purpose of the platform~\cite{Herz14}.
+
+\paragraph{Narratives} provides a story or a setting for the gamified elements, helping to create a sense of immersion, and are designed to foster engagement~\cite{MRGA15}. In a framework, this might look like providing tooling to create/visualize a roadmap that a user can progress through.
+
+\paragraph{Quests} 
+
+\subsubsection{Development \& Accomplishment}\cite{Chou15} The drive to make visible progress towards a goal, to develop skills and to overcome challenges.
+
+\paragraph{Leveling system} (point system)~\cite{DeDKN11, SaHMM17, XiZIA18}, motivation to reach a higher level;~\cite{Yongw15} identifies different \enquote{player personality archetypes} and finds that of all identified game mechanics, status-enabling mechanics like player levels are the only ones to motivate all kinds.
+
+\paragraph{Badges \& Trophies~\cite{SaHMM17}}
+
+\paragraph{Leaderboards}
+
+\paragraph{Rewards} (not to be confused with badges/achievements etc. since they are real/extrinsic)
+
+\subsubsection{Empowerment of Creativity \& Feedback}\cite{Chou15} The drive to be creative, to experiment, being able to immediately see the result of one's actions.
+
+\paragraph{Customizable Avatar}~\cite{SaHMM17} (generally in combination with a profile, see below)
+
+\paragraph{\enquote{Choose Your Path} Quests} give users multiple paths to achieve a goal
+
+\paragraph{Notifications}~\cite{SaHMM17} (real-time feedback on actions inside the platform, for example through push-notifications)
+
+\subsubsection{Ownership \& Possession}\cite{Chou15} The drive to own, control and accumulate things.
+
+\paragraph{Collectibles}
+
+\paragraph{Virtual currency}
+
+\subsubsection{Social Influence \& Relatedness}\cite{Chou15} The drive for social interaction and connection: companionship, competition, cooperation, communication.
+
+\paragraph{Profiles}
+
+\paragraph{Roles}
+
+\paragraph{Social Network} Social Graph, Friends, Groups
+
+\paragraph{Widgets} (embeddable in own website or \enquote{personal} company spaces inside things like confluence etc.)
+
+\subsubsection{Scarcity \& Impatience}\cite{Chou15} The drive to value and prioritize things simply because they are rare or difficult to obtain, or because their availability is limited in some other way.
+
+\paragraph{Events} rare, cyclic (?) chance to gain special rewards~\cite{Herz14}
+
+\paragraph{Time-gates} on e.g.~tasks (= may not take more than X minutes to complete task)~\cite{Yongw15, DeDKN11}
+
+\paragraph{Deadlines} on tasks (= must complete task before X)~\cite{Yongw15}
+
+\subsubsection{Unpredictability \& Curiosity}\cite{Chou15} The drive to explore the unknown, being motivated by the desire to find out what happens next.
+
+\paragraph{Variable rewards} (randomness)
+
+\paragraph{Gambling} (e.g. lottery)~\cite{Yongw15}
+
+\subsubsection{Loss \& Avoidance}\cite{Chou15} The drive to avoid negative consequences as a result of one's actions or inactions.
+
+\paragraph{Streaks} daily/weekly/\ldots
+
+\paragraph{Punishments} on failed tasks or e.g.~missed deadlines/time-gates
+
+\subsection{Technical Details}
+
+\begin{itemize}
+    \item Integration (simple dependency, framework-specific, separate service)
+    \item Supported programming languages, databases, frameworks (front- and backend), natural languages, \ldots
+    \item Adaptability (how customizable is the system, how extensible is it, \ldots)
+    \item Development Activity (number of commits and contributors over time, notable forks, sponsors)
+    \item Licensing (MIT, GPL, \ldots; can it be used commercially in closed-source projects)
+    \item Does it have a user interface or is it headless
+\end{itemize}
+
+\section{Frameworks under Consideration}
+
+\subsection{Open-Source}
+
+Conducted a GitHub search for \enquote{gamification}, only considering repositories with a reasonable amount of stars:
+\begin{itemize}
+    \item gengine\footnote{\url{https://github.com/ActiDoo/gamification-engine}} (Given)
+    \item Kinben\footnote{\url{https://github.com/InteractiveSystemsGroup/GamificationEngine-Kinben}, see also related work in~\cite{KiKZ18}.} (Given)
+    \item UserInfuser\footnote{\url{https://github.com/nlake44/UserInfuser}} (Given)
+    \item laravel-gamify\footnote{\url{https://github.com/qcod/laravel-gamify}}
+    \item level-up\footnote{\url{https://github.com/cjmellor/level-up}}
+    \item Django Gamification\footnote{\url{https://github.com/mattjegan/django-gamification}}
+    \item yay\footnote{\url{https://github.com/sveneisenschmidt/yay}}
+    \item hpi/gamification\footnote{\url{https://github.com/hpi-schul-cloud/gamification}}
+    \item myCRED\footnote{\url{https://github.com/mycred/myCRED}}
+    \item score.js\footnote{\url{https://github.com/mulhoon/score.js}}
+    \item GenGamification\footnote{\url{https://github.com/TiagoGouvea/PHPGamification}}
+    \item devleague/gamification-server\footnote{\url{https://github.com/devleague/Gamification-Server}}
+    \item badger\footnote{\url{https://github.com/the-badger/badger}}
+    \item \ldots just a first look, preferable to wait with expanding this list until it's clear how much work it is to evaluate them individually
+\end{itemize}
+
+\subsection{Proprietary}
+
+Conducted Google search \enquote{gamification}:
+\begin{itemize}
+    \item sosafe\footnote{\url{https://sosafe-awareness.com/resources/reports/gamification/}}
+    \item Drmify\footnote{\url{https://drimify.com/}}
+    \item Genially\footnote{\url{https://genially.com/features/gamification/}}
+    \item playable\footnote{\url{https://playable.com/}}
+    \item \ldots just a first look, but don't want to include too many of these either way
+\end{itemize}
+%
+It should be noted that the industry moves fast: Of 10 commercial gamification solutions treated in one of the literature reviews under consideration~\cite{HeAWS15}\footnote{Published 10 years ago at the time of writing. Looking only at \enquote{Generic Gamification Platforms} and \enquote{Integrated Solutions}.}, only two were still accessible under the given URL\@.
+
+\section{Evaluation}
+
+\section{Conclusion}
+
 \appendix
 
-\section{Literature Comments}
+\section{Notes (to be removed in final draft)}
 
-Literature reviews on gamification itself, i.e.\ not platforms/frameworks in particular:
+For comprehensive and widely accepted definition of gamification, see~\cite{DeDKN11} (according to SemanticScholar, this is incidentally the most cited work on gamification in general).
 
-\begin{itemize}
-    \item\cite{Herz14} examines 37 studies to identify gamification requirements, but notes that much work has been done since then. In addition, the review was not the focus of the thesis. (Given)
-    \item\cite{HaKS14} examine 24 (empirical, peer-reviewed) studies, creating a framework to examine the effectiveness of gamification.
-\end{itemize}
+Literature reviews on gamification itself, i.e.\ not platforms/frameworks in particular:~\cite{Herz14, HaKS14}.
 
-Literature reviews on (theoretical) frameworks for gamification:
+Literature reviews on (theoretical) frameworks for gamification:~\cite{MRGA15, MRGA17}. Descriptions of (theoretical) gamification frameworks: Octalysis~\cite{Chou15}, 5W2H+M~\cite{CoGS19, CoGS19a}, \ldots.
 
-\begin{itemize}
-    \item\cite{MRGA15} identify 10 \enquote{framework features} and judge 18 papers describing gamification frameworks or generic gamification process descriptions accordingly. Their individual reasoning is not always given, but the feature groups appear promising for adoption. (Given)
-    \item\cite{MRGA17}, from the same authors as above, follows a similar methodology, but considers more papers and has a stronger focus on education as opposed to industry applications.
-\end{itemize}
-
-Framework descriptions:
-
-\begin{itemize}
-    \item Octalysis \cite{Chou15}
-    \item 5W2H+M \cite{CoGS19}, although I couldn't really follow their description, and it doesn't appear to have gained any traction
-    \item ...incomplete list, literature reviews contain many more
-\end{itemize}
-
-Actual implementations (conducted a GitHub search for "gamification"):
-
-\begin{itemize}
-    \item gamification-engine\footnote{https://github.com/ActiDoo/gamification-engine} (Given)
-    \item Kinben\footnote{https://github.com/InteractiveSystemsGroup/GamificationEngine-Kinben, see also \cite{KiKZ18}} (Given)
-    \item UserInfuser\footnote{https://github.com/nlake44/UserInfuser} (Given)
-    \item laravel-gamify\footnote{https://github.com/qcod/laravel-gamify}
-    \item level-up\footnote{https://github.com/cjmellor/level-up}
-    \item django-gamification\footnote{https://github.com/mattjegan/django-gamification}
-    \item yay\footnote{https://github.com/sveneisenschmidt/yay}
-    \item hpi/gamification\footnote{https://github.com/hpi-schul-cloud/gamification}
-\end{itemize}
+Gamification effectiveness:~\cite{SaHMM17, APLLAC24} (mixed results).
 
 \printbibliography[]
 
