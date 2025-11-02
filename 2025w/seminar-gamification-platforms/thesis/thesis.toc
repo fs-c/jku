@@ -1,5 +1,0 @@
-\contentsline {title}{Gamification: Evaluation of Platforms}{1}{chapter.1}%
-\authcount {1}
-\contentsline {author}{Laurenz Weixlbaumer}{1}{chapter.1}%
-\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
-\contentsline {section}{\numberline {A}Literature Comments}{2}{section.1}%

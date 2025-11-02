@@ -1,0 +1,657 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage{lmodern}
+
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{csquotes}
+\usepackage{microtype}
+\usepackage[inline]{enumitem}
+
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{bookmark}
+\usepackage{fancyref}
+
+\usepackage{booktabs}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\usepackage{tabularx,ragged2e}
+\usepackage{multirow}
+\usepackage{adjustbox}
+\usepackage{makecell}
+
+\usepackage{tikz}
+\usetikzlibrary{external}
+
+\setcounter{tocdepth}{3}
+
+\newcommand{\reqno}[2][black]{\tikz[baseline=-0.5ex]{\draw[#1,radius=2pt] (0,0) circle ;}}%
+\newcommand{\reqpartial}[2][black]{\tikz[baseline=-0.5ex, rotate=-45]{
+    \begin{scope}
+        \clip(-2pt, -2pt) rectangle (2pt, 0);
+        \draw[#1,radius=2pt, fill=black] (0,0) circle ;
+    \end{scope}
+    \draw[#1,radius=2pt] (0,0) circle ;
+}}%
+\newcommand{\reqyes}[2][black,fill=black]{\tikz[baseline=-0.5ex]{\draw[#1,radius=2pt] (0,0) circle ;}}%
+
+\usepackage[style=lncs, bibstyle=mylncs, backref=true, sortcites, defernumbers=true, backend=biber]{biblatex}
+\addbibresource{references.bib}
+\addbibresource{frameworks.bib}
+
+\newenvironment{xcenter}
+ {\par\setbox0=\hbox\bgroup\ignorespaces}
+ {\unskip\egroup\noindent\makebox[\textwidth]{\box0}\par}
+
+\begin{document}
+
+% this makes sure references are included regardless of whether they are cited or not
+\nocite{*}
+
+\title{Gamification: Evaluation of Platforms}
+\author{Laurenz Weixlbaumer}
+\authorrunning{L. Weixlbaumer}
+\institute{JKU Linz, Austria\\\email{k11804751@students.jku.at}}
+\maketitle
+ 
+\begin{abstract}
+The abstract should briefly summarize the contents of the paper in
+150--250 words.
+\keywords{Gamification platforms \and Gamification frameworks \and Gamification evaluation}
+\end{abstract}
+\clearpage
+
+\tableofcontents
+\listoffigures
+\listoftables
+\clearpage
+
+\section{Introduction}
+
+\paragraph{Goal} Provide a comparison/evaluation of gamification platforms, focusing on open-source but also considering proprietary solutions.
+
+\paragraph{Methodology}
+\begin{enumerate}
+    \item Assemble catalogue of evaluation criteria
+    \begin{enumerate}
+        \item top-down, by considering existing, similar evaluations in the literature
+        \item bottom-up, by collecting the features of existing systems
+    \end{enumerate}
+    \item Assemble list of gamification platforms/frameworks/engines
+    \begin{enumerate}
+        \item open-source (GitHub)
+        \item proprietary (Google searches, literature)
+    \end{enumerate}
+    \item Evaluate the platforms according to the catalogue of evaluation criteria 
+\end{enumerate}
+
+TODO:~LLM declaration
+
+Gemini 2.5 Pro: literature search, initial drafts and information synthesis
+
+elicit: literature search
+
+Cursor: inline completions (primarily for LaTeX-specific changes like table formatting, but occasionally also )
+
+\section{Evaluation Criteria}
+
+\subsection{Gamification Features}
+
+Many evaluations of concrete gamification implementations use the Octalysis framework~\cite{Chou15} as a basis for their evaluation~\cite{SANCN24, EDPKM15, ChrWa21, MohaB23}. At its core, Octalysis identifies eight \enquote{core drives} of human engagement that it considers to be essential for gamification. Because Octalysis does not attempt to provide a comprehensive taxonomy of gamification features, but rather considers overarching categories, we will augment the respective drives with more specific features, inspired by the literature but also by existing solutions.
+
+In particular, while the original grouping is arranged around factors concerned with human motivation, we will instead group features by their fundamental nature and conceptual similarity. It should be noted that other evaluations of more abstract frameworks for gamification consider e.g.~such things as economic viability~\cite{GearB13} or consideration for stakeholders~\cite{HeAWS15} as \enquote{features} of gamification frameworks, while this work focuses only on features which a concrete implementation of a gamification framework could provide or directly enable (cf.~\emph{functional} vs.~\emph{non-functional} requirements~\cite{ISOReq}, where we would consider only the former).
+
+In the following, for each of the eight drives, alongside a brief definition we will list functional gamification features that are relevant to the drive. Note that this could never be an exhaustive list, but rather an as much as possible a representative sample based on the literature (as noted individually) and existing solutions (see \fref{sec:frameworks-under-consideration}).
+
+\subsubsection{Epic Meaning \& Calling\label{sec:epic-meaning-calling}} This encompasses the drive to feel like being a part of something larger than oneself, having a meaningful impact on some greater goal~\cite{Chou15}. Providing such a \enquote{narrative} around the gamified elements lies upon the implementor, but the framework may still provide supporting tools in this regard. Stretching the original definition, we will also more broadly include other long-term incentives in this category.
+
+Features in this category are concerned with establishing a first sense of purpose and direction and then a sustainable \enquote{progression loop} that keeps the user engaged.
+
+\paragraph{Onboarding \& Tutorials} serve as an early guide for new users, helping them to understand the gamified elements and the overall purpose of the platform~\cite{Herz14, ZichC11, APLLAC24}.
+
+\paragraph{Narratives} provide a story or a setting for the gamified elements, helping to create a sense of immersion, and are designed to foster engagement~\cite{MRGA15}. In a framework, this might look like providing tooling to create/visualize a roadmap that a user can progress through~\cite{SaHMM17}.
+
+\paragraph{Quests} are a structured way to earn \emph{Points} (see \Fref{sec:development-accomplishment}) after completing some given tasks~\cite{ZichC11, APLLAC24}. They are a key component of the \enquote{progression loop} and generally an abstraction over whatever the gamified experience is trying to achieve.
+
+\subsubsection{Development \& Accomplishment\label{sec:development-accomplishment}} The drive to make visible progress towards a goal, to develop skills and to overcome challenges~\cite{Chou15}.
+
+Frameworks support this drive by providing feedback on progression and visible representations of achievement, as such providing \emph{visible proof}\footnote{Metaphorically speaking; many actual frameworks do not provide a user interface and it is up to the implementor to actually make these things visible. But we consider these features supported if the framework provides those means.} of progress---both to the user and to others.
+
+\paragraph{Points} (or \emph{XP}) are the fundamental unit of progression in many descriptions of gamification~\cite{DeDKN11, SaHMM17, XiZIA18, ZichC11, Yongw15, APLLAC24, BozHS24, HeAWS15}. They are generally combined with \emph{Levels} to structure the progression and enhance the motivational aspects~\cite{SaHMM17}.
+
+\paragraph{Levels} increase player's competitive instinct by providing a clear hierarchy of progression~\cite{DeDKN11, Yongw15, APLLAC24, BozHS24}. They are generally based on point thresholds (see \emph{Points}).~\cite{Yongw15} identifies different \enquote{player personality archetypes} and finds that of all identified game mechanics, status-enabling mechanics like player levels are the only ones to specifically motivate all kinds.
+
+\paragraph{Badges \& Trophies} (or \emph{Achievements}, \emph{Milestones}) are orthogonal to the points and levels system---they provide a way to reward players for extraordinary achievements outside of the regular \enquote{progression loop}~\cite{SaHMM17, ZichC11, Yongw15, APLLAC24, BozHS24}. Awarding new players comparatively easy badges early on is a common way to bolster early engagement and foster retention~\cite{CoGS19}.
+
+\paragraph{Leaderboards} rank players based on their relative \enquote{performance}, be it \emph{Points} or some other metric~\cite{ZichC11, APLLAC24, BozHS24}. They can be effective motivators to some players~\cite{HaKS14}, however the general \enquote{motivational potential} of leaderboards is mixed~\cite{SaHMM17}.
+
+\paragraph{Rewards} are coupled with completion of \emph{Quests}, on obtaining \emph{Badges}~\cite{Yongw15} or otherwise as a result of some desired action~\cite{XiZIA18, APLLAC24}. They are particularly relevant for customer-facing gamification systems~\cite{XiZIA18}. While some authors make a distinction between \enquote{in-game} and \enquote{real-world} rewards~\cite{APLLAC24}, we will not do so here, in particular since the majority of examined frameworks do not support this distinction.
+
+\subsubsection{Empowerment of Creativity \& Feedback\label{sec:creativity-and-feedback}} The drive to be creative, to experiment, being able to immediately see the result of one's actions~\cite{Chou15}.
+
+Features in this category are concerned with providing the user with a sense of agency and control over their own progress and experience.
+
+\paragraph{Customizable Avatars} allow users to personalize their own visual representation~\cite{SaHMM17, APLLAC24, BozHS24}. It is important to delineate avatars from \emph{Profiles} (see \fref{sec:ownership-and-possession}): While they may be presented together, the primary purpose of avatars is self-expression while profiles are primarly concerned with information display.
+
+\paragraph{\enquote{Choose Your Path} Quests} give users multiple paths to achieve a goal, giving them a sense of agency and control~\cite{CoGS19, CoGS19a}. Note that we will, in our evaluation, not limit this to only \enquote{Quests} but more generally progress: If all progress is linear along a single path (regardless of the concept of progression), the framework is not considered to support this.
+
+\paragraph{Notifications}~provide real-time feedback to users about their actions (and the consequences thereof) inside the platform~\cite{SaHMM17}, for example through push-notifications or pop-ups. This closes the feedback loop and reinforces the user's sense of agency~\cite{CoGS19}.
+
+\subsubsection{Ownership \& Possession\label{sec:ownership-and-possession}} The drive to own, control and accumulate things~\cite{Chou15}.
+
+Features in this category provide the means for the user to own e.g.~items and (virtual) currency within the bounds of the platform.
+
+\paragraph{Collectibles} are virtual items~\cite{HeAWS15}, generally with no direct \enquote{functional value}, that users can earn, collect and display~\cite{DeDKN11} (although, for the sake of this evaluation, simply the concept of this kind of virtual item is sufficient). Their value is driven by a \enquote{collector's instinct}, an important part of this drive.
+
+\paragraph{Virtual Currency} is any framework-internal currency (e.g.~\enquote{Gems}, \enquote{Coins}) earned as rewards for completing \emph{Quests}, obtaining \emph{Badges} or otherwise through some activitiy~\cite{HeAWS15}. It is generally used to purchase \emph{Collectibles} or as a means to personalize the \emph{Avatar} (see \fref{sec:creativity-and-feedback}) but may in some usage contexts also be exchanged for real-world currency or other benefits.
+
+\subsubsection{Social Influence \& Relatedness\label{sec:social-influence-and-relatedness}} The drive for social interaction and connection, including e.g.~companionship, competition, cooperation and communication~\cite{Chou15}. It is concerned iwth the fundamental human need for social connection, interaction and validation.
+
+Framework mechanics can leverage this drive by providing opportunities for social interaction and fostering social connections.
+
+\paragraph{Profiles} are a dedicated space representing a user's identity within the platform, generally containing information about the user's \emph{Roles}, \emph{Badges \& Trophies} and \emph{Level} (see \fref{sec:development-accomplishment}), and other relevant details~\cite{ZichC11}. 
+
+\paragraph{Roles} represent specific labels or permissions assigned to users, often based on their contributions, status, or seniority~\cite{HeAWS15}. Depending on usage context roles can facilitate or provide a (social) hierarchy or be used for access control and permissions management.
+
+\paragraph{Social Network} is the \enquote{umbrella category} for all kinds of social features allowing users to form and foster connections with one another, such as the concept of \emph{Friends}, \emph{Groups} or \emph{Followers}~\cite{ZichC11, Herz14, Yongw15}. This facilitates direct social interactions like cooperation and communication on-platform, giving the chance to integrate it into the gamified experience (e.g.~by awarding rewards for cooperative interactions).
+
+\paragraph{Widgets} are embeddable components (e.g.~iframe or script reference) that allow users to display their profile, achievements, or status outside of the primary platform (e.g., on a personal blog, forum signature, or company intranet page)~\cite{ZichC11}. This has the potential to extend the social aspects of the gamified experience beyond the primary platform.
+
+\subsubsection{Scarcity \& Impatience\label{sec:scarcity-and-impatience}} The drive to value and prioritize things simply because they are rare or difficult to obtain, or because their availability is limited in some other way~\cite{Chou15}. This drive encompasses e.g. the well-known \enquote{fear of missing out} (FOMO) effect.
+
+Frameworks can allow implementors to leverage this by making opportunities and rewards limited in time, quantity or otherwise.
+
+\paragraph{Events} are rare, time-limited and generally cyclic opportunities to gain special rewards, often by participating in an exclusive activity tied to the event~\cite{Herz14, HeAWS15}.
+
+\paragraph{Time-gates} on tasks or other activities are a constraint that requires a task to be completed withing a maximum allowed time~\cite{Yongw15, DeDKN11}. This creates pressure and can make the successful completion of the task feel more rewarding.
+
+\paragraph{Deadlines} on tasks or other activities are a constraint that require a task to be initiated or completed by a specific point in time, which is generally useful to model real-life time constraints in the gamified context~\cite{Yongw15, DeDKN11}.
+
+\subsubsection{Unpredictability \& Curiosity\label{sec:unpredictability-and-curiosity}} The drive to explore the unknown, being motivated by the desire to find out what happens next~\cite{Chou15}. This encompasses the {Skinner box} effect, where variable or random rewards are often more engaging than predictable ones.
+
+Features in this category are concerned with enabling random reward behavior in the gamified experience.
+
+\paragraph{Variable Rewards} broadly represent any kind of non-deterministic outcomes or rewards for actions, a classic example of tapping into the Skinner box effect~\cite{HeAWS15}.
+
+
+\paragraph{Gambling} is a super-category for any kind of games of chance supported by frameworks, generally requiring the user to stake something of value (e.g.~\emph{Points} or \emph{Virtual currency}, see \fref{sec:development-accomplishment} and \fref{sec:ownership-and-possession} respectively) in order to participate~\cite{Yongw15}. This distinguishes it from \emph{Variable rewards} in that the user stakes a resource other than their own time (in order to complete the associated task).
+
+\subsubsection{Loss \& Avoidance\label{sec:loss-and-avoidance}} The drive to avoid negative consequences as a result of one's actions or inactions~\cite{Chou15}. It is based on the psychological principle of \enquote{loss aversion}, where the pain of losing something may be a more powerful motivator than the pleasure of gaining an equivalent reward.
+
+Features in this category are concerned with enabling this kind of \enquote{negative motivation} as part of the engagement mechanisms.
+
+\paragraph{Streaks} are a mechanic that rewards users for performing a desired action (e.g.~\enquote{logging in}) on a consecutive basis (daily, weekly)~\cite{HuynI17, Rapp15}. They set up a loss-avoidance incentive (\enquote{sunk-cost}) that enhances user retention. But they may also have the opposite effect: Once users lose a streak they are much more likely to abandon the activity altogether~\cite{HuynI17}.
+
+\paragraph{Punishments} are negative consequences for failures (e.g.~for failed tasks) or inactions (e.g.~for missed deadlines or time-gates)~\cite{SaHMM17, XiZIA18}. We consider this feature to be supported if there are mechanics that motivate users through the drive to avoid a penalty.
+
+% \subsection{Technical and Architectural Characteristics}
+
+% \subsubsection{Installation \& Deployment} The process and complexity required to make the framework operational.
+
+% \begin{itemize}
+%     \item Installation: how can an implementor get to a point where they can use the framework
+%     \begin{itemize}
+%         \item dependency
+%         \item separate deployment/service
+%     \end{itemize}
+%     \item Integration: how can the framework be used in a project
+%     \begin{itemize}
+%         \item API
+%         \item directly
+%         \item \enquote{parent-framework specific} e.g.~plugin
+%     \end{itemize}
+%     \item Requirements~\cite{AhaPP04}
+%     \begin{itemize}
+%         \item programming language
+%         \item database (*SQL, Redis, \ldots)
+%         \item framework or platform (e.g. Django, NodeJS, WordPress, \ldots)
+%     \end{itemize}
+%     \item Internationalization capabilities~\cite{AhaPP04}
+%     \begin{itemize}
+%         \item supported languages
+%         \item easily extensible to new ones
+%     \end{itemize}
+%     \item Adaptability (how customizable is the system, how extensible is it, \ldots)~\cite{AhaPP04}
+%     \item Interfaces
+%     \begin{itemize}
+%         \item user interface 
+%         \item admin interface (only fully supportedif it also supports full data manipulation)
+%     \end{itemize}
+%     \item 3\textsuperscript{rd} party integration capabilities
+%     \begin{itemize}
+%         \item social media platforms (e.g.~Facebook, Google via OAuth)
+%         \item enterprise SSO
+%     \end{itemize}
+% \end{itemize}
+
+% \subsection{Project Health and Ecosystem}
+
+% \begin{itemize}
+%     \item Development Activity (number of commits and contributors over time, notable forks, sponsors), also: stability~\cite{AhaPP04, MattB99}
+%     \begin{itemize}
+%         \item last commit date
+%         \item number of contributors/commits over time
+%         \item forks
+%         \item backers: who are the main contributors (government, university, private company)
+%     \end{itemize}
+%     \item Licensing (MIT, GPL, \ldots; can it be used commercially in closed-source projects)
+%     \item Community and support (are there active forums, a Discord, mailing list, \ldots)~\cite{AhaPP04}
+% \end{itemize}
+
+\subsection{Technical and Architectural Characteristics}
+This section evaluates the properties that are inherent to the frameworks' architecture and implementation. These characteristics may impose technical constraints on the implementor and affect the integration and development effort.
+
+\subsubsection{Integration\label{sec:integration}}
+Evaluates the process and complexity required for an implementor to get the framework operational as well as the method of logically connecting it to the parent application. The evaluated elements concern the initial setup and the architectural/infrastructure footprint of the framework, i.e.~the specific integration points and the level of coupling they require.
+
+\paragraph{Dependency}
+Is the framework a library intended to be included directly in the application's codebase (e.g., via a package manager like npm, pip, or Maven)? This approach typically means the framework code runs within the same context as the parent application, generally even within the same process.
+
+\paragraph{Separate Deployment}
+Alternatively, we evaluate if the framework is designed to run as a standalone service (e.g., a containerized microservice). This approach offers logical decoupling (integration code may use a completely different technology stack) and scalability but introduces infrastructural overhead (separate hosting, networking, and monitoring). 
+
+\paragraph{Platform-specific (Plugin)}
+Is the framework a plugin for a \enquote{parent} system (e.g., a WordPress installation or Shopify app)? We delineate this from the \emph{Dependency} pattern by limiting this pattern to cases where there is a clear parent framework with an opinionated way of integrating plugins and requiring that the framework support drop-in integration without any additional glue code.
+
+\subsubsection{Technology Stack Requirements\label{sec:technology-stack-requirements}}
+This category details the specific software stack required to integrate the framework.
+
+\paragraph{Programming Language}
+For this point, the evaluation scheme differs based on the integration pattern (see \fref{sec:integration}): For the case of direct integration, this is the language that the framework is built in. For the remaining cases we will consider this point to be not applicable, unless the framework is clearly designed to be used with some particular languages (e.g.~PHP for a WordPress plugin, or if the documentation otherwise mentions it).
+
+\paragraph{Persistence}
+The persistence layers that are supported. This will generally be a list of supported databases (e.g.~MySQL, Postgres, Redis, \ldots) but may also be not applicable if the framework does not support any persistence at all, or very broad in case \emph{adapters} or e.g.\emph{ORM} are supported.
+
+\paragraph{Framework or Platform}
+Any hard dependencies on other frameworks or runtimes, such as Node.js, Spring Boot, or a specific web server. A WordPress plugin would for example be considered to have a hard dependency on WordPress.
+
+\subsubsection{Internationalization (i18n) Capabilities\label{sec:internationalization-i18n-capabilities}}
+Examines the framework's ability to support different languages and regions for any user-facing content~\cite{AhaPP04}. This is concerned with both out-of-the-box support for locales and the ease of adding new translations.
+
+\paragraph{Supported Languages}
+The set of out-of-the-box translations provided for any user-facing content, such as built-in badge descriptions or notification messages.
+
+\paragraph{Extensibility}
+Whether the framework supports the addition of new locales and other localization concerns like RTL text or region-specific formats. Note that documentation in this regard is particularly poor in many cases, so we will tend towards noting this point as not applicable in lieu of testing the framework's actual capabilities.
+
+\subsubsection{Provided Interfaces\label{sec:provided-interfaces}}
+This evaluates the built-in interfaces provided for different user roles, such as end-users or administrators. The elements in this category focus on what is provided out-of-the box.
+
+\paragraph{User Interface}
+Does the framework provide pre-built UI widgets (e.g., as web components, React components, or server-rendered templates) or does it only provide a data API, leaving all UI development to the implementor?
+
+\paragraph{Admin Interface}
+We evaluate the existence and completeness of an administrative dashboard for non-technical users. The minimum requirement is that the administrative view enabled viewing and modifying user data, we consider it fully supported if it also supports manipulating the gamification mechanics themselves (e.g.~creating new badges or events, \ldots).
+
+\subsubsection{3rd Party Integration Capabilities\label{sec:3rd-party-integration-capabilities}}
+This category assesses the framework's out-of-the-box capabilities to connect with external, third-party services for user authentication and management. This focuses on common integrations for identity and authentication.
+
+\paragraph{Social}
+Considers identity providers that users might have personal accounts with, such as Google, Facebook, or Microsoft.
+
+\paragraph{Enterprise}
+Considers support for single sign-on (SSO) with identity providers that are provided as part of company infrastructure, such as SAML or LDAP.\@
+
+\subsection{Project Health and Ecosystem\label{sec:project-health-and-ecosystem}}
+This section evaluates the external attributes related to the project's development, community, and long-term viability. These factors indicate the project's stability, maturity, and the level of support an implementor can expect.
+
+\subsubsection{Development Activity \& Stability\label{sec:development-activity-and-stability}}
+This category uses quantitative measures from the project's source code repository to gauge its maintenance, momentum, and risk of abandonment~\cite{AhaPP04, MattB99}. We are concerned with the trend and recency of development.
+
+\paragraph{Last Commit Date}
+The date of the most recent commit, which serves as the simplest sign of life. A project with no commits for an extended period (e.g., > 6 months) may be considered dormant or abandoned.
+
+\paragraph{Commit \& Contributor Velocity}
+The trend of commits and the number of unique contributors over time. A mature project may have fewer commits, but a healthy one shows consistent activity from a non-trivial number of contributors.
+
+\paragraph{Backers \& Project Ownership}
+We identify the primary maintainers or organizations (e.g., private company, university, government) behind the project. This helps assess the \enquote{bus factor} and the project's long-term strategic interests.
+
+\subsubsection{Licensing\label{sec:licensing}}
+This category evaluates the legal terms under which the framework can be used, which is a critical-path check for any adoption. We are concerned with both the license type and its implications.
+
+\paragraph{License Type}
+The specific license for the framework (e.g., MIT, Apache 2.0, GPL, AGPL). Note that frameworks may be available under multiple licenses for a multitude of reasons, in which case we will consider the most restrictive one, particularly in terms of \emph{Commercial Viability}.
+
+\paragraph{Commercial Viability}
+The key implications of the license, particularly the distinction between permissive licenses (e.g., MIT) which allow use in closed-source commercial projects, and copyleft licenses (e.g., AGPL) which may require the parent application to also be open-sourced.
+
+\subsubsection{Community \& Support\label{sec:community-and-support}}
+
+\paragraph{Community}
+
+\paragraph{Commercial}
+
+\section{Frameworks under Consideration\label{sec:frameworks-under-consideration}}
+
+\subsection{Open-Source}
+
+\cite{ActiDoo, SieteValles, UserInfuser}
+
+Conducted a GitHub search for \enquote{gamification}, only considering repositories with a reasonable amount of stars:
+\begin{itemize}
+    \item gengine\footnote{\url{https://github.com/ActiDoo/gamification-engine}} (Given)
+    \item Kinben\footnote{\url{https://github.com/InteractiveSystemsGroup/GamificationEngine-Kinben}, see also related work in~\cite{KiKZ18}.} (Given)
+    \item UserInfuser\footnote{\url{https://github.com/nlake44/UserInfuser}} (Given)
+    \item laravel-gamify\footnote{\url{https://github.com/qcod/laravel-gamify}}
+    \item level-up\footnote{\url{https://github.com/cjmellor/level-up}}
+    \item Django Gamification\footnote{\url{https://github.com/mattjegan/django-gamification}}
+    \item yay\footnote{\url{https://github.com/sveneisenschmidt/yay}}
+    \item hpi/gamification\footnote{\url{https://github.com/hpi-schul-cloud/gamification}}
+    \item myCRED\footnote{\url{https://github.com/mycred/myCRED}}
+    \item score.js\footnote{\url{https://github.com/mulhoon/score.js}}
+    \item GenGamification\footnote{\url{https://github.com/TiagoGouvea/PHPGamification}}
+    \item devleague/gamification-server\footnote{\url{https://github.com/devleague/Gamification-Server}}
+    \item badger\footnote{\url{https://github.com/the-badger/badger}}
+    \item \ldots just a first look, preferable to wait with expanding this list until it's clear how much work it is to evaluate them individually
+\end{itemize}
+
+\subsection{Proprietary}
+
+Conducted Google search \enquote{gamification}:
+\begin{itemize}
+    \item sosafe\footnote{\url{https://sosafe-awareness.com/resources/reports/gamification/}}
+    \item Drmify\footnote{\url{https://drimify.com/}}
+    \item Genially\footnote{\url{https://genially.com/features/gamification/}}
+    \item playable\footnote{\url{https://playable.com/}}
+    \item \ldots just a first look, but don't want to include too many of these either way
+\end{itemize}
+%
+It should be noted that the industry moves fast: Of 10 commercial gamification solutions treated in one of the literature reviews under consideration~\cite{HeAWS15}\footnote{Published 10 years ago at the time of writing. Looking only at \enquote{Generic Gamification Platforms} and \enquote{Integrated Solutions}.}, only two were still accessible under the given URL\@.
+
+\section{Evaluation}
+
+See \fref{tab:gamification-features-eval}, \fref{tab:technical-and-architectural-characteristics-eval}.
+
+\newgeometry{left=0.5cm, right=0.5cm, top=1cm, bottom=1cm, landscape}
+\begin{landscape}
+\begin{table}[p]
+    \scriptsize
+
+    \renewcommand{\arraystretch}{1.3}
+
+    \caption{Gamification Features Evaluation Table (WIP) (\reqno{} = not supported, \reqpartial{} = partially supported, \reqyes{} = fully supported; see respective sections for details)\label{tab:gamification-features-eval}}
+
+    \centerline{\begin{tabular}{@{} l cccccccccccccccccccccccc @{}} \toprule
+        & \multicolumn{3}{l}{Meaning (\ref{sec:epic-meaning-calling})} & \multicolumn{5}{l}{Development (\ref{sec:development-accomplishment})} & \multicolumn{3}{l}{Creativity (\ref{sec:creativity-and-feedback})} & \multicolumn{2}{l}{Ownership (\ref{sec:ownership-and-possession})} & \multicolumn{4}{l}{Social (\ref{sec:social-influence-and-relatedness})} & \multicolumn{3}{l}{Scarcity (\ref{sec:scarcity-and-impatience})} & \multicolumn{2}{l}{Curiosity (\ref{sec:unpredictability-and-curiosity})} & \multicolumn{2}{l}{Loss (\ref{sec:loss-and-avoidance})} \\ \cmidrule(r){2-4} \cmidrule(r){5-9} \cmidrule(r){10-12} \cmidrule(r){13-14} \cmidrule(r){15-18} \cmidrule(r){19-21} \cmidrule(r){22-23}  \cmidrule{24-25}
+        Ref. & Tutorials & \makecell[lt]{Narra--\\tives} & Quests & Points & Levels & Badges & \makecell[lt]{Leader--\\boards} & Rewards & Avatar & CYP & \makecell[lt]{Notifi--\\cations} & Collectibles & Virtual \$ & Profiles & Roles & Social & Widgets & Events & \makecell[lt]{Time-\\gates} & \makecell[lt]{Dead--\\lines} & Var. Rewards & Gambling & Streaks & \makecell[lt]{Punish--\\ments} \\\midrule
+    
+        % reference
+        \cite{ActiDoo} &
+        % tutorials
+        \reqno{} &
+        % narratives
+        \reqpartial{} &
+        % quests
+        \reqyes{} &
+        % points
+        \reqyes{} &
+        % levels
+        \reqyes{} &
+        % badges/achievements
+        \reqyes{} &
+        % leaderboards
+        \reqyes{} &
+        % rewards
+        \reqpartial{} &
+        % avatar
+        \reqno{} &
+        % CYP
+        \reqno{} &
+        % notifications
+        \reqyes{} &
+        % collectibles
+        \reqno{} &
+        % virtual \$
+        \reqno{} &
+        % profiles
+        \reqno{} &
+        % roles
+        \reqyes{} &
+        % social
+        \reqpartial{} &
+        % widgets
+        \reqno{} &
+        % events
+        \reqno{} &
+        % time-gates
+        \reqno{} &
+        % deadlines
+        \reqyes{} &
+        % var. rewards
+        \reqno{} &
+        % gambling
+        \reqno{} &
+        % streaks
+        \reqno{} &
+        % punishments
+        \reqno{} \\
+    
+        % reference
+        \cite{SieteValles} &
+        % tutorials
+        \reqno{} &
+        % narratives
+        \reqno{} &
+        % quests
+        \reqyes{} &
+        % points
+        \reqyes{} &
+        % levels
+        \reqpartial{} &
+        % badges/achievements
+        \reqyes{} &
+        % leaderboards
+        \reqno{} &
+        % rewards
+        \reqno{} &
+        % avatar
+        \reqno{} &
+        % CYP
+        \reqno{} &
+        % notifications
+        \reqno{} &
+        % collectibles
+        \reqno{} &
+        % virtual \$
+        \reqno{} &
+        % profiles
+        \reqno{} &
+        % roles
+        \reqno{} &
+        % social
+        \reqno{} &
+        % widgets
+        \reqno{} &
+        % events
+        \reqno{} &
+        % time-gates
+        \reqno{} &
+        % deadlines
+        \reqno{} &
+        % var. rewards
+        \reqno{} &
+        % gambling
+        \reqno{} &
+        % streaks
+        \reqno{} &
+        % punishments
+        \reqno{} \\
+
+        % reference
+        \cite{UserInfuser} &
+        % tutorials
+        \reqno{}&
+        % narratives
+        \reqno{}&
+        % quests
+        \reqno{}&
+        % points
+        \reqyes{}&
+        % levels
+        \reqno{}&
+        % badges/achievements
+        \reqyes{}&
+        % leaderboards
+        \reqyes{}&
+        % rewards
+        \reqpartial{}&
+        % avatar
+        \reqno{}&
+        % CYP
+        \reqno{}&
+        % notifications
+        \reqyes{}&
+        % collectibles
+        \reqno{}&
+        % virtual \$
+        \reqno{}&
+        % profiles
+        \reqno{}&
+        % roles
+        \reqno{}&
+        % social
+        \reqno{}&
+        % widgets
+        \reqyes{}&
+        % events
+        \reqno{}&
+        % time-gates
+        \reqno{}&
+        % deadlines
+        \reqno{}&
+        % var. rewards
+        \reqno{}&
+        % gambling
+        \reqno{}&
+        % streaks
+        \reqno{}&
+        % punishments
+        \reqno{} \\
+
+        % % reference
+        % &
+        % % tutorials
+        % &
+        % % narratives
+        % &
+        % % quests
+        % &
+        % % points
+        % &
+        % % levels
+        % &
+        % % badges/achievements
+        % &
+        % % leaderboards
+        % &
+        % % rewards
+        % &
+        % % avatar
+        % &
+        % % CYP
+        % &
+        % % notifications
+        % &
+        % % collectibles
+        % &
+        % % virtual \$
+        % &
+        % % profiles
+        % &
+        % % roles
+        % &
+        % % social
+        % &
+        % % widgets
+        % &
+        % % events
+        % &
+        % % time-gates
+        % &
+        % % deadlines
+        % &
+        % % var. rewards
+        % &
+        % % gambling
+        % &
+        % % streaks
+        % &
+        % % punishments
+        % \\
+        \bottomrule
+    \end{tabular}}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\end{landscape}
+\restoregeometry%
+
+\begin{table}[p]
+    \scriptsize
+
+    \renewcommand{\arraystretch}{1.3}
+
+    \caption{Technical and Architectural Characteristics Evaluation Table (WIP)\label{tab:technical-and-architectural-characteristics-eval}}
+
+    \begin{tabular}{@{} l cccccccccccc @{}} \toprule
+        & \multicolumn{3}{l}{Integration (\ref{sec:integration})} & \multicolumn{3}{l}{Technology Stack (\ref{sec:technology-stack-requirements})} & \multicolumn{2}{l}{i18n (\ref{sec:internationalization-i18n-capabilities})} & \multicolumn{2}{l}{Interfaces (\ref{sec:provided-interfaces})} & \multicolumn{2}{l}{3rd Party (\ref{sec:3rd-party-integration-capabilities})} \\ \cmidrule(r){2-4} \cmidrule(r){5-7} \cmidrule(r){8-9} \cmidrule(r){10-11} \cmidrule{12-13}
+        Ref. & Dependency & Deployment & Plugin & Languages & Persistence & Framework & Supported & Extensible & User & Admin & Social & Enterprise \\ \midrule
+        
+    \end{tabular}
+\end{table}
+
+\section{Conclusion}
+
+\appendix
+
+\section{Literature Notes}
+
+The following are supplementary notes and summaries of key references for this thesis.
+
+\paragraph{\cite{APLLAC24}} While the primary output of this paper (a review of gamification in the field of mobility and transport) doesn't immediately seem relevant, its introductory section goes into comparatively great detail and is very well researched---it has served well as a means to find more relevant high-quality literature. Also notably one goal was the evaluation of the effectiveness of gamification where \enquote{the results were rather mixed between positive and neutral results, with even some negative results}.
+
+\paragraph{\cite{BozHS24}} Proposes \enquote{criteria to consider when selecting [\ldots] platforms for gamification} which it bases on the MDA framework~\cite{HunLZ04}, originally developed for game design. The primary output of this paper is their categorisation of gamification criteria, which is of great interest for the purpose of this thesis.
+
+\paragraph{\cite{Chou15}} Provides a detailed description of the Octalysis framework, which appears to be one of the more popular frameworks for gamification. This is the most complete reference for Octalysis, but a more accessible summary is given e.g.~in~\cite{MohaB23}.
+
+\paragraph{\cite{GearB13}} An example of a more abstract framework for gamification, in particular one which explicitly considers economic factors.
+
+\paragraph{\cite{HaKS14}} Examines 24 (empirical, peer-reviewed) studies, establishing a framework to examine the effectiveness of gamification. As such it focuses on somewhat different aspects than e.g.~\cite{Herz14}, but it is particularly valuable for its overview of the field.
+
+\paragraph{\cite{HeAWS15}} Describes gamification as a software development process and lays out requirements for a successful introduction of gamification. Existing gamification solutions are analyzed with regards to these requirements. Hits on many of the same notes as other work from the main author, e.g.~\cite{Herz14} but focuses on requirements relevant in the implementation/provisioning phase.
+
+\paragraph{\cite{Herz14}} Examines 37 studies to identify gamification requirements, but notes that much work has been done since then and refers to~\cite{HaKS14} for a more recent review.
+
+\paragraph{\cite{MRGA15}} Identifies 10 \enquote{framework features} and judges 18 papers describing gamification frameworks or generic gamification process descriptions accordingly. Their individual reasoning is not always given, but in any case the feature groups are what is most interesting for the purpose of this thesis.
+
+\paragraph{\cite{MRGA17}} Follows a similar methodology to~\cite{MRGA15} (same authors) but considers more papers and has a stronger focus on education as opposed to more general business applications. Given their narrow scope, the actual frameworks under review here are likely not very interesting for future reference, but the feature classification remains valuable.
+
+\paragraph{\cite{SANCN24}} Evaluates a \enquote{gamified} app based on features of the Octalysis framework~\cite{Chou15}. Since a singular instance of a tailor-made gamification implementation is evaluated, it is not exactly applicable to the evaluation of gamification platforms in general. But it nevertheless serves as an example of how a concrete feature-based evaluation can look like. (As such, similar to~\cite{EDPKM15, ChrWa21}.)
+
+\section{Notes (to be removed in final draft)}
+
+For comprehensive and widely accepted definition of gamification, see~\cite{DeDKN11} (according to SemanticScholar, this is incidentally the most cited work on gamification in general).
+
+Literature reviews on gamification itself, i.e.\ not platforms/frameworks in particular:~\cite{Herz14, HaKS14}.
+
+Literature reviews on (theoretical) frameworks for gamification:~\cite{MRGA15, MRGA17}. Descriptions of (theoretical) gamification frameworks: Octalysis~\cite{Chou15}, 5W2H+M~\cite{CoGS19, CoGS19a}, \ldots.
+
+Gamification effectiveness:~\cite{SaHMM17, APLLAC24} (mixed results).
+
+\cite{ZichC11} identify seven primary gamification mechanics: \enquote{points, levels, leaderboards, badges,  challenges/quests, onboarding, and engagement loops}.
+
+\printbibliography[
+    notkeyword=framework
+]
+
+\newrefcontext[labelprefix=F]
+\printbibliography[
+    keyword=framework,
+    title={Frameworks}
+]
+
+
+\end{document}
