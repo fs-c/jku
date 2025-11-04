@@ -20,13 +20,22 @@
 \usepackage{multirow}
 \usepackage{adjustbox}
 \usepackage{makecell}
+\usepackage{datetime2}
 
 \usepackage{tikz}
 \usetikzlibrary{external}
 
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{dateplot}
+\usepgfplotslibrary{groupplots}
+
+
 \setcounter{tocdepth}{3}
 
 \newcommand{\reqno}[2][black]{\tikz[baseline=-0.5ex]{\draw[#1,radius=2pt] (0,0) circle ;}}%
+\newcommand{\reqna}[2][black]{\tikz[baseline=-0.5ex]{\draw[#1,radius=2pt] (0,0)[densely dotted] circle ;}}%
 \newcommand{\reqpartial}[2][black]{\tikz[baseline=-0.5ex, rotate=-45]{
     \begin{scope}
         \clip(-2pt, -2pt) rectangle (2pt, 0);
@@ -92,11 +101,11 @@ Gemini 2.5 Pro: literature search, initial drafts and information synthesis
 
 elicit: literature search
 
-Cursor: inline completions (primarily for LaTeX-specific changes like table formatting, but occasionally also )
+Cursor: inline completions (primarily for LaTeX-specific changes like table formatting), data gathering script generation
 
-\section{Evaluation Criteria}
+\section{Evaluation Criteria\label{sec:evaluation-criteria}}
 
-\subsection{Gamification Features}
+\subsection{Gamification Features\label{sec:gamification-features}}
 
 Many evaluations of concrete gamification implementations use the Octalysis framework~\cite{Chou15} as a basis for their evaluation~\cite{SANCN24, EDPKM15, ChrWa21, MohaB23}. At its core, Octalysis identifies eight \enquote{core drives} of human engagement that it considers to be essential for gamification. Because Octalysis does not attempt to provide a comprehensive taxonomy of gamification features, but rather considers overarching categories, we will augment the respective drives with more specific features, inspired by the literature but also by existing solutions.
 
@@ -185,68 +194,15 @@ Features in this category are concerned with enabling this kind of \enquote{nega
 
 \paragraph{Punishments} are negative consequences for failures (e.g.~for failed tasks) or inactions (e.g.~for missed deadlines or time-gates)~\cite{SaHMM17, XiZIA18}. We consider this feature to be supported if there are mechanics that motivate users through the drive to avoid a penalty.
 
-% \subsection{Technical and Architectural Characteristics}
+\subsection{Technical and Architectural Characteristics\label{sec:technical-and-architectural-characteristics}}
 
-% \subsubsection{Installation \& Deployment} The process and complexity required to make the framework operational.
-
-% \begin{itemize}
-%     \item Installation: how can an implementor get to a point where they can use the framework
-%     \begin{itemize}
-%         \item dependency
-%         \item separate deployment/service
-%     \end{itemize}
-%     \item Integration: how can the framework be used in a project
-%     \begin{itemize}
-%         \item API
-%         \item directly
-%         \item \enquote{parent-framework specific} e.g.~plugin
-%     \end{itemize}
-%     \item Requirements~\cite{AhaPP04}
-%     \begin{itemize}
-%         \item programming language
-%         \item database (*SQL, Redis, \ldots)
-%         \item framework or platform (e.g. Django, NodeJS, WordPress, \ldots)
-%     \end{itemize}
-%     \item Internationalization capabilities~\cite{AhaPP04}
-%     \begin{itemize}
-%         \item supported languages
-%         \item easily extensible to new ones
-%     \end{itemize}
-%     \item Adaptability (how customizable is the system, how extensible is it, \ldots)~\cite{AhaPP04}
-%     \item Interfaces
-%     \begin{itemize}
-%         \item user interface 
-%         \item admin interface (only fully supportedif it also supports full data manipulation)
-%     \end{itemize}
-%     \item 3\textsuperscript{rd} party integration capabilities
-%     \begin{itemize}
-%         \item social media platforms (e.g.~Facebook, Google via OAuth)
-%         \item enterprise SSO
-%     \end{itemize}
-% \end{itemize}
-
-% \subsection{Project Health and Ecosystem}
-
-% \begin{itemize}
-%     \item Development Activity (number of commits and contributors over time, notable forks, sponsors), also: stability~\cite{AhaPP04, MattB99}
-%     \begin{itemize}
-%         \item last commit date
-%         \item number of contributors/commits over time
-%         \item forks
-%         \item backers: who are the main contributors (government, university, private company)
-%     \end{itemize}
-%     \item Licensing (MIT, GPL, \ldots; can it be used commercially in closed-source projects)
-%     \item Community and support (are there active forums, a Discord, mailing list, \ldots)~\cite{AhaPP04}
-% \end{itemize}
-
-\subsection{Technical and Architectural Characteristics}
 This section evaluates the properties that are inherent to the frameworks' architecture and implementation. These characteristics may impose technical constraints on the implementor and affect the integration and development effort.
 
 \subsubsection{Integration\label{sec:integration}}
 Evaluates the process and complexity required for an implementor to get the framework operational as well as the method of logically connecting it to the parent application. The evaluated elements concern the initial setup and the architectural/infrastructure footprint of the framework, i.e.~the specific integration points and the level of coupling they require.
 
 \paragraph{Dependency}
-Is the framework a library intended to be included directly in the application's codebase (e.g., via a package manager like npm, pip, or Maven)? This approach typically means the framework code runs within the same context as the parent application, generally even within the same process.
+Is the framework a library intended to be included directly in the application's codebase (e.g., via a package manager like npm, pip, or Maven)? This approach typically means the framework code runs within the same context as the parent application, generally even within the same process. We consider this to be partially supported if e.g.~the framework provides client dependencies to interact with an API (= separate deployment).
 
 \paragraph{Separate Deployment}
 Alternatively, we evaluate if the framework is designed to run as a standalone service (e.g., a containerized microservice). This approach offers logical decoupling (integration code may use a completely different technology stack) and scalability but introduces infrastructural overhead (separate hosting, networking, and monitoring). 
@@ -258,7 +214,7 @@ Is the framework a plugin for a \enquote{parent} system (e.g., a WordPress insta
 This category details the specific software stack required to integrate the framework.
 
 \paragraph{Programming Language}
-For this point, the evaluation scheme differs based on the integration pattern (see \fref{sec:integration}): For the case of direct integration, this is the language that the framework is built in. For the remaining cases we will consider this point to be not applicable, unless the framework is clearly designed to be used with some particular languages (e.g.~PHP for a WordPress plugin, or if the documentation otherwise mentions it).
+For this point, the evaluation scheme differs based on the integration pattern (see \fref{sec:integration}): For the case of direct integration, this is the language that the framework is built in. For the remaining cases we will consider this point to be not applicable, unless the framework is clearly designed to be used with some particular language (e.g.~PHP for a WordPress plugin, or if the documentation otherwise mentions it).
 
 \paragraph{Persistence}
 The persistence layers that are supported. This will generally be a list of supported databases (e.g.~MySQL, Postgres, Redis, \ldots) but may also be not applicable if the framework does not support any persistence at all, or very broad in case \emph{adapters} or e.g.\emph{ORM} are supported.
@@ -273,7 +229,7 @@ Examines the framework's ability to support different languages and regions for 
 The set of out-of-the-box translations provided for any user-facing content, such as built-in badge descriptions or notification messages.
 
 \paragraph{Extensibility}
-Whether the framework supports the addition of new locales and other localization concerns like RTL text or region-specific formats. Note that documentation in this regard is particularly poor in many cases, so we will tend towards noting this point as not applicable in lieu of testing the framework's actual capabilities.
+Whether the framework supports the addition of new locales and other localization concerns like RTL text or region-specific formats.
 
 \subsubsection{Provided Interfaces\label{sec:provided-interfaces}}
 This evaluates the built-in interfaces provided for different user roles, such as end-users or administrators. The elements in this category focus on what is provided out-of-the box.
@@ -294,19 +250,20 @@ Considers identity providers that users might have personal accounts with, such 
 Considers support for single sign-on (SSO) with identity providers that are provided as part of company infrastructure, such as SAML or LDAP.\@
 
 \subsection{Project Health and Ecosystem\label{sec:project-health-and-ecosystem}}
+
 This section evaluates the external attributes related to the project's development, community, and long-term viability. These factors indicate the project's stability, maturity, and the level of support an implementor can expect.
 
 \subsubsection{Development Activity \& Stability\label{sec:development-activity-and-stability}}
 This category uses quantitative measures from the project's source code repository to gauge its maintenance, momentum, and risk of abandonment~\cite{AhaPP04, MattB99}. We are concerned with the trend and recency of development.
 
-\paragraph{Last Commit Date}
-The date of the most recent commit, which serves as the simplest sign of life. A project with no commits for an extended period (e.g., > 6 months) may be considered dormant or abandoned.
-
-\paragraph{Commit \& Contributor Velocity}
-The trend of commits and the number of unique contributors over time. A mature project may have fewer commits, but a healthy one shows consistent activity from a non-trivial number of contributors.
+\paragraph{Commit \& Contributor Velocity} TODO: ideally separate figure, not sure how to do it yet
 
 \paragraph{Backers \& Project Ownership}
 We identify the primary maintainers or organizations (e.g., private company, university, government) behind the project. This helps assess the \enquote{bus factor} and the project's long-term strategic interests.
+
+\paragraph{Number of Forks} is an indicator for project usage: Users might create a fork to make minor modifications or bugfixes for upstreaming, which implies they use the framework in their own projects~\cite{YaKKN20}. We chose to use number of forks as opposed to number of stars on GitHub since stars seem more likely to be used as a form of \enquote{bookmark} or reminder, and thus less suitable as a proxy for real-world usage.
+
+\paragraph{Number of Contributors} is similar to \emph{Backers \& Project Ownership} in that it's a metric to assess the \enquote{bus factor}. Projects with a smaller number of contributors are more likely to have more open issues and are at higher risk of abandonment~\cite{YaKKN20}.
 
 \subsubsection{Licensing\label{sec:licensing}}
 This category evaluates the legal terms under which the framework can be used, which is a critical-path check for any adoption. We are concerned with both the license type and its implications.
@@ -315,37 +272,75 @@ This category evaluates the legal terms under which the framework can be used, w
 The specific license for the framework (e.g., MIT, Apache 2.0, GPL, AGPL). Note that frameworks may be available under multiple licenses for a multitude of reasons, in which case we will consider the most restrictive one, particularly in terms of \emph{Commercial Viability}.
 
 \paragraph{Commercial Viability}
-The key implications of the license, particularly the distinction between permissive licenses (e.g., MIT) which allow use in closed-source commercial projects, and copyleft licenses (e.g., AGPL) which may require the parent application to also be open-sourced.
+is often the key implication of a software license, particularly the distinction between permissive licenses (e.g., MIT) which allow use in closed-source commercial projects, and copyleft licenses (e.g., AGPL) which may require the parent application to also be open-sourced. We will only consider this to be fully supported if the license allows use in closed-source commercial projects.
 
 \subsubsection{Community \& Support\label{sec:community-and-support}}
 
-\paragraph{Community}
+\paragraph{Community} Are there active forums, a Discord, mailing list, \ldots? GitHub issues and pull requests are a frequent place of discussion in open source projects, but if they are the only channels of communication we will consider this to be only partially fulfilled.
 
-\paragraph{Commercial}
+\paragraph{Commercial} Does the framework have an entity offering commercial support or for example managed hosting in case it's a separate deployment?
 
 \section{Frameworks under Consideration\label{sec:frameworks-under-consideration}}
 
 \subsection{Open-Source}
 
-\cite{ActiDoo, SieteValles, UserInfuser}
+We selected GitHub as the sole data source for open source work due to its position as the de-facto standard for open source software development. Its scale and central role in the open source developer community~\cite{github25} make it the most representative source among alternatives like GitLab or SourceForge.
 
-Conducted a GitHub search for \enquote{gamification}, only considering repositories with a reasonable amount of stars:
+The collection process was divided into two stages, \emph{Searching} using an API with some initial criteria and manual \emph{Filtering} through individually inspecting the results.
+
+\paragraph{Search} The GitHub Repository Search API\footnote{\url{https://docs.github.com/en/search-github/searching-on-github/searching-for-repositories}, accessed 11/04/2025} was used to search for repositories with the following initial criteria:
 \begin{itemize}
-    \item gengine\footnote{\url{https://github.com/ActiDoo/gamification-engine}} (Given)
-    \item Kinben\footnote{\url{https://github.com/InteractiveSystemsGroup/GamificationEngine-Kinben}, see also related work in~\cite{KiKZ18}.} (Given)
-    \item UserInfuser\footnote{\url{https://github.com/nlake44/UserInfuser}} (Given)
-    \item laravel-gamify\footnote{\url{https://github.com/qcod/laravel-gamify}}
-    \item level-up\footnote{\url{https://github.com/cjmellor/level-up}}
-    \item Django Gamification\footnote{\url{https://github.com/mattjegan/django-gamification}}
-    \item yay\footnote{\url{https://github.com/sveneisenschmidt/yay}}
-    \item hpi/gamification\footnote{\url{https://github.com/hpi-schul-cloud/gamification}}
-    \item myCRED\footnote{\url{https://github.com/mycred/myCRED}}
-    \item score.js\footnote{\url{https://github.com/mulhoon/score.js}}
-    \item GenGamification\footnote{\url{https://github.com/TiagoGouvea/PHPGamification}}
-    \item devleague/gamification-server\footnote{\url{https://github.com/devleague/Gamification-Server}}
-    \item badger\footnote{\url{https://github.com/the-badger/badger}}
-    \item \ldots just a first look, preferable to wait with expanding this list until it's clear how much work it is to evaluate them individually
+    \item Name, description or tags must include \enquote{gamification}. This notably does not include the \enquote{readme} file, which is customary for most repositories and would also be available for search. We found that when including it, the search results were dominated by projects that were not actually frameworks, but rather tools or libraries that happened to off-handedly mention gamification as part of their broader scope.
+    \item Must be public and not archived by the owner. Not considering archived repositories invites a minor contradiction, since we otherwise included obviously abandoned repositories. But we took the archival status as an explicit sign from the owner that the repository should no longer be considered for usage, as opposed to simply being (perhaps temporarily) inactive.
+    \item Must have been updated in the last 10 years\footnote{Note that GitHub has somewhat counter-intuitive behavior in this regard: A repositories \enquote{pushed date} also includes pushes on non-default branches. In particular this may include branches that are created and pushed to by automated processes (e.g.~dependency update bots) long after a repository was already abandoned. Repositories that were included only due to obviously automated activity were filtered out by hand.}. In modern software engineering, dependencies that have remained unmaintained for extended periods are generally considered to be a security risk~\cite{owasp21} and should be avoided. Thus, if we wished to limit ourselves to frameworks that should still be reasonably used in practice, a tighter limit would be more appropriate. But we also wanted to consider the historical development of the space, and thus chose the 10-year limit as a compromise.
+    \item The 5 star limit was arbitrarily chosen to limit the number of results to a manageable number.
 \end{itemize}
+
+These criteria can be expressed as the following search query:
+\url{https://api.github.com/search/repositories?q=gamification+is:public+archived:false+pushed:>2015+stars:>5}\footnote{Or alternatively, \url{https://github.com/search?q=gamification+is:public+archived:false+pushed:>2015+stars:>5} to use the web interface. But this opens up the possibility of cookies and other tracking interfering with the results and wasn't used.}. Executing this query yielded 191 results as of 11/04/2025.
+
+\paragraph{Filter} The obtained repositories were then manually screened for criteria and filtered out as follows:
+\begin{itemize}
+    \item Discarding projects that are overly domain-specific, e.g.~apps that are concerned with gamifying a particular activity and thus have the relevant tags, but are not a framework. (This filtered out 139 projects.)
+    \item Discarding projects that are overly \enquote{simple} or focused: When projects explicitly focus only on a singular feature, e.g.~adding badges to some forum software. These may be part of a larger gamification effort, and may be extended or combined with other software to forma framework, but do not qualify as one by themselves in our definition. (This filtered out 19 projects.)
+    \item Discarding projects that have no documentation, in particular when projects have links to documentation on external websites that are no longer accessible. (This filtered out 11 projects.)
+    \item Choosing the more recently updated fork if applicable. (This filtered out one project.)
+\end{itemize}
+filtered out a total of 170 projects.
+
+\paragraph{Results} This leaves us with 21 open source frameworks for further evaluation, henceforth referred to by either their reference or their short name, as listed in \fref{tab:open-source-frameworks}.
+
+\begin{table}[h]
+    \centering
+    \caption{Open source frameworks under consideration\label{tab:open-source-frameworks}}
+    \begin{tabular}{@{} l l l @{}}
+        \toprule
+        Ref. & Short Name & URL (prepend \url{https://github.com/}) \\
+        \midrule
+        \cite{ActiDoo} & Gamification Engine & \href{https://github.com/ActiDoo/gamification-engine}{\url{ActiDoo/gamification-engine}} \\
+        \cite{SieteValles} & Siete Valles & \href{https://github.com/jorgegorka/siete-valles}{\url{jorgegorka/siete-valles}} \\
+        \cite{UserInfuser} & UserInfuser & \href{https://github.com/nlake44/UserInfuser}{\url{nlake44/UserInfuser}} \\
+        \cite{GamificationServer} & Gamification-Server & \href{https://github.com/devleague/Gamification-Server}{\url{devleague/Gamification-Server}} \\
+        \cite{DjangoGamification} & django-gamification & \href{https://github.com/mattjegan/django-gamification}{\url{mattjegan/django-gamification}} \\
+        \cite{FlarumGamification} & gamification & \href{https://github.com/FriendsOfFlarum/gamification}{\url{FriendsOfFlarum/gamification}} \\
+        \cite{Gioco} & gioco (v1.1.1) & \href{https://github.com/joaomdmoura/gioco/tree/1.1.1}{\url{joaomdmoura/gioco/tree/1.1.1}} \\
+        \cite{HyperosloGamification} & gamification & \href{https://github.com/hyperoslo/gamification}{\url{hyperoslo/gamification}} \\
+        \cite{MoodleBlockXP} & moodle-block\_xp & \href{https://github.com/FMCorz/moodle-block_xp}{\url{FMCorz/moodle-block\_xp}} \\
+        \cite{ScoreJS} & score.js & \href{https://github.com/mulhoon/score.js}{\url{mulhoon/score.js}} \\
+        \cite{LaravelGamify} & laravel-gamify & \href{https://github.com/qcod/laravel-gamify}{\url{qcod/laravel-gamify}} \\
+        \cite{Yay} & yay & \href{https://github.com/sveneisenschmidt/yay}{\url{sveneisenschmidt/yay}} \\
+        \cite{Kinben} & Kinben & \href{https://github.com/InteractiveSystemsGroup/GamificationEngine-Kinben}{\url{InteractiveSystemsGroup/GamificationEngine-Kinben}} \\
+        \cite{Oasis} & oasis & \href{https://github.com/isuru89/oasis}{\url{isuru89/oasis}} \\
+        \cite{LevelUp} & level-up & \href{https://github.com/cjmellor/level-up}{\url{cjmellor/level-up}} \\
+        \cite{Gamify} & Gamify & \href{https://github.com/GollaBharath/Gamify}{\url{GollaBharath/Gamify}} \\
+        \cite{GamifyLaravel} & gamify-laravel & \href{https://github.com/pacoorozco/gamify-laravel}{\url{pacoorozco/gamify-laravel}} \\
+        \cite{Honor} & honor & \href{https://github.com/jrmyward/honor}{\url{jrmyward/honor}} \\
+        \cite{PhpGamify} & php-gamify & \href{https://github.com/mediasoftpro/php-gamify}{\url{mediasoftpro/php-gamify}} \\
+        \cite{Horde} & horde & \href{https://github.com/horde-lord/horde}{\url{horde-lord/horde}} \\
+        \cite{AcisGamificationFramework} & Acis-Gamification & \href{https://github.com/rwth-acis/Gamification-Framework}{\url{rwth-acis/Gamification-Framework}} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \subsection{Proprietary}
 
@@ -371,7 +366,7 @@ See \fref{tab:gamification-features-eval}, \fref{tab:technical-and-architectural
 
     \renewcommand{\arraystretch}{1.3}
 
-    \caption{Gamification Features Evaluation Table (WIP) (\reqno{} = not supported, \reqpartial{} = partially supported, \reqyes{} = fully supported; see respective sections for details)\label{tab:gamification-features-eval}}
+    \caption{Gamification Features (\fref{sec:gamification-features}) Evaluation Table (WIP) (\reqno{} = not supported, \reqpartial{} = partially supported, \reqyes{} = fully supported; see respective sections for details)\label{tab:gamification-features-eval}}
 
     \centerline{\begin{tabular}{@{} l cccccccccccccccccccccccc @{}} \toprule
         & \multicolumn{3}{l}{Meaning (\ref{sec:epic-meaning-calling})} & \multicolumn{5}{l}{Development (\ref{sec:development-accomplishment})} & \multicolumn{3}{l}{Creativity (\ref{sec:creativity-and-feedback})} & \multicolumn{2}{l}{Ownership (\ref{sec:ownership-and-possession})} & \multicolumn{4}{l}{Social (\ref{sec:social-influence-and-relatedness})} & \multicolumn{3}{l}{Scarcity (\ref{sec:scarcity-and-impatience})} & \multicolumn{2}{l}{Curiosity (\ref{sec:unpredictability-and-curiosity})} & \multicolumn{2}{l}{Loss (\ref{sec:loss-and-avoidance})} \\ \cmidrule(r){2-4} \cmidrule(r){5-9} \cmidrule(r){10-12} \cmidrule(r){13-14} \cmidrule(r){15-18} \cmidrule(r){19-21} \cmidrule(r){22-23}  \cmidrule{24-25}
@@ -586,22 +581,409 @@ See \fref{tab:gamification-features-eval}, \fref{tab:technical-and-architectural
 \end{landscape}
 
 \begin{landscape}
+    \begin{table}[p]
+        \scriptsize
+    
+        \renewcommand{\arraystretch}{1.3}
+    
+        \caption{Technical and Architectural Characteristics (\fref{sec:technical-and-architectural-characteristics}) and Project Health and Ecosystem (\fref{sec:project-health-and-ecosystem}) Evaluation Table (WIP)\label{tab:technical-and-architectural-characteristics-eval}}
+    
+        \centerline{\begin{tabular}{@{} l ccccccccccccccccccc @{}} \toprule
+            & \multicolumn{3}{l}{Integration (\ref{sec:integration})} & \multicolumn{3}{l}{Technology Stack (\ref{sec:technology-stack-requirements})} & \multicolumn{2}{l}{i18n (\ref{sec:internationalization-i18n-capabilities})} & \multicolumn{2}{l}{Interfaces (\ref{sec:provided-interfaces})} & \multicolumn{2}{l}{3rd Party (\ref{sec:3rd-party-integration-capabilities})} & \multicolumn{3}{l}{Activity (\ref{sec:development-activity-and-stability})} & \multicolumn{2}{l}{Licensing (\ref{sec:licensing})} & \multicolumn{2}{l}{Community (\ref{sec:community-and-support})} \\ \cmidrule(r){2-4} \cmidrule(r){5-7} \cmidrule(r){8-9} \cmidrule(r){10-11} \cmidrule(r){12-13} \cmidrule(r){14-16} \cmidrule(r){17-18} \cmidrule{19-20}
+            Ref. & Dependency & Deployment & Plugin & Languages & Persistence & Framework & Supported & Ext. & User & Admin & Social & Ent. & Backers & Forks & Contributors & License & \$? & Community & \$ Support \\ \midrule
+    
+            % reference
+            \cite{ActiDoo} &
+            % dependency
+            \reqno{} &
+            % deployment
+            \reqyes{} &
+            % plugin
+            \reqno{} &
+            % programming languages
+            Python &
+            % persistence
+            Postgres &
+            % framework
+            \reqno{} &
+            % supported languages
+            EN &
+            % extensible i18n
+            \reqyes{} &
+            % user
+            \reqno{} &
+            % admin
+            \reqno{} &
+            % social
+            \reqno{} &
+            % enterprise
+            \reqno{} &
+            % backers
+            Company &
+            % forks
+            111 &
+            % contributors
+            9 &
+            % license
+            MIT &
+            % license commercially viable?
+            \reqyes{} &
+            % community
+            \reqpartial{} &
+            % commercial support offered?
+            \reqpartial{} \\
+    
+            % reference
+            \cite{SieteValles} &
+            % dependency
+            \reqyes{} &
+            % deployment
+            \reqno{} &
+            % plugin
+            \reqno{} &
+            % programming languages
+            Ruby &
+            % persistence
+            Active Record &
+            % framework
+            Rails &
+            % supported languages
+            \reqna{} &
+            % extensible i18n
+            \reqno{} &
+            % user
+            \reqpartial{} &
+            % admin
+            \reqpartial{} &
+            % social
+            \reqno{} &
+            % enterprise
+            \reqno{} &
+            % backers
+            Private &
+            % forks
+            4 &
+            % contributors
+            1 &
+            % license
+            MIT &
+            % license commercially viable?
+            \reqyes{} &
+            % community
+            \reqpartial{} &
+            % commercial support offered?
+            \reqno{} \\
+    
+            % reference
+            \cite{UserInfuser} &
+            % dependency
+            \reqpartial{} &
+            % deployment
+            \reqyes{} &
+            % plugin
+            \reqno{} &
+            % programming languages
+            Python &
+            % persistence
+            G. Datastore &
+            % framework
+            G. App Engine &
+            % supported languages
+            EN &
+            % extensible i18n
+            \reqno{} &
+            % user
+            \reqyes{} &
+            % admin
+            \reqna{} &
+            % social
+            \reqno{} &
+            % enterprise
+            \reqno{} &
+            % backers
+            Abandoned &
+            % forks
+            52 &
+            % contributors
+            3 &
+            % license
+            Unclear &
+            % license commercially viable?
+            \reqpartial{} &
+            % community
+            \reqno{} &
+            % commercial support offered?
+            \reqno{} \\
+            
+            % % reference
+            % &
+            % % dependency
+            % &
+            % % deployment
+            % &
+            % % plugin
+            % &
+            % % programming languages
+            % &
+            % % persistence
+            % &
+            % % framework
+            % &
+            % % supported languages
+            % &
+            % % extensible i18n
+            % &
+            % % user
+            % &
+            % % admin
+            % &
+            % % social
+            % &
+            % % enterprise
+            % &
+            % % backers
+            % &
+            % % forks
+            % &
+            % % contributors
+            % &
+            % % license
+            % &
+            % % license commercially viable?
+            % &
+            % % community
+            % &
+            % % commercial support offered?
+            % \\
+        \end{tabular}}
+    \end{table}
 \end{landscape}
 \restoregeometry%
 
-\begin{table}[p]
-    \scriptsize
+\pgfplotsset{
+    tick label style={font=\small},
+    label style={font=\small},
+    legend style={font=\footnotesize},
+} 
 
-    \renewcommand{\arraystretch}{1.3}
+\begin{figure}[h]
+    \centering
 
-    \caption{Technical and Architectural Characteristics Evaluation Table (WIP)\label{tab:technical-and-architectural-characteristics-eval}}
+    \caption{Number of commits over time for the evaluated frameworks (\fref{tab:open-source-frameworks}). Data taken from the respective repository's default branch. Note the different scales of the y-axes.\vspace{.5em}}
 
-    \begin{tabular}{@{} l cccccccccccc @{}} \toprule
-        & \multicolumn{3}{l}{Integration (\ref{sec:integration})} & \multicolumn{3}{l}{Technology Stack (\ref{sec:technology-stack-requirements})} & \multicolumn{2}{l}{i18n (\ref{sec:internationalization-i18n-capabilities})} & \multicolumn{2}{l}{Interfaces (\ref{sec:provided-interfaces})} & \multicolumn{2}{l}{3rd Party (\ref{sec:3rd-party-integration-capabilities})} \\ \cmidrule(r){2-4} \cmidrule(r){5-7} \cmidrule(r){8-9} \cmidrule(r){10-11} \cmidrule{12-13}
-        Ref. & Dependency & Deployment & Plugin & Languages & Persistence & Framework & Supported & Extensible & User & Admin & Social & Enterprise \\ \midrule
-        
-    \end{tabular}
-\end{table}
+    % https://tex.stackexchange.com/questions/444761/pgfplots-print-groupplots-over-multiple-pages
+    \begin{tikzpicture}
+        \begin{groupplot}[
+            title style={at={(1,0.5)}},
+            group style={
+                group size=1 by 21,
+                xticklabels at=edge bottom,
+                x descriptions at=edge bottom,
+                horizontal sep=0pt,vertical sep=3pt, 
+            },
+            date coordinates in=x,
+            width=\textwidth,
+            height=2.5cm,
+            yticklabel style={font=\tiny},
+            enlarge x limits=false,
+            enlarge y limits=0.2,
+            xticklabel=\year,
+            xtick distance=365,
+            xmajorgrids,
+            x grid style=dashed,
+            y label style={at={(-0.05,0.5)}, rotate=-90},
+        ]
+            \nextgroupplot[
+                ylabel={\cite{ActiDoo}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/gamification-engine_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{SieteValles}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/siete-valles_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{UserInfuser}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/UserInfuser_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{GamificationServer}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/Gamification-Server_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{DjangoGamification}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/django-gamification_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{FlarumGamification}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/FlarumGamification_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Gioco}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/gioco_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{HyperosloGamification}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/HyperosloGamification_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{MoodleBlockXP}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/moodle-block_xp_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{ScoreJS}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/score.js_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{LaravelGamify}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/laravel-gamify_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Yay}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/yay_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Kinben}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/GamificationEngine-Kinben_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Oasis}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/oasis_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{LevelUp}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/level-up_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Gamify}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/Gamify_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{GamifyLaravel}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/gamify-laravel_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Honor}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/honor_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{PhpGamify}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/php-gamify_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Horde}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/horde_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{AcisGamificationFramework}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/Gamification-Framework_monthly.csv};
+        \end{groupplot}
+    \end{tikzpicture}
+\end{figure}
 
 \section{Conclusion}
 
@@ -647,11 +1029,10 @@ Gamification effectiveness:~\cite{SaHMM17, APLLAC24} (mixed results).
     notkeyword=framework
 ]
 
-\newrefcontext[labelprefix=F]
+\newrefcontext[labelprefix=F, sorting=none]
 \printbibliography[
     keyword=framework,
-    title={Frameworks}
+    title={Frameworks},
 ]
-
 
 \end{document}
