@@ -226,10 +226,10 @@ Any hard dependencies on other frameworks or runtimes, such as Node.js, Spring B
 Examines the framework's ability to support different languages and regions for any user-facing content~\cite{AhaPP04}. This is concerned with both out-of-the-box support for locales and the ease of adding new translations.
 
 \paragraph{Supported Languages}
-The set of out-of-the-box translations provided for any user-facing content, such as built-in badge descriptions or notification messages.
+The set of out-of-the-box translations provided for any user-facing content, such as built-in badge descriptions or notification messages. We consider this to be not applicable if the framework does not have any initial user-facing strings by default (but note that \emph{Extensibility} may still be relevant in this case).
 
 \paragraph{Extensibility}
-Whether the framework supports the addition of new locales and other localization concerns like RTL text or region-specific formats.
+Whether the framework supports the addition of new locales and other localization concerns like RTL text or region-specific formats. This is considered not applicable if there is a required \enquote{super-framework} (e.g.~WordPress, Laravel, \ldots) which already has an established way of handling localization.
 
 \subsubsection{Provided Interfaces\label{sec:provided-interfaces}}
 This evaluates the built-in interfaces provided for different user roles, such as end-users or administrators. The elements in this category focus on what is provided out-of-the box.
@@ -308,7 +308,7 @@ These criteria can be expressed as the following search query:
 \end{itemize}
 This process filtered out 171 projects in total.
 
-\paragraph{Results} This leaves us with 21 open source frameworks for further evaluation, in the following referred to by either their reference or their short name, as listed in \fref{tab:open-source-frameworks}.
+\paragraph{Results} This leaves us with 20 open source frameworks for further evaluation, listed in \fref{tab:open-source-frameworks}.
 
 \begin{table}[h]
     \centering
@@ -356,7 +356,21 @@ It should be noted that the industry moves fast: Of 10 commercial gamification s
 
 \section{Evaluation}
 
-See \fref{tab:gamification-features-eval}, \fref{tab:technical-and-architectural-characteristics-eval}, \fref{fig:commits-over-time}.
+Individual evaluation was carried out by
+\begin{itemize}
+    \item For open source frameworks, manually inspecting the repository's documentation (generally readme, repository wiki or documentation website) and spot-checking source code (in particular data models and example code) to assess individual features. For proprietary frameworks, publicly available marketing material was considered.
+    \item Feeding the respective primary URL into Gemini 2.5 Pro alongside the evaluation criteria. The LLM served as a valuable \enquote{second pair of eyes}, being able to dive deeper into the details in less time than it would take a human. This was particularly useful for the often large and convoluted corporate websites---companies were found to be reluctant to even provide access to their frameworks' documentation without an active account.
+\end{itemize}
+Note in particular that it was infeasible to manually inspect the source code of open-source frameworks in any amount of detail for reasons of time. For the same reason, no attempt was made to set up any of the frameworks for hands-on evaluation. In the same vein, no attempt was made to create \enquote{demo accounts} for proprietary frameworks.
+
+Additionally, both the Technical and Architectural Characteristics (\fref{sec:technical-and-architectural-characteristics}) and the Project Health and Ecosystem (\fref{sec:project-health-and-ecosystem}) were primarily established with the intent of evaluating open source frameworks, and were found to be unsuitable for evaluating proprietary frameworks. The kind of information that would be required to evaluate these characteristics, e.g.~the internally used tech stack, is not generally available or even relevant for end-users (since modification is impossible either way). For these reasons, proprietary frameworks were only evaluated according to the primary focus of this thesis, the gamification features (\fref{sec:gamification-features}).
+
+That being said, for the evaluation results, see:
+\begin{itemize}
+    \item \Fref{tab:gamification-features-eval} for the gamification features as described in \fref{sec:gamification-features}.
+    \item \Fref{tab:technical-and-architectural-characteristics-eval} for the technical and architectural characteristics as described in \fref{sec:technical-and-architectural-characteristics} (excluding proprietary frameworks). As part of this evaluation, \fref{fig:commits-over-time} was created to visualize the development activity of these frameworks over time.
+\end{itemize}
+
 
 \newgeometry{left=0.5cm, right=0.5cm, top=1cm, bottom=1cm, landscape}
 \input{table-gamification-features.tex}
@@ -372,14 +386,13 @@ See \fref{tab:gamification-features-eval}, \fref{tab:technical-and-architectural
 \begin{figure}[p]
     \centering
 
-    \caption{Number of commits over time for the evaluated frameworks, as per \fref{sec:development-activity-and-stability}. Data taken from the respective repository's default branch. Note the different scales of the y-axes.\label{fig:commits-over-time}\vspace{.5em}}
+    \caption{Number of commits (left axis, solid) and number of total lines changed (right axis, dashed) over time for the evaluated frameworks, as per \fref{sec:development-activity-and-stability}. Data taken from the respective repository's default branch. Note the different scales of the y-axes across graphs.\label{fig:commits-over-time}}
 
     % https://tex.stackexchange.com/questions/444761/pgfplots-print-groupplots-over-multiple-pages
     \centerline{\begin{tikzpicture}
         \begin{groupplot}[
-            title style={at={(1,0.5)}},
             group style={
-                group size=1 by 21,
+                group size=1 by 20,
                 xticklabels at=edge bottom,
                 x descriptions at=edge bottom,
                 horizontal sep=0pt,vertical sep=3pt, 
@@ -395,6 +408,8 @@ See \fref{tab:gamification-features-eval}, \fref{tab:technical-and-architectural
             xmajorgrids,
             x grid style=dashed,
             y label style={at={(-0.05,0.5)}, rotate=-90},
+            % yticklabel style=black!80!black,
+            % every y tick/.style={black}
         ]
             \nextgroupplot[
                 ylabel={\cite{ActiDoo}}
@@ -574,6 +589,171 @@ See \fref{tab:gamification-features-eval}, \fref{tab:technical-and-architectural
                 col sep=comma,
                 x=date,
                 y=commit_count,
+            ] {./data/Gamification-Framework_monthly.csv};
+        \end{groupplot}
+        
+        \begin{groupplot}[
+            title style={at={(1,0.5)}},
+            group style={
+                group size=1 by 20,
+                xticklabels at=edge bottom,
+                x descriptions at=edge bottom,
+                y descriptions at=edge right,
+                horizontal sep=0pt,vertical sep=3pt, 
+            },
+            date coordinates in=x,
+            width=\textwidth,
+            height=2.5cm,
+            yticklabel style={font=\tiny},
+            enlarge x limits=false,
+            enlarge y limits=0.2,
+            xticklabel=\year,
+            xtick distance=365,
+            xmajorgrids,
+            x grid style=dashed,
+            y label style={at={(-0.05,0.5)}, rotate=-90},
+            xtick=\empty, axis line style=transparent,
+            % yticklabel style=black!80!black,
+            % every y tick/.style={black}
+        ]
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/gamification-engine_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/siete-valles_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/UserInfuser_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/Gamification-Server_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/django-gamification_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/FlarumGamification_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/gioco_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/HyperosloGamification_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/moodle-block_xp_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/score.js_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/laravel-gamify_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/yay_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/GamificationEngine-Kinben_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/oasis_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/level-up_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/Gamify_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/gamify-laravel_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/honor_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/php-gamify_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
             ] {./data/Gamification-Framework_monthly.csv};
         \end{groupplot}
     \end{tikzpicture}}
