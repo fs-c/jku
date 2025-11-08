@@ -1,0 +1,381 @@
+\pgfplotsset{
+    tick label style={font=\small},
+    label style={font=\small},
+    legend style={font=\footnotesize},
+} 
+
+\begin{figure}[p]
+    \centering
+
+    \caption{Number of commits (left axis, solid) and number of total lines changed (right axis, dashed) over time for the evaluated frameworks, as per \zcref{sec:development-activity-and-stability}. Data taken from the respective repository's default branch. Note the different scales of the y-axes across graphs.\label{fig:commits-over-time}}
+
+    % https://tex.stackexchange.com/questions/444761/pgfplots-print-groupplots-over-multiple-pages
+    \centerline{\begin{tikzpicture}
+        \begin{groupplot}[
+            group style={
+                group size=1 by 20,
+                xticklabels at=edge bottom,
+                x descriptions at=edge bottom,
+                horizontal sep=0pt,vertical sep=3pt, 
+            },
+            date coordinates in=x,
+            width=\textwidth,
+            height=2.5cm,
+            yticklabel style={font=\tiny},
+            enlarge x limits=false,
+            enlarge y limits=0.2,
+            xticklabel=\year,
+            xtick distance=365,
+            xmajorgrids,
+            x grid style=dashed,
+            y label style={at={(-0.05,0.5)}, rotate=-90},
+            % yticklabel style=black!80!black,
+            % every y tick/.style={black}
+        ]
+            \nextgroupplot[
+                ylabel={\cite{ActiDoo}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/gamification-engine_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{SieteValles}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/siete-valles_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{UserInfuser}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/UserInfuser_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{GamificationServer}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/Gamification-Server_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{DjangoGamification}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/django-gamification_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{FlarumGamification}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/FlarumGamification_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Gioco}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/gioco_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{HyperosloGamification}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/HyperosloGamification_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{MoodleBlockXP}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/moodle-block_xp_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{ScoreJS}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/score.js_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{LaravelGamify}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/laravel-gamify_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Yay}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/yay_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Kinben}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/GamificationEngine-Kinben_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Oasis}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/oasis_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{LevelUp}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/level-up_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Gamify}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/Gamify_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{GamifyLaravel}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/gamify-laravel_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{Honor}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/honor_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{PhpGamify}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/php-gamify_monthly.csv};
+
+            \nextgroupplot[
+                ylabel={\cite{AcisGamificationFramework}}
+            ]
+            \addplot+[mark=none, black] table [
+                col sep=comma,
+                x=date,
+                y=commit_count,
+            ] {./data/Gamification-Framework_monthly.csv};
+        \end{groupplot}
+        
+        \begin{groupplot}[
+            title style={at={(1,0.5)}},
+            group style={
+                group size=1 by 20,
+                xticklabels at=edge bottom,
+                x descriptions at=edge bottom,
+                y descriptions at=edge right,
+                horizontal sep=0pt,vertical sep=3pt, 
+            },
+            date coordinates in=x,
+            width=\textwidth,
+            height=2.5cm,
+            yticklabel style={font=\tiny},
+            enlarge x limits=false,
+            enlarge y limits=0.2,
+            xticklabel=\year,
+            xtick distance=365,
+            xmajorgrids,
+            x grid style=dashed,
+            y label style={at={(-0.05,0.5)}, rotate=-90},
+            xtick=\empty, axis line style=transparent,
+            % yticklabel style=black!80!black,
+            % every y tick/.style={black}
+        ]
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/gamification-engine_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/siete-valles_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/UserInfuser_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/Gamification-Server_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/django-gamification_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/FlarumGamification_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/gioco_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/HyperosloGamification_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/moodle-block_xp_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/score.js_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/laravel-gamify_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/yay_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/GamificationEngine-Kinben_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/oasis_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/level-up_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/Gamify_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/gamify-laravel_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/honor_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/php-gamify_monthly.csv};
+
+            \nextgroupplot[scaled y ticks=false]
+            \addplot+[mark=none, black, dashed] table [
+                col sep=comma,
+                x=date,
+                y=total_changes,
+            ] {./data/Gamification-Framework_monthly.csv};
+        \end{groupplot}
+    \end{tikzpicture}}
+\end{figure}
