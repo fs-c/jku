@@ -151,7 +151,6 @@
 %% a package `biblatex', you would use the command `\usepackage{biblatex}'.
 %% 
 
-\usepackage{csquotes}
 \usepackage[backend=biber,citestyle=numeric,sortcites=true,maxcitenames=2,style=ACM-Reference-Format]{biblatex}
 \setcounter{biburlnumpenalty}{100} %% reducing biburl* penalties typically improves URL placement in bibliography
 \setcounter{biburllcpenalty}{100}
@@ -161,6 +160,12 @@
 \usepackage{amsfonts}
 \usepackage{subfigure}
 %\usepackage{acronym}
+\usepackage{minted}
+\usepackage{verbatim} % just for comment
+\usepackage{csquotes}
+
+% this should be loaded as late as possible
+\usepackage{zref-clever}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,7 +251,7 @@
 %% Include your abstract into the frontmatter
 %% 
 
-\import{./}{00-abstract}
+\import{./chapters/}{00-abstract}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,7 +262,7 @@
 %% used to acknowledge external funding, discuss with your supvervisor if unsure)
 %% 
 
-%\import{./}{acknowledgements}
+%\import{./chapters/}{acknowledgements}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,7 +273,7 @@
 %% 
 
 %% Make sure to start the table of contents on a new odd page (odd is only relevant in twoside layout)
-\cleardoubleoddpage
+\cleardoubleoddpage%
 %% Print the table of contents
 \tableofcontents
 
@@ -285,7 +290,7 @@
 %% Make sure to start the list of acronyms on a new odd page (odd is only relevant in twoside layout)
 %\cleardoubleoddpage
 %% Include list of acronyms (optional and often not necessary)
-%\import{./}{acronyms}
+%\import{./chapters/}{acronyms}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,12 +303,12 @@
 %% Include your chapters
 %% 
 
-\import{./}{01-introduction}
-\import{./}{02-background}
-\import{./}{03-extractors}
-\import{./}{04-implementation}
-\import{./}{05-testing}
-\import{./}{09-conclusion}
+\import{./chapters/}{01-introduction}
+\import{./chapters/}{02-background}
+\import{./chapters/}{03-extractors}
+\import{./chapters/}{04-implementation}
+\import{./chapters/}{05-testing}
+\import{./chapters/}{09-conclusion}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,7 +331,7 @@
 %% Include your appendix chapters
 %% 
 
-\import{./}{91-appendix}
+\import{./chapters/}{91-appendix}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

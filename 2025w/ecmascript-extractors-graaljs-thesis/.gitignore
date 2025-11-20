@@ -27,3 +27,6 @@
 *~
 /main.pdf
 /main-*.pdf
+
+*-SAVE-ERROR
+*.minted
