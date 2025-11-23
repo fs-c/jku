@@ -4,15 +4,22 @@
 
 kitchen sink for everything that might be useful "background information" for other sections but isn't relevant in there:
 
- - background on this thesis being about implementing an ecmascript stage 2 proposal:
-    - outline the tc39 process https://tc39.es/process-document/
-    - maybe list some other active proposals (same stage, below, above) to give some context on what's currently happening
-        - (maybe in particular pattern matching)
-- background on graaljs/truffle framework
-    - graaljs: ECMAScript implementation built on Oracle GraalVM (what is GraalVM?)
-    - what is truffle framework
-    - maybe mention history of proposal implementations on graaljs
-- define ECMAScript "abstract operation" (relevant because a core part of the proposal is specified as an abstract operation)
-    - are effectively spec "helper functions" that abstract spec descriptions
-    - they aren't internal methods (those would be actual program logic)
-    - e.g., the abstract operation `Call(F, V, [, argumentsList])' eventually returns `F.[[Call]](V, argumentsList)' which is the actual call (F is the function, V the `this') but it also specifies some other behavior like that a TypeError has to be thrown if `IsCallable(F)' (another abstract operation) is false
+\begin{itemize}
+    \item background on this thesis being about implementing an ecmascript stage 1 proposal:
+    \begin{itemize}
+        \item outline the tc39 process https://tc39.es/process-document/
+        \item given it's status as stage 1 it's in principle too early for engines to implement this, explain why we did it anyways here
+    \end{itemize}
+    \item background on graaljs/truffle framework
+    \begin{itemize}
+        \item graaljs: ECMAScript implementation built on Oracle GraalVM (what is GraalVM?)
+        \item what is truffle framework
+        \item (maybe mention history of proposal implementations on graaljs)
+    \end{itemize}
+    \item define ECMAScript "abstract operation" (relevant because a core part of the proposal is specified as an abstract operation)
+    \begin{itemize}
+        \item are effectively spec "helper functions" that abstract spec descriptions
+        \item they aren't internal methods (those would be actual program logic)
+        \item e.g., the abstract operation `Call(F, V, [, argumentsList])' eventually returns `F.[[Call]](V, argumentsList)' which is the actual call (F is the function, V the `this') but it also specifies some other behavior like that a TypeError has to be thrown if `IsCallable(F)' (another abstract operation) is false
+    \end{itemize}
+\end{itemize}
