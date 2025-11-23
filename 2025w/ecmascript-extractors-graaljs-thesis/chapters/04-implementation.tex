@@ -1,5 +1,64 @@
 \cleardoubleoddpage%
 \chapter{Implementation\label{sec:implementation}}
 
-% - when parser encounters an Extractor in any situation (todo: maybe list )
-% - todo: flag
+\section{Parser\label{sec:implementation-parser}}
+
+\begin{itemize}
+    \item \mintinline{js}|verifyAssignment(lhs, op, rhs)| verifies expressions like \mintinline{text}|{lhs} {op} {rhs}|
+    \begin{itemize}
+        \item for a statement like \mintinline{js}|Foo(a, b, c) = x| we effectively want \mintinline{js}|[a, b, c] = /* x transformed according to Foo[Symbol.customMatcher] */|
+        \item Extractors get parsed as CallNodes since they look like function calls, so if we encounter a CallNode as the left hand side of an assignment we just pretend it's a destructuring assignment (if the flag is enabled)
+        \item then \mintinline{js}|verifyDestructuringAssignmentPattern| gets called with that CallNode, it really just calls \mintinline{js}|node.accept(new VerifyDestructuringPatternNodeVisitor)|
+        \begin{itemize}
+            \item (should probably explain visitors)
+            \item refactored that visitor slightly to reduce duplication between array and object destructuring node lists
+            \item for array/object destructuring it gets a literal array/object node and essentially just calls child.accept(this) for all elements, with some special handling for a single optional final spread
+            \item when we encounter a CallNode in this visitor we use the same logic as if it were an array literal node, with the parameters as the array 
+        \end{itemize}
+    \end{itemize}
+    \item \mintinline{js}|variableDeclarationList| parses variable declarations
+    \begin{itemize}
+        \item originally it used \mintinline{text}|bindingIdentifierOrPattern| to get the binding name (attempting to parse either a literal or an array/object); loosened to \mintinline{text}|leftHandSideExpression| (analogous to \mintinline{text}|assignmentExpression|) so we can get CallNode
+        \item then we proceed normally, ending up in \mintinline{js}|verifyAssignment(lhs, op, rhs)| where lhs is our call node
+        \item \mintinline{js}|variableDeclarationList| and \mintinline{text}|assignmentExpression| are the only places where \mintinline{js}|verifyAssignment(lhs, op, rhs)| is called where an Extractor can appear so this covers all bases in that regard
+    \end{itemize}
+    \item in general we converted all instances where there previously was a check for \mintinline{js}|isDestructuringLhs| into \mintinline{js}|isDestructuringOrExtractorLhs| since there isn't a case where they should lead to different behavior
+    \item missing: function parameters
+    \item missing: maybe more?
+\end{itemize}
+
+\section{GraalJSTranslator}
+
+\begin{itemize}
+    \item we modify the assignment transformer (\mintinline{js}|transformAssignmentImpl|) to handle the case where the lhs is a CallNode (see \zcref{sec:implementation-parser})
+    \item for this purpose: \mintinline{js}|transformAssignmentExtractor|
+    \begin{itemize}
+        \item see (where transformDestructuringArrayAssignment handles the destructured assignment of the returned array to the \enquote{arguments} of the extractor as if we were doing an array destructuring)
+        \begin{minted}{java}
+private JavaScriptNode transformAssignmentExtractor(CallNode fakeCallNode, JavaScriptNode assignedValue, boolean initializationAssignment) {
+    final var functionExpr = fakeCallNode.getFunction();
+    final var function = transform(functionExpr);
+
+    var receiver = function;
+    if (functionExpr instanceof AccessNode) {
+        final AccessNode accessNode = (AccessNode) functionExpr;
+        receiver = transform(accessNode.getBase());
+    }
+
+    final var invokeCustomMatcherOrThrowNode = factory.createInvokeCustomMatcherOrThrow(context, function, assignedValue, receiver, environment.isStrictMode());
+
+    final var args = fakeCallNode.getArgs();
+    VarRef valueTempVar = environment.createTempVar();
+    return createBlock(
+            this.transformDestructuringArrayAssignment(args, invokeCustomMatcherOrThrowNode, valueTempVar, initializationAssignment),
+            valueTempVar.createWriteNode(assignedValue)
+    );
+}
+        \end{minted}
+        \item note that the valueTempVar is used to ensure that \mintinline{js}|(Foo(/* ... */) = x) === x|, which should hold for all assignments
+    \end{itemize}
+\end{itemize}
+
+\section{InvokeCustomMatcherOrThrow\label{sec:implementation-invokecustommatcherorthrow}}
+
+
