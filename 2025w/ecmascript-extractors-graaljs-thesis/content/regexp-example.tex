@@ -1,0 +1,13 @@
+\begin{minted}{js}
+    // (no arrow function here to avoid capturing the enclosing `this`)
+    RegExp.prototype[Symbol.customMatcher] = function (value) {
+        const match = this.exec(value);
+        return !!match && [match];
+    }
+    
+    const /(?<year>\d{4})-(?<month>\d{2})/({ groups: { year, month } }) = "2024-01";
+    
+    // Or, for better readability with a named expression
+    const IsoTime = /^(?<hours>\d{2}):(?<minutes>\d{2}):(?<seconds>\d{2})$/;
+    const IsoTime({ groups: { hours, minutes, seconds } }) = "15:56:31"
+\end{minted}

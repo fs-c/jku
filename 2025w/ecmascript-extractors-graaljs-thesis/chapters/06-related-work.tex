@@ -1,0 +1,134 @@
+\cleardoubleoddpage%
+\chapter{Related Work\label{sec:related-work}}
+
+
+\section{Prior Art}
+
+(TODO: There appear to be some theoretical underpinnings to this as well, mainly from a functional-programming background, which would probably best fit into this section. See in particular the description/references in \url{https://github.com/tc39/proposal-pattern-matching/issues/63}.)
+
+The proposal mentions the following language features as prior art:
+
+\begin{itemize}
+    \item Scala Extractor Objects
+    \item C\# Deconstruct
+    \item F\# Active Patterns
+    \item Rust Enums \& Pattern Matching
+\end{itemize}
+
+We will briefly describe each, and compare it to the proposed ECMAScript Extractors.
+
+\paragraph{Scala} Perhaps the most direct example of this pattern in other languages is Scala, where \emph{Extractor Objects} are objects with an \mintinline{scala}|unapply| method, whch is effectively equivalent in purpose and behavior to the method behind \mintinline{js}|Symbol.customMatcher|. From the Scala documentation: \enquote{Whereas the \mintinline{scala}|apply| method is like a constructor which takes arguments and creates an object, the \mintinline{scala}|unapply| takes an object and tries to give back the arguments.}\footnote{\url{https://docs.scala-lang.org/tour/extractor-objects.html}, accessed 20/11/2025}
+
+\begin{minted}{Scala}
+// (Scala; TODO: expand to not-quite-as-trivial example to showcase power)
+case class Point(x: Int, y: Int)
+
+val p = Point(10, 20) // Construction
+val Point(x, y) = p // Extraction (calls Point.unapply(p))
+\end{minted}
+
+The \mintinline{scala}|unapply| method may be \emph{refutable} (may not succeed), but if it returns \mintinline{Scala}|None| or throws an exception, an exception is thrown on assignment.
+
+\paragraph{C\#} While both Scala and the ECMAScript proposal essentially define extractors as objects with a certain (static) method, C\# relies on a \mintinline{csharp}|Deconstruct| \emph{instance} method on the object type to be deconstructed\footnote{\url{https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/deconstruct}, accessed 20/11/2025}.
+
+\begin{minted}[highlightlines={13-18, 24}]{csharp}
+// (C#)
+public class Person
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+
+    public Person(string fname, string lname)
+    {
+        FirstName = fname;
+        LastName = lname;
+    }
+
+    public void Deconstruct(out string fname, out string lname)
+    {
+        // Arbitrary logic in here 
+        fname = FirstName;
+        lname = LastName;
+    }
+}
+
+// Somewhere else:
+{
+    var p = new Person("John", "Smith")
+    var (fName, lName) = p;
+
+    // Compile time error since no matching Deconstructor is found
+    var (fName) = p;
+}
+\end{minted}
+
+But while this has some benefits, like allowing it to omit the requirement of specifying which Extractor shall be used (as is always required in e.g.~Scala), it's more limiting than the alternative: Constructs like the following in ECMAScript, where an Extractor operates on multiple different types that may not have a relation with each other or may even be primitives, are not possible with the instance-method approach. In this sense the ECMAScript implementation opts for increased flexibility and power over clearly enforced Constructor-Extractor symmetry, at the cost of slightly increased verbosity.
+
+\begin{minted}{js}
+const InstantExtractor = {
+    [Symbol.customMatcher](value) {
+        if (value instanceof Temporal.Instant) {
+            return [value];
+        } else if (value instanceof Date) {
+            return [Temporal.Instant.fromEpochMilliseconds(+value)];
+        } else if (typeof value === 'string') {
+            return [Temporal.Instant.from(value)];
+        }
+    }
+};
+
+// Two different classes and a primitive are all used with the same Extractor
+const InstantExtractor(x) = Temporal.Instant.from(0);
+const InstantExtractor(y) = new Date(0);
+const InstantExtractor(z) = '1970-01-01T00:00:00Z';
+\end{minted}
+
+\paragraph{F\#} While Scala (at least in terms of naming) focuses on the symmetry between its \mintinline{scala}|apply| and \mintinline{scala}|unapply| methods on Extractor Objects, F\# has a very generic concept of \emph{Active Patterns}, which allow developers to effectively define named \enquote{views} on arbitrary data.
+
+\begin{minted}{fsharp}
+let (|Point|_|) (input: string) =
+    let parts = input.Split(',')
+    match parts with
+    | [| x; y |] -> 
+        try Some(int x, int y) 
+        with _ -> None // Parse failed
+    | _ -> None // Format failed
+
+let rawData = "10,20"
+
+match rawData with
+    | Point (x, y) -> (* ...use x and y... *)
+    | _ -> (* Error *)
+\end{minted}
+
+This represents a very close functional equivalent to the proposed ECMAScript Extractors. But it's important to note that the above Active Pattern is \emph{refutable} (as can be seen by the two failure branches), and that this would cause a compilation error if used in a binding without being handled. One way around this would be to introduce default values, as demonstrated in the following. Nevertheless, this doesn't directly map to the proposed behavior in ECMAScript, which is to throw a TypeError if the extractor doesn't succeed.
+
+\begin{minted}{fsharp}
+let (|Point|) (input: string) =
+    let parts = input.Split(',')
+    match parts with
+    | [| x; y |] -> 
+        match (Int32.TryParse x, Int32.TryParse y) with
+        | ((true, ix), (true, iy)) -> (ix, iy)
+        | _ -> (0, 0) // Parse failed
+    | _ -> (0, 0) // Format failed
+\end{minted}
+
+\paragraph{Rust} TODO (not as direct of a relation IMO, but the README mentions it)
+
+% # reversible constructor paradigm & prior art
+
+% - reversible constructor paradigm seems to be the conceptual influence behind the proposal (either way it certainly appears to prioritize following it)
+%     - https://github.com/tc39/proposal-pattern-matching/issues/63 (is a discussion on the pattern mathing proposal but as far as i can tell the extractors one grew out of that)
+%     - the syntax to deconstruct a value should be isomorphic to the syntax used to construct it; reduces cognitive load
+%     - classic example, `const p = new Point(x, y)'; `const Point(x, y) = p;' (assuming Point is set up properly)
+% - precedent/prior art/historical context
+%     - discourse surrounding the proposal frequently references Scala's Extractor Objects (`unapply') as precedent
+%         - https://docs.scala-lang.org/tour/extractor-objects.html
+%         - but Scala is statically typed so doesn't need the instanceof etc. checks that `customMatcher' of this proposals need (a rough scala vs JS code snippet would be cool)
+%     - others mentioned in README (it would be great to have roughly comparable code examples for each of these)
+%         - C# 8.0 Deconstruct https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/deconstruct
+%         - F# Active Patterns https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/active-patterns
+%         - Rust Enums https://doc.rust-lang.org/book/ch06-01-defining-an-enum.html
+%         - Rust Pattern Matching https://doc.rust-lang.org/book/ch19-00-patterns.html
+

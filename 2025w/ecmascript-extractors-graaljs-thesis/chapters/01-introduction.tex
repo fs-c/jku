@@ -1,5 +1,37 @@
 \cleardoubleoddpage%
-\chapter{Introduction}
-\label{ch:introduction}
+\chapter{Introduction\label{ch:introduction}}
 
-maybe note somewhere that many of the JS examples and some test cases are taken or strongly inspired from the README of the proposal 
+many of the JS examples and some test cases are taken directly or strongly inspired from the README of the proposal (or public communications of the champions): either mention here generally or for every individual case
+
+see minimum example in \zcref{lst:minimal-intro-example}
+
+\begin{listing}[htbp]
+    \begin{minted}[highlightlines={9-11, 15}]{js}
+class Point {
+    #x;
+    #y;
+    constructor(x, y) {
+        this.#x = x;
+        this.#y = y;
+    }
+
+    static [Symbol.customMatcher](subject) {
+        return #x in subject ? [subject.#x, subject.#y] : false;
+    }
+}
+
+const p = new Point(1, 2); // Construction
+const Point(x, y) = p; // Extraction (calls Point[Symbol.customMatcher](p))
+x; // 1
+y; // 2
+    \end{minted}
+    \caption{TODO\label{lst:minimal-intro-example}}
+\end{listing}
+
+
+\paragraph{AI Usage Declaration}
+
+\begin{enumerate}
+    \item GitHub Copilot inline completion for the impl
+    \item todo\ldots
+\end{enumerate}

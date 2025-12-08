@@ -160,7 +160,7 @@
 \usepackage{amsfonts}
 \usepackage{subfigure}
 %\usepackage{acronym}
-\usepackage{minted}
+\usepackage[newfloat=true]{minted}
 \usepackage{verbatim} % just for comment
 \usepackage{csquotes}
 
@@ -168,6 +168,13 @@
 \usepackage{zref-clever}
 
 \newmintinline{js}{js}
+
+% Custom minted environment with fixed options but parameterizable language
+\newenvironment{simplecode}[1][js]%
+  {\minted[linenos=false, frame=none, autogobble]{#1}}%
+  {\endminted}
+
+\SetupFloatingEnvironment{listing}{placement=htp}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -309,7 +316,8 @@
 \import{./chapters/}{02-background}
 \import{./chapters/}{03-extractors}
 \import{./chapters/}{04-implementation}
-\import{./chapters/}{05-testing}
+\import{./chapters/}{05-evaluation}
+\import{./chapters/}{06-related-work}
 \import{./chapters/}{09-conclusion}
 
 %% 

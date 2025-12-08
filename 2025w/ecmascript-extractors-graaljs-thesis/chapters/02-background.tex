@@ -5,21 +5,24 @@
 kitchen sink for everything that might be useful "background information" for other sections but isn't relevant in there:
 
 \begin{itemize}
+    \item what is javascript/ecma, brief history, where is it used, maybe some stats (figure?)
     \item background on this thesis being about implementing an ecmascript stage 1 proposal:
     \begin{itemize}
         \item outline the tc39 process https://tc39.es/process-document/
-        \item given it's status as stage 1 it's in principle too early for engines to implement this, explain why we did it anyways here
+        \item given it's status as stage 1 it's in principle too early for engines to implement this, address why we did it anyways here (-> while it's not officially been communicated as such yet, the API appears to be fairly stable. also, while it may be too early to provide this to end users, it is still useful to do this ahead of time internally to be able to gauge implementation effort when the real, finalized version is to be implemented. [can really come up with anything that sounds plausible here, oracle doesn't really have an answer here])
     \end{itemize}
     \item background on graaljs/truffle framework
     \begin{itemize}
         \item graaljs: ECMAScript implementation built on Oracle GraalVM (what is GraalVM?)
         \item what is truffle framework
+        \item maybe diagram of components to viz pipeline from code to execution (implementation ch can reference that)
         \item (maybe mention history of proposal implementations on graaljs)
+        \item visitor pattern \label{sec:background-visitor-pattern}
     \end{itemize}
-    \item define ECMAScript "abstract operation" (relevant because a core part of the proposal is specified as an abstract operation)
+    \item maybe define ECMAScript \enquote{abstract operation} (relevant because a core part of the proposal is specified as an abstract operation)
     \begin{itemize}
-        \item are effectively spec "helper functions" that abstract spec descriptions
-        \item they aren't internal methods (those would be actual program logic)
+        \item (or do it at the point where it's relevant later)
+        \item are effectively spec \enquote{helper functions} that abstract spec descriptions but not internal methods (those would be actual program logic)
         \item e.g., the abstract operation `Call(F, V, [, argumentsList])' eventually returns `F.[[Call]](V, argumentsList)' which is the actual call (F is the function, V the `this') but it also specifies some other behavior like that a TypeError has to be thrown if `IsCallable(F)' (another abstract operation) is false
     \end{itemize}
 \end{itemize}

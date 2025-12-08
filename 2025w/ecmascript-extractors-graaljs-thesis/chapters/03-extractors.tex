@@ -3,31 +3,11 @@
 
 \section{Motivation}
 
-There is an asymmetry between the mechanism used to create data structures and those used to consume them. Developers have a multitude of language functionality for object construction at their fingertips: classes with private fields, computed property names, factory functions, \ldots, but retrieval of this data can often require stepping outside these declarative paradigms. While the destructuring syntax is a step towards this direction, it only allows for the extraction of data from Arrays and Objects based on their structural shapes---it doesn't support cases where transformation is required.
+There is an asymmetry between the mechanism used to create data structures and those used to consume them. Developers have a multitude of language functionality for object construction at their fingertips: classes with private fields, computed property names, factory functions, and more; however the retrieval of this data can often require stepping outside these declarative paradigms. While the destructuring syntax is a step towards this direction, it only allows for the extraction of data from Arrays and Objects based on their structural shapes---it doesn't support cases where transformation is required.
 
 During development, this shortcoming may force developers to choose between encapsulation (private fields, specific constructors, \ldots) and development ergonomics (plain objects that are easy to destructure). The proposal addresses this by introducing a pattern that can execute user-defined logic during the binding phase. This logic is attached to objects through a new well-known property, \mintinline{js}{Symbol.customMatcher}, which can then be used for this purpose.
 
-\begin{minted}[highlightlines={9-11, 15}]{js}
-class Point {
-    #x;
-    #y;
-    constructor(x, y) {
-        this.#x = x;
-        this.#y = y;
-    }
-
-    static [Symbol.customMatcher](subject) {
-        return #x in subject ? [subject.#x, subject.#y] : false;
-    }
-}
-
-const p = new Point(1, 2); // Construction
-const Point(x, y) = p; // Extraction (calls Point[Symbol.customMatcher](p))
-x; // 1
-y; // 2
-\end{minted}
-
-(As will be outlined later, another motivation is to improve the ergonomics of \emph{Pattern Matching}, another proposal, see \zcref{sec:ecosystem-and-related-proposals}.)
+A secondary motivation, discussed in \zcref{sec:ecosystem-and-related-proposals-pattern-matching}, is to improve the ergonomics of the related \emph{Pattern Matching} proposal.
 
 With this addition, the proposal augments the existing binding and assignment patterns to allow for:
 \begin{itemize}
@@ -36,159 +16,16 @@ With this addition, the proposal augments the existing binding and assignment pa
     \item Encapsulation, enabling \enquote{views} into an object's state without exposing its internal storage layout.
 \end{itemize}
 
-% - currently there is asymmetry between the mechanisms used to create data structures and those used to consume them
-%     - lots of language functionality related to object construction: 
-%     - but retrieval of this data can often require stepping outside this (declarative) paradigm
-% - destructuring assignment (ES6) allows for extraction of data from Arrays and Objects based on their structural shape only, it doesn't support cases where transformation is required
-%     - e.g. constructing a `Temporal.Instant` from a string is easy (concise, declarative) but extracting its epoch milliseconds within a destructuring flow is impossible without imperative if/else blocks or auxiliary constructs
-%         - https://github.com/tc39/proposal-extractors/issues/15#issuecomment-2037675151 for rough emulation with auxiliary variables (but not exactly relevant)
-%         - example code with/without extractors
-%     - can force a choice between encapsulation (private fields, specific constructors, ...) and development ergonomics (plain objects that are easy to destructure)
-%     - proposal addresses this by introducing a pattern that can execute user-defined logic during the binding phase, allowing for
-%         - data validation: The ability to verify that a subject conforms to a specific type or constraint before attempting extraction.
-%         - transformation: The capacity to convert complex objects (e.g., a `Date' object) into primitive representations (e.g., a string) seamlessly during the assignment.
-%         - encapsulation: The enablement of "views" into an object's state without exposing its implementation details (internal storage layout).
-% -> show a code sample here (maybe inspired by the README one, but that one doesn't really illustrate it that well)
-
-\section{Prior Art}
-
-(TODO: There appear to be some theoretical underpinnings to this as well, mainly from a functional-programming background, which would probably best fit into this section. See in particular the description/references in \url{https://github.com/tc39/proposal-pattern-matching/issues/63}.)
-
-The proposal mentions the following language features as prior art:
-
-\begin{itemize}
-    \item Scala Extractor Objects
-    \item C\# Deconstruct
-    \item F\# Active Patterns
-    \item Rust Enums \& Pattern Matching
-\end{itemize}
-
-We will briefly describe each, and compare it to the proposed ECMAScript Extractors.
-
-\paragraph{Scala} Perhaps the most direct example of this pattern in other languages is Scala, where \emph{Extractor Objects} are objects with an \mintinline{scala}|unapply| method, whch is effectively equivalent in purpose and behavior to the method behind \mintinline{js}|Symbol.customMatcher|. From the Scala documentation: \enquote{Whereas the \mintinline{scala}|apply| method is like a constructor which takes arguments and creates an object, the \mintinline{scala}|unapply| takes an object and tries to give back the arguments.}\footnote{\url{https://docs.scala-lang.org/tour/extractor-objects.html}, accessed 20/11/2025}
-
-\begin{minted}{Scala}
-// (Scala; TODO: expand to not-quite-as-trivial example to showcase power)
-case class Point(x: Int, y: Int)
-
-val p = Point(10, 20) // Construction
-val Point(x, y) = p // Extraction (calls Point.unapply(p))
-\end{minted}
-
-The \mintinline{scala}|unapply| method may be \emph{refutable} (may not succeed), but if it returns \mintinline{Scala}|None| or throws an exception, an exception is thrown on assignment.
-
-\paragraph{C\#} While both Scala and the ECMAScript proposal essentially define extractors as objects with a certain (static) method, C\# relies on a \mintinline{csharp}|Deconstruct| \emph{instance} method on the object type to be deconstructed\footnote{\url{https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/deconstruct}, accessed 20/11/2025}.
-
-\begin{minted}[highlightlines={13-18, 24}]{csharp}
-// (C#)
-public class Person
-{
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-
-    public Person(string fname, string lname)
-    {
-        FirstName = fname;
-        LastName = lname;
-    }
-
-    public void Deconstruct(out string fname, out string lname)
-    {
-        // Arbitrary logic in here 
-        fname = FirstName;
-        lname = LastName;
-    }
-}
-
-// Somewhere else:
-{
-    var p = new Person("John", "Smith")
-    var (fName, lName) = p;
-
-    // Compile time error since no matching Deconstructor is found
-    var (fName) = p;
-}
-\end{minted}
-
-But while this has some benefits, like allowing it to omit the requirement of specifying which Extractor shall be used (as is always required in e.g.~Scala), it's more limiting than the alternative: Constructs like the following in ECMAScript, where an Extractor operates on multiple different types that may not have a relation with each other or may even be primitives, are not possible with the instance-method approach. In this sense the ECMAScript implementation opts for increased flexibility and power over clearly enforced Constructor-Extractor symmetry, at the cost of slightly increased verbosity.
-
-\begin{minted}{js}
-const InstantExtractor = {
-    [Symbol.customMatcher](value) {
-        if (value instanceof Temporal.Instant) {
-            return [value];
-        } else if (value instanceof Date) {
-            return [Temporal.Instant.fromEpochMilliseconds(+value)];
-        } else if (typeof value === 'string') {
-            return [Temporal.Instant.from(value)];
-        }
-    }
-};
-
-// Two different classes and a primitive are all used with the same Extractor
-const InstantExtractor(x) = Temporal.Instant.from(0);
-const InstantExtractor(y) = new Date(0);
-const InstantExtractor(z) = '1970-01-01T00:00:00Z';
-\end{minted}
-
-\paragraph{F\#} While Scala (at least in terms of naming) focuses on the symmetry between its \mintinline{scala}|apply| and \mintinline{scala}|unapply| methods on Extractor Objects, F\# has a very generic concept of \emph{Active Patterns}, which allow developers to effectively define named \enquote{views} on arbitrary data.
-
-\begin{minted}{fsharp}
-let (|Point|_|) (input: string) =
-    let parts = input.Split(',')
-    match parts with
-    | [| x; y |] -> 
-        try Some(int x, int y) 
-        with _ -> None // Parse failed
-    | _ -> None // Format failed
-
-let rawData = "10,20"
-
-match rawData with
-    | Point (x, y) -> (* ...use x and y... *)
-    | _ -> (* Error *)
-\end{minted}
-
-This represents a very close functional equivalent to the proposed ECMAScript Extractors. But it's important to note that the above Active Pattern is \emph{refutable} (as can be seen by the two failure branches), and that this would cause a compilation error if used in a binding without being handled. One way around this would be to introduce default values, as demonstrated in the following. Nevertheless, this doesn't directly map to the proposed behavior in ECMAScript, which is to throw a TypeError if the extractor doesn't succeed.
-
-\begin{minted}{fsharp}
-let (|Point|) (input: string) =
-    let parts = input.Split(',')
-    match parts with
-    | [| x; y |] -> 
-        match (Int32.TryParse x, Int32.TryParse y) with
-        | ((true, ix), (true, iy)) -> (ix, iy)
-        | _ -> (0, 0) // Parse failed
-    | _ -> (0, 0) // Format failed
-\end{minted}
-
-\paragraph{Rust} TODO (not as direct of a relation IMO, but the README mentions it)
-
-% # reversible constructor paradigm & prior art
-
-% - reversible constructor paradigm seems to be the conceptual influence behind the proposal (either way it certainly appears to prioritize following it)
-%     - https://github.com/tc39/proposal-pattern-matching/issues/63 (is a discussion on the pattern mathing proposal but as far as i can tell the extractors one grew out of that)
-%     - the syntax to deconstruct a value should be isomorphic to the syntax used to construct it; reduces cognitive load
-%     - classic example, `const p = new Point(x, y)'; `const Point(x, y) = p;' (assuming Point is set up properly)
-% - precedent/prior art/historical context
-%     - discourse surrounding the proposal frequently references Scala's Extractor Objects (`unapply') as precedent
-%         - https://docs.scala-lang.org/tour/extractor-objects.html
-%         - but Scala is statically typed so doesn't need the instanceof etc. checks that `customMatcher' of this proposals need (a rough scala vs JS code snippet would be cool)
-%     - others mentioned in README (it would be great to have roughly comparable code examples for each of these)
-%         - C# 8.0 Deconstruct https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/deconstruct
-%         - F# Active Patterns https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/active-patterns
-%         - Rust Enums https://doc.rust-lang.org/book/ch06-01-defining-an-enum.html
-%         - Rust Pattern Matching https://doc.rust-lang.org/book/ch19-00-patterns.html
-
 \section{Ecosystem \& Related Proposals\label{sec:ecosystem-and-related-proposals}}
 
-\subsection{Pattern Matching Proposal}
+\subsection{Pattern Matching Proposal\label{sec:ecosystem-and-related-proposals-pattern-matching}}
 
-The \emph{Pattern Matching} proposal\footnote{\url{https://github.com/tc39/proposal-pattern-matching}, accessed 21/11/2025} has the goal of generalizing conditional branching based on the structure and content of data. In particular, currently ECMAScript relies on the \mintinline{js}|switch| statement, which is limited to strict equality checks, or chains of \mintinline{js}|if|/\mintinline{js}|else| blocks, which can become verbose and difficult to read when handling complex data structures. It introduces a \mintinline{js}|match| construct that allows developers to test values against patterns---including object shapes, array contents, logical conditions---in a concise and declarative manner.
+The \emph{Pattern Matching} proposal~\cite{tc39patternmatching}, has the goal of generalizing conditional branching based on the structure and content of data. In particular, currently ECMAScript relies on the \mintinline{js}|switch| statement, which is limited to strict equality checks, or chains of \mintinline{js}|if|/\mintinline{js}|else| blocks, which can become verbose and difficult to read when handling complex data structures. It introduces a \mintinline{js}|match| construct that allows developers to test values against patterns---including object shapes, array contents, logical conditions---in a concise and declarative manner.
 
-Consider the following example of a network request handler, which demonstrates the ergonomics of structural matching, in particular in combination with bindings as part of the patterns.
+Consider the example of a network request handler in \zcref{lst:pattern-matching-example}, which demonstrates the ergonomics of structural matching in particular in combination with bindings as part of the patterns.
 
-\begin{minted}{js}
+\begin{listing}[htbp]
+    \begin{minted}{js}
 match (res) {
     when { status: 200, let body, ...let rest }: 
         handleData(body, rest);
@@ -204,48 +41,54 @@ match (res) {
     default: 
         throwSomething();
 }
-\end{minted}
+    \end{minted}
+    \caption{Demonstrating the ergonomics of structural matching, showing how \mintinline{js}{match} could allow validating the shape of data (e.g., \mintinline{js}{status: 200}) combined with extraction of values into variables (as happens e.g. for the request body in the first \mintinline{js}{when}-clause).\label{lst:pattern-matching-example}}
+\end{listing}
 
-But the Pattern Matching proposal has especially strong ties to the Extractors proposal because it already contains some of its syntax and semantics. In particular, it would already allow for statements like the following example, which is very close to a basic use case for Extractors (with the minor change that binding semantics are described differently: in this case \mintinline{js}|let| is inside the parentheses).
+But the Pattern Matching proposal has especially strong ties to the Extractors proposal because it already contains some of its syntax and semantics. In particular, it would already allow for expressions as in \zref{lst:pattern-matching-example-extractors}, which is very close to a basic use case for Extractors (with the minor change that binding semantics are described differently: in this case \mintinline{js}|let| is inside the parentheses).
 
-\begin{minted}{js}
-match (expr) {
-    when Point(let x, let y): {
-        // work with x and y
-    }
-    // ...
+\begin{listing}[htbp]
+    \begin{minted}{js}
+match (res) {
+    when Response({ const status, const body, ...const rest }): 
+        handleData(body, rest);
+    
+    /* ... */
 }
-\end{minted}
+    \end{minted}
+    \caption{Augmenting \zcref{lst:pattern-matching-example} by also using the variation of Extractors introduced by the Pattern Matching proposal.\label{lst:pattern-matching-example-extractors}}
+\end{listing}
 
 With the Extractors proposal this would become even more powerful, allowing for nested matchers among other enhancements. In addition, the Extractors proposal may bring with it \mintinline{js}|Symbol.customMatcher|s for built-in objects, from which the Pattern Matching proposal would also benefit.
 
 \subsection{Discard Binding Proposal}
 
-The \emph{Discard Binding} Proposal\footnote{\url{https://github.com/tc39/proposal-discard-binding}, accessed 11/2025} introduces the \mintinline{js}|void| keyword as a binding pattern to explicitly ignore values. This is particularly relevant for Extractors which often return multiple values (tuples) where only a subset is needed.
+The \emph{Discard Binding} Proposal~\cite{tc39discardbinding} introduces the \mintinline{js}|void| keyword as a binding pattern to explicitly ignore values. This is particularly relevant for Extractors which often return multiple values (tuples) where only a subset is needed.
 
-\begin{minted}{js}
+\begin{simplecode}[js]
 // Without `void`
 const Point(_unused, y) = p; // Linter error: '_unused' is defined but never used
 
 // With `void` integration
 const Point(void, y) = p; // Explicitly ignored
-\end{minted}
+\end{simplecode}
 
 This mirrors the \mintinline{js}|_| keyword found e.g.~in Scala and Rust.
 
 \subsection{Improved Ergonomics for Built-ins}
 
 \paragraph{Map} In many situations, the built-in \mintinline{js}|Map| data type is a better fit to store key-value data than a plain ECMAScript Object. But one reason they don't see more adoption is their comparatively poor ergonomics, e.g.~one can do 
-\begin{minted}[linenos=false, frame=none]{js}
+\begin{simplecode}[js]
 const { x, y } = { x: 1, y: 2 };
-\end{minted}
+\end{simplecode}
 But the equivalent is not possible with object destructuring:
-\begin{minted}[linenos=false, frame=none]{js}
+\begin{simplecode}[js]
 const { x, y } = new Map([['x', 1], ['y', 2]]) // Error
-\end{minted}
+\end{simplecode}
 
-With an Extractor, this would be easily possible:
-\begin{minted}{js}
+With an Extractor, this would be easily possible, as demonstrated in \zcref{lst:map-extractor}.
+\begin{listing}[htbp]
+    \begin{minted}{js}
 const MapExtractor = {
     [Symbol.customMatcher](map) {
         const obj = {};
@@ -257,16 +100,20 @@ const MapExtractor = {
 }
 
 const MapExtractor({ x, y }) = new Map([['x', 1], ['y', 2]]);
-\end{minted}
+    \end{minted}
+    \caption{Example of a custom Extractor for \mintinline{js}{Map} objects, enabling destructuring syntax similar to plain objects. The \mintinline{js}{Symbol.customMatcher} method converts the \mintinline{js}{Map} into a plain object, which can then be destructured using the standard object destructuring syntax.\label{lst:map-extractor}}
+\end{listing}
+
 (Note that naturally such a custom matcher function could also be defined on the \mintinline{js}|Map| prototype itself, which would make the ergonomics even better.)
 
 \paragraph{Set} The situation with \mintinline{js}|Set|s is very similar to that of \mintinline{js}|Map|s: Also here, \enquote{normal} destructuring does not work, i.e.:
-\begin{minted}[linenos=false, frame=none]{js}
+\begin{simplecode}[js]
 const [a, b, c] = [1, 2, 3]
 const [x, y, z] = new Set([7, 8, 9]); // Error
-\end{minted}
-But an Extractor (again optionally defined on the prototype itself) could improve the situation.
-\begin{minted}{js}
+\end{simplecode}
+But an Extractor (again optionally defined on the prototype itself) could improve the situation, as shown in \zcref{lst:set-extractor}.
+\begin{listing}[htbp]
+    \begin{minted}{js}
 const SetExtractor = {
     [Symbol.customMatcher](set) {
         const arr = /* analogous to above, convert set -> array */;
@@ -275,124 +122,105 @@ const SetExtractor = {
 }
 
 const SetExtractor([ x, y, z ]) = new Set([7, 8, 9]);
-\end{minted}
+    \end{minted}
+    \caption{Example of a custom Extractor for \mintinline{js}{Set} objects, analogous to \zcref{lst:map-extractor}. The \mintinline{js}{Symbol.customMatcher} method converts the \mintinline{js}{Set} into an array, enabling array destructuring syntax.\label{lst:set-extractor}}
+\end{listing}
 
-\paragraph{RegExp} Regular expressions are a natural fit for Extractors since they are themselves a mechanism for transforming data, so a very simple relevant Extractor can be quite powerful. (To demonstrate the conciseness that the new syntax allows, we chose to patch the \mintinline{js}|Symbol.customMatcher| directly onto the \mintinline{js}|RegExp| prototype for this example, although this is of course functionally not required.)
+\paragraph{RegExp} Regular expressions are a natural fit for Extractors since they are themselves a mechanism for transforming data, so a very simple relevant Extractor can be quite powerful. To demonstrate the conciseness that the new syntax allows, we chose to patch the \mintinline{js}|Symbol.customMatcher| directly onto the \mintinline{js}|RegExp| prototype in \zcref{lst:regexp-extractor}, although this is of course functionally not required.
 
-% TODO: DO NOT FORGET TO UNCOMMENT THIS!
-
-% \begin{minted}{js}
-% // (no arrow function here to avoid capturing the enclosing `this`)
-% RegExp.prototype[Symbol.customMatcher] = function (value) {
-%     const match = this.exec(value);
-%     return !!match && [match];
-% }
-
-% const /(?<year>\d{4})-(?<month>\d{2})/({ groups: { year, month } }) = "2024-01";
-
-% // Or, for better readability with a named expression
-% const IsoTime = /^(?<hours>\d{2}):(?<minutes>\d{2}):(?<seconds>\d{2})$/;
-% const IsoTime({ groups: { hours, minutes, seconds } }) = "15:56:31"
-% \end{minted}
+\begin{listing}[htbp]
+% this is extracted into a different file since it breaks syntax highlighting in vscode
+\input{../content/regexp-example.tex}
+    \caption{Example of using Extractors with regular expressions. By defining \mintinline{js}{Symbol.customMatcher} on the \mintinline{js}{RegExp} prototype, regular expressions can be used directly in destructuring patterns, extracting matched groups from strings.\label{lst:regexp-extractor}}
+\end{listing}
 
 This demonstrates that a strong use-case for the proposal is simply defining \mintinline{js}|Symbol.customMatcher|s for existing functionality that handles data transformation, allowing for concise and declarative usage.
 
-% # ecosystem & related proposals (working title)
-
-% - pattern matching!
-%     - extractors are effectively required for the pattern matching proposal and were split out of it
-%         - `match' expressions would work without them, but the power of pattern matching in languages like Rust or Elixir comes from matching against data types and variants (= Extractors use case)
-%     - code example to demonstrate this
-% - regex (assuming RegExp.prototype[Symbol.customMatcher] gets an appropriate built-in definition, see tests)
-%     - const /(?<year>\d{4})-(?<month>\d{2})/({ groups: { year, month } }) = "2024-01";
-% - temporal would also be a natural fit (code example!)
-% - discard bindings (proposal, stage 2, https://github.com/tc39/proposal-discard-binding); similar to _ in Scala and Rust
-%     - it's likely that developers will end up in situations where extractors return more values than are needed in a particular situation, `const Point(_unused, y) = p; // Linter error: '_unused' is defined but never used'
-%     - proposal introduces `void' keyword as a binding pattern to explicitly ignore values, `const Point(void, y) = p; // Explicit discard'
-% - `Map' destructuring
-%     - from a performance point of view, `Map's are generally preferable to plain objects
-%     - one reason they aren't adopted more is their comparatively poor ergonomics, e.g. one can do `const { a, b } = { a: 1, b: 2 }' but not `const { a, b } = new Map([ [a, 1], [a, 2] ])'
-%     - with an extractor that would be possible (code example! add test)
-%     - (similar functionality was historically proposed as specific syntax for `Map's in https://www.proposals.es/proposals/Tagged%20Collection%20Literals, the Extractors proposal can be viewed as a generalization of that)
-% - analogous to `Map', also for `Set'
-
 \subsection{Runtime Type-Checking}
 
-While the primary motivation for ECMAScript Extractors is generally considered to be used-defined destructuring, there are other use-cases such as declarative runtime type checking. Developers can define Extractors that do not \enquote{extract} in the traditional sense of decomposing an object, but instead only validate the subject against a type (generally the type the extractor is defined on) and then return the subject itself---a \enquote{Pass-Through Extractor}\footnote{\url{https://github.com/tc39/proposal-extractors/issues/20}}.
+While the primary motivation for ECMAScript Extractors is generally considered to be used-defined destructuring, there are other use-cases such as declarative runtime type checking. Developers can define Extractors that do not \enquote{extract} in the traditional sense of decomposing an object, but instead only validate the subject against a type (generally the type the extractor is defined on) and then return the subject itself---a \enquote{Pass-Through Extractor}\footnote{See \url{https://github.com/tc39/proposal-extractors/issues/20} (accessed 07/12/2025) for a recent discussion. Note that this was first mentioned in the context of the (now inactive) \emph{Type Annotations} proposal~\cite{tc39typeannotations} as part of the reasoning for that proposals avoidance of introducing runtime semantics in regards to typing.}.
 
-\begin{itemize}
-    \item \url{https://docs.google.com/presentation/d/1OraKn6TUdmtug-lkgijq-43Xou_1lB1_DJ54x6ssnRY/edit?slide=id.g2192741a6f7_0_42#slide=id.g2192741a6f7_0_42}
-    \item caveats: instanceof doesn't work on primitives; potentially performance issues if engines don't optimize it away
-    \item particularly useful on API boundaries to ensure that functions are being called with the expected arguments
-    \item how does the error message look like if an extractor throws something?
-\end{itemize}
+This class of Extractors could be particularly useful on API boundaries, to enforce that functions beyond ones control behave as expected, beyond merely trusting potentially inacurrate or outdated TypeScript definition files or similar.
 
-\section{Core Specification \& Semantics}
+\begin{simplecode}[js]
+    // Concisely validating arguments or return values from the "outside world" 
+    export function drawLine(Point(p1), Point(p2)) { /* ... */ }
+    const Point(p) = SomeExternalModule.getPoint(/* ... */);
+\end{simplecode}
 
-GraalJS does not have a one-to-one implementation of the grammar in the specification, this means that the specification grammar needs to be considered to understand how things should behave, but the actual implementation will not necessarily use the same constructions to reach that. For this reason we will outline \emph{functional requirements} that need to be fulfilled for an implementation of the proposal.
+
+
+\section{Core Specification \& Semantics\label{sec:extractors-core-specification-semantics}}
+
+GraalJS does not have a one-to-one implementation of the grammar in the specification, meaning that while the specification grammar defines the intended behavior, the implementation may not strictly mirror these syntactic constructions. For this reason we will outline \emph{functional requirements} that need to be fulfilled for an implementation of the proposal.
 
 \paragraph{Extractor patterns} Consist of a qualified name (specification: \mintinline{text}|ExtractorMemberExpression|) and a parenthesized list of binding or assignment elements (specification: see \mintinline{text}|ExtractorAssignmentPattern| and \mintinline{js}|ExtractorBindingPattern| respectively).
 \begin{itemize}
-    \item \emph{Historical note}: Parentheses are a clear choice when symmetry with constructors is desirable, but one could also reasonably consider symmetry with array and object destructuring to be desirable. In fact, early versions of the proposal used round parentheses for \enquote{Array Extractors} (not square brackets, because there would be syntactic ambiguity) and curly braces for \enquote{Object Extractors}.
+    \item \emph{Historical note}: Parentheses are a clear choice when symmetry with constructors is desirable, but one could also reasonably consider symmetry with array and object destructuring to be desirable. In fact, early versions of the proposal used round parentheses for \enquote{Array Extractors} (not square brackets, which would be the more immediately obvious choice, because there would be syntactic ambiguity) and curly braces for \enquote{Object Extractors}.
 
-    The latter were later removed from consideration since committee members felt that reserving \mintinline{text}|identifier {| in the grammar would block too much syntax space\footnote{\url{https://github.com/tc39/proposal-extractors/issues/10}}.
+    Object Extractors were subsequently removed from consideration since committee members felt that reserving \mintinline{text}|identifier {| in the grammar would block too much syntax space\footnote{\url{https://github.com/tc39/proposal-extractors/issues/10}, accessed 07/12/2025}.
 
     \item In the simplest case, they must be made part of the existing assignment and binding patterns such that statements like
-    \begin{minted}[linenos=false, frame=none, autogobble]{js}
+    \begin{simplecode}[js]
         const Foo(y) = x; // Binding
         Foo(y) = x; // Assignment
-    \end{minted}
+    \end{simplecode}
     are valid.
 
     \item They must also be valid as function parameters
     \begin{itemize}
         \item For function declarations and expressions
-        \begin{minted}[linenos=false, frame=none, autogobble]{js}
+        \begin{simplecode}[js]
             function draw(Point(x, y)) { /* ... */ }
             const f = function draw(Point(x, y)) { /* ... */ };
-        \end{minted}
+        \end{simplecode}
         \item For arrow functions (whose parameters must be parenthesized to avoid ambiguity with function calls)
-        \begin{minted}[linenos=false, frame=none, autogobble]{js}
+        \begin{simplecode}[js]
             const f = (Point(x, y)) => { /* ... */ };
-        \end{minted}
+        \end{simplecode}
         \item For class/object methods, constructors, and setters
-        \begin{minted}[linenos=false, frame=none, autogobble]{js}
+        \begin{simplecode}[js]
             class Shape {
                 set center(Point(x, y)) { /* ... */ }
                 constructor(Point(x, y)) { /* ... */ }
                 draw(Point(x, y)) { /* ... */ }
             }
             const obj = { method(Point(x, y)) { ... } };
-        \end{minted}
+        \end{simplecode}
     \end{itemize}
 
     \item They must be valid in iteration statements
-    \begin{minted}[linenos=false, frame=none, autogobble]{js}
+    \begin{simplecode}[js]
         for (const Point(x, y) of pointList) { /* ... */ }
         for await (const Point(x, y) of pointStream) { /* ... */ }
 
         for (const Key(k) in object) { /* ... */ }
 
         for (let Point(x, y) = start; /* ... */) { /* ... */ }
-    \end{minted}
+    \end{simplecode}
 
-    \item But they must in particular \emph{not} be valid outside of assignment (assignment expressions) and binding (variable declarations, function parameters, \ldots) patterns, where they would be meaningless.
+    \item They must be valid in \mintinline{js}|catch| clauses
+    \begin{simplecode}[js]
+        try { /* ... */ } catch (ErrorExtractor(error)) { /* ... */ }
+    \end{simplecode}
+
+    \item But they must in general \emph{not} be valid outside of assignment (assignment expressions) and binding (variable declarations, function parameters, \ldots) patterns, where they would either be meaningless or invite confusion with regular function calls.
     
     \item Whereas in bindings the \mintinline{js}|x| and \mintinline{js}|y| of \mintinline{js}|const Point(x, y) = p;| must be new variable names, in assignments they may be anything that is valid on the left hand side of other assignments, including e.g.~member expressions (\mintinline{js}|Point(obj.x, this.arr[0]) = p;|);
 
     \item Among others (see specification for details) \mintinline{text}|ExtractorMemberExpression| may be an identifier reference (optionally specifying \mintinline{text}|this| or \mintinline{text}|super|), a qualified name (like \mintinline{text}|Foo.Bar|) and contain array accesses.
     
     \item Extractors may appear inside destructuring patterns, but not as a rest element.
-    \begin{minted}[linenos=false, frame=none, autogobble]{js}
+    \begin{simplecode}[js]
         const [ Point(x, y) ] = listOfPoints;
         const { center: Point(x, y) } = shape;
         const [ ...Point(x, y) ] = iterable; // Error
-    \end{minted}
+    \end{simplecode}
 
     \item The parenthesized list may contain everything that an array destructuring pattern may also contain (specification: \mintinline{text}|BindingElementList| and \mintinline{text}|AssignmentElementList| respectively). Importantly this includes other, nested Extractors.
-    \begin{minted}[linenos=false, frame=none, autogobble]{js}
+    \begin{simplecode}[js]
         const Line(Point(x1, y1), Point(x2, y2)) = line;
-    \end{minted}
+    \end{simplecode}
 \end{itemize}
 
 \paragraph{Extractor binding semantics} (see the BindingInitialization runtime semantics in the specification)
@@ -412,45 +240,3 @@ GraalJS does not have a one-to-one implementation of the grammar in the specific
     \item Let \mintinline{js}|result| be \mintinline{js}|f.apply(matcher, subject)|; if it is not an Object, throw a \mintinline{js}|TypeError|
     \item Return an iterator for \mintinline{js}|result|
 \end{enumerate}
-
-% # core specification & semantics
-
-% ## grammar augmentation
-
-% note that graaljs doesn't have a 1-1 implementation of spec grammar -> the spec grammar needs to be considered to understand how things should behave, but the actual implementation will not necessarily use the same constructions to reach that.
-
-% `BindingPattern' is modified to include ExtractorBindingPattern:
-
-% ```
-% ExtractorBindingPattern :
-%     ExtractorMemberExpression ( Elision_opt BindingRestElement_opt )
-%     ExtractorMemberExpression ( BindingElementList )
-%     ExtractorMemberExpression ( BindingElementList , Elision_opt BindingRestElement_opt )
-% '''
-% (which is identical to how ArrayBindingPattern is defined, except with `(' instead of `[')
-
-% with the following semantics (simplified: leaving out details only relevant in the context of the spec and as-of-yet unused functionality)
-%     1. let `extractor' be the left hand side expression that is covered by ExtractorMemberExpression (e.g., the `Point' in `... Point(x, y) = ...')
-%     2. let `iterator' be `InvokeCustomMatcherOrThrow(extractor, value)' (where value is the right hand side)
-%     3. perform IteratorBindingInitialization of this ExtractorBindingPattern (this is defined to behave exactly as array binding) and let the result be `result'
-%     4. return `result'
-
-% ExtractorAssignmentPattern also follows ArrayAssignmentPattern with behavior analogous to ExtractorBindingPattern
-
-% InvokeCustomMatcherOrThrow(matcher, subject) is an abstract operation (https://tc39.es/ecma262/#sec-abstract-operations, see background chap):
-%     1. if matcher is not an object, throw a TypeError
-%     2. let f be matcher[Symbol.customMatcher]
-%     3. if f is undefined, throw a TypeError
-%     4. let result be f.apply(matcher, subject)
-%     5. if result is not an Object, throw a TypeError
-%     6. return iterator for result
-
-% - on parentheses vs. other options (to explain why this is even a question: parentheses are a clear choice when symmetry with constructors is desirable, but one could also reasonably consider symmetry with array and object destructuring to be desirable)
-%     - can't use '[' because there would be a collision with ElementAccessExpression (while `const Point[x] = p' would be fine, `Point[x] = p' is already valid and interpreted as assigning `p' to the property `x' of `Point')
-%     - historically (https://github.com/tc39/proposal-extractors/issues/10) there were "Array Extractors" using `(' and "Object Extractors" (`const Point{ x, y } = p;') using `{' but it was decided to drop Object Extractors since (1) `identifier {' would reserve a lot of syntax space and (2) object extraction can still be achieved with array extraction (`Point({ x, y })')
-% - LHS restrictions
-%     - extractors are only valid in BindingPattern (var/let/const declarations, function parameters) and AssignmentPattern (assignment expressions)
-%     - in particular not as standalone expressions, to prevent ambiguity with function calls
-% - runtime performance concerns
-%     - iterators have big overhead compared to just array-like (https://github.com/tc39/proposal-pattern-matching/issues/315)
-%     - the `Symbol.customMatcher' is still a dynamic method call
