@@ -1,28 +1,65 @@
 \cleardoubleoddpage%
 \chapter{Background}
-\label{sec:background}
+\label{ch:background}
 
-kitchen sink for everything that might be useful "background information" for other sections but isn't relevant in there:
+This chapter establishes the terminology and technical foundations necessary for understanding the implementation of the Extractors proposal. We first clarify the distinction between the JavaScript language and the ECMAScript standard in \zcref{sec:background-ecmascript-and-javascript}. We then discuss the standardization process in \zcref{sec:background-ecmascript-standardization-process-tc39}, outlining the stages a proposal must traverse before becoming part of the standard. Finally, in \zcref{sec:background-graaljs-truffle-and-the-graal-compiler} we introduce the specific implementation platform used in this thesis: the GraalJS engine, along with relevant background on the Truffle framework and its interaction with the Graal Compiler.
 
-\begin{itemize}
-    \item what is javascript/ecma, brief history, where is it used, maybe some stats (figure?)
-    \item background on this thesis being about implementing an ecmascript stage 1 proposal:
-    \begin{itemize}
-        \item outline the tc39 process https://tc39.es/process-document/
-        \item given it's status as stage 1 it's in principle too early for engines to implement this, address why we did it anyways here (-> while it's not officially been communicated as such yet, the API appears to be fairly stable. also, while it may be too early to provide this to end users, it is still useful to do this ahead of time internally to be able to gauge implementation effort when the real, finalized version is to be implemented. [can really come up with anything that sounds plausible here, oracle doesn't really have an answer here])
-    \end{itemize}
-    \item background on graaljs/truffle framework
-    \begin{itemize}
-        \item graaljs: ECMAScript implementation built on Oracle GraalVM (what is GraalVM?)
-        \item what is truffle framework
-        \item maybe diagram of components to viz pipeline from code to execution (implementation ch can reference that)
-        \item (maybe mention history of proposal implementations on graaljs)
-        \item visitor pattern \label{sec:background-visitor-pattern}
-    \end{itemize}
-    \item maybe define ECMAScript \enquote{abstract operation} (relevant because a core part of the proposal is specified as an abstract operation)
-    \begin{itemize}
-        \item (or do it at the point where it's relevant later)
-        \item are effectively spec \enquote{helper functions} that abstract spec descriptions but not internal methods (those would be actual program logic)
-        \item e.g., the abstract operation `Call(F, V, [, argumentsList])' eventually returns `F.[[Call]](V, argumentsList)' which is the actual call (F is the function, V the `this') but it also specifies some other behavior like that a TypeError has to be thrown if `IsCallable(F)' (another abstract operation) is false
-    \end{itemize}
-\end{itemize}
+\section{ECMAScript and JavaScript\label{sec:background-ecmascript-and-javascript}}
+
+A distinction needs to be made between the governing standard and the programming language itself. ECMAScript refers to the formal specification (ECMA-262\footnote{\url{https://tc39.es/ecma262/}, accessed December 2025}). JavaScript is the common name for the programming language described by this standard, with different execution engines such as V8, SpiderMonkey, or GraalJS.\@ These engines may vary in their internal architecture or performance characteristics~\cite{lwengines23} and, as in cases like this thesis, in their implementation of various non-standard (or not-yet-standard) features.
+
+The divergence in naming---where the standard is \enquote{ECMAScript} but the language is \enquote{JavaScript}---stems from historical trademark constraints. The \enquote{JavaScript} trademark is currently held by Oracle Corporation (inherited from Sun Microsystems). Consequently, the standards body adopted \enquote{ECMAScript} to ensure vendor neutrality~\cite{js20years}. Nevertheless, \enquote{JavaScript} remains the ubiquitous term for the language in common usage.
+
+JavaScript is the dominant programming language of the web by far. As of 2024, it is utilized as a client-side programming language by approximately 98.9\% of all websites\footnote{\url{https://w3techs.com/technologies/details/cp-javascript}, accessed December 2025}. While originally designed for browser-based scripting~\cite{js20years}, the advent of runtimes like Node.js and embeddable engines like GraalJS has expanded its utility to server-side development, embedded devices, and enterprise systems~\cite{backdevtechreview24}. As such, it is now among the most widely used programming languages in the world\footnote{\url{https://survey.stackoverflow.co/2025/technology}, accessed December 2025, where JavaScript is in the top 3 for all categories of respondents.}.
+
+\section{ECMAScript Standardization Process (TC39)\label{sec:background-ecmascript-standardization-process-tc39}}
+
+The evolution of the ECMAScript standard is managed by TC39 (Technical Committee 39) of Ecma International. Unlike many open-source projects and even programming languages that may follow centralized governance models~\cite{ossgov11, ossgovrationale21}, TC39 operates on a consensus-based model involving major browser vendors (Google, Mozilla, Apple, Microsoft) and invited experts~\cite{tc39process}.
+
+New language features must pass through a well-defined maturity process before being added to the official standard. This process is designed to \enquote{provide guidelines for evolving a language addition from an idea to a fully specified feature} and encompasses five stages~\cite{tc39process}:
+
+\begin{description}
+    \item[Stage 0] serves as a space for ideation and exploration without strict technical requirements. Generally, non-members will create proposals at this stage and refine them until a committee delegate volunteers to shepherd the feature.
+    \item[Stage 1] signifies that the proposal is under consideration by the committee, but there is still work to be done in designing the solution. At this stage, major changes are still possible in principle, but an initial specification text including major semantics and syntax is in place.
+    \item[Stage 2] proposals have a comparatively locked-down solution space, and are undergoing reviews and refinements to precisely define the specification text (finalization of which is signified by a \enquote{checkpoint}: {\usekomafont{abstract}\textbf{Stage 2.7}}, which is also the point at which Test262 acceptance tests are expected to be implemented). As the general shape of the solution is agreed upon, this is usually the point at which experimental implementations are produced.
+    \item[Stage 3] signals that the solution is complete and ready for production-grade implementations by engines. Changes are only expected in response to feedback from these implementations.
+    \item[Stage 4] is reached if there are at least two independent implementations by major vendors that pass the acceptance tests. At this point, the feature is expected to be included in the next annual edition of the standard.
+\end{description}
+
+\section{GraalJS, Truffle and the Graal Compiler\label{sec:background-graaljs-truffle-and-the-graal-compiler}}
+
+The implementation platform for this thesis is GraalJS\footnote{\url{https://github.com/oracle/graaljs}, accessed December 2025}, an ECMAScript-compliant engine developed by Oracle Labs. Unlike the V8 engine (written in C++) or SpiderMonkey (written in C++ and Rust), GraalJS is implemented entirely in Java. It serves as the modern successor to previous Java-based JavaScript engines, namely Rhino (Mozilla) and Nashorn (OpenJDK), targeting the specific niche of embedding JavaScript within JVM applications. Because GraalJS runs on the JVM, it can share memory and object references directly with the host Java application without the serialization overhead typically associated with Foreign Function Interfaces~\cite{onevmtrulethemall13}.
+
+GraalJS is built upon the Truffle Language Implementation Framework, a system for building programming language interpreters that uses a unique architectural approach allowing for high performance with comparatively little effort on the side of the language implementor. In a traditional compiler-based engine, source code is parsed and immediately lowered into a bytecode format, which is then executed by a virtual machine. Truffle takes a different approach. It parses source code into an Abstract Syntax Tree (AST) of executable nodes. When the code runs, these Java objects (nodes) recursively call each other's \mintinline{java}|execute()| methods.
+
+While this type of AST interpretation is typically slow, Truffle allows implementors to mitigate this through Self-Optimizing Nodes~\cite{selfoptastint12}. As the AST executes, nodes can rewrite themselves based on the data they observe. For example, a generic \enquote{Add} node is implemented to handle all \enquote{+}-operations, but it might replace itself with a more specialized variant based on the observed inputs. See \zcref{lst:background-self-optimizing-nodes-demonstration} for an example.
+
+Additionally, to achieve high performance, the Graal Compiler (a Just-In-Time compiler for the JVM) can be provided with information to optimize the execution. It analyzes the stable ASTs of hot code paths, inlines the recursive Java method calls, and compiles them into optimized machine code~\cite{truffledsl16}. This allows a high-level Java interpreter to achieve performance competitive with native C++ engines, provided the application runs long enough to complete the \enquote{warm-up} phase, while retaining the benefits of a higher-level language.
+
+\begin{listing}[htbp]
+    \caption{Selected methods of the \mintinline{java}|SLAddNode|, part of the \enquote{SimpleLanguage} demonstration language for Truffle, demonstrating node specializations using the Truffle DSL. Note the high-performance specialization on \mintinline{java}|long|s; if an overflow occurs, \mintinline{java}| Math.addExact| throws a \mintinline{java}|ArithmeticException| and Truffle rewrites the node to a more general form.\label{lst:background-self-optimizing-nodes-demonstration}}
+    \begin{minted}[autogobble]{java}
+        @Specialization(rewriteOn = ArithmeticException.class)
+        public static long doLong(long left, long right) {
+            return Math.addExact(left, right);
+        }
+
+        @Specialization(guards = "isString(left, right)")
+        @HostCompilerDirectives.InliningCutoff
+        public static TruffleString doString(Object left, Object right, /* ... */) {
+            return concatNode.execute(
+                toTruffleStringNodeLeft.execute(node, left),
+                toTruffleStringNodeRight.execute(node, right),
+                SLLanguage.STRING_ENCODING, true
+            );
+        }
+
+        @Specialization(replaces = "doLong")
+        public static SLBigInteger doSLBigInteger(SLBigInteger left, SLBigInteger right) {
+            BigInteger castLeft = left.getValue();
+            BigInteger castRight = right.getValue();
+            BigInteger result = addBoundary(castLeft, castRight);
+            return new SLBigInteger(result);
+        }
+    \end{minted}
+\end{listing}

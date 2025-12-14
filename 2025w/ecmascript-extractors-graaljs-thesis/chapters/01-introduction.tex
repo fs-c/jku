@@ -1,11 +1,13 @@
 \cleardoubleoddpage%
-\chapter{Introduction\label{ch:introduction}}
+\chapter{Introduction}
+\label{ch:introduction}
 
-many of the JS examples and some test cases are taken directly or strongly inspired from the README of the proposal (or public communications of the champions): either mention here generally or for every individual case
+This thesis presents the design, implementation, and evaluation of the ECMAScript Extractors proposal~\cite{tc39extractors} within GraalJS, a high-performance, Java-based ECMAScript engine\footnotemark{}. This proposal aims to bridge the gap between object construction and destruction by introducing user-defined logic into the destructuring process. It defines a symmetric \enquote{un-constructor} mechanism via a new well-known symbol, \mintinline{js}|Symbol.customMatcher|, allowing for destructuring patterns that mirror construction as illustrated in \zcref{lst:minimal-intro-example}.
 
-see minimum example in \zcref{lst:minimal-intro-example}
+\footnotetext{The source code for this thesis is available at \url{https://github.com/fs-c/graaljs/tree/lw/extractors}, with associated Pull Request into the upstream repository at \url{https://github.com/oracle/graaljs/pull/924}.}
 
 \begin{listing}[htbp]
+    \caption{Minimal showcase of the Extractors proposal, demonstrating the symmetry between construction and destruction.\label{lst:minimal-intro-example}}
     \begin{minted}[highlightlines={9-11, 15}]{js}
 class Point {
     #x;
@@ -25,13 +27,17 @@ const Point(x, y) = p; // Extraction (calls Point[Symbol.customMatcher](p))
 x; // 1
 y; // 2
     \end{minted}
-    \caption{TODO\label{lst:minimal-intro-example}}
 \end{listing}
 
+The primary contribution of this work is a functional, experimental implementation of the proposal within the GraalJS engine. The technical work encompasses the entire interpreter's pipeline: from modifying the parser to resolve syntactic ambiguities between Extractors and function calls, to implementing the runtime AST transformations and the \mintinline{js}|InvokeCustomMatcherOrThrow| abstract operation. To ensure correctness in the absence of an official conformance suite, we developed a targeted test suite based on functional requirements derived from the draft specification.
+
+At the time of writing, the Extractors proposal is at Stage 1 of the TC39 standardization process. Production engines typically delay implementation until the specification stabilizes at Stage 2 or 3~\cite{tc39process}, since proposals may change significantly in the early stages. However, we felt that the proposal's core semantics have stabilized sufficiently to warrant an initial, experimental implementation. Even if changes may make adaptations necessary, the produced work should still remain useful as a basis to build on.
+
+The remainder of this thesis is structured to guide the reader from the theoretical foundations to the practical realization of the feature.\@ \zcref[S]{ch:background} (\nameref{ch:background}) establishes the necessary context regarding the TC39 standardization process and the architecture of the GraalJS engine.~\zcref[S]{ch:extractors-proposal} (\nameref{ch:extractors-proposal}) details the proposal itself, discussing the motivation for the feature and its relation to the broader ecosystem.~\zcref[S]{ch:implementation} (\nameref{ch:implementation}) documents the technical challenges encountered in parsing and executing Extractors, while \zcref{ch:evaluation} (\nameref{ch:evaluation}) describes the testing methodology and highlights specific defects discovered during development. Finally, \zcref{ch:conclusion} (\nameref{ch:conclusion}) summarizes the findings and offers an outlook on future work required as the proposal matures.
 
 \paragraph{AI Usage Declaration}
 
 \begin{enumerate}
-    \item GitHub Copilot inline completion for the impl
-    \item todo\ldots
+    \item \emph{GitHub Copilot} was used for inline completions during the implementation phase
+    \item \emph{Gemini 3 Pro} was used during the writing process for literature search, initial drafts and proof-reading
 \end{enumerate}

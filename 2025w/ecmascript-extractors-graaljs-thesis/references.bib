@@ -33,3 +33,153 @@
   year     = {2025},
   organization = {ECMA International}
 }
+
+@online{tc39process,
+  author = {{TC39}},
+  title = {The TC39 Process},
+  url = {https://tc39.es/process-document/},
+  urldate  = {2025-12-09},
+  year     = {2025},
+  organization = {ECMA International}
+}
+
+@article{js20years,
+  author = {Wirfs-Brock, Allen and Eich, Brendan},
+  title = {JavaScript: the first 20 years},
+  year = {2020},
+  issue_date = {June 2020},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {4},
+  number = {HOPL},
+  url = {https://doi.org/10.1145/3386327},
+  doi = {10.1145/3386327},
+  journal = {Proc. ACM Program. Lang.},
+  month = jun,
+  articleno = {77},
+  numpages = {189},
+}
+
+@InProceedings{matchingobjects07,
+  author   = {Emir, Burak and Odersky, Martin and Williams, John},
+  title    = {Matching Objects with Patterns},
+  booktitle = {ECOOP 2007 -- Object-Oriented Programming},
+  year     = {2007},
+  publisher = {Springer Berlin Heidelberg},
+  address  = {Berlin, Heidelberg},
+  pages    = {273--298},
+  isbn     = {978-3-540-73589-2}
+}
+
+@phdthesis{truffledsl16,
+  author = {Humer, Christian},
+  year = {2016},
+  month = {09},
+  pages = {},
+  title = {Truffle DSL: A DSL for Building Self-Optimizing AST Interpreters},
+  doi = {10.13140/RG.2.2.23639.52646}
+}
+
+@article{ossgov11,
+  author = {De Noni, Ivan and Ganzaroli, Andrea and Orsi, Luigi},
+  year = {2011},
+  month = {04},
+  pages = {1},
+  title = {The Governance of Open Source Software Communities: An Exploratory Analysis},
+  volume = {6},
+  journal = {Journal of Business Systems, Governance and Ethics},
+  doi = {10.15209/jbsge.v6i1.195}
+}
+
+@misc{ossgovrationale21,
+    title={Extracting Rationale for Open Source Software Development Decisions -- A Study of Python Email Archives}, 
+    author={Pankajeshwara Nand Sharma and Bastin Tony Roy Savarimuthu and Nigel Stanger},
+    year={2021},
+    eprint={2102.05232},
+    archivePrefix={arXiv},
+    primaryClass={cs.SE},
+    url={https://arxiv.org/abs/2102.05232}, 
+}
+
+@InProceedings{backdevtechreview24,
+  author="Sharma, Siddhant
+  and Singh, Priyanka
+  and Sain, Jayesh
+  and Shrivastava, Vishal
+  and Pandey, Akhil",
+  editor="Rathore, Vijay Singh
+  and Manuel R. S. Tavares, Jo{\~a}o
+  and Tuba, Eva
+  and Devedzic, Vladan",
+  title="Modern Backend Development Technologies: A Comparative Review and Case Study",
+  booktitle="Emerging Trends in Expert Applications and Security",
+  year="2024",
+  publisher="Springer Nature Singapore",
+  address="Singapore",
+  pages="139--151",
+  isbn="978-981-97-3745-1"
+}
+
+@INPROCEEDINGS{lwengines23,
+  author={Wu, Meng and Dong, Weixin and Zhao, Qiang and Pan, Zhizhong and Hua, Baojian},
+  booktitle={2023 IEEE 23rd International Conference on Software Quality, Reliability, and Security Companion (QRS-C)}, 
+  title={An Empirical Study of Lightweight JavaScript Engines}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={413-422},
+  keywords={Codes;Prototypes;Software quality;Software reliability;Engines;Standards;Resilience;Empirical study;Lightweight JavaScript engine;Software quality},
+  doi={10.1109/QRS-C60940.2023.00103}
+}
+
+@inproceedings{onevmtrulethemall13,
+  author = {W\"{u}rthinger, Thomas and Wimmer, Christian and W\"{o}\ss{}, Andreas and Stadler, Lukas and Duboscq, Gilles and Humer, Christian and Richards, Gregor and Simon, Doug and Wolczko, Mario},
+  title = {One VM to rule them all},
+  year = {2013},
+  isbn = {9781450324724},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/2509578.2509581},
+  doi = {10.1145/2509578.2509581},
+  booktitle = {Proceedings of the 2013 ACM International Symposium on New Ideas, New Paradigms, and Reflections on Programming \& Software},
+  pages = {187–204},
+  numpages = {18},
+  location = {Indianapolis, Indiana, USA},
+  series = {Onward! 2013}
+}
+
+@inproceedings{10.1145/2384577.2384587,
+author = {W\"{u}rthinger, Thomas and W\"{o}\ss{}, Andreas and Stadler, Lukas and Duboscq, Gilles and Simon, Doug and Wimmer, Christian},
+title = {Self-optimizing AST interpreters},
+year = {2012},
+isbn = {9781450315647},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2384577.2384587},
+doi = {10.1145/2384577.2384587},
+abstract = {An abstract syntax tree (AST) interpreter is a simple and natural way to implement a programming language. However, it is also considered the slowest approach because of the high overhead of virtual method dispatch. Language implementers therefore define bytecodes to speed up interpretation, at the cost of introducing inflexible and hard to maintain bytecode formats. We present a novel approach to implementing AST interpreters in which the AST is modified during interpretation to incorporate type feedback. This tree rewriting is a general and powerful mechanism to optimize many constructs common in dynamic programming languages. Our system is implemented in Java and uses the static typing and primitive data types of Java elegantly to avoid the cost of boxed representations of primitive values in dynamic programming languages.},
+booktitle = {Proceedings of the 8th Symposium on Dynamic Languages},
+pages = {73–82},
+numpages = {10},
+keywords = {virtual machine, optimization, language implementation, javascript, java, dynamic languages},
+location = {Tucson, Arizona, USA},
+series = {DLS '12}
+}
+
+@article{selfoptastint12,
+  author = {W\"{u}rthinger, Thomas and W\"{o}\ss{}, Andreas and Stadler, Lukas and Duboscq, Gilles and Simon, Doug and Wimmer, Christian},
+  title = {Self-optimizing AST interpreters},
+  year = {2012},
+  issue_date = {February 2013},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {48},
+  number = {2},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/2480360.2384587},
+  doi = {10.1145/2480360.2384587},
+  journal = {SIGPLAN Not.},
+  month = oct,
+  pages = {73–82},
+  numpages = {10},
+}

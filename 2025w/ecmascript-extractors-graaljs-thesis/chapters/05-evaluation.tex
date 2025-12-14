@@ -1,16 +1,98 @@
 \cleardoubleoddpage%
-\chapter{Evaluation\label{sec:evaluation}}
+\chapter{Evaluation}
+\label{ch:evaluation}
 
-\begin{itemize}
-    \item want to test for completeness and correctness
-    \item extended existing JSSimpleTestSuite
-    \item include all code examples from README (but note that many of them are wrong, see \href{https://github.com/tc39/proposal-extractors/issues/32}) and a selection from proposal champion communications
-    \item include test cases for all requirements outlined in \zcref{sec:extractors-core-specification-semantics}
-    \item consider performance
-    \begin{itemize}
-        \item common use cases with vs.~without extractor syntax
-        \item using extractors vs.~using the desugaring
-    \end{itemize}
-\end{itemize}
+Since the official ECMAScript conformance suite did not cover the Extractors proposal at the time of writing, we extended the already existing GraalJS \mintinline{js}|JSSimpleTestSuite| with a number of tests related to Extractors. An overview of this effort is given in \zcref{sec:evaluation-test-suite-extension}. In the interest of providing value to future implementors in this area, we describe some defects we found and fixed during implementation in \zcref{sec:evaluation-selected-found-defects}. Finally, we provide some considerations on the completeness and correctness of the implementation in \zcref{sec:evaluation-considerations-on-completeness-and-correctness}, cautioning that the implementation is based on a best-effort alignment with a proposal that may still contain ambiguities or change significantly.
 
-\label{sec:special-case-iterator-read-side-effects}
+\section{Test Suite Extension}
+\label{sec:evaluation-test-suite-extension}
+
+The Extractors tests primarily consist of 7 distinct test files, comprising more than 100 test blocks with over 300 individual assertions. The testing strategy was designed to isolate distinct layers of the implementation: parsing (syntax), resolution (identifiers and scopes), and execution (matcher invocation and iterator protocol).
+
+\paragraph{Parser Verification} (\texttt{syntactic-validity.js})
+Verifies the acceptance of Extractors in all valid pattern contexts, including \mintinline{js}|for-await-of| loops, \mintinline{js}|catch| clauses, and recursive compositions (e.g., \mintinline{js}|Pair(Pair(...))|). Negative testing is implemented via \mintinline{js}|eval| to ensure strict rejection in expression positions—such as template literals, \mintinline{js}|typeof| operands, and \mintinline{js}|new| expressions---preventing \enquote{grammar drift} ($\sim$74 assertions).
+
+\paragraph{LHS Semantics} (\texttt{binding-and-assignment.js})
+Validates the behavioral differences between binding declarations and assignment patterns. Tests confirm that \mintinline{js}|const|/\mintinline{js}|let| create new block-scoped bindings, whereas assignment patterns require valid LHS targets (including \mintinline{js}|globalThis|, computed properties, and symbol keys). The suite also covers scoping constraints (throwing \mintinline{js}|ReferenceError| for out-of-scope access) and default value application ($\sim$64 assertions).
+
+\paragraph{Identifier Resolution} (\texttt{expression-resolution.js})
+Tests the resolution of extractor identifiers. This covers simple identifiers, deep member chains (e.g., \texttt{ns.module.Extractor}), contextual references like \mintinline{js}|super.Extractor|, and computed property names using array indices or dynamic expressions ($\sim$31 assertions).
+
+\paragraph{Core Protocol} (\texttt{runtime-invoke-matcher.js})
+Tests the \texttt{InvokeCustomMatcherOrThrow} operation against the specification requirements: the extractor must be an object, \mintinline{js}|Symbol.customMatcher| must be a function, and the return value must be iterable. It verifies that insufficient elements result in \mintinline{js}|undefined| bindings, surplus elements are ignored, and the matcher is invoked exactly once per extraction ($\sim$63 assertions).
+
+\paragraph{Receiver Semantics} (\texttt{receiver-parameter.js})
+Checks the propagation of the \texttt{receiver} argument to the custom matcher. Tests confirm that the object on which the extractor is accessed is passed correctly, enabling access to instance state (including private fields like \mintinline{js}|#field|) and methods in both static and instance contexts ($\sim$25 assertions).
+
+\paragraph{Iterator Lifecycle} (\texttt{runtime-evaluation-cleanup.js})
+Tests iterator consumption and the invocation of the \mintinline{js}|return()| method.
+
+It verifies that cleanup is triggered during partial consumption, empty patterns, and errors within \mintinline{js}|next()| or binding initialization, ensuring resource release in both assignment and loop contexts ($\sim$45 assertions).
+
+\paragraph{Negative Paths} (\texttt{error-handling.js})
+Validates error propagation and side-effect ordering. Specifically, it confirms that assigning to a standard function call triggers a \mintinline{js}|ReferenceError| only \emph{after} the function execution (preserving side effects) and validates \mintinline{js}|TypeError| generation for invalid matcher returns ($\sim$11 assertions).
+
+\paragraph{Specification README} As part of informally explaining Extractors, the README of the Extractors proposal repository contains a number of examples (some of which were already presented in slightly modified form, e.g.~\zcref{lst:map-extractor, lst:regexp-extractor}). While most of the previously mentioned tests rely on the author's understanding of the specification to establish correctness, these examples provide a more authoritative view\footnote{It must be noted that at the time of writing many of the examples in the README are in fact subtly wrong. These discrepancies were identified by the author in \url{https://github.com/tc39/proposal-extractors/issues/32} (accessed December 2025) and have been acknowledged by committee members as incorrect.}. We identified three such complete examples and included them in the test suite.
+
+\section{Selected Found Defects}
+\label{sec:evaluation-selected-found-defects}
+
+During the implementation of Extractors, a test-driven development style was generally followed, so during development most bugs in the code were found by automated tests as opposed to manual testing. Nevertheless, we want to highlight some of these bugs as they both demonstrate the rigor of the implemented testing suite and uncover some subtle details about GraalJS' internal workings.
+
+\paragraph{Array Destructuring} When an Extractor was nested within an array pattern (e.g., \mintinline{js}|const [Pair(x, y), a, b] = [p, 1, 2]|), the values bound to subsequent variables (\mintinline{js}|a| and \mintinline{js}|b|) were incorrect: \mintinline{js}|a| received \mintinline{js}|2| instead of \mintinline{js}|1|, and \mintinline{js}|b| became \mintinline{js}|undefined|. The root cause lay in the \mintinline{js}|GraalJSTranslator|. The \mintinline{js}|transformAssignmentExtractor| method received the RHS as a \mintinline{js}|IteratorGetNextValueNode| when called as part of translating array destructuring. In the generated Truffle AST, this node was evaluated twice within the generated block---once by the primary logic in \mintinline{js}|InvokeCustomMatcherOrThrowNode| and once more to preserve the \enquote{assignment evaluates to right hand side} behavior.
+
+Since that node is stateful (advancing the underlying iterator), this caused the iterator to consume an extra element silently. The issue was resolved by enforcing the materialization of the RHS into a temporary variable to be used instead, ensuring the iterator is advanced exactly once per element.
+
+\paragraph{Extractor Bindings Scoping}
+Variables declared within an Extractor pattern were incorrectly visible in the enclosing scope, violating block-scoping rules. For example, in a statement like \mintinline{js}|const Foo(x) = y|, the variable \mintinline{js}|x| should be strictly scoped to the block. However, initial versions of the implementation allowed \mintinline{js}|x| to leak, being accessible in enclosing scopes.
+
+The root cause was that the Extractor parsing logic initially bypassed the standard binding registration process. It failed to register the extracted identifiers as new declarations in the parser's symbol table (skipping the internal \mintinline{java}|declareVar| method). Consequently, these identifiers were treated as references to existing variables rather than new bindings. The issue was resolved by unifying the logic, handling both standard destructuring patterns and Extractors the same way in this regard.
+
+\section{Considerations on Completeness and Correctness}
+\label{sec:evaluation-considerations-on-completeness-and-correctness}
+
+As the Extractors proposal is currently at Stage 1, there is no official specification conformance test suite (Test262) available to verify the implementation. Consequently, the correctness of this implementation relies heavily on the author's interpretation of the draft specification, particularly the informal functional requirements outlined in \zcref{sec:extractors-core-specification-semantics}. Additionally, it is important to note that proposals at this stage may still contain ambiguities or under-specified behaviors (some instances of this were already discussed prior); in such cases and in general, the tests (and requirements) reflect a best-effort alignment with the \emph{perceived} intent of the proposal.
+
+The test suite described in this chapter was thus constructed using a two-fold approach designed to ensure functional coverage without the overhead of e.g.~formal verification methods. We want to emphasize that this does not attempt to be a comprehensive test suite, but rather a pragmatic approach to ensure that the implementation is correct and complete in regards to the functional requirements we outlined previously.
+
+\paragraph{Requirement-Driven Tests} The primary source for test cases was the set of functional requirements derived in \zcref{sec:extractors-core-specification-semantics}. We systematically translated each of these requirements into (usually multiple) concrete test scenarios.
+
+For example, the requirement that \enquote{Extractors must be valid as function parameters} expands to roughly 100 lines of tests, see \zcref{lst:evaluation-function-params-tests} for a selection.
+
+\paragraph{Iterative Development} In addition to the requirements-based tests, the suite was expanded iteratively as part of a Test-Driven Development process. As individual components were implemented (such as the parser modifications or the runtime code), ad-hoc tests were written to immediately verify their behavior. This was in particular based on the selection of examples provided in the proposal README.
+
+\begin{listing}[htbp]
+    \caption{Selection of test cases for the requirement that \enquote{Extractors must be valid as function parameters}. Explanatory comments and braces for scoping left out for brevity. Note that this is an incomplete excerpt.\label{lst:evaluation-function-params-tests}}
+    \begin{minted}[autogobble]{js}
+        function declFunc(Pair(x, y)) {
+            return x + y;
+        }
+        const result = declFunc(new Pair(5, 6));
+        assertSame(11, result);
+
+        const exprFunc = function(Pair(x, y)) {
+            return x * y;
+        };
+        const result = exprFunc(new Pair(7, 8));
+        assertSame(56, result);
+
+        const arrowFunc = (Pair(x, y)) => x - y;
+        const result = arrowFunc(new Pair(10, 3));
+        assertSame(7, result);
+
+        class Calculator {
+            add(Pair(x, y)) {
+                return x + y;
+            }
+
+            static multiply(Pair(x, y)) {
+                return x * y;
+            }
+        }
+        const calc = new Calculator();
+        assertSame(15, calc.add(new Pair(7, 8)));
+        assertSame(42, Calculator.multiply(new Pair(6, 7)));
+        
+        /* ... */
+    \end{minted}
+\end{listing}

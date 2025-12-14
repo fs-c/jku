@@ -164,10 +164,14 @@
 \usepackage{verbatim} % just for comment
 \usepackage{csquotes}
 
+\usepackage{nameref}
+
 % this should be loaded as late as possible
 \usepackage{zref-clever}
 
 \newmintinline{js}{js}
+
+\setminted{autogobble}
 
 % Custom minted environment with fixed options but parameterizable language
 \newenvironment{simplecode}[1][js]%
@@ -317,7 +321,6 @@
 \import{./chapters/}{03-extractors}
 \import{./chapters/}{04-implementation}
 \import{./chapters/}{05-evaluation}
-\import{./chapters/}{06-related-work}
 \import{./chapters/}{09-conclusion}
 
 %% 

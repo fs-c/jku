@@ -1,5 +1,11 @@
 \cleardoubleoddpage%
-\chapter{Conclusion and Outlook}
-\label{sec:conclusion}
+\chapter{Conclusion}
+\label{ch:conclusion}
 
-Space for your summary, central conclusions, and an outlook on potential future work.
+This thesis detailed the design, implementation, and evaluation of the ECMAScript Extractors proposal within the GraalJS engine. By introducing new syntax to allow attaching custom logic to the destructuring process, it opens up avenues for developers to write more concise and declarative code.
+
+A primary challenge lay in the parser, which had to be adapted to accept \enquote{function calls} in assignment and binding contexts. This required significant adjustments to the existing parsing logic, despite the comparatively simple grammar changes in the specification. On the runtime side, we implemented a custom node to map the proposal's semantics, using Graal's self-optimizing node architecture.
+
+To verify correctness in the absence of an official specification test suite, we developed a custom suite based on the functional requirements we derived from the draft. This testing effort proved fruitful in uncovering a number of bugs, two of which we highlighted in particular.
+
+Looking ahead, this implementation must evolve alongside the standardization process. As the proposal matures to Stage 2 and beyond, official Test262 compliance tests will become available, necessitating further validation against the finalized specification. Additionally, future efforts should focus on performance, which was considered out of scope at this early stage.
