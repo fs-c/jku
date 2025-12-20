@@ -17,7 +17,16 @@ conclusion: what did we actually do. basically condensed intro again -> what is 
 - the newline thing (see notes & issue), double check if that is still an issue
 - there will be an issue with if condition in catch clause (nashorn extension) in combination with extractors (parser line 3895)
 - array destructuring with extractors broken (but not without): `const [Pair(x, y), other] = [p, "value"];`, x and y as expected but other == null
-    - caused by invoking a read iterator next node more than once as part of the extractor syntax translation
+  - caused by invoking a read iterator next node more than once as part of the extractor syntax translation
 - scoping of variables introduced in a binding extractor statement
-    - didn't properly set the variables as declared to mark their scope, defaulted to global scope (strange behavior from graaljs imo)
-    
+  - didn't properly set the variables as declared to mark their scope, defaulted to global scope (strange behavior from graaljs imo)
+
+---
+
+### abby session
+
+- inconsistent emph usage
+- inconsistent capitalizations
+- run-on sentences
+- briefly explain visitor pattern where it is mentioned
+- replace instances of "spec" with "specification"

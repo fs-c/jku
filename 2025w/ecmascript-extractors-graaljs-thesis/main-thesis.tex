@@ -218,13 +218,13 @@
 %% Command \supervisor[number,gender]{name}: sets the name of the supervisor (where number optionally
 %%   defines the rank of the supervisor (1-3) and gender specifies if the supervisor is male (m) or
 %%   female (f/w) to adapt gender-specific terms in German)
-\supervisor{\prefix{Dipl.-Ing.} Florian~Huemer, BSc}
+\supervisor{\prefix{Dipl.-Ing.} Florian~Huemer\suffix{BSc}}
 
 %% Command \assistantsupervisor{name}: sets the name of the assistant supervisor(s)
 \assistantsupervisor{\prefix{Dipl.-Ing.} Andreas~W\"o\ss{} (Oracle)}
 
 %% Command \degree{degree}{degree program}: sets the degree and degree program name
-\degree{Bachelor of Science}{Informatics}
+\degree{Bachelor of Science}{Informatik}
 %% Please make sure to insert the _correct_ degree and degree program names for your studies before
 %% submission. Examples for degrees at JKU:
 %%  * Diplom-Ingenieurin / Diplom-Ingenieur
@@ -331,6 +331,8 @@
 %% Print the bibliography
 %% 
 %% Make sure to start the bibliography on a new odd page (odd is only relevant in twoside layout)
+\listoffigures
+\listoflistings
 \cleardoubleoddpage
 \printbibliography
 %% 

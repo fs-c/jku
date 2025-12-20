@@ -6,38 +6,110 @@ This chapter establishes the terminology and technical foundations necessary for
 
 \section{ECMAScript and JavaScript\label{sec:background-ecmascript-and-javascript}}
 
-A distinction needs to be made between the governing standard and the programming language itself. ECMAScript refers to the formal specification (ECMA-262\footnote{\url{https://tc39.es/ecma262/}, accessed December 2025}). JavaScript is the common name for the programming language described by this standard, with different execution engines such as V8, SpiderMonkey, or GraalJS.\@ These engines may vary in their internal architecture or performance characteristics~\cite{lwengines23} and, as in cases like this thesis, in their implementation of various non-standard (or not-yet-standard) features.
+A distinction needs to be made between the governing standard called ECMAScript and the programming language called JavaScript. ECMAScript refers to the formal specification (ECMA-262\footnote{\url{https://tc39.es/ecma262/}, accessed December 2025}). JavaScript is the common name for the programming language described by this standard, with different execution engines such as V8~\cite{v8engine}, SpiderMonkey~\cite{spidermonkeyengine}, or GraalJS~\cite{graaljsengine}.\@ These engines may vary in their internal architecture or performance characteristics\footnotemark{} and, as in cases like this thesis, in their implementation of various non-standard (or not-yet-standard) features.
 
-The divergence in naming---where the standard is \enquote{ECMAScript} but the language is \enquote{JavaScript}---stems from historical trademark constraints. The \enquote{JavaScript} trademark is currently held by Oracle Corporation (inherited from Sun Microsystems). Consequently, the standards body adopted \enquote{ECMAScript} to ensure vendor neutrality~\cite{js20years}. Nevertheless, \enquote{JavaScript} remains the ubiquitous term for the language in common usage.
+\footnotetext{See e.g.~\cite{jsoptcomparison16} where the same JavaScript code optimizations produce very different performance results across different engines.}
 
-JavaScript is the dominant programming language of the web by far. As of 2024, it is utilized as a client-side programming language by approximately 98.9\% of all websites\footnote{\url{https://w3techs.com/technologies/details/cp-javascript}, accessed December 2025}. While originally designed for browser-based scripting~\cite{js20years}, the advent of runtimes like Node.js and embeddable engines like GraalJS has expanded its utility to server-side development, embedded devices, and enterprise systems~\cite{backdevtechreview24}. As such, it is now among the most widely used programming languages in the world\footnote{\url{https://survey.stackoverflow.co/2025/technology}, accessed December 2025, where JavaScript is in the top 3 for all categories of respondents.}.
+JavaScript is the dominant programming language of the web by far. As of 2024, it is utilized as a client-side programming language by approximately 98.9\% of all websites\footnote{\url{https://w3techs.com/technologies/details/cp-javascript}, accessed December 2025}. While originally designed for browser-based scripting~\cite{js20years}, the advent of runtimes like Node.js and embeddable engines like GraalJS has expanded its utility to server-side development~\cite{nodemicroservicedeploy23} and embedded devices~\cite{fishtrackigembeddednodejs19}. As such, it is now among the most widely used programming languages in the world\footnote{\url{https://survey.stackoverflow.co/2025/technology}, accessed December 2025, where JavaScript is in the top 3 for all categories of respondents.}.
+
+\subsection{Selected JavaScript Details\label{sec:background-javascript-details}}
+
+Since some familiarity with JavaScript is required for later sections, we briefly introduce some special concepts.
+
+\paragraph{Property Accessor Syntax} The \enquote{traditional} way to access an object's properties is through the dot notation, as may be familiar from e.g.~Java class members.
+\begin{simplecode}[js]
+    const o = { a: 1, b: 'b' };
+    o.a; // 1
+    o.b = 2;
+\end{simplecode}
+But another way to access properties is through using the bracket notation, often reserved for array access in other languages such as Java. This allows arbitrary expressions to be used to compute the name of the property to be accessed.
+\begin{simplecode}[js]
+    o['a']; // 1
+    function getPropertyName() { return 'b'; }
+    o[getPropertyName()] = 2;
+\end{simplecode}
+
+\paragraph{Computed Property Names} Objects are constructed using the object initializer syntax, as in
+\begin{simplecode}[js]
+    const o = { a: 1, b: 'b', c: { /* ... */ } };
+\end{simplecode}
+Similarly to the bracket notation when accessing properties, computed property names allow specifying an expression in square brackets in that will be evaluated in place of the property name:
+\begin{simplecode}[js]
+    const o = { a: 1, [getPropertyName()]: 'b', ['c']: { /* ... */ } };
+    o.b; // 'b'
+    o.c; // { /* ... */ }
+\end{simplecode}
+
+\paragraph{Binding and Assignment} Binding is the introduction of a new identifier with an associated value, generally into the current scope. This is in contrast to assignment, which merely changes a value (e.g.~of an existing binding, or of an array value, etc.).
+\begin{simplecode}[js]
+    let ident = 'some value'; // Binding: "ident" is introduced into the scope
+    ident = 'some other value'; // Assignment
+    function f(a, b, c) { /* Binding: "a", "b" and "c" */ }
+    try { /* ... */ } catch (err) { /* Binding: "err" */ }
+\end{simplecode}
+Importantly, the left hand side of an assignment may also e.g.~be a property accessor (as seen in previous examples), while bindings are more restrictive.
+\begin{simplecode}[js]
+    const arr[0] = 'some value'; // Error
+\end{simplecode}
+
+\paragraph{Destructuring Syntax} The destructuring syntax allows \enquote{unpacking} object properties and array values into separate variables, mirroring the syntax used to construct them. It also allows specifying default values and, in the case of object properties, defining an alternative name for specific variables.
+\begin{simplecode}[js]
+    const arr = [ 1, undefined, '3' ];
+    const [ x, y = 2, z ] = arr;
+    x; y; z; // x = 1, y = 2, z = '3'
+    const obj = { a: 1, b: 'b', c: undefined };
+    const { a, b: newNameForB, c = 3 } = obj; 
+    a; b; c; // a = 1, b = 'b', c = 3
+\end{simplecode}
+While these examples demonstrated binding destructuring, assignment destructuring is also possible, with the same viable assignment targets.
+\begin{simplecode}[js]
+    let x, y = { value: undefined }, z = []
+    [ x, y.value, z[0] ] = arr;
+\end{simplecode}
+
+\paragraph{Symbols \& Well-Known Symbols}
+
+Symbols are JavaScript primitives (like \mintinline{js}|number| or \mintinline{js}|undefined|) that are guaranteed to be unique. The \mintinline{js}|Symbol| built-in object provides a constructor which returns such symbol primitives, optionally associated with a name.
+\begin{simplecode}[js]
+    const x = Symbol();
+    const y = Symbol('foo'); // with x !== y
+    const z = Symbol('foo'); // with y !== z
+\end{simplecode}
+The \mintinline{js}|Symbol| built-in has a number of static properties, all of them Symbols, which are called well-known Symbols. These properties are defined by the specification, and allow developers to customize the language's behavior. For example, if an object has a \mintinline{js}|Symbol.hasInstance| method, this method will be used in \mintinline{js}|instanceof| checks against it.
+\begin{simplecode}[js]
+// object that pretends that everything is an instance of it
+const impostor = {
+    [Symbol.hasInstance](instance) {
+        return true;
+    }
+};
+'a' instanceof impostor; // true
+1 instanceof impostor; // true
+[] instanceof impostor; // true
+\end{simplecode}
 
 \section{ECMAScript Standardization Process (TC39)\label{sec:background-ecmascript-standardization-process-tc39}}
 
-The evolution of the ECMAScript standard is managed by TC39 (Technical Committee 39) of Ecma International. Unlike many open-source projects and even programming languages that may follow centralized governance models~\cite{ossgov11, ossgovrationale21}, TC39 operates on a consensus-based model involving major browser vendors (Google, Mozilla, Apple, Microsoft) and invited experts~\cite{tc39process}.
+The evolution of the ECMAScript standard is managed by TC39 (Technical Committee 39) of Ecma International. TC39 is composed of experts from different fields and organizations, including the major browser vendors Google, Mozilla, Apple, and Microsoft.
 
-New language features must pass through a well-defined maturity process before being added to the official standard. This process is designed to \enquote{provide guidelines for evolving a language addition from an idea to a fully specified feature} and encompasses five stages~\cite{tc39process}:
+New language features must pass through a stepwise development process before being added to the official standard. This process is designed to \enquote{provide guidelines for evolving a language addition from an idea to a fully specified feature}~\cite{tc39process} and encompasses five stages:
 
 \begin{description}
-    \item[Stage 0] serves as a space for ideation and exploration without strict technical requirements. Generally, non-members will create proposals at this stage and refine them until a committee delegate volunteers to shepherd the feature.
-    \item[Stage 1] signifies that the proposal is under consideration by the committee, but there is still work to be done in designing the solution. At this stage, major changes are still possible in principle, but an initial specification text including major semantics and syntax is in place.
-    \item[Stage 2] proposals have a comparatively locked-down solution space, and are undergoing reviews and refinements to precisely define the specification text (finalization of which is signified by a \enquote{checkpoint}: {\usekomafont{abstract}\textbf{Stage 2.7}}, which is also the point at which Test262 acceptance tests are expected to be implemented). As the general shape of the solution is agreed upon, this is usually the point at which experimental implementations are produced.
+    \item[Stage 0] serves as a space for exploring ideas without strict technical requirements. Generally, non-members will create proposals at this stage and refine them until a committee member takes over the development of the feature.
+    \item[Stage 1] signifies that the proposal is under consideration by the committee, but there is still work to be done in designing the solution. At this stage, major changes are still possible, but an initial specification text including key algorithms and semantics is in place.
+    \item[Stage 2] proposals have a narrowed solution space, and committee members refine the specification text until it is seen as complete at {\usekomafont{abstract}\textbf{Stage 2.7}}. In addition, Stage 2.7 represents the point at which the comprehensive test suite (Test262) is expected to be extended to cover the feature.
     \item[Stage 3] signals that the solution is complete and ready for production-grade implementations by engines. Changes are only expected in response to feedback from these implementations.
-    \item[Stage 4] is reached if there are at least two independent implementations by major vendors that pass the acceptance tests. At this point, the feature is expected to be included in the next annual edition of the standard.
+    \item[Stage 4] is reached if there are at least two independent implementations by major vendors that pass the acceptance tests. At this point, the feature is expected to be included in the next edition of the standard.
 \end{description}
 
-\section{GraalJS, Truffle and the Graal Compiler\label{sec:background-graaljs-truffle-and-the-graal-compiler}}
+\section{Truffle and the Graal Compiler\label{sec:background-graaljs-truffle-and-the-graal-compiler}}
 
-The implementation platform for this thesis is GraalJS\footnote{\url{https://github.com/oracle/graaljs}, accessed December 2025}, an ECMAScript-compliant engine developed by Oracle Labs. Unlike the V8 engine (written in C++) or SpiderMonkey (written in C++ and Rust), GraalJS is implemented entirely in Java. It serves as the modern successor to previous Java-based JavaScript engines, namely Rhino (Mozilla) and Nashorn (OpenJDK), targeting the specific niche of embedding JavaScript within JVM applications. Because GraalJS runs on the JVM, it can share memory and object references directly with the host Java application without the serialization overhead typically associated with Foreign Function Interfaces~\cite{onevmtrulethemall13}.
+The Truffle Language Implementation Framework~\cite{truffleframework} is a system for building programming language interpreters. It uses a unique architectural approach allowing for high performance with comparatively little effort on the side of the language implementor. A language implementor parses code into an Abstract Syntax Tree (AST) of Truffle Nodes. They can then create specializations of AST nodes based on input types and other properties, e.g.~providing specializations of an \enquote{Add} Node to both handle addition of integers and concenation of strings. At runtime, Nodes can replace themselves with specializations matching the input types. See \zcref{lst:background-self-optimizing-nodes-demonstration} for an example of such a Node, with specializations for the cases where both operands are either \mintinline{java}|long|s, \mintinline{java}|String|s, or \mintinline{java}|BigInteger|s. Note the performance-oriented specialization on \mintinline{java}|long|s: if an overflow occurs, \mintinline{java}|Math.addExact| throws a \mintinline{java}|ArithmeticException| and Truffle rewrites the Node to a more generic (and less performant) form.
 
-GraalJS is built upon the Truffle Language Implementation Framework, a system for building programming language interpreters that uses a unique architectural approach allowing for high performance with comparatively little effort on the side of the language implementor. In a traditional compiler-based engine, source code is parsed and immediately lowered into a bytecode format, which is then executed by a virtual machine. Truffle takes a different approach. It parses source code into an Abstract Syntax Tree (AST) of executable nodes. When the code runs, these Java objects (nodes) recursively call each other's \mintinline{java}|execute()| methods.
-
-While this type of AST interpretation is typically slow, Truffle allows implementors to mitigate this through Self-Optimizing Nodes~\cite{selfoptastint12}. As the AST executes, nodes can rewrite themselves based on the data they observe. For example, a generic \enquote{Add} node is implemented to handle all \enquote{+}-operations, but it might replace itself with a more specialized variant based on the observed inputs. See \zcref{lst:background-self-optimizing-nodes-demonstration} for an example.
-
-Additionally, to achieve high performance, the Graal Compiler (a Just-In-Time compiler for the JVM) can be provided with information to optimize the execution. It analyzes the stable ASTs of hot code paths, inlines the recursive Java method calls, and compiles them into optimized machine code~\cite{truffledsl16}. This allows a high-level Java interpreter to achieve performance competitive with native C++ engines, provided the application runs long enough to complete the \enquote{warm-up} phase, while retaining the benefits of a higher-level language.
+Additionally, the Graal Compiler (a Just-In-Time compiler for the JVM) has information about the AST of Truffle Nodes, and can provide better peak performance by selectively transforming parts of the program into compiled code at runtime~\cite{practpartialeval17}. It does this through a process called Partial Evaluation~\cite{practpartialeval17}, where \enquote{stable} parts of the AST (i.e.~nodes which are not expected to re-specialize) are replaced with handles to optimized machine code.
 
 \begin{listing}[htbp]
-    \caption{Selected methods of the \mintinline{java}|SLAddNode|, part of the \enquote{SimpleLanguage} demonstration language for Truffle, demonstrating node specializations using the Truffle DSL. Note the high-performance specialization on \mintinline{java}|long|s; if an overflow occurs, \mintinline{java}| Math.addExact| throws a \mintinline{java}|ArithmeticException| and Truffle rewrites the node to a more general form.\label{lst:background-self-optimizing-nodes-demonstration}}
+    \caption{Specializations of a sample \enquote{Add} Truffle Node.\label{lst:background-self-optimizing-nodes-demonstration}}
     \begin{minted}[autogobble]{java}
         @Specialization(rewriteOn = ArithmeticException.class)
         public static long doLong(long left, long right) {
@@ -45,21 +117,30 @@ Additionally, to achieve high performance, the Graal Compiler (a Just-In-Time co
         }
 
         @Specialization(guards = "isString(left, right)")
-        @HostCompilerDirectives.InliningCutoff
-        public static TruffleString doString(Object left, Object right, /* ... */) {
-            return concatNode.execute(
-                toTruffleStringNodeLeft.execute(node, left),
-                toTruffleStringNodeRight.execute(node, right),
-                SLLanguage.STRING_ENCODING, true
-            );
+        public static String doString(Object left, Object right) {
+            return left.toString() + right.toString();
         }
 
         @Specialization(replaces = "doLong")
-        public static SLBigInteger doSLBigInteger(SLBigInteger left, SLBigInteger right) {
-            BigInteger castLeft = left.getValue();
-            BigInteger castRight = right.getValue();
-            BigInteger result = addBoundary(castLeft, castRight);
-            return new SLBigInteger(result);
+        public static BigInteger doBigInteger(BigInteger left, BigInteger right) {
+            BigInteger result = add(left, right);
+            return new BigInteger(result);
         }
     \end{minted}
 \end{listing}
+
+\section{GraalJS}
+
+The implementation platform for this thesis is GraalJS, an ECMAScript-compliant engine developed by Oracle Labs~\cite{graaljsengine}. GraalJS is implemented in Java and built using the Truffle framework (see \zcref{sec:background-graaljs-truffle-and-the-graal-compiler}). It serves as the modern successor to previous Java-based JavaScript engines, namely Rhino (Mozilla,~\cite{rhinoengine}) and Nashorn (OpenJDK,~\cite{nashornengine}). Because GraalJS runs on the JVM, it can share memory and object references directly with a host Java application without the serialization overhead typically associated with Foreign Function Interfaces~\cite{onevmtrulethemall13}. An overview of the relevant subset of the GraalJS pipeline from source code to execution is given in \zcref{fig:graaljs-pipeline}.
+
+\begin{figure}[htbp]
+    \centering
+    \makebox[0pt]{\input{../content/graaljs-structure.pdf_tex}}
+    \caption{GraalJS pipeline from source code to execution, with two edge nodes representing notable data structures in the process.\label{fig:graaljs-pipeline}}
+\end{figure}
+
+The first component we consider is the Parser, which converts input JavaScript code into an intermediary AST.\@ The produced AST Nodes are language-focused, representing JavaScript constructs as they appear in the source. For example, this AST might contain Nodes representing function calls as \mintinline{java}|CallNode|s---i.e.~\mintinline{js}|someFunction(a)| as \mintinline{java}|CallNode(someFunction, a)|---without worrying about actual semantics like special behavior for certain functions or similar.
+
+Following this, a Translator component converts this AST into another AST made up of executable Truffle Nodes. As opposed to the intermediary AST produced by the Parser, the Truffle AST is now execution-focused; its Nodes represent actual operations that are executed at runtime. For example, a \mintinline{java}|CallNode| will be transformed to one of several more specific Nodes depending on the content. For example, \mintinline{java}|super()|, \mintinline{java}|import()|, \mintinline{java}|eval()| and Extractors are each parsed as a \mintinline{java}|CallNode|, but since each need special runtime behavior and they get translated into different Truffle Nodes.
+
+These Truffle Nodes specify their own runtime behavior as member functions (optionally with specializations as discussed in \zcref{sec:background-graaljs-truffle-and-the-graal-compiler}) and are then executed by the Truffle Interpreter. For example, at runtime, a Node resulting from \mintinline{javascript}|import('some-module.js')| will load the file at the given path as a module, while a Node resulting from \mintinline{javascript}|eval('hello world')| will initiate execution of its arguments as JavaScript code.

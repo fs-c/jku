@@ -10,15 +10,15 @@ This thesis presents the design, implementation, and evaluation of the ECMAScrip
     \caption{Minimal showcase of the Extractors proposal, demonstrating the symmetry between construction and destruction.\label{lst:minimal-intro-example}}
     \begin{minted}[highlightlines={9-11, 15}]{js}
 class Point {
-    #x;
-    #y;
+    _x;
+    _y;
     constructor(x, y) {
-        this.#x = x;
-        this.#y = y;
+        this._x = x;
+        this._y = y;
     }
 
     static [Symbol.customMatcher](subject) {
-        return #x in subject ? [subject.#x, subject.#y] : false;
+        return [subject._x, subject._y] : ;
     }
 }
 
@@ -29,7 +29,7 @@ y; // 2
     \end{minted}
 \end{listing}
 
-The primary contribution of this work is a functional, experimental implementation of the proposal within the GraalJS engine. The technical work encompasses the entire interpreter's pipeline: from modifying the parser to resolve syntactic ambiguities between Extractors and function calls, to implementing the runtime AST transformations and the \mintinline{js}|InvokeCustomMatcherOrThrow| abstract operation. To ensure correctness in the absence of an official conformance suite, we developed a targeted test suite based on functional requirements derived from the draft specification.
+The primary contribution of this work is a functional, experimental implementation of the proposal within the GraalJS engine. The technical work encompasses the entire interpreter's pipeline: from modifying the parser to resolve syntactic ambiguities between Extractors and function calls, to implementing the runtime AST transformations and the \mintinline{js}|InvokeCustomMatcherOrThrow| abstract operation. To ensure correctness in the absence of an official conformance suite, we also developed a targeted test suite based on functional requirements derived from the draft specification.
 
 At the time of writing, the Extractors proposal is at Stage 1 of the TC39 standardization process. Production engines typically delay implementation until the specification stabilizes at Stage 2 or 3~\cite{tc39process}, since proposals may change significantly in the early stages. However, we felt that the proposal's core semantics have stabilized sufficiently to warrant an initial, experimental implementation. Even if changes may make adaptations necessary, the produced work should still remain useful as a basis to build on.
 
@@ -38,6 +38,6 @@ The remainder of this thesis is structured to guide the reader from the theoreti
 \paragraph{AI Usage Declaration}
 
 \begin{enumerate}
-    \item \emph{GitHub Copilot} was used for inline completions during the implementation phase
-    \item \emph{Gemini 3 Pro} was used during the writing process for literature search, initial drafts and proof-reading
+    \item \emph{GitHub Copilot} was used for inline completions during the implementation phase.
+    \item \emph{Gemini 3 Pro} was used during the writing process for literature search, initial drafts and proof-reading.
 \end{enumerate}
