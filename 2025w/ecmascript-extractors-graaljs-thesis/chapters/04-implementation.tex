@@ -7,145 +7,253 @@ This chapter details the technical realization of the Extractors proposal within
 \section{Parser}
 \label{sec:implementation-parser}
 
-The primary challenge in parsing Extractors is syntactic ambiguity. To a parser, an Extractor pattern such as \mintinline{js}|Foo(a, b)| is syntactically identical to a function call. In standard ECMAScript, a function call is not a valid Left-Hand Side (LHS) expression for an assignment (e.g., \mintinline{js}|f() = x| throws a \mintinline{js}|ReferenceError|). With this proposal, however, such expressions become valid assignment and binding targets. Notably, we chose not to introduce a new Parser AST Node for Extractors, but to re-use the existing \mintinline{js}|CallNode| since there is no ambiguity---an Extractor will never appear in a place where a function call would have also been valid.
+The primary challenge in parsing Extractors is syntactic ambiguity. To a parser, an Extractor pattern such as \mintinline{js}|Foo(a, b)| is syntactically identical to a function call. In standard ECMAScript, a function call is not a valid Left-Hand Side (LHS) expression for an assignment (e.g., \mintinline{js}|f() = x| throws a \mintinline{js}|ReferenceError|). With this proposal, however, such expressions become valid assignment and binding targets. Notably, we chose not to introduce a new Parser AST Node for Extractors, but to re-use the existing node already being parsed for function calls. There is no ambiguity---an Extractor will never appear in a place where a function call would have also been valid.
 
-\paragraph{Assignment} To accommodate support for statements such as \mintinline{js}|Foo(a, b, c) = x| (where \mintinline{js}|Foo| is an Extractor and \mintinline{js}|a|, \mintinline{js}|b| and \mintinline{js}|c| are existing identifiers), we need to modify the \mintinline{js}|verifyAssignment(lhs, op, rhs)| method in the Parser. This method is responsible for validating expressions of the form \mintinline{text}|{lhs} {op} {rhs}|. When the Parser encounters a \mintinline{js}|CallNode| as the LHS of an assignment, it no longer immediately rejects it. Instead, if the Extractors feature flag is enabled, the Parser treats the call tentatively as a destructuring pattern; i.e.~if it encounters an Extractor assignment statement as above, these modifications make it treat it analogously to
+\paragraph{Assignment} To accommodate support for statements such as \mintinline{js}|Foo(a, b, c) = x| (where \mintinline{js}|Foo| is an Extractor and \mintinline{js}|a|, \mintinline{js}|b| and \mintinline{js}|c| are existing identifiers)
+
+
+To accomodate Extractors in assignment expressions, e.g. \mintinline{js}|Foo(a, b, c) = x| where \mintinline{js}|a|, \mintinline{js}|b| and \mintinline{js}|c| are existing identifiers, we need to modify the \mintinline{js}|verifyAssignment(lhs, op, rhs)| method in the Parser. This method is responsible for validating expressions of the form \mintinline{text}|{lhs} {op} {rhs}|, where \mintinline{text}|op| is one of the various assignment operands (e.g.~\mintinline{js}|=|, \mintinline{js}|+=|, \ldots). When the Parser encounters a function call node (\mintinline{js}|CallNode|) as the LHS of a regular assignment, it no longer immediately rejects it. Instead, the Parser treats \mintinline{js}|CallNode| on the LHS as the start of a destructuring pattern; i.e.~if it encounters an Extractor assignment statement like  \mintinline{js}|Foo(a, b, c) = ...|, these modifications make it treat it analogously to
 \begin{simplecode}[js]
-    [a, b, c] = /* something */
+    [a, b, c] = /* ... */
 \end{simplecode}
-The parsing and validation of destructring assignments is delegated to \mintinline{js}|verifyDestructuringAssignmentPattern|, which traverses the LHS node and its descendants. Previously it would  The visitor logic was updated to handle \mintinline{js}|CallNode| instances as follows:
-\begin{itemize}
-    \item When the visitor encounters a \mintinline{js}|CallNode| in a destructuring context, it treats it analogously to an \mintinline{js}|ArrayNode|. 
-    \item Accordingly, the arguments of the call (e.g., \mintinline{js}|a, b| in \mintinline{js}|Foo(a, b)|) are validated as if they were elements of an array destructuring pattern.
-    \item This re-use of logic matches the spirit of the specification and ensures that nested patterns (e.g., \mintinline{js}|Foo(Bar(x))|) are supported automatically via recursion.
-\end{itemize}
+The parsing and validation of destructuring assignments is handled in \mintinline{js}|verifyDestructuringAssignmentPattern|, which previously only accepted array and object literals and was thus also extended to handle call nodes. An overview of the existing process with these modifications is given in \zcref{fig:verify-assignment-flow}.
 
-\paragraph{Binding} Similar modifications were required for variable declarations (e.g., \mintinline{js}|const Foo(x) = y;|). Previously, \mintinline{js}|variableDeclarationList| parsed the LHS of a binding assignment using \mintinline{text}|bindingIdentifierOrPattern|, which expected either a simple identifier or a standard destructuring pattern (an array or object). We loosened this constraint to parse the broader \mintinline{text}|leftHandSideExpression|. This aligns the parsing logic with \mintinline{text}|assignmentExpression|, allowing \mintinline{js}|CallNode|s to be captured and subsequently validated by \mintinline{js}|verifyAssignment| (i.e.~the same logic as discussed in Assignment).
+\begin{figure}[htbp]
+    \centering
+    \makebox[0pt]{\input{verify-assignment-flow.pdf_tex}}
+    \caption{Illustration of the relevant parsing logic flow for assignments, adjustments highlighted in cursive. Note that this doesn't consider parsing of the right hand side.\label{fig:verify-assignment-flow}}
+\end{figure}
 
-While this catches the most basic case of bindings (explicit variable declarations), other forms exist as mentioned in \zcref{sec:extractors-core-specification-semantics}. In particular, to support Extractors in other places such as function parameters or the \mintinline{js}|catch| block, we had to implement lookahead checks\footnote{The parser generally looks only at the current token in the input, consuming it in the process. But disambiguating certain language constructs may necessitate inspecting more of the (future) input without consuming it.}. To give a singular example, to parse function parameters there was previously a check similar to the following.
+\paragraph{Variable Declarations} Similar modifications were required to support Extractors in variable declarations, as in \mintinline{js}|const Foo(x) = y;|. Previously, the relevant parsing method (\mintinline{js}|variableDeclarationList|) would parse the LHS of a variable declaration using \mintinline{text}|bindingIdentifierOrPattern|, which expected either a simple identifier or a standard destructuring pattern (an array or object literal). We loosened this constraint to parse the broader \mintinline{text}|leftHandSideExpression|, which includes \mintinline{text}|CallNode|s.
+
+In subsequent parsing steps, parsing proceeds very similarly to an assignment expression. In particular, \mintinline{js}|VerifyDestructuringPatternNodeVisitor|, as seen in \zcref{fig:verify-assignment-flow} , is used again, allowing for logic re-use.
+
+\paragraph{Other Bindings} As elaborated in \zcref{sec:extractors-core-specification-semantics}, Extractors are valid in all binding situations, not just in variable declarations. All bindings support destructuring, and as such eventually hit code paths we have already adjusted as seen above. But the parse functions for \mintinline{js}|try|, and function parameter bindings required additional adjustments as they handled parsing slightly differently. In both cases, the parse logic was similar to the following:
 \begin{simplecode}[java]
-    if (type == IDENT) {
+    if (currentTokenIsIdentifier()) {
         // parse an identifier as the parameter
-        // e.g. f(a, b, c)
+        // e.g. a in f(a, b, c)
     } else {
-        // attempt to parse a binding pattern, which may start either with [ or {
-        // e.g. f({ a, b }, [c])
+        // parse a destructuring pattern, which may start either with [ or {
+        // e.g. [c] in f({ a, b }, [c])
     }
 \end{simplecode}
-But now we needed to support binding patterns that start with an identifier, so a lookahead was implemented to differentiate between the start of a binding identifier and a binding pattern in this context, replacing the simple next token check.
-\begin{simplecode}[java]
-    private boolean lookaheadIsSimpleFormalParameter() {
-        if (!isBindingIdentifier()) {
-            return false;
-        }
+But destructuring patterns can now also start with an identifier, so lookahead checks\footnotemark{} were implemented to differentiate between the start of a binding identifier and a destructuring pattern in these contexts, replacing the simple current token check.
 
-        return lookaheadFindTokenSkippingComments(COMMARIGHT) || lookaheadFindTokenSkippingComments(RPAREN) || lookaheadFindTokenSkippingComments(ASSIGN);
-    }
-\end{simplecode}
+\footnotetext{The parser generally looks only at the current token in the input, consuming it in the process. But disambiguating certain language constructs may necessitate inspecting more of the (future) input without consuming it.}
 
-\paragraph{Feature Flag} Given the experimental nature of the proposal and this implementation of it, we implemented the support for Extractors as an opt-in feature at the parser level, disabling the new behavior by default. This ensures that the new syntax does not interfere with parsing in default environments that do not expect it.
+\paragraph{Feature Flag} Given the experimental nature of the proposal, support for Extractors was implemented as an opt-in feature at the parser level, disabling the new behavior by default. This ensures that the new syntax does not interfere with parsing in default environments that do not expect it.
+ 
+The configuration is exposed as a \mintinline{java}|JSContextOption| with the name \enquote{js.extractors}. The method of setting or changing these options depends on the manner in which GraalJS is invoked. When used from Java Code using GraalVM's Polyglot API, a \mintinline{java}|Context|\footnote{\url{https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Context.html}} is used to represent the global state of languages, including language-specific options:
 
-The configuration is exposed as a \mintinline{java}|JSContextOption|, joining the suite of over 100 existing engine options. This design allows users to change it just as they would any other option, e.g.~when embedded using GraalVM's Polyglot API:
 \begin{simplecode}[js]
 Context context = Context.newBuilder("js")
     .option("js.extractors", "true")
     .build();
-context.eval("js", "/* ... */");
+context.eval("js", "/* JS code using Extractors goes here */");
 \end{simplecode}
 
-Internally, the propagation of this option follows the standard engine architecture:
+From there, options are propagated downwards to the respective components of the engine. In this case, the Parser needs to act on the option:
 \begin{enumerate}
     \item The option is defined in \mintinline{java}|JSContextOptions|.
     \item From there it is passed through \mintinline{java}|JSLanguageObjects| into \mintinline{java}|JSParserOptions|.
-    \item Finally, it is consumed by the \mintinline{java}|GraalJSParserHelper| to construct a \mintinline{java}|ScriptEnvironment|.
+    \item Finally, it is consumed by \mintinline{java}|GraalJSParserHelper| to construct a \mintinline{java}|ScriptEnvironment|, which then serves as the source of truth for the Parser's capabilities.
 \end{enumerate}
 
-This \mintinline{java}|ScriptEnvironment| then serves as the immutable source of truth for the parser's capabilities, also including e.g.~such options as allowing top-level \mintinline{js}|await| or dictating whether or not strict mode is enabled. The flag is then used as a strict guard: modifications that permit previously invalid syntax---e.g.~allowing \mintinline{js}|CallNode|s in the LHS---are ignored unless this flag is explicitly set.
+The flag is then used as a strict guard: modifications that permit previously invalid syntax---e.g.~allowing \mintinline{js}|CallNode|s in the LHS---are ignored unless this flag is explicitly set.
 
 \section{GraalJSTranslator}
 \label{sec:implementation-graaljstranslator}
 
-Once the AST is parsed and verified as in \zcref{sec:implementation-parser}, the \mintinline{js}|GraalJSTranslator| converts it into a tree of executable Truffle nodes. The core logic for Extractors resides in the transformation of assignment nodes. To that end we modified \mintinline{js}|transformAssignmentImpl| to detect when the assignment target is a \mintinline{js}|CallNode|. In such cases, it delegates to a new method, \mintinline{js}|transformAssignmentExtractor|, which generates the necessary runtime nodes to perform the extraction.
+Once the AST is parsed and verified, as described in \zcref{sec:implementation-parser}, the \mintinline{js}|GraalJSTranslator| converts it 
+into a tree of executable Truffle nodes. While the Parser needed several modifications to handle assignments and the various binding types, this logic is consolidated in the Translator: All relevant code paths (regular assignment, variable declaration, \ldots) end up relying on \mintinline{java}|transformAssignment| to handle the assignment of a value to a (potentially new) reference. There is thus no need to differentiate between binding and assignment contexts going forward.
 
-The transformation process involves three distinct steps:
-\begin{enumerate}
-    \item Resolution: The \enquote{function} part of the call (the Extractor) is transformed. (If it is a property access (e.g., \mintinline{js}|A.B(x)|), the receiver is preserved to ensure correct \mintinline{js}|this| binding.)
-    \item Invocation: A new node, \mintinline{js}|InvokeCustomMatcherOrThrowNode| (detailed in \zcref{sec:implementation-invokecustommatcherorthrow}), is created. This node is responsible for calling \mintinline{js}|Symbol.customMatcher| at runtime.
-    \item Destructuring: The arguments of the extractor are treated as a standard array destructuring assignment, applied to the result of the custom matcher.
-\end{enumerate}
+An overview of the \mintinline{java}|transformAssignment| method, with changes highlighted, is given in \zcref{lst:graaljstranslator-transformassignment}. The required changes were minimal since the method primarily delegates transformation to other methods, based on the \mintinline{java}|tokenType| of the LHS. Given that Extractors are parsed as \mintinline{java}|CallNode|s, we extended the relevant \mintinline{java}|case| with a disambiguation to handle these nodes in particular, and then delegated transformation to a new method, \mintinline{java}|transformAssignmentExtractor|.
 
-The implementation of this transformation is shown in \zcref{lst:transform-assignment-extractor}. Note the use of a temporary variable (\mintinline{js}|valueTempVar|) to hold the RHS value. This ensures that the assignment expression evaluates to the assigned value (preserving the invariant \mintinline{js}|(Foo(x) = y) === y|), regardless of the extractor's logic, analogous to assignment behavior in other cases (e.g.~\mintinline{js}|[x] = [1]| evaluates to \mintinline{js}|[1]|). Another temporary variable (\mintinline{js}|assignedValueTempVar|) is used to prevent evaluating \mintinline{js}|assignedValue| more than once, which might have side effects (see the bug found in \zcref{sec:evaluation-selected-found-defects}).
-
-\begin{listing}[htbp]
-    \caption{Transformation logic converting an assignment consisting of a \mintinline{js}{CallNode} on the LHS into effectively the same nodes that would result from a destructuring array assignment for the desugaring of Extractors: \mintinline{js}{[...params] = Extractor[Symbol.customMatcher](instance)}.\label{lst:transform-assignment-extractor}}
-\begin{minted}{java}
-    private JavaScriptNode transformAssignmentExtractor(CallNode fakeCallNode, JavaScriptNode assignedValue, boolean initializationAssignment) {
-        final var functionExpr = fakeCallNode.getFunction();
-        final var function = transform(functionExpr);
-
-        var receiver = /* either function or base of access node */;
-
-        VarRef assignedValueTempVar = environment.createTempVar();
-        JavaScriptNode storeAssignedValue = assignedValueTempVar.createWriteNode(assignedValue);
-        JavaScriptNode readAssignedValue = assignedValueTempVar.createReadNode();
-
-        final var invokeCustomMatcherOrThrowNode = factory.createInvokeCustomMatcherOrThrow(context, function, readAssignedValue, receiver, environment.isStrictMode());
-
-        final var args = fakeCallNode.getArgs();
-        VarRef valueTempVar = environment.createTempVar();
-        return createBlock(
-                storeAssignedValue,
-                this.transformDestructuringArrayAssignment(args, invokeCustomMatcherOrThrowNode, valueTempVar, initializationAssignment),
-                valueTempVar.createWriteNode(assignedValueTempVar.createReadNode())
-        );
-    }
+\begin{listing}
+    \caption{Simplified representation of the \mintinline{java}{transformAssignment} method of \mintinline{java}{GraalJSTranslator}, transforming a node of the Parser AST into a Truffle Node.\label{lst:graaljstranslator-transformassignment}}
+    \begin{minted}[autogobble, highlightlines={8-9}]{java}
+        TruffleNode transformAssignment(ParserNode lhs, TruffleNode assignedValue) {
+            switch (lhs.tokenType()) {
+                case ARRAY:
+                    return transformDestructuringArrayAssignment(lhs, assignedValue);
+                case OBJECT:
+                    return transformDestructuringObjectAssignment(lhs, assignedValue);
+                case IDENT:
+                    if (lhs instanceof CallNode) {
+                        return transformAssignmentExtractor(lhs, assignedValue);
+                    } else {
+                        return transformAssignmentIdent(lhs, assignedValue);
+                    }
+                    break;
+                // ...
+            }
+        }
     \end{minted}
 \end{listing}
+
+The core logic of \mintinline{java}|transformAssignmentExtractor| is straightforward and represented in \zcref{lst:transformassignmentextractor-core-logic}. We pass this function a \mintinline{java}|CallNode|, which usually contain a function and a number of arguments. In our case, the \enquote{function} is an Extractor object (\mintinline{java}|extractor| on \zcref{ln:transformassignmentextractor-core-logic-ext}) and the arguments (\mintinline{java}|args| on \zcref{ln:transformassignmentextractor-core-logic-args}) are variables to be assigned to. Next, on \zcref{ln:transformassignmentextractor-core-logic-inv} a \mintinline{java}|InvokeCustomMatcherOrThrowNode| is created from the Extractor object and the assigned value; as per convention, this is done through a factory method. This node behaves as outlined in \zcref{sec:extractors-core-specification-semantics}, calling the \mintinline{js}|[Symbol.customMatcher]| method on the Extractor object, with the assigned value as the argument, and evaluates to the result of that call. This \mintinline{java}|invokeCustomMatcherOrThrowNode| is then used as the source iterator for array destructuring on \zcref{ln:transformassignmentextractor-core-logic-ret}, with the arguments of our fake function (the Extractor) as the assignment target.
+
+\begin{listing}[htbp]
+    \caption{Simplified representation of the core logic in the \mintinline{java}{transformAssignmentExtractor} method of \mintinline{java}{GraalJSTranslator}.\label{lst:transformassignmentextractor-core-logic}}
+    \begin{minted}[autogobble, escapeinside=||]{java}
+        TruffleNode transformAssignmentExtractor(CallNode fakeCallNode, TruffleNode assignedValue) {
+            final TruffleNode extractor = fakeCallNode.getFunction();|\label{ln:transformassignmentextractor-core-logic-ext}|
+            final List<TruffleNode> args = fakeCallNode.getArgs();|\label{ln:transformassignmentextractor-core-logic-args}|
+
+            final TruffleNode invokeCustomMatcherOrThrowNode = factory.createInvokeCustomMatcherOrThrow(extractor, assignedValue);|\label{ln:transformassignmentextractor-core-logic-inv}|
+            return this.transformDestructuringArrayAssignment(args, invokeCustomMatcherOrThrowNode);|\label{ln:transformassignmentextractor-core-logic-ret}|
+        }
+    \end{minted}
+\end{listing}
+
+The \mintinline{java}|transformDestructuringArrayAssignment| method then proceeds to handle the assignment as if it were regular array destructuring. A high-level view of the method is given in \zcref{lst:transformDestructuringArrayAssignment-core}. It iterates through the LHS and \enquote{RHS} (\mintinline{java}|assignedValue|) elements in parallel, generating assignment nodes for each pair. Notably, while the LHS is an array of expressions that are known at compile-time (\zcref{ln:lst:transformDestructuringArrayAssignment-elements, ln:lst:transformDestructuringArrayAssignment-elements-ass}) the RHS is a runtime iterator and thus runtime nodes are needed to iterate through it (\zcref{ln:lst:transformDestructuringArrayAssignment-initElements-ass}). In the case of the call from \mintinline{java}|transformAssignmentExtractor|, this would be the iterator returned by the \mintinline{java}|InvokeCustomMatcherOrThrowNode|.
+
+\begin{listing}[htbp]
+    \caption{Simplified representation of the \mintinline{java}{transformDestructuringArrayAssignment} method of \mintinline{java}{GraalJSTranslator}.\label{lst:transformDestructuringArrayAssignment-core}}
+    \begin{minted}[autogobble, escapeinside=||]{java}
+        TruffleNode transformDestructuringArrayAssignment(ParserNode lhs, TruffleNode assignedValue) {
+            final List<ParserNode> elements = ((ArrayLiteralNode) lhs).getElements();|\label{ln:lst:transformDestructuringArrayAssignment-elements}|
+            final List<TruffleNode> initElements = new TruffleNode[elements.size()];|\label{ln:lst:transformDestructuringArrayAssignment-initElements}|
+            for (int i = 0; i < elements.size(); i++) {
+                final ParserNode lhs = elements.get(i);|\label{ln:lst:transformDestructuringArrayAssignment-elements-ass}|
+                final TruffleNode rhs = factory.createIteratorGetNextValue(assignedValue);|\label{ln:lst:transformDestructuringArrayAssignment-initElements-ass}|
+                initElements[i] = transformAssignment(lhs, rhs);|\label{ln:lst:transformDestructuringArrayAssignment-trans}|
+            }
+            return factory.createBlock(initElements);
+        }
+    \end{minted}
+\end{listing}
+
+(TODO: \zcref{lst:transformassignmentextractor-core-logic} and its description in the text leave out some details that are not immediately relevant to the behavior but that prevent bugs/unintended behavior. I don't want to oversimplify/\enquote{undersell} my work, but I ended up removing it because it was hard to explain coherently.)
+
+% \begin{listing}[htbp]
+%     \caption{Simplified representation of the \mintinline{java}{transformAssignmentExtractor} method of \mintinline{java}{GraalJSTranslator}.\label{}}
+%     \begin{minted}[autogobble]{java}
+%         TruffleNode transformAssignmentExtractor(CallNode fakeCallNode, TruffleNode assignedValue) {
+%             final var extractor = fakeCallNode.getFunction();
+
+%             final var assignedValueTempVar = environment.createTempVar();
+%             final var storeAssignedValue = assignedValueTempVar.createWriteNode(assignedValue);
+%             final var readAssignedValue = assignedValueTempVar.createReadNode();
+
+%             final var invokeCustomMatcherOrThrowNode = factory.createInvokeCustomMatcherOrThrow(extractor, readAssignedValue);
+
+%             final var args = fakeCallNode.getArgs();
+
+%             return this.transformDestructuringArrayAssignment(args, invokeCustomMatcherOrThrowNode);
+%         }
+%     \end{minted}
+% \end{listing}
+
+% The core logic for Extractors resides in the transformation of assignment nodes. To that end we modified \mintinline{js}|transformAssignmentImpl| to detect when the assignment target is a \mintinline{js}|CallNode|. In such cases, it delegates to a new method, \mintinline{js}|transformAssignmentExtractor|, which generates the necessary runtime nodes to perform the extraction.
+
+% The transformation process involves three distinct steps:
+% \begin{enumerate}
+%     \item Resolution: The \enquote{function} part of the call (the Extractor) is transformed. (If it is a property access (e.g., \mintinline{js}|A.B(x)|), the receiver is preserved to ensure correct \mintinline{js}|this| binding.)
+%     \item Invocation: A new node, \mintinline{js}|| (detailed in \zcref{sec:implementation-invokecustommatcherorthrow}), is created. This node is responsible for calling \mintinline{js}|Symbol.customMatcher| at runtime.
+%     \item Destructuring: The arguments of the extractor are treated as a standard array destructuring assignment, applied to the result of the custom matcher.
+% \end{enumerate}
+
+% The implementation of this transformation is shown in \zcref{lst:transform-assignment-extractor}. Note the use of a temporary variable (\mintinline{js}|valueTempVar|) to hold the RHS value. This ensures that the assignment expression evaluates to the assigned value (preserving the invariant \mintinline{js}|(Foo(x) = y) === y|), regardless of the extractor's logic, analogous to assignment behavior in other cases (e.g.~\mintinline{js}|[x] = [1]| evaluates to \mintinline{js}|[1]|). Another temporary variable (\mintinline{js}|assignedValueTempVar|) is used to prevent evaluating \mintinline{js}|assignedValue| more than once, which might have side effects (see the bug found in \zcref{sec:evaluation-selected-found-defects}).
+
+% \begin{listing}[htbp]
+%     \caption{Transformation logic converting an assignment consisting of a \mintinline{js}{CallNode} on the LHS into effectively the same nodes that would result from a destructuring array assignment for the desugaring of Extractors: \mintinline{js}{[...params] = Extractor[Symbol.customMatcher](instance)}.\label{lst:transform-assignment-extractor}}
+% \begin{minted}{java}
+%     private JavaScriptNode transformAssignmentExtractor(CallNode fakeCallNode, JavaScriptNode assignedValue) {
+%         final var functionExpr = fakeCallNode.getFunction();
+%         final var function = transform(functionExpr);
+
+%         var receiver = /* either function or base of access node */;
+
+%         VarRef assignedValueTempVar = environment.createTempVar();
+%         JavaScriptNode storeAssignedValue = assignedValueTempVar.createWriteNode(assignedValue);
+%         JavaScriptNode readAssignedValue = assignedValueTempVar.createReadNode();
+
+%         final var invokeCustomMatcherOrThrowNode = factory.createInvokeCustomMatcherOrThrow(context, function, readAssignedValue, receiver, environment.isStrictMode());
+
+%         final var args = fakeCallNode.getArgs();
+%         VarRef valueTempVar = environment.createTempVar();
+%         return createBlock(
+%                 storeAssignedValue,
+%                 this.transformDestructuringArrayAssignment(args, invokeCustomMatcherOrThrowNode, valueTempVar),
+%                 valueTempVar.createWriteNode(assignedValueTempVar.createReadNode())
+%         );
+%     }
+%     \end{minted}
+% \end{listing}
 
 \section{InvokeCustomMatcherOrThrow}
 \label{sec:implementation-invokecustommatcherorthrow}
 
-The runtime behavior is encapsulated in the \mintinline{js}|InvokeCustomMatcherOrThrow| Node, which is constructed for assignments involving Extractors as seen in \zcref{sec:implementation-graaljstranslator}. This Node implements the specific algorithm defined in the proposal for retrieving and executing the custom matcher. The core execution flow is detailed in \zcref{lst:invoke-custom-matcher}.
-
-It should be noted that this implementation contains a deviation from the specification\footnote{See e.g.~discussion in issue \url{https://github.com/tc39/proposal-extractors/issues/34} (accessed December 2025)} concerning the behavior when the LHS does not have a \mintinline{js}|Symbol.customMatcher| method. In standard ECMAScript, assigning to a function call (\mintinline{js}|f() = x|) results in a \mintinline{js}|ReferenceError|. However, the Extractors proposal makes this syntax valid, creating a potential ambiguity around whether \mintinline{js}|f() = x| would in this case be a failed extractor usage or an invalid assignment.
-
-This is particularly relevant since, in non-strict mode, the expected behavior is to throw an error after performing the function call. As suggested in the linked discussion, our implementation thus behaves differently depending on mode:
-\begin{enumerate}
-    \item In strict mode, we follow the specification and throw a \mintinline{js}|ReferenceError|.
-    \item In non-strict mode, we execute the call as a standard function first. This ensures that any side effects still occur, before finally throwing an error.
-\end{enumerate}
+The runtime behavior is encapsulated in the \mintinline{js}|InvokeCustomMatcherOrThrowNode|, which is emitted for assignments involving Extractors as seen in \zcref{sec:implementation-graaljstranslator}. This node implements the specific algorithm defined in the proposal for retrieving and executing the custom matcher, described in \zcref{sec:extractors-core-specification-semantics}. The \mintinline{js}|InvokeCustomMatcherOrThrowNode| contains only a single specialization, the core of which is seen in \zcref{lst:invokeCustomMatcherOrThrow-core}. As opposed to previous sections, this is now runtime code: The method accepts JavaScript \mintinline{java}|Object|s as arguments (and not e.g.~Parser or Truffle nodes, as previously encountered) and returns an \mintinline{java}|IteratorRecord| (a runtime representation of the JS objects making up an iterator).
 
 \begin{listing}[htbp]
-    \caption{Implementation of the \mintinline{js}{InvokeCustomMatcherOrThrow} abstract operation.\label{lst:invoke-custom-matcher}}
-    \begin{minted}{java}
-        protected final IteratorRecord invokeCustomMatcherOrThrow(/* ... */) {
-            // 1. If matcher is not an Object, throw a TypeError exception.
-            if (!isObjectNode.executeBoolean(matcher)) {
-                errorBranchProfile.enter(this);
-                throw Errors.createTypeErrorNotAnObject(matcher);
-            }
-            
-            // 2. Let f be ? GetMethod(matcher, @@customMatcher).
-            final var f = this.getCustomMatcherNode.executeWithTarget(matcher);
-            
-            // 3. If f is undefined, throw a TypeError exception.
+    \caption{Simplified representation of the only specialization on \mintinline{js}{InvokeCustomMatcherOrThrowNode}.\label{lst:invokeCustomMatcherOrThrow-core}}
+    \begin{minted}[autogobble, escapeinside=||]{java}
+        IteratorRecord invokeCustomMatcherOrThrow(Object matcher, Object subject) {
+            final Object f = this.getCustomMatcherNode.executeWithTarget(matcher);|\label{ln:invokeCustomMatcherOrThrow-getf}|
             if (f == Undefined.instance) {
-                // Simplified: see note on specification deviation
-                errorBranchProfile.enter(this);
-                throw Errors.createTypeError("matcher does not have Symbol.customMatcher method");
+                if (this.isStrict) {
+                    throw Errors.createTypeError("matcher does not have Symbol.customMatcher method");
+                } else {
+                    this.callNode.executeCall(JSArguments.create(matcher, matcher, subject, "list", receiver));
+                    throw Errors.createReferenceError("cannot assign to function call");
+                }
             }
-            
-            // 4. Let result be ? Call(f, matcher, « subject, "list", receiver »).
-            final var result = this.callNode.executeCall(JSArguments.create(matcher, f, subject, "list", receiver));
-            
-            // 5. If result is not an Object, throw a TypeError exception.
-            if (!isObjectNode.executeBoolean(result)) {
-                errorBranchProfile.enter(this);
-                throw Errors.createTypeErrorInvalidCustomMatcherReturnValue(result, this);
-            }
-            
-            // 6. Let iteratorRecord be ? GetIterator(result, sync). & 7. Return iteratorRecord.
-            return getIteratorNode.execute(this, result);
+
+            final var result = this.callNode.executeCall(matcher, f, subject);|\label{ln:invokeCustomMatcherOrThrow-call}|
+
+            return getIteratorNode.execute(result);|\label{ln:invokeCustomMatcherOrThrow-ret}|
         }
     \end{minted}
 \end{listing}
+
+The property \mintinline{js}|Symbol.customMatcher| is accessed from the matcher object, ensuring it's a function, on \zcref{ln:invokeCustomMatcherOrThrow-getf}. This is done through \mintinline{java}|getCustomMatcherNode|, which is defined in the constructor as \mintinline{java}|GetMethodNode.create(Symbol.SYMBOL_CUSTOM_MATCHER)|, where \mintinline{java}|SYMBOL_CUSTOM_MATCHER| is a property that was added to the global \mintinline{java}|Symbol| object. On \zcref{ln:invokeCustomMatcherOrThrow-call} this method is then executed with the matcher object as the \mintinline{java}|this|-value, and the subject as the sole argument. The result is expected to be iterable, and an iterator over it is then returned on \zcref{ln:invokeCustomMatcherOrThrow-ret}.
+
+It should be noted that this implementation contains a deviation from the specification\footnote{See e.g.~discussion in issue \url{https://github.com/tc39/proposal-extractors/issues/34} (accessed December 2025)} concerning the behavior when the object does not have a \mintinline{js}|[Symbol.customMatcher]| method. In standard ECMAScript, assigning to a function call (\mintinline{js}|f() = x|) results in a \mintinline{js}|ReferenceError|. However, the Extractors proposal makes this syntax valid, creating a potential ambiguity around whether \mintinline{js}|f() = x| would in this case be a failed extractor usage or an invalid assignment. This is particularly relevant since, in non-strict mode, the expected behavior is to throw an error after performing the function call. As suggested in the linked discussion, our implementation thus behaves differently depending on mode. In strict mode, a \mintinline{js}|ReferenceError| is thrown immediately, as per the specification. In non-strict mode however, we execute the call as a standard function first. This ensures that any side effects still occur, before finally throwing an error.
+
+% The core execution flow is detailed in \zcref{lst:invoke-custom-matcher}.
+
+% It should be noted that this implementation contains a deviation from the specification\footnote{See e.g.~discussion in issue \url{https://github.com/tc39/proposal-extractors/issues/34} (accessed December 2025)} concerning the behavior when the LHS does not have a \mintinline{js}|Symbol.customMatcher| method. In standard ECMAScript, assigning to a function call (\mintinline{js}|f() = x|) results in a \mintinline{js}|ReferenceError|. However, the Extractors proposal makes this syntax valid, creating a potential ambiguity around whether \mintinline{js}|f() = x| would in this case be a failed extractor usage or an invalid assignment.
+
+% This is particularly relevant since, in non-strict mode, the expected behavior is to throw an error after performing the function call. As suggested in the linked discussion, our implementation thus behaves differently depending on mode:
+% \begin{enumerate}
+%     \item In strict mode, we follow the specification and throw a \mintinline{js}|ReferenceError|.
+%     \item In non-strict mode, we execute the call as a standard function first. This ensures that any side effects still occur, before finally throwing an error.
+% \end{enumerate}
+
+% \begin{listing}[htbp]
+%     \caption{Implementation of the \mintinline{js}{InvokeCustomMatcherOrThrow} abstract operation.\label{lst:invoke-custom-matcher}}
+%     \begin{minted}{java}
+%         protected final IteratorRecord invokeCustomMatcherOrThrow(/* ... */) {
+%             // 1. If matcher is not an Object, throw a TypeError exception.
+%             if (!isObjectNode.executeBoolean(matcher)) {
+%                 errorBranchProfile.enter(this);
+%                 throw Errors.createTypeErrorNotAnObject(matcher);
+%             }
+            
+%             // 2. Let f be ? GetMethod(matcher, @@customMatcher).
+%             final var f = this.getCustomMatcherNode.executeWithTarget(matcher);
+            
+%             // 3. If f is undefined, throw a TypeError exception.
+%             if (f == Undefined.instance) {
+%                 // Simplified: see note on specification deviation
+%                 errorBranchProfile.enter(this);
+%                 throw Errors.createTypeError("matcher does not have Symbol.customMatcher method");
+%             }
+            
+%             // 4. Let result be ? Call(f, matcher, « subject, "list", receiver »).
+%             final var result = this.callNode.executeCall(JSArguments.create(matcher, f, subject, "list", receiver));
+            
+%             // 5. If result is not an Object, throw a TypeError exception.
+%             if (!isObjectNode.executeBoolean(result)) {
+%                 errorBranchProfile.enter(this);
+%                 throw Errors.createTypeErrorInvalidCustomMatcherReturnValue(result, this);
+%             }
+            
+%             // 6. Let iteratorRecord be ? GetIterator(result, sync). & 7. Return iteratorRecord.
+%             return getIteratorNode.execute(this, result);
+%         }
+%     \end{minted}
+% \end{listing}

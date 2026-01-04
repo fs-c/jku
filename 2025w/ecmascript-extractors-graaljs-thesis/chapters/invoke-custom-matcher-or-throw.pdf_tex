@@ -1,0 +1,100 @@
+%% Creator: Inkscape 1.4.2 (f4327f4, 2025-05-13), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'invoke-custom-matcher-or-throw.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{567.75bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.45046235)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.25891678,0.39630119){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline[fontsize=\Large]{js}{const}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.45046235,0.39630119){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline[fontsize=\Large]{js}{=}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.4993395,0.39630119){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline[fontsize=\Large]{js}{x}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.53632761,0.39630119){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline[fontsize=\Large]{js}{;}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.34214003,0.39630119){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline[fontsize=\Large]{js}{Foo}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.26287979,0.33883752){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}not an Object\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.12417437,0.32496697){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline{js}{TypeError}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.34247028,0.25891678){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline{js}{f = Foo[Symbol.customMatcher]}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=9]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.27608983,0.20673712){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}undefined\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=10]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.16380449,0.19286658){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline{js}{TypeError}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=11]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.41875826,0.12681638){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline{js}{result = f.apply(Foo, x)}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=12]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.34214003,0.08784676){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}not an Object\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=13]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.21664465,0.07397622){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline{js}{TypeError}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=14]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.41149273,0.00792602){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}return iterator over \mintinline{js}{result}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=15]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.68119814,0.20211361){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}equivalent to \mintinline{js}{f(x)} with \end{tabular}}}}%
+    \put(0.67899604,0.18361955){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline{js}{Foo} as the \mintinline{js}{this} value\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=16]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.7010132,0.08322325){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}for consistency with e.g. \end{tabular}}}}%
+    \put(0.6988111,0.06472919){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}array destructuring etc.\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=17]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.55614267,0.36195509){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\mintinline{js}|const Foo = |\EscVerb{\{}\end{tabular}}}}%
+    \put(0.55614267,0.34346103){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\mintinline{js}|    [Symbol.customMatcher](subject) |\EscVerb{\{}\end{tabular}}}}%
+    \put(0.55614267,0.32496697){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\mintinline{js}|        // ...|\end{tabular}}}}%
+    \put(0.55614267,0.30647292){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\mintinline{js}|    |\EscVerb{\}}\end{tabular}}}}%
+    \put(0.55614267,0.28797886){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\mintinline{js}||\EscVerb{\}}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=18]{invoke-custom-matcher-or-throw.pdf}}%
+    \put(0.4015852,0.39630119){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\mintinline[fontsize=\Large]{js}{(y)}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=19]{invoke-custom-matcher-or-throw.pdf}}%
+  \end{picture}%
+\endgroup%

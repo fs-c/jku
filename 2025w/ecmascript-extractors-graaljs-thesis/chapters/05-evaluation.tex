@@ -7,7 +7,7 @@ Since the official ECMAScript conformance suite did not cover the Extractors pro
 \section{Test Suite Extension}
 \label{sec:evaluation-test-suite-extension}
 
-The Extractors tests primarily consist of 7 distinct test files, comprising more than 100 test blocks with over 300 individual assertions. The testing strategy was designed to isolate distinct layers of the implementation: parsing (syntax), resolution (identifiers and scopes), and execution (matcher invocation and iterator protocol).
+The Extractors tests primarily consist of 7 distinct test files, comprising more than 100 test blocks with over 300 individual assertions. The goal of splitting the tests into separate groups as files is to isolate and test distinct layers of the implementation: parsing (syntax), resolution (identifiers and scopes), and execution (matcher invocation and iterator protocol).
 
 \paragraph{Parser Verification} (\texttt{syntactic-validity.js})
 Verifies the acceptance of Extractors in all valid pattern contexts, including \mintinline{js}|for-await-of| loops, \mintinline{js}|catch| clauses, and recursive compositions (e.g., \mintinline{js}|Pair(Pair(...))|). Negative testing is implemented via \mintinline{js}|eval| to ensure strict rejection in expression positions—such as template literals, \mintinline{js}|typeof| operands, and \mintinline{js}|new| expressions---preventing \enquote{grammar drift} ($\sim$74 assertions).
@@ -32,7 +32,7 @@ It verifies that cleanup is triggered during partial consumption, empty patterns
 \paragraph{Negative Paths} (\texttt{error-handling.js})
 Validates error propagation and side-effect ordering. Specifically, it confirms that assigning to a standard function call triggers a \mintinline{js}|ReferenceError| only after the function execution (preserving side effects) and validates \mintinline{js}|TypeError| generation for invalid matcher returns ($\sim$11 assertions).
 
-\paragraph{Specification README} As part of informally explaining Extractors, the README of the Extractors proposal repository contains a number of examples (some of which were already presented in slightly modified form, e.g.~\zcref{lst:map-extractor, lst:regexp-extractor}). While most of the previously mentioned tests rely on the author's understanding of the specification to establish correctness, these examples provide a more authoritative view\footnote{It must be noted that at the time of writing many of the examples in the README are in fact subtly wrong. These discrepancies were identified by the author in \url{https://github.com/tc39/proposal-extractors/issues/32} (accessed December 2025) and have been acknowledged by committee members as incorrect.}. We identified three such complete examples and included them in the test suite.
+\paragraph{Specification README} As part of informally explaining Extractors, the README of the Extractors proposal repository contains a number of examples. While most of the previously mentioned tests rely on the author's understanding of the specification to establish correctness, these examples provide a more authoritative view\footnote{It must be noted that at the time of writing many of the examples in the README are in fact subtly wrong. These discrepancies were identified by the author in \url{https://github.com/tc39/proposal-extractors/issues/32} (accessed December 2025) and have been acknowledged by committee members as incorrect.}. We identified three such complete examples and included them in the test suite.
 
 \section{Selected Found Defects}
 \label{sec:evaluation-selected-found-defects}
@@ -46,53 +46,59 @@ Since that node is stateful (advancing the underlying iterator), this caused the
 \paragraph{Extractor Bindings Scoping}
 Variables declared within an Extractor pattern were incorrectly visible in the enclosing scope, violating block-scoping rules. For example, in a statement like \mintinline{js}|const Foo(x) = y|, the variable \mintinline{js}|x| should be strictly scoped to the block. However, initial versions of the implementation allowed \mintinline{js}|x| to leak, being accessible in enclosing scopes.
 
-The root cause was that the Extractor parsing logic initially bypassed the standard binding registration process. It failed to register the extracted identifiers as new declarations in the parser's symbol table (skipping the internal \mintinline{java}|declareVar| method). Consequently, these identifiers were treated as references to existing variables rather than new bindings. The issue was resolved by unifying the logic, handling both standard destructuring patterns and Extractors the same way in this regard.
+The root cause was that the Extractor parsing logic initially bypassed the standard binding registration process. It failed to register the extracted identifiers as new declarations in the parser's symbol table (skipping the internal method, \mintinline{java}|declareVar|, responsible for this). Consequently, these identifiers were treated as references to existing variables rather than new bindings. The issue was resolved by unifying the logic, handling both standard destructuring patterns and Extractors the same way, ensuring that they behave the same in this regard.
 
 \section{Considerations on Completeness and Correctness}
 \label{sec:evaluation-considerations-on-completeness-and-correctness}
 
-As the Extractors proposal is currently at Stage 1, there is no official specification conformance test suite (Test262) available to verify the implementation. Consequently, the correctness of this implementation relies heavily on the author's interpretation of the draft specification, particularly the informal functional requirements outlined in \zcref{sec:extractors-core-specification-semantics}. Additionally, it is important to note that proposals at this stage may still contain ambiguities or under-specified behaviors (some instances of this were already discussed prior); in such cases and in general, the tests (and requirements) reflect a best-effort alignment with the perceived intent of the proposal.
+As the Extractors proposal is currently at Stage 1, there is no official specification conformance test suite (Test262) available to verify the implementation. Consequently, the correctness of this implementation relies heavily on the author's interpretation of the draft specification, particularly the informal functional requirements outlined in \zcref{sec:extractors-core-specification-semantics}. Additionally, it is important to note that proposals at this stage may still contain ambiguities or under-specified behaviors (some instances of this were already discussed prior); in such cases and in general, the tests and requirements reflect a best-effort alignment with the perceived intent of the proposal.
 
-The test suite described in this chapter was thus constructed using a two-fold approach designed to ensure functional coverage without the overhead of e.g.~formal verification methods. We want to emphasize that this does not attempt to be a comprehensive test suite, but rather a pragmatic approach to ensure that the implementation is correct and complete in regards to the functional requirements we outlined previously.
+The test suite described in this chapter was thus constructed using a two-fold approach designed to ensure functional coverage without the overhead of e.g.~formal verification methods. This does not attempt to be a comprehensive test suite, but rather a pragmatic approach to ensure that the implementation is correct and complete in regards to the functional requirements we outlined previously.
 
-\paragraph{Requirement-Driven Tests} The primary source for test cases was the set of functional requirements derived in \zcref{sec:extractors-core-specification-semantics}. We systematically translated each of these requirements into (usually multiple) concrete test scenarios.
+\paragraph{Requirement-Driven Tests} The primary source for test cases was the set of functional requirements derived in \zcref{sec:extractors-core-specification-semantics}. We translated each of these requirements into (usually multiple) concrete test scenarios.
 
-For example, the requirement that \enquote{Extractors must be valid as function parameters} expands to roughly 100 lines of tests, see \zcref{lst:evaluation-function-params-tests} for a selection.
+For example, the requirement that \enquote{Extractors must be valid as function parameters} expands to roughly 100 lines of tests. See \zcref{lst:evaluation-function-params-tests} for a selection that demonstrates the kind of tests that are used.
 
 \paragraph{Iterative Development} In addition to the requirements-based tests, the suite was expanded iteratively as part of a Test-Driven Development process. As individual components were implemented (such as the parser modifications or the runtime code), ad-hoc tests were written to immediately verify their behavior. This was in particular based on the selection of examples provided in the proposal README.
 
 \begin{listing}[htbp]
-    \caption{Selection of test cases for the requirement that \enquote{Extractors must be valid as function parameters}. Explanatory comments and braces for scoping left out for brevity. Note that this is an incomplete excerpt.\label{lst:evaluation-function-params-tests}}
+    \caption{Selection of test cases for the requirement that \enquote{Extractors must be valid as function parameters}. Note that this is an incomplete excerpt.\label{lst:evaluation-function-params-tests}}
     \begin{minted}[autogobble]{js}
-        function declFunc(Pair(x, y)) {
-            return x + y;
-        }
-        const result = declFunc(new Pair(5, 6));
-        assertSame(11, result);
-
-        const exprFunc = function(Pair(x, y)) {
-            return x * y;
-        };
-        const result = exprFunc(new Pair(7, 8));
-        assertSame(56, result);
-
-        const arrowFunc = (Pair(x, y)) => x - y;
-        const result = arrowFunc(new Pair(10, 3));
-        assertSame(7, result);
-
-        class Calculator {
-            add(Pair(x, y)) {
+        {
+            function declFunc(Pair(x, y)) {
                 return x + y;
             }
-
-            static multiply(Pair(x, y)) {
-                return x * y;
-            }
+            const result = declFunc(new Pair(5, 6));
+            assertSame(11, result);
         }
-        const calc = new Calculator();
-        assertSame(15, calc.add(new Pair(7, 8)));
-        assertSame(42, Calculator.multiply(new Pair(6, 7)));
+
+        {
+            const exprFunc = function(Pair(x, y)) {
+                return x * y;
+            };
+            const result = exprFunc(new Pair(7, 8));
+            assertSame(56, result);
+        }
+
+        {
+            const arrowFunc = (Pair(x, y)) => x - y;
+            const result = arrowFunc(new Pair(10, 3));
+            assertSame(7, result);
+        }
         
         /* ... */
     \end{minted}
 \end{listing}
+
+% class Calculator {
+%     add(Pair(x, y)) {
+%         return x + y;
+%     }
+
+%     static multiply(Pair(x, y)) {
+%         return x * y;
+%     }
+% }
+% const calc = new Calculator();
+% assertSame(15, calc.add(new Pair(7, 8)));
+% assertSame(42, Calculator.multiply(new Pair(6, 7)));

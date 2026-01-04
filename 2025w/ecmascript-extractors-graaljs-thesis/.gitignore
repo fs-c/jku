@@ -25,6 +25,7 @@
 *.xdv
 .~*#
 *~
+*.lol
 /main.pdf
 /main-*.pdf
 

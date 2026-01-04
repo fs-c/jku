@@ -2,38 +2,115 @@
 \chapter{Introduction}
 \label{ch:introduction}
 
-This thesis presents the design, implementation, and evaluation of the ECMAScript Extractors proposal~\cite{tc39extractors} within GraalJS, a high-performance, Java-based ECMAScript engine\footnotemark{}. This proposal aims to bridge the gap between object construction and destruction by introducing user-defined logic into the destructuring process. It defines a symmetric \enquote{un-constructor} mechanism via a new well-known symbol, \mintinline{js}|Symbol.customMatcher|, allowing for destructuring patterns that mirror construction as illustrated in \zcref{lst:minimal-intro-example}.
+ECMAScript currently supports destructuring for arrays and objects. The syntax used to create array and object literals mirrors the syntax used to decompose them:
 
-\footnotetext{The source code for this thesis is available at \url{https://github.com/fs-c/graaljs/tree/lw/extractors}, with associated Pull Request into the upstream repository at \url{https://github.com/oracle/graaljs/pull/924}.}
+\begin{description}
+    \item[Arrays] Construction uses an ordered list of values; destructuring retrieves them by position.
+    \begin{simplecode}[js]
+        const arr = [1, 2];         // Construction
+        const [x, y] = arr;         // Destructuring (x = 1, y = 2)
+    \end{simplecode}
+    \item[Objects] Construction uses named properties; destructuring retrieves them by name.
+    \begin{simplecode}[js]
+        const obj = { a: 1, b: 2 }; // Construction
+        const { a, b } = obj;       // Destructuring (a = 1, b = 2)
+    \end{simplecode}
+\end{description}
+
+But this symmetry does not consistently extend to user-defined classes and more complex objects in general. While a class constructor defines a clear path for instance creation, there is no counterpart for instance destructuring. Without making assumptions about the internal structure of classes, existing destructuring patterns can't be used. For example, a class exposing values only through methods makes straightforward destructuring impossible.
+
+The Extractors proposal adds a third destructuring pattern, introducing the possibility of invoking user-defined logic as part of the destructuring process. For example, this enables a class to declare an inverse operation to its constructor, to be invoked during destructuring. Consider the class in \zcref{lst:minimal-intro-example}, using a hypothetical \mintinline{js}|extractor| method to illustrate the concept\footnotemark{}. By defining how the object should be \enquote{unpacked}, the class is valid in this new destructuring pattern and we call it an \enquote{Extractor}. Both directions of data flow are now supported:
+\begin{simplecode}[js]
+    const point = new Point(13, 37); // Construction
+    const Point(x, y) = point;       // Destructuring (x = 13, y = 37)
+\end{simplecode}
+The return value of the object's extraction logic (the \mintinline{js}|extractor| method in \zcref{lst:minimal-intro-example}) is used as part of the destructuring process, as opposed to the object itself.
+
+\footnotetext{Note that this class is simplified for clarity and differs from the proposal in how the extractor method is defined in detail. See \zcref{lst:minimal-intro-example-fixed} for an adjusted version.}
 
 \begin{listing}[htbp]
-    \caption{Minimal showcase of the Extractors proposal, demonstrating the symmetry between construction and destruction.\label{lst:minimal-intro-example}}
-    \begin{minted}[highlightlines={9-11, 15}]{js}
-class Point {
-    _x;
-    _y;
-    constructor(x, y) {
-        this._x = x;
-        this._y = y;
-    }
+    \caption{Class with an \mintinline{js}{extractor} instance method, which \enquote{reverses} the constructor.\label{lst:minimal-intro-example}}
+    \begin{minted}[autogobble, highlightlines={9-11}]{js}
+        class Point {
+            #x; #y; // # prefix denotes private fields
 
-    static [Symbol.customMatcher](subject) {
-        return [subject._x, subject._y] : ;
-    }
-}
+            constructor(x, y) {
+                this.#x = x;
+                this.#y = y;
+            }
 
-const p = new Point(1, 2); // Construction
-const Point(x, y) = p; // Extraction (calls Point[Symbol.customMatcher](p))
-x; // 1
-y; // 2
+            extractor() {
+                return [this.#x, this.#y];
+            }
+        }
     \end{minted}
 \end{listing}
 
-The primary contribution of this work is a functional, experimental implementation of the proposal within the GraalJS engine. The technical work encompasses the entire interpreter's pipeline: from modifying the parser to resolve syntactic ambiguities between Extractors and function calls, to implementing the runtime AST transformations and the \mintinline{js}|InvokeCustomMatcherOrThrow| abstract operation. To ensure correctness in the absence of an official conformance suite, we also developed a targeted test suite based on functional requirements derived from the draft specification.
+% \begin{simplecode}[js]
+%     // Array
+%     const arr = [1, 2];         // Construction
+%     const [x, y] = arr;         // Destructuring (x = 1, y = 2)
+%     // Object
+%     const obj = { a: 1, b: 2 }; // Construction
+%     const { a, b } = obj;       // Destructuring (a = 1, b = 2)
+% \end{simplecode}
+
+
+% 1. js right now has array and object destructuring
+%       . constructing arrays/objects with literals has a clear destructuring path (const arr = [1, 2, 3]; const [x, y, z] = arr;, etc.)
+%       . but for more complex objects this kind of destructuring symmetry isn't always achievable (classes may have private fields, want to 
+%         hide their internal structure, etc.). e.g. const point = new Point(13, 37); without making assumptions about Point we can't use 
+%         existing dsetructuring patterns (we could try const { x, y } = point; but that assumes that Point has public fields x and y. similar 
+%         story when trying other names or using array destructuring.)
+%       . the Extractors proposal allows executing user-defined logic during destructuring as part of a new destructuring pattern, which closes 
+%         this gap. developers can attach a function [Symbol.customMatcher] 
+
+%. destructuring is useful: (1) more concise alternative to direct access (const x = arr[0], y = arr[1], ... vs. ...) and also (2) 
+%         can be used in locations that "receive data" (such as the left hand side of an assignment, a function parameter, etc.) which makes 
+%         it flexible. e.g. compare `function f(arr) { const x = arr[0]; ... }` with `function f([x]) { ... }`
+
+% This thesis presents the design, implementation, and evaluation of the ECMAScript Extractors proposal~\cite{tc39extractors} within GraalJS, a high-performance, Java-based ECMAScript engine\footnotemark{}. This proposal aims to bridge the gap between object construction and destruction by introducing user-defined logic into the destructuring process. It defines a symmetric \enquote{un-constructor} mechanism via a new well-known symbol, \mintinline{js}|Symbol.customMatcher|, allowing for destructuring patterns that mirror construction as illustrated in \zcref{lst:minimal-intro-example}.
+
+% \footnotetext{The source code for this thesis is available at \url{https://github.com/fs-c/graaljs/tree/lw/extractors}, with associated Pull Request into the upstream repository at \url{https://github.com/oracle/graaljs/pull/924}.}
+
+% \begin{listing}[htbp]
+%     \caption{Minimal showcase of the Extractors proposal, demonstrating the symmetry between construction and destruction.\label{lst:minimal-intro-example}}
+%     \begin{minted}[highlightlines={9-11, 15}]{js}
+% class Point {
+%     _x;
+%     _y;
+%     constructor(x, y) {
+%         this._x = x;
+%         this._y = y;
+%     }
+
+%     static [Symbol.customMatcher](subject) {
+%         return [subject._x, subject._y];
+%     }
+% }
+
+% const p = new Point(1, 2); // Construction
+% const Point(x, y) = p; // Extraction (calls Point[Symbol.customMatcher](p))
+% x; // 1
+% y; // 2
+%     \end{minted}
+% \end{listing}
 
 At the time of writing, the Extractors proposal is at Stage 1 of the TC39 standardization process. Production engines typically delay implementation until the specification stabilizes at Stage 2 or 3~\cite{tc39process}, since proposals may change significantly in the early stages. However, we felt that the proposal's core semantics have stabilized sufficiently to warrant an initial, experimental implementation. Even if changes may make adaptations necessary, the produced work should still remain useful as a basis to build on.
 
-The remainder of this thesis is structured to guide the reader from the theoretical foundations to the practical realization of the feature.\@ \zcref[S]{ch:background} (\nameref{ch:background}) establishes the necessary context regarding the TC39 standardization process and the architecture of the GraalJS engine.~\zcref[S]{ch:extractors-proposal} (\nameref{ch:extractors-proposal}) details the proposal itself, discussing the motivation for the feature and its relation to the broader ecosystem.~\zcref[S]{ch:implementation} (\nameref{ch:implementation}) documents the technical challenges encountered in parsing and executing Extractors, while \zcref{ch:evaluation} (\nameref{ch:evaluation}) describes the testing methodology and highlights specific defects discovered during development. Finally, \zcref{ch:conclusion} (\nameref{ch:conclusion}) summarizes the findings and offers an outlook on future work required as the proposal matures.
+The primary contribution of this work is a functional, experimental implementation of the proposal within the GraalJS engine~\cite{graaljsengine}. GraalJS is built on the Truffle framework~\cite{truffleframework}, which allows defining AST interpreters and provides a DSL to simplify the specialization of AST nodes. It is based on GraalVM~\cite{graalvm}, which enables JIT-compilation of guest languages, such as JavaScript in this case.
+
+The GraalJS pipeline from source code to execution is shown in \zcref{fig:graaljs-pipeline}. GraalJS uses two ASTs, at two levels of abstraction: One at the language level (concerned with syntax) and one at the runtime level (concerned with behavior at runtime). When GraalJS is given a JavaScript source file, it is first transformed by the parser into an AST, closely matching the input syntax. This AST is then translated into an AST of Truffle nodes, which represent actual runtime behavior. These nodes recursively execute each other; executing the root node initiates script execution.
+
+\begin{figure}[htbp]
+    \centering
+    \makebox[0pt]{\input{../content/graaljs-structure.pdf_tex}}
+    \caption{GraalJS pipeline from source code to execution, with two edge nodes representing notable data structures in the process.\label{fig:graaljs-pipeline}}
+\end{figure}
+
+The technical work in implementing the proposal encompasses this entire GraalJS pipeline: From modifying the parser to resolve syntactic ambiguities between Extractors and function calls, to implementing the AST transformations into special Truffle nodes, and implementing the runtime behavior of the new destructuring pattern. To ensure correctness in the absence of an official conformance suite, we also developed a targeted test suite based on functional requirements derived from the draft specification.
+
+The remainder of this thesis is structured to guide the reader from the theoretical foundations to the practical realization of the feature.\@ \zcref[S]{ch:background} establishes the necessary context regarding JavaScript, the TC39 standardization process, and the architecture of the GraalJS engine.~\zcref[S]{ch:extractors-proposal} details the proposal itself, discussing the motivation for the feature and deriving functional requirements that an implementation should fulfill.~\zcref[S]{ch:implementation} documents the technical challenges encountered in parsing and executing Extractors, while \zcref[S]{ch:evaluation} describes the testing methodology and highlights specific defects discovered during development. Finally, \zcref[S]{ch:conclusion} summarizes the findings and offers an outlook on future work required as the proposal matures.
 
 \paragraph{AI Usage Declaration}
 

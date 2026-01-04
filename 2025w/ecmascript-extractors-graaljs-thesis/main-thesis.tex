@@ -166,6 +166,8 @@
 
 \usepackage{nameref}
 
+\usepackage{fvextra}
+
 % this should be loaded as late as possible
 \usepackage{zref-clever}
 
@@ -179,6 +181,13 @@
   {\endminted}
 
 \SetupFloatingEnvironment{listing}{placement=htp}
+
+\zcsetup{
+    cap = true
+}
+
+\AddToHook{env/minted/begin}{\zcsetup{currentcounter=FancyVerbLine}}
+\zcsetup{countertype={FancyVerbLine=line}}
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

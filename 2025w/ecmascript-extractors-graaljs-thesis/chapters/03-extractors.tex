@@ -2,7 +2,46 @@
 \chapter{Extractors}
 \label{ch:extractors-proposal}
 
-This chapter presents the ECMAScript Extractors proposal, detailing its goals, syntax, and semantics. We begin by discussing the motivation behind the proposal in \zcref{sec:extractors-motivation}, focusing on the need for symmetric data construction and destruction. We then situate the proposal within the broader ECMAScript ecosystem in \zcref{sec:ecosystem-and-related-proposals}, highlighting its synergies with other pending proposals such as Pattern Matching, and with selected built-in data structures. Following this, we lay the groundwork for the implementation by elaborating on the core specification and semantics in \zcref{sec:extractors-core-specification-semantics}, laying out the functional requirements we will also later use in the evaluation phase. Finally, we review prior art of comparable features in other programming languages in \zcref{sec:extractors-prior-art}.
+As introduced in \zcref{ch:introduction}, the Extractors proposal adds a new kind of destructuring form alongside array and object destructuring. 
+\begin{simplecode}[js]
+    const [y] = [x];        // Array destructuring
+    const { y } = { x };    // Object destructuring
+    const Foo(y) = x;       // Extractors
+\end{simplecode}
+
+Any object is considered an Extractor, viable for usage in this new pattern, if it has a certain method that describes how it should be extracted. An example of such an object was given in the form of a class in \zcref{lst:minimal-intro-example}. But this example class was simplified in two important ways:
+
+\begin{itemize}
+    \item The actual proposed method name is \mintinline{js}|Symbol.customMatcher|, as opposed to \mintinline{js}|extractor|, a new well-known Symbol introduced as part of the proposal.
+    \item The \mintinline{js}|extractor| method was an instance method. In the actual proposal the Extractor itself needs to have the method; i.e.~if the class itself should be usable as an Extractor, as opposed to instances of it, the method needs to be static.
+\end{itemize}
+
+A version of this example where these simplifications were undone, i.e.~one which follows the proposal exactly, can be seen in \zcref{lst:minimal-intro-example-fixed}\footnotemark{}.
+
+\footnotetext{Note that a computed property name is necessesary to define a property name as a Symbol; see \zcref{sec:background-javascript-details}.}
+
+\begin{listing}[htbp]
+    \caption{Adjusted version of \zcref{lst:minimal-intro-example}, using the proposed method name and making it static.\label{lst:minimal-intro-example-fixed}}
+    \begin{minted}[autogobble, highlightlines={9-11}]{js}
+        class Point {
+            #x; #y; // # prefix denotes private fields
+
+            constructor(x, y) {
+                this.#x = x;
+                this.#y = y;
+            }
+
+            static [Symbol.customMatcher](subject) {
+                return [subject.#x, subject.#y];
+            }
+        }
+
+        const point = new Point(13, 37);
+        const Point(x, y) = point; // calls Point[Symbol.customMatcher](point)
+    \end{minted}
+\end{listing}
+
+This chapter goes into more detail on this proposals goals, syntax, and semantics. We begin by discussing the motivation behind the proposal in \zcref{sec:extractors-motivation}. Following this, we lay the groundwork for the implementation by elaborating on the core specification and semantics in \zcref{sec:extractors-core-specification-semantics}, laying out the functional requirements we will also later use in the evaluation phase. 
 
 \section{Motivation\label{sec:extractors-motivation}}
 
@@ -15,232 +54,66 @@ Consider the case where a point is given in the form of a plain JavaScript Objec
     const { x, y } = simplePoint; // x === 13, y === 37
 \end{simplecode}
 
-But if points are given in the form of an opaque class where e.g.~we don't want to expose internal property names, destructuring is no longer possible.
+But if points are given in the form of a class where e.g.~property values are private, destructuring is no longer possible
 
 \begin{simplecode}[js]
-    const opaquePoint = new Point(13, 37);
-    const { x, y } = opaquePoint; // x, y === undefined
+    const point = new Point(13, 37);
+    const { x, y } = point; // x, y === undefined
 \end{simplecode}
 
 The \mintinline{js}|Point| class could define a view method to keep its internals opaque but still allow access in this context, which can then be used for array destructuring.
 
 \begin{simplecode}[js]
-    const opaquePoint = new Point(13, 37);
+    const point = new Point(13, 37);
     // assume that this returns an array [x, y]
-    const [x, y] = opaquePoint.components();
+    const [x, y] = point.components();
 \end{simplecode}
 
-But this is not as powerful because, unlike destructuring, this is not valid in all binding situations. For example, while with our plain point we could do destructuring in function parameters, this is not possible with a view method.
+But this is not as powerful because it is not valid in all binding situations, unlike destructuring. For example, while the plain point object permitted destructuring in function parameters, this is not possible with a view method.
 
 \begin{simplecode}[js]
     function f({ x, y }) { /* ... */ }
-    function f(opaquePoint.components()) { /* ... */ } // Error!
+    function f(point.components()) { /* ... */ } // Error!
 \end{simplecode}
 
-The closest we could get with our view method on the opaque \mintinline{js}|Point| class would either:
+The closest one could get with such a view method on the opaque \mintinline{js}|Point| class would either:
 
 \begin{itemize}
     \item require polluting the function body with parameter-handling logic:
     \begin{simplecode}[js]
-        function f(opaquePoint) {
-            const [x, y] = opaquePoint.components();
+        function f(point) {
+            const [x, y] = point.components();
             // ...
         }
     \end{simplecode}
     \item or, require misusing default parameters:
     \begin{simplecode}[js]
-        function f(opaquePoint, [x, y] = opaquePoint.components()) {
+        function f(point, [x, y] = point.components()) {
             // ...
         }
-        f(opaquePoint); // Or explicitly: f(opaquePoint, undefined);
+        f(point); // Equivalent to f(point, undefined);
     \end{simplecode}
-    This would work by accepting a second parameter, which callers should always leave undefined. In that case the default logic will always call the function we need.
+    This would work by accepting a second parameter, which callers should always leave undefined. In that case the default value for that parameter will always be evaluated, 
 \end{itemize}
 
-The proposal addresses this by introducing a mechanism to allow developers to define a special method on arbitrary objects, the result of which will be used for destructuring. Thus, as shown in the introduction in \zcref{lst:minimal-intro-example}, with the addition of this method we can write
+The proposal addresses this by introducing a mechanism to allow developers to define a special method on arbitrary objects, the result of which will be used for destructuring. With the addition of this method we can write
 
 \begin{simplecode}[js]
     function f(Point(x, y)) { /* ... */ }
 \end{simplecode}
 
-which is just as expressive as destructuring of plain objects, but backed by user-defined logic. With this addition, the proposal allows for:
+which is just as expressive as destructuring of plain objects, but backed by user-defined logic. With this addition, the proposal allows for \enquote{destructuring-time}:
 \begin{itemize}
     \item Validation, through the ability to verify that a subject (the object being destructured) conforms to arbitrary constraints before attempting extraction.
     \item Transformation, by giving the capacity to convert complex objects (e.g., a custom class) into primitive representations (usually the constructor arguments) seamlessly during binding or assignment.
     \item Encapsulation, enabling \enquote{views} into an object's state without exposing its internal storage layout, even in contexts where a regular method call would not be syntactically valid.
 \end{itemize}
 
-% While we generally consider the primary motivation for ECMAScript Extractors to be user-defined destructuring (see e.g.~the introductory example in \zcref{lst:minimal-intro-example}), there are other use-cases which focus less on the natural symmetry between construction and destruction. One such example is ergonomic run-time type validation and user-defined type coercion\footnotemark{}, as demonstrated in \zcref{lst:runtime-type-validation-example}.   made possible because developers are free to define Extractors that do not necessarily follow this symmetry.  Simply adding a \mintinline{js}{Symbol.customMatcher} property to any object makes it an Extractor, allowing for arbitrary deconstruction logic on objects that are essentially just intermediaries for the sole purpose of being used in such patterns.
-
-% \footnotetext{See \url{https://github.com/tc39/proposal-extractors/issues/20} (accessed December 2025) for discussion on this use-case. Note that this was first mentioned in the context of the now inactive Type Annotations proposal~\cite{tc39typeannotations}. In that context, it was part of the reasoning for that proposals avoidance of introducing runtime semantics in regards to typing.}
-
-% \begin{listing}[htbp]
-%     \caption{Demonstration of an \mintinline{js}{Integer} Extractor used for runtime validation and coercion.\label{lst:runtime-type-validation-example}}
-%     \begin{minted}[escapeinside=!!, highlightlines={11, 21}]{js}
-%         const Integer = {
-%             [Symbol.customMatcher](value) {
-%                 const num = Number(value);
-%                 if (Number.isInteger(num)) {
-%                     return [num];
-%                 }
-%                 return false;
-%             }
-%         };
-
-%         export function consumeUntrustedInput(Integer(x)) { !\label{line:runtime-type-validation-example-consume-untrusted-input}!
-%             // we have guarantees about x now, without having to pollute the function body
-%         }
-
-%         consumeUntrustedInput(1);
-%         consumeUntrustedInput("1");
-%         consumeUntrustedInput(1.1);    // TypeError
-%         consumeUntrustedInput({});     // TypeError
-
-%         // or equivalently when receiving untrusted input
-%         const Integer(z) = ExternalAPI.getIntegerProbably(); !\label{line:runtime-type-validation-example-external-api-call}!
-%     \end{minted}
-% \end{listing}
-
-% \section{Ecosystem \& Related Proposals\label{sec:ecosystem-and-related-proposals}}
-
-% The Extractors proposal is part of the broader ECMAScript ecosystem, and as such is closely related to other pending proposals such as the Pattern Matching proposal and the Discard Binding proposal. We will discuss each of these in turn, in \zcref{sec:ecosystem-and-related-proposals-pattern-matching} and \zcref{sec:ecosystem-and-related-proposals-discard-binding} respectively. Finally, as part of considering this ecosystem, we will also provide examples of how the proposal could be used to improve the ergonomics of built-in data structures such as \mintinline{js}|Map| and \mintinline{js}|Set| in \zcref{sec:improved-ergonomics-for-built-ins}.
-
-% \subsection{Pattern Matching Proposal\label{sec:ecosystem-and-related-proposals-pattern-matching}}
-
-% The Pattern Matching proposal~\cite{tc39patternmatching} has the goal of generalizing conditional branching based on the structure and content of data. In particular, currently ECMAScript relies on the \mintinline{js}|switch| statement, which is limited to strict equality checks, or chains of \mintinline{js}|if|/\mintinline{js}|else| blocks. These can become verbose and difficult to read when handling complex data structures. The proposal introduces a \mintinline{js}|match| construct that allows developers to test values against patterns---including object shapes, array contents, logical conditions---in a concise and declarative manner.
-
-% Consider the example of a network request handler in \zcref{lst:pattern-matching-example}, which demonstrates the ergonomics of structural matching, particularly when combined with bindings as part of the patterns.
-
-% \begin{listing}[htbp]
-%     \caption{Demonstrating the ergonomics of structural matching, showing how \mintinline{js}{match} could allow validating the shape of data (e.g., \mintinline{js}{status: 200}) combined with extraction of values into variables (as happens e.g. for the request body in the first \mintinline{js}{when}-clause).\label{lst:pattern-matching-example}}
-%     \begin{minted}{js}
-% match (res) {
-%     when { status: 200, let body, ...let rest }: 
-%         handleData(body, rest);
-    
-%     when { const status, destination: let url } and if (300 <= status && status < 400):
-%         handleRedirect(url);
-    
-%     when { status: 500 } and if (!this.hasRetried): do {
-%         retry(req);
-%         this.hasRetried = true;
-%     };
-  
-%     default: 
-%         throwSomething();
-% }
-%     \end{minted}
-% \end{listing}
-
-% But the Pattern Matching proposal has especially strong ties to the Extractors proposal because it already contains some of its syntax and semantics. In particular, it would already allow for expressions as in \zcref{lst:pattern-matching-example-extractors}, where the \mintinline{js}|when| clause contains a syntactic construct very similar to the Extractor proposal's syntax, with some differences. Notably, the binding semantics need to be handled differently: the \mintinline{js}|when| clause isn't part of a binding pattern, so clarifying intent (just matching or also binding) needs to be done explicitly with \mintinline{js}|let|/\mintinline{js}|const| inside the pattern.
-
-% \begin{listing}[htbp]
-%     \caption{Augmenting \zcref{lst:pattern-matching-example} by also using the variation of Extractors introduced by the Pattern Matching proposal.\label{lst:pattern-matching-example-extractors}}
-%     \begin{minted}{js}
-% match (res) {
-%     when Response({ const status, const body, ...const rest }): 
-%         handleData(body, rest);
-    
-%     /* ... */
-% }
-%     \end{minted}
-% \end{listing}
-
-% With the Extractors proposal this would become even more powerful, allowing for nested matchers among other enhancements. In addition, the Extractors proposal may bring with it \mintinline{js}|Symbol.customMatcher|s for built-in objects, from which the Pattern Matching proposal would also benefit.
-
-% \subsection{Discard Binding Proposal\label{sec:ecosystem-and-related-proposals-discard-binding}}
-
-% The Discard Binding Proposal~\cite{tc39discardbinding} introduces the \mintinline{js}|void| keyword as a binding pattern to explicitly ignore values. This is particularly relevant for Extractors which often return multiple values (tuples) where only a subset is needed, see \zcref{lst:discard-binding-example}. This mirrors the \mintinline{js}|_| keyword found e.g.~in Scala and Rust.
-
-% \begin{listing}[htbp]
-%     \caption{Example of explicitly ignoring a value using the \mintinline{js}{void} keyword, as proposed by the Discard Binding proposal.\label{lst:discard-binding-example}}
-%     \begin{minted}{js}
-% // Without `void`
-% const Point(_unused, y) = p; // Linter error: '_unused' is defined but never used
-
-% // With `void` integration
-% const Point(void, y) = p; // Explicitly ignored
-%     \end{minted}
-% \end{listing}
-
-% \subsection{Improved Ergonomics for Built-ins\label{sec:improved-ergonomics-for-built-ins}}
-
-% \paragraph{Map} In many situations, the built-in \mintinline{js}|Map| data type is a better fit to store key-value data than a plain ECMAScript Object. However, one reason they don't see more adoption is their comparatively poor ergonomics, as demonstrated in the following example:
-% \begin{simplecode}[js]
-% const { x, y } = { x: 1, y: 2 };
-% \end{simplecode}
-% But the equivalent is not possible with object destructuring:
-% \begin{simplecode}[js]
-% const { x, y } = new Map([['x', 1], ['y', 2]]); // Error
-% \end{simplecode}
-
-% With an Extractor, this would be easily possible, as demonstrated in \zcref{lst:map-extractor}.
-% \begin{listing}[htbp]
-%     \caption{Example of a custom Extractor for \mintinline{js}{Map} objects, enabling destructuring syntax similar to plain objects. The \mintinline{js}{Symbol.customMatcher} method converts the \mintinline{js}{Map} into a plain object, which can then be destructured using the standard object destructuring syntax.\label{lst:map-extractor}}
-%     \begin{minted}{js}
-% const MapExtractor = {
-%     [Symbol.customMatcher](map) {
-%         const obj = {};
-%         for (const [key, value] of map) {
-%             obj[typeof key === 'symbol' ? key : `${key}`] = value;
-%         }
-%         return [obj];
-%     }
-% }
-
-% const MapExtractor({ x, y }) = new Map([['x', 1], ['y', 2]]);
-%     \end{minted}
-% \end{listing}
-
-% (Note that naturally such a custom matcher function could also be defined on the \mintinline{js}|Map| prototype itself, which would make the ergonomics even better.)
-
-% \paragraph{Set} The situation with \mintinline{js}|Set|s is very similar to that of \mintinline{js}|Map|s: Similarly, \enquote{normal} destructuring does not work, i.e.:
-% \begin{simplecode}[js]
-% const [a, b, c] = [1, 2, 3]
-% const [x, y, z] = new Set([7, 8, 9]); // Error
-% \end{simplecode}
-% But an Extractor (again optionally defined on the prototype itself) could improve the situation, as shown in \zcref{lst:set-extractor}.
-% \begin{listing}[htbp]
-%     \caption{Example of a custom Extractor for \mintinline{js}{Set} objects, analogous to \zcref{lst:map-extractor}. The \mintinline{js}{Symbol.customMatcher} method converts the \mintinline{js}{Set} into an array, enabling array destructuring syntax.\label{lst:set-extractor}}
-%     \begin{minted}{js}
-% const SetExtractor = {
-%     [Symbol.customMatcher](set) {
-%         const arr = /* analogous to above, convert set -> array */;
-%         return [arr];
-%     }
-% }
-
-% const SetExtractor([ x, y, z ]) = new Set([7, 8, 9]);
-%     \end{minted}
-% \end{listing}
-
-% \paragraph{RegExp} Regular expressions are a natural fit for Extractors since they are themselves a mechanism for transforming data, so a very simple relevant Extractor can be quite powerful. To demonstrate the conciseness that the new syntax allows, we chose to patch the \mintinline{js}|Symbol.customMatcher| directly onto the \mintinline{js}|RegExp| prototype in \zcref{lst:regexp-extractor}, although this is functionally not required.
-
-% \begin{listing}[htbp]
-%     \caption{Example of using Extractors with regular expressions. By defining \mintinline{js}{Symbol.customMatcher} on the \mintinline{js}{RegExp} prototype, regular expressions can be used directly in destructuring patterns, extracting matched groups from strings.\label{lst:regexp-extractor}}
-%     % this is extracted into a different file since it breaks syntax highlighting in vscode
-%     \input{../content/regexp-example.tex}
-% \end{listing}
-
-% This demonstrates that a strong use-case for the proposal is simply defining \mintinline{js}|Symbol.customMatcher|s for existing functionality that handles data transformation, allowing for concise and declarative usage.
-
-% % \subsection{Runtime Type-Checking}
-
-% % While the primary motivation for ECMAScript Extractors is generally considered to be user-defined destructuring, there are other use-cases such as declarative runtime type checking. Developers can define Extractors that do not \enquote{extract} in the traditional sense of decomposing an object, but instead only validate the subject against a type (generally the type the extractor is defined on) and then return the subject itself---a \enquote{Pass-Through Extractor}\footnote{See \url{https://github.com/tc39/proposal-extractors/issues/20} (accessed December 2025) for a recent discussion. Note that this was first mentioned in the context of the now inactive Type Annotations proposal~\cite{tc39typeannotations}, as part of the reasoning for that proposal's avoidance of introducing runtime semantics in regards to typing.}.
-
-% % This class of Extractors could be particularly useful on API boundaries, to enforce that functions beyond one's control behave as expected, beyond merely trusting potentially inaccurate or outdated TypeScript definition files or similar.
-
-% % \begin{simplecode}[js]
-% %     // Concisely validating arguments or return values from the "outside world" 
-% %     export function drawLine(Point(p1), Point(p2)) { /* ... */ }
-% %     const Point(p) = SomeExternalModule.getPoint(/* ... */);
-% % \end{simplecode}
-
 \section{Core Specification \& Semantics\label{sec:extractors-core-specification-semantics}}
 
 Given the proposals' early stage in the TC39 process, details in the specification are still subject to change. For this reason, we will outline functional requirements that need to be fulfilled for an implementation of the proposal, rather than overly focusing on formal specification details.
 
-\paragraph{Extractor patterns} Consist of a qualified name and a parenthesized list of elements. The following is a list of functional requirements in regard to this pattern syntax:
+\paragraph{Extractor patterns} First, we will consider the syntactic requirements of Extractors themselves. An Extractor pattern consists of a qualified name and a parenthesized list of elements. The following is a list of functional requirements in regard to this pattern syntax:
 
 \begin{itemize}
     \item The Extractor name may be an identifier reference (optionally specifying \mintinline{text}|this| or \mintinline{text}|super|), a qualified name (like \mintinline{text}|Foo.Bar|) and contain array accesses.
@@ -255,7 +128,7 @@ Given the proposals' early stage in the TC39 process, details in the specificati
         const this.Foo[0].Bar(y) = x;
     \end{simplecode}
 
-    \item The parenthesized list may contain everything that an array destructuring pattern may also contain (specification: \mintinline{text}|BindingElementList| and \mintinline{text}|AssignmentElementList| respectively). In particular this means that for bindings the elements must be simple identifiers, while for identifiers they may e.g.~contain object or array accesses.
+    \item The parenthesized list may contain everything that an array destructuring pattern may also contain (specification: \mintinline{text}|BindingElementList| and \mintinline{text}|AssignmentElementList| respectively), which depends on whether it is a binding or assignment context as described in \zcref{sec:background-javascript-details}. In particular this means that in binding patterns the elements must be simple identifiers, while in assignment patterns they may e.g.~contain object or array accesses.
     \begin{simplecode}[js]
         // Binding
         const Point(x, y) = p;
@@ -269,8 +142,12 @@ Given the proposals' early stage in the TC39 process, details in the specificati
     \begin{simplecode}[js]
         const Line(Point(x1, y1), Point(x2, y2)) = line;
     \end{simplecode}
+\end{itemize}
 
-    \item They must be integrated into the existing assignment and binding patterns such that statements such as
+Next, we will consider requirements around where Extractor patterns are valid. Specifically, they are valid in all binding and assignment patterns (i.e.~in all places where e.g. array destructuring would also be valid). Nevertheless, also because these requirements are later used to ground the evaluation in \zcref{ch:evaluation}, we will formulate more explicit requirements around the integration into existing syntax.
+
+\begin{itemize}
+    \item Extractors must be integrated into the existing assignment and binding patterns such that statements such as
     \begin{simplecode}[js]
         const Foo(y) = x; // Binding
         Foo(y) = x; // Assignment
@@ -314,37 +191,41 @@ Given the proposals' early stage in the TC39 process, details in the specificati
         try { /* ... */ } catch (ErrorExtractor(error)) { /* ... */ }
     \end{simplecode}
 
-    \item But they must in general not be valid outside of assignment (assignment expressions) and binding (variable declarations, function parameters, \ldots) patterns, where they would either be meaningless or invite confusion with regular function calls.
+    \item But they must not be valid outside of assignment (assignment expressions) and binding (variable declarations, function parameters, \ldots) patterns, where they would either be meaningless or invite confusion with regular function calls.
     
     \item Whereas in bindings the \mintinline{js}|x| and \mintinline{js}|y| of \mintinline{js}|const Point(x, y) = p;| must be new variable names, in assignments they may be anything that is valid on the left hand side of other assignments, including e.g.~member expressions (\mintinline{js}|Point(obj.x, this.arr[0]) = p;|);
     
     \item Extractors may appear inside destructuring patterns, but not as a rest element (last line in the following example).
     \begin{simplecode}[js]
-        const [ Point(x, y) ] = listOfPoints;
+        const [Point(x, y)] = listOfPoints;
         const { center: Point(x, y) } = shape;
-        const [ ...Point(x, y) ] = iterable; // Error
+        const [...Point(x, y)] = iterable; // Error
     \end{simplecode}
 \end{itemize}
 
-\paragraph{Extractor runtime semantics} In general, Extractors behave analogously to array destructuring at runtime, both in binding and assignment contexts, where the only major difference is that Extractors need to first transform their input. This is defined in the \mintinline{js}|InvokeCustomMatcherOrThrow(matcher, subject)| Abstract Operation (see the Binding\-Initialization runtime semantics in the specification)\footnotemark{}:
+\paragraph{Extractor runtime semantics} Extractors behave analogously to array destructuring at runtime, both in binding and assignment contexts. The major difference is that array destructuring already starts with an iterable to be destructured (the subject), whereas Extractors need to first transform the subject into an iterable using the user-defined \mintinline{js}|[Symbol.customMatcher]| method.
+
+This transformation is specified in the \mintinline{js}|InvokeCustomMatcherOrThrow(matcher, subject)| Abstract Operation\footnotemark{} (see Binding-Initialization runtime semantics in the specification), an overview of which is given in \zcref{fig:invoke-custom-matcher-or-throw-diagram}. In precise terms, where \mintinline{js}|matcher| is the Extractor, i.e. the \mintinline{js}|Foo| in \mintinline{js}|const Foo(y) = x;|, and \mintinline{js}|subject| the right hand side:
+
+\begin{figure}[htbp]
+    \centering
+    \makebox[0pt]{\input{./invoke-custom-matcher-or-throw.pdf_tex}}
+    \caption{Flowchart of the \mintinline{js}{InvokeCustomMatcherOrThrow} Abstract Operation, where \mintinline{js}{Foo} is an Extractor and \mintinline{js}{x} the subject.\label{fig:invoke-custom-matcher-or-throw-diagram}}
+\end{figure}
 
 \footnotetext{The proposal aligns itself to the Pattern Matching proposal in some ways that are not relevant if the Pattern Matching proposal is not also implemented. For example, \mintinline{text}|InvokeCustomMatcherOrThrow| in fact also takes a third argument, which is only relevant in a Pattern Matching context. While we implemented this to align with the specification, we leave it out here to avoid confusion.}
 
 \begin{enumerate}
-    \setcounter{enumi}{-1}
-    \item (Where \mintinline{js}|matcher| is the Extractor, i.e. the \mintinline{js}|Foo| in \mintinline{js}|const Foo(y) = x;|, and \mintinline{js}|subject| the right hand side, i.e. the \mintinline{js}|x| in the previous example.)
-    \item If \mintinline{js}|matcher| is not an Object, throw a \mintinline{js}|TypeError|
-    \item Let \mintinline{js}|subject| be the value on the right hand side (i.e., the \mintinline{js}|x| in \mintinline{js}|const Foo(y) = x;|)
-    \item Let \mintinline{js}|f| be \mintinline{js}|matcher[Symbol.customMatcher]|\footnotemark; if it is undefined throw a \mintinline{js}|TypeError|
-    \item Let \mintinline{js}|result| be \mintinline{js}|f.apply(matcher, subject)|; if it is not an Object, throw a \mintinline{js}|TypeError|    
+    \item If \mintinline{js}|matcher| is not an Object, throw a \mintinline{js}|TypeError|.
+    \item Let \mintinline{js}|f| be \mintinline{js}|matcher[Symbol.customMatcher]|\footnotemark; if it is undefined throw a \mintinline{js}|TypeError|.
+    \item Let \mintinline{js}|result| be \mintinline{js}|f.apply(matcher, subject)|; if it is not an Object, throw a \mintinline{js}|TypeError|.
     (The \mintinline{js}|apply| method of function instances calls the respective function with the first argument as its \mintinline{js}|this| value, and passes on the remaining arguments.)
-
-    \item Return an iterator for \mintinline{js}|result|
+    \item Return an iterator for \mintinline{js}|result|. (Since array destructuring also works with an iterable as the value to be destructured, this ensures consistency.)
 \end{enumerate}
 
-\footnotetext{Note that JavaScript property accessor syntax is necessesary here; see \zcref{sec:background-javascript-details}.}
+\footnotetext{Note that the bracket property accessor syntax is necessesary here; see \zcref{sec:background-javascript-details}.}
 
-Given this description, an Extractor statement such as
+Given these semantics, an Extractor statement such as
 \begin{simplecode}[js]
     const Foo(y, z) = x;
 \end{simplecode}
@@ -357,7 +238,7 @@ and further, leaving out edge case and error handling and \enquote{inlining} the
     const [y, z] = Foo[Symbol.customMatcher].apply(Foo, x);
 \end{simplecode}
 
-While this reformulation as a function is convenient as a demonstration of the runtime semantics, it should be noted that it cannot cover the entire syntax space of the Extractors proposal. For example, it cannot represent Extractors in binding contexts that are not variable declarations, such as function parameters or the \mintinline{js}{catch} clause.
+But while this reformulation as a function is convenient as a demonstration of the runtime semantics, it should be noted that it cannot cover the entire syntax space of the Extractors proposal. For example, it cannot represent Extractors in binding contexts that are not variable declarations, such as function parameters or the \mintinline{js}{catch} clause.
 
 % \paragraph{InvokeCustomMatcherOrThrow(matcher, subject)} Abstract Operation (see the Binding\-Initialization runtime semantics in the specification)\footnote{The proposal aligns itself to the Pattern Matching proposal in some ways that are not relevant if the Pattern Matching proposal is not also implemented. For example, \mintinline{text}|InvokeCustomMatcherOrThrow| in fact also takes a third argument, which is only relevant in a Pattern Matching context. While we implemented this to align with the specification, we leave it out here and in the binding/assignment semantics description to avoid confusion.}
 % \begin{enumerate}

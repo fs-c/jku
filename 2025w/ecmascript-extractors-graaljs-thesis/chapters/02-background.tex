@@ -2,7 +2,7 @@
 \chapter{Background}
 \label{ch:background}
 
-This chapter establishes the terminology and technical foundations necessary for understanding the implementation of the Extractors proposal. We first clarify the distinction between the JavaScript language and the ECMAScript standard in \zcref{sec:background-ecmascript-and-javascript}. We then discuss the standardization process in \zcref{sec:background-ecmascript-standardization-process-tc39}, outlining the stages a proposal must traverse before becoming part of the standard. Finally, in \zcref{sec:background-graaljs-truffle-and-the-graal-compiler} we introduce the specific implementation platform used in this thesis: the GraalJS engine, along with relevant background on the Truffle framework and its interaction with the Graal Compiler.
+This chapter establishes the terminology and technical foundations necessary for understanding the implementation of the Extractors proposal. We first clarify the distinction between the JavaScript language and the ECMAScript standard and review some features of modern JavaScript in \zcref{sec:background-ecmascript-and-javascript}. We then discuss the standardization process in \zcref{sec:background-ecmascript-standardization-process-tc39}, outlining the stages a proposal must traverse before becoming part of the standard. Finally, we introduce the specific implementation platform used in this thesis: First Truffle and the Graal Compiler as the basis in \zcref{sec:background-truffle-and-the-graal-compiler}, followed by GraalJS in \zcref{sec:background-graaljs}.
 
 \section{ECMAScript and JavaScript\label{sec:background-ecmascript-and-javascript}}
 
@@ -12,9 +12,9 @@ A distinction needs to be made between the governing standard called ECMAScript 
 
 JavaScript is the dominant programming language of the web by far. As of 2024, it is utilized as a client-side programming language by approximately 98.9\% of all websites\footnote{\url{https://w3techs.com/technologies/details/cp-javascript}, accessed December 2025}. While originally designed for browser-based scripting~\cite{js20years}, the advent of runtimes like Node.js and embeddable engines like GraalJS has expanded its utility to server-side development~\cite{nodemicroservicedeploy23} and embedded devices~\cite{fishtrackigembeddednodejs19}. As such, it is now among the most widely used programming languages in the world\footnote{\url{https://survey.stackoverflow.co/2025/technology}, accessed December 2025, where JavaScript is in the top 3 for all categories of respondents.}.
 
-\subsection{Selected JavaScript Details\label{sec:background-javascript-details}}
+\subsection{Selected JavaScript Features\label{sec:background-javascript-details}}
 
-Since some familiarity with JavaScript is required for later sections, we briefly introduce some special concepts.
+Since some familiarity with JavaScript is required for later sections, a number of specific features of modern JavaScript will be reviewed. While the language shares some syntactic heritage with e.g. C and Java, its dynamic nature has motivated some syntax constructs that may look foreign to developers unfamiliar with the language.
 
 \paragraph{Property Accessor Syntax} The \enquote{traditional} way to access an object's properties is through the dot notation, as may be familiar from e.g.~Java class members.
 \begin{simplecode}[js]
@@ -29,11 +29,11 @@ But another way to access properties is through using the bracket notation, ofte
     o[getPropertyName()] = 2;
 \end{simplecode}
 
-\paragraph{Computed Property Names} Objects are constructed using the object initializer syntax, as in
+\paragraph{Computed Property Names} Objects can be constructed using the object initializer syntax, as in
 \begin{simplecode}[js]
     const o = { a: 1, b: 'b', c: { /* ... */ } };
 \end{simplecode}
-Similarly to the bracket notation when accessing properties, computed property names allow specifying an expression in square brackets in that will be evaluated in place of the property name:
+Similarly to the bracket notation when accessing properties, computed property names allow specifying an expression in square brackets that will be evaluated in place of the property name:
 \begin{simplecode}[js]
     const o = { a: 1, [getPropertyName()]: 'b', ['c']: { /* ... */ } };
     o.b; // 'b'
@@ -63,9 +63,11 @@ Importantly, the left hand side of an assignment may also e.g.~be a property acc
 \end{simplecode}
 While these examples demonstrated binding destructuring, assignment destructuring is also possible, with the same viable assignment targets.
 \begin{simplecode}[js]
-    let x, y = { value: undefined }, z = []
+    let x, y = { value: undefined }, z = [];
     [ x, y.value, z[0] ] = arr;
 \end{simplecode}
+
+(TODO: This now overlaps with the introduction, also it's a bit too terse here.)
 
 \paragraph{Symbols \& Well-Known Symbols}
 
@@ -88,6 +90,29 @@ const impostor = {
 [] instanceof impostor; // true
 \end{simplecode}
 
+\paragraph{Iterators \& Iterables} An object is iterable if it implements a method identified by the well-known \mintinline{js}|Symbol.iterator| which returns an iterator object. This iterator must implement a \mintinline{js}|next()| method that returns a result object with \mintinline{js}|value| and \mintinline{js}|done| properties.
+\begin{simplecode}[js]
+    const iterable = {
+        [Symbol.iterator]() {
+            let i = 0;
+            // Returns an iterator
+            return {
+                next() {
+                    if (i < 2) return { value: i++, done: false };
+                    return { value: undefined, done: true };
+                }
+            };
+        }
+    };
+\end{simplecode}
+
+This protocol is utilized in many places instead of just accepting arrays, such as in \mintinline{js}|for...of| loops, or as the RHS in array destructuring.
+
+\begin{simplecode}[js]
+    for (const x of iterable) { /* 0, then 1 */ }
+    const [a, b, c] = iterable; // a = 0, b = 1, c = undefined
+\end{simplecode}
+
 \section{ECMAScript Standardization Process (TC39)\label{sec:background-ecmascript-standardization-process-tc39}}
 
 The evolution of the ECMAScript standard is managed by TC39 (Technical Committee 39) of Ecma International. TC39 is composed of experts from different fields and organizations, including the major browser vendors Google, Mozilla, Apple, and Microsoft.
@@ -102,7 +127,7 @@ New language features must pass through a stepwise development process before be
     \item[Stage 4] is reached if there are at least two independent implementations by major vendors that pass the acceptance tests. At this point, the feature is expected to be included in the next edition of the standard.
 \end{description}
 
-\section{Truffle and the Graal Compiler\label{sec:background-graaljs-truffle-and-the-graal-compiler}}
+\section{Truffle and the Graal Compiler\label{sec:background-truffle-and-the-graal-compiler}}
 
 The Truffle Language Implementation Framework~\cite{truffleframework} is a system for building programming language interpreters. It uses a unique architectural approach allowing for high performance with comparatively little effort on the side of the language implementor. A language implementor parses code into an Abstract Syntax Tree (AST) of Truffle Nodes. They can then create specializations of AST nodes based on input types and other properties, e.g.~providing specializations of an \enquote{Add} Node to both handle addition of integers and concenation of strings. At runtime, Nodes can replace themselves with specializations matching the input types. See \zcref{lst:background-self-optimizing-nodes-demonstration} for an example of such a Node, with specializations for the cases where both operands are either \mintinline{java}|long|s, \mintinline{java}|String|s, or \mintinline{java}|BigInteger|s. Note the performance-oriented specialization on \mintinline{java}|long|s: if an overflow occurs, \mintinline{java}|Math.addExact| throws a \mintinline{java}|ArithmeticException| and Truffle rewrites the Node to a more generic (and less performant) form.
 
@@ -129,18 +154,12 @@ Additionally, the Graal Compiler (a Just-In-Time compiler for the JVM) has infor
     \end{minted}
 \end{listing}
 
-\section{GraalJS}
+\section{GraalJS\label{sec:background-graaljs}}
 
-The implementation platform for this thesis is GraalJS, an ECMAScript-compliant engine developed by Oracle Labs~\cite{graaljsengine}. GraalJS is implemented in Java and built using the Truffle framework (see \zcref{sec:background-graaljs-truffle-and-the-graal-compiler}). It serves as the modern successor to previous Java-based JavaScript engines, namely Rhino (Mozilla,~\cite{rhinoengine}) and Nashorn (OpenJDK,~\cite{nashornengine}). Because GraalJS runs on the JVM, it can share memory and object references directly with a host Java application without the serialization overhead typically associated with Foreign Function Interfaces~\cite{onevmtrulethemall13}. An overview of the relevant subset of the GraalJS pipeline from source code to execution is given in \zcref{fig:graaljs-pipeline}.
-
-\begin{figure}[htbp]
-    \centering
-    \makebox[0pt]{\input{../content/graaljs-structure.pdf_tex}}
-    \caption{GraalJS pipeline from source code to execution, with two edge nodes representing notable data structures in the process.\label{fig:graaljs-pipeline}}
-\end{figure}
+The implementation platform for this thesis is GraalJS, an ECMAScript-compliant engine developed by Oracle Labs~\cite{graaljsengine}. GraalJS is implemented in Java and built using the Truffle framework (see \zcref{sec:background-truffle-and-the-graal-compiler}). It serves as the modern successor to previous Java-based JavaScript engines, namely Rhino (Mozilla,~\cite{rhinoengine}) and Nashorn (OpenJDK,~\cite{nashornengine}). Because GraalJS runs on the JVM, it can share memory and object references directly with a host Java application without the serialization overhead typically associated with Foreign Function Interfaces~\cite{onevmtrulethemall13}. An overview of the relevant subset of the GraalJS pipeline from source code to execution is given in \zcref{fig:graaljs-pipeline}.
 
 The first component we consider is the Parser, which converts input JavaScript code into an intermediary AST.\@ The produced AST Nodes are language-focused, representing JavaScript constructs as they appear in the source. For example, this AST might contain Nodes representing function calls as \mintinline{java}|CallNode|s---i.e.~\mintinline{js}|someFunction(a)| as \mintinline{java}|CallNode(someFunction, a)|---without worrying about actual semantics like special behavior for certain functions or similar.
 
 Following this, a Translator component converts this AST into another AST made up of executable Truffle Nodes. As opposed to the intermediary AST produced by the Parser, the Truffle AST is now execution-focused; its Nodes represent actual operations that are executed at runtime. For example, a \mintinline{java}|CallNode| will be transformed to one of several more specific Nodes depending on the content. For example, \mintinline{java}|super()|, \mintinline{java}|import()|, \mintinline{java}|eval()| and Extractors are each parsed as a \mintinline{java}|CallNode|, but since each need special runtime behavior and they get translated into different Truffle Nodes.
 
-These Truffle Nodes specify their own runtime behavior as member functions (optionally with specializations as discussed in \zcref{sec:background-graaljs-truffle-and-the-graal-compiler}) and are then executed by the Truffle Interpreter. For example, at runtime, a Node resulting from \mintinline{javascript}|import('some-module.js')| will load the file at the given path as a module, while a Node resulting from \mintinline{javascript}|eval('hello world')| will initiate execution of its arguments as JavaScript code.
+These Truffle Nodes specify their own runtime behavior as member functions (optionally with multiple specializations as discussed in \zcref{sec:background-truffle-and-the-graal-compiler}) and are then executed by the Truffle Interpreter. For example, at runtime, a Node resulting from \mintinline{javascript}|import('some-module.js')| will load the file at the given path as a module, while a Node resulting from \mintinline{javascript}|eval('hello world')| will initiate execution of its arguments as JavaScript code.

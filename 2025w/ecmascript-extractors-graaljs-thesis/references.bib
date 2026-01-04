@@ -34,6 +34,15 @@
   organization = {ECMA International}
 }
 
+@online{ecmascript26,
+  url = {https://tc39.es/ecma262/},
+  author = {{TC39}},
+  urldata = {2025-12-25},
+  year = {2025},
+  title = {ECMAScript 2026 Language Specification},
+  organization = {Ecma International}
+}
+
 @online{tc39process,
   author = {{TC39}},
   title = {The TC39 Process},
@@ -41,6 +50,24 @@
   urldate  = {2025-12-09},
   year     = {2025},
   organization = {ECMA International}
+}
+
+@online{graalvmcompiler,
+  author = {{Graal Compiler}},
+  title = {Graal Compiler},
+  url = {https://www.graalvm.org/latest/reference-manual/java/compiler/},
+  urldate = {2025-12-27},
+  year = {2025},
+  organization = {Oracle Labs}
+}
+
+@online{graalvm,
+  author = {GraalVM},
+  title = {GraalVM},
+  url = {https://www.graalvm.org/},
+  urldate = {2025-12-27},
+  year = 2025,
+  organization = {Oracle Labs},
 }
 
 @online{v8engine,
@@ -128,37 +155,6 @@
     url={https://arxiv.org/abs/2102.05232}, 
 }
 
-@InProceedings{backdevtechreview24,
-  author="Sharma, Siddhant
-  and Singh, Priyanka
-  and Sain, Jayesh
-  and Shrivastava, Vishal
-  and Pandey, Akhil",
-  editor="Rathore, Vijay Singh
-  and Manuel R. S. Tavares, Jo{\~a}o
-  and Tuba, Eva
-  and Devedzic, Vladan",
-  title="Modern Backend Development Technologies: A Comparative Review and Case Study",
-  booktitle="Emerging Trends in Expert Applications and Security",
-  year="2024",
-  publisher="Springer Nature Singapore",
-  address="Singapore",
-  pages="139--151",
-  isbn="978-981-97-3745-1"
-}
-
-@INPROCEEDINGS{lwengines23,
-  author={Wu, Meng and Dong, Weixin and Zhao, Qiang and Pan, Zhizhong and Hua, Baojian},
-  booktitle={2023 IEEE 23rd International Conference on Software Quality, Reliability, and Security Companion (QRS-C)}, 
-  title={An Empirical Study of Lightweight JavaScript Engines}, 
-  year={2023},
-  volume={},
-  number={},
-  pages={413-422},
-  keywords={Codes;Prototypes;Software quality;Software reliability;Engines;Standards;Resilience;Empirical study;Lightweight JavaScript engine;Software quality},
-  doi={10.1109/QRS-C60940.2023.00103}
-}
-
 @inproceedings{onevmtrulethemall13,
   author = {W\"{u}rthinger, Thomas and Wimmer, Christian and W\"{o}\ss{}, Andreas and Stadler, Lukas and Duboscq, Gilles and Humer, Christian and Richards, Gregor and Simon, Doug and Wolczko, Mario},
   title = {One VM to rule them all},
@@ -173,24 +169,6 @@
   numpages = {18},
   location = {Indianapolis, Indiana, USA},
   series = {Onward! 2013}
-}
-
-@inproceedings{10.1145/2384577.2384587,
-author = {W\"{u}rthinger, Thomas and W\"{o}\ss{}, Andreas and Stadler, Lukas and Duboscq, Gilles and Simon, Doug and Wimmer, Christian},
-title = {Self-optimizing AST interpreters},
-year = {2012},
-isbn = {9781450315647},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/2384577.2384587},
-doi = {10.1145/2384577.2384587},
-abstract = {An abstract syntax tree (AST) interpreter is a simple and natural way to implement a programming language. However, it is also considered the slowest approach because of the high overhead of virtual method dispatch. Language implementers therefore define bytecodes to speed up interpretation, at the cost of introducing inflexible and hard to maintain bytecode formats. We present a novel approach to implementing AST interpreters in which the AST is modified during interpretation to incorporate type feedback. This tree rewriting is a general and powerful mechanism to optimize many constructs common in dynamic programming languages. Our system is implemented in Java and uses the static typing and primitive data types of Java elegantly to avoid the cost of boxed representations of primitive values in dynamic programming languages.},
-booktitle = {Proceedings of the 8th Symposium on Dynamic Languages},
-pages = {73–82},
-numpages = {10},
-keywords = {virtual machine, optimization, language implementation, javascript, java, dynamic languages},
-location = {Tucson, Arizona, USA},
-series = {DLS '12}
 }
 
 @article{selfoptastint12,
@@ -270,8 +248,8 @@ series = {DLS '12}
 }
 
 @online{truffleframework,
-  author = {TruffleFramework},
-  title = {TruffleFramework},
+  author = {Truffle},
+  title = {Truffle},
   url = {https://www.graalvm.org/latest/graalvm-as-a-platform/language-implementation-framework/e},
   urldate  = {2025-12-19},
   year     = {2025},
@@ -296,5 +274,40 @@ series = {DLS '12}
   pages = {662–676},
   numpages = {15},
   keywords = {dynamic languages, language implementation, optimization, partial evaluation, virtual machine}
+}
+
+@inproceedings{10.1145/1806596.1806598,
+author = {Richards, Gregor and Lebresne, Sylvain and Burg, Brian and Vitek, Jan},
+title = {An analysis of the dynamic behavior of JavaScript programs},
+year = {2010},
+isbn = {9781450300193},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1806596.1806598},
+doi = {10.1145/1806596.1806598},
+booktitle = {Proceedings of the 31st ACM SIGPLAN Conference on Programming Language Design and Implementation},
+pages = {1–12},
+numpages = {12},
+keywords = {dynamic behavior, dynamic metrics, execution tracing, javascript, program analysis},
+location = {Toronto, Ontario, Canada},
+series = {PLDI '10}
+}
+
+@article{rlbv10,
+  author = {Richards, Gregor and Lebresne, Sylvain and Burg, Brian and Vitek, Jan},
+  title = {An analysis of the dynamic behavior of JavaScript programs},
+  year = {2010},
+  issue_date = {June 2010},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {45},
+  number = {6},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/1809028.1806598},
+  doi = {10.1145/1809028.1806598},
+  journal = {SIGPLAN Not.},
+  month = jun,
+  pages = {1–12},
+  numpages = {12},
 }
 
